@@ -1,0 +1,834 @@
+body {
+    margin: 0px;
+    padding: 0px;
+    background: linear-gradient(5deg, #2785c3, #8e98d3);
+    backdrop-filter: blur(24px) saturate(140%); // Mờ + tăng độ đậm màu
+
+    .users-container {
+        // Để hiệu ứng gradient phủ toàn màn hình (nếu trang này là trang chính)
+        min-height: 100vh;
+        // background: linear-gradient(45deg, #2785c3, #8e98d3);
+
+        // background-color: #ffffff; // Màu này giờ chỉ còn tác dụng nếu nội dung cực dài
+        font-family: system-ui, -apple-system, sans-serif;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0px;
+        padding: 0px;
+
+        .header-title {
+            color: #1d1d1f; // Chữ đen Apple
+            font-weight: 600;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+
+        /* Trong file UserManage.scss */
+
+        .mb-3 {
+            display: flex;
+            justify-content: flex-start; // Đã đổi từ center sang flex-start để đẩy sang trái
+            width: 100%; // Cần thiết để chiếm hết chiều ngang
+            max-width: 900px; // Khớp với max-width của .table-manage-user
+            margin: 0 !important;
+            // padding-left: 5px;
+            // margin: 0px;
+            padding-top: 25px !important;
+            padding-bottom: 5px;
+
+
+            .btn-primary {
+                /* Mặc định: Nền trong suốt, viền mờ, không bóng */
+                background-color: transparent !important; // Nền trong suốt
+                // border: 1px solid rgba(255, 255, 255, 0.4) !important; // Viền trắng mờ
+                border-radius: 30px;
+                color: rgba(255, 255, 255, 0.8) !important; // Màu chữ/icon trắng mờ
+                // padding: 10px 10px;
+                transition: all 0.3s ease; // Hiệu ứng chuyển động mượt mà
+                display: flex;
+                align-items: center;
+                box-shadow: none !important; // Không có bóng đổ
+                cursor: pointer;
+
+                /* Hiệu ứng khi di chuột (hover) */
+                &:hover {
+                    /* Hiện nền tím-xanh, viền trắng rõ, bóng đổ */
+                    // background-color: #1c246d !important; // Màu nền khi hover (cùng tông với header bảng)8e98d3
+                    background: linear-gradient(to right, #1c246d, #8e98d3);
+
+                    border-color: #fff !important; // Viền trắng rõ hơn
+                    color: #fff !important; // Màu chữ/icon trắng rõ
+                    transform: translateY(-2px); // Nổi nhẹ lên
+                    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important; // Bóng đổ
+                }
+
+                /* Hiệu ứng khi click (active) */
+                &:active {
+                    transform: translateY(0); // Lún xuống khi click
+                }
+            }
+        }
+
+        .table-manage-user {
+            width: 100%;
+            max-width: 900px;
+            border-collapse: collapse;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            // background-color: rgba(255, 255, 255, 0.2); // Hiệu ứng kính mờ
+            background: linear-gradient(45deg, #1c246d, #8e98d3);
+
+            border-radius: 20px;
+            backdrop-filter: blur(24px) saturate(140%); // Mờ + tăng độ đậm màu
+            -webkit-backdrop-filter: blur(24px) saturate(140%); // Fix Safari
+
+            /* Viền + bóng đổ để bảng nổi lên */
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow:
+                0 15px 35px rgba(0, 0, 0, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+
+            thead {
+                background: linear-gradient(45deg, #1c246d, #8e98d3);
+
+                th {
+                    //#55608f;
+                    color: #fff;
+                    text-align: left;
+                    padding: 15px;
+
+                    .th-actions {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        gap: 8px;
+                        /* khoảng cách giữa icon */
+
+                    }
+                }
+            }
+
+            tbody {
+                tr {
+
+                    &:hover {
+                        background-color: rgba(255, 255, 255, 0.3);
+                    }
+
+                    td {
+                        padding: 15px;
+                        color: #ffffff;
+                        border: none; // Bỏ viền để trông mượt hơn
+                        position: relative;
+
+                        // Hiệu ứng highlight cột khi hover vào cell (từ CSS mẫu của bạn)
+                        &:hover:before {
+                            content: "";
+                            position: absolute;
+                            left: 0;
+                            right: 0;
+                            top: -9999px;
+                            bottom: -9999px;
+                            background-color: rgba(255, 255, 255, 0.2);
+                            z-index: -1;
+                        }
+                    }
+                }
+            }
+
+            // Tùy chỉnh riêng cho các nút bấm Actions
+            .btn-edit,
+            .btn-delete {
+                background: none;
+                border: none;
+                cursor: pointer;
+                font-size: 16px;
+                transition: transform 0.2s ease-in-out;
+
+
+                &:hover {
+                    transform: scale(1.3);
+                }
+            }
+
+            .btn-edit {
+                color: #ffc107; // Màu vàng cho nút sửa
+                margin-right: 15px;
+            }
+
+            .btn-delete {
+                color: #ff4d4d; // Màu đỏ cho nút xóa
+            }
+        }
+    }
+}
+
+// Tùy chỉnh thanh cuộn nếu bảng quá dài (giống class .container của bạn)
+.users-container {
+    max-height: 100vh;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 10px;
+    }
+}
+
+/* Style cho Modal Add New User */
+.modal-add-new-user,
+.user-redux-add-new-user {
+    // font-family: system-ui, -apple-system, sans-serif;Z
+
+    // Fix lệch & render mượt (rất quan trọng với blur + radius lớn)
+    .modal-dialog {
+        max-width: 520px; // Giống Apple modal width
+        margin: 1.75rem auto; // Bootstrap default, đảm bảo center
+        transform: translateZ(0); // Hardware accel → fix blur/radius lệch trên Chrome/Safari
+    }
+
+    .modal-content {
+        background: rgba(255, 255, 255, 0.16); // Apple light glass – rất trong
+        // Dark mode fallback: rgba(40, 40, 50, 0.6) nếu bạn có dark theme
+        backdrop-filter: blur(28px) saturate(130%);
+        -webkit-backdrop-filter: blur(28px) saturate(130%);
+
+        border-radius: 20px; // Tròn mượt như iOS/macOS sheet
+        border: 1px solid rgba(255, 255, 255, 0.24);
+        box-shadow:
+            0 24px 60px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.4), // highlight trên
+            inset 0 -1px 0 rgba(0, 0, 0, 0.2); // shadow dưới
+
+        overflow: hidden;
+        color: white;
+    }
+
+    .modal-header {
+        border-bottom: none;
+        padding: 24px 28px 12px;
+
+
+        button {
+            border-radius: 20px;
+            background: transparent;
+            /* hoặc */
+            border: none;
+            background-color: transparent;
+
+        }
+
+        .modal-title {
+            margin-left: 20px;
+            font-size: 1.45rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        .close {
+            // color: white;
+            // opacity: 0.7;
+            // text-shadow: none;
+
+            span[aria-hidden="true"] {
+                display: none !important; // Ẩn ×
+            }
+
+            background-image: url('../../assets/images/close-x-white.png'); // Nếu dùng public folder
+            // Hoặc nếu import trong JS: dùng variable, nhưng CSS thuần thì dùng path
+            background-size: contain; // Giữ tỷ lệ, fit vào button
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: #fc5b54;
+            //--------------------------------------------
+            width: 14px !important;
+            height: 14px !important;
+            padding: 0 !important; // Xóa padding mặc định
+            margin-right: 20px !important;
+
+            border: none !important;
+            opacity: 0.7; // Mờ nhẹ như Apple
+            transition: opacity 0.2s ease;
+
+
+            &:hover,
+            &:focus {
+                opacity: 1;
+                background-color: #fc5b54; // Optional: hover effect mờ
+                border-radius: 50%; // Làm tròn nếu muốn kiểu nút tròn
+            }
+        }
+    }
+
+    .modal-body {
+        padding: 0 28px 32px;
+        padding-top: 28px;
+
+        .modal-user-body {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+
+            .input-container {
+                flex: 1 1 45%; // 2 cột responsive
+                min-width: 200px;
+
+                &.max-width-input {
+                    flex: 1 1 100%;
+                }
+
+                label {
+                    display: block;
+                    margin-bottom: 8px;
+                    font-size: 0.95rem;
+                    font-weight: 500;
+                    color: rgba(255, 255, 255, 0.9);
+                }
+
+                input {
+                    width: 100%;
+                    height: 46px; // Cao như input Apple
+                    padding: 0 16px;
+                    font-size: 1rem;
+                    color: white;
+                    background: rgba(255, 255, 255, 0.12);
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    border-radius: 30px;
+                    outline: none;
+                    transition: all 0.25s ease;
+
+                    &::placeholder {
+                        color: rgba(255, 255, 255, 0.55);
+                    }
+
+                    &:focus {
+                        background: rgba(255, 255, 255, 0.22);
+                        border-color: rgba(255, 255, 255, 0.65);
+                        box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.18);
+                    }
+                }
+
+                select {
+                    width: 100%;
+                    height: 46px;
+                    padding: 0 16px;
+                    font-size: 1rem;
+                    color: white;
+                    background: rgba(255, 255, 255, 0.12);
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    border-radius: 30px;
+                    outline: none;
+                    appearance: none;
+                    -webkit-appearance: none;
+                    cursor: pointer;
+                    transition: all 0.25s ease;
+                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+                    background-repeat: no-repeat;
+                    background-position: right 16px center;
+                    background-size: 12px;
+
+                    &:focus {
+                        background-color: rgba(255, 255, 255, 0.22);
+                        border-color: rgba(255, 255, 255, 0.65);
+                        box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.18);
+                    }
+
+                    option {
+                        background-color: #2c2c2e;
+                        color: white;
+
+                    }
+
+                    option {
+                        background-color: #212529; // Màu nền tối giống trong ảnh của ông
+                        color: white;
+                        padding: 12px;
+                        border: none;
+
+                        // Khử cái màu xanh mặc định khi chọn trên một số trình duyệt
+                        &:hover,
+                        &:focus,
+                        &:active {
+                            background-color: #007aff !important;
+                            color: white;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .label-upload {
+        background: rgba(255, 255, 255, 0.2);
+        /* Hiệu ứng kính */
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 6px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: inline-block;
+        transition: all 0.3s ease;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: translateY(-1px);
+        }
+    }
+
+    .preview-image {
+        width: 100px;
+        height: 100px;
+        border: 2px dashed #ccc;
+        margin-top: 10px;
+        background-size: cover;
+        background-position: center;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .modal-footer {
+        border-top: none;
+        padding: 20px 28px 28px; // Tăng bottom padding cho đẹp
+        display: flex !important; // Buộc flex
+        justify-content: flex-end !important; // Dính sát phải (quan trọng nhất!)
+        align-items: center;
+        gap: 16px; // Khoảng cách giữa 2 nút đều, giống Apple
+        margin: 0; // Xóa margin thừa nếu có
+
+        .btn {
+            min-width: 100px; // Đảm bảo nút không quá hẹp
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            white-space: nowrap; // Ngăn text wrap làm lệch
+            display: flex !important; // Buộc flex để align center
+            align-items: center !important; // Center vertical text/icon
+            justify-content: center !important; // Center horizontal (nếu có icon)
+            // min-height: 44px; // Optional: set height cố định để test
+            padding: 0.5rem 1.5rem; // Tăng padding ngang nếu cần, giữ top/bottom nhỏ
+            line-height: 1.4; // Điều chỉnh line-height cho text center tốt hơn
+            font-size: 1rem; // Giữ font-size ổn định
+
+            // Nếu vẫn lệch nhẹ, ép padding top/bottom bằng nhau
+            padding-top: 0.6rem !important;
+            padding-bottom: 0.6rem !important;
+        }
+
+        .btn-secondary {
+            // Close ở "trái" hơn (nhưng vẫn flex-end tổng)
+            background: rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.32);
+            color: white;
+            order: 1; // Optional: nếu muốn Close trước Add New
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.28);
+            }
+        }
+
+        .btn-primary {
+            background-color: #007aff !important;
+            border: none;
+            order: 2; // Add New ở phải nhất
+
+            &:hover {
+                background-color: #0062d1 !important;
+                transform: translateY(-1px);
+                box-shadow: 0 6px 16px rgba(0, 122, 255, 0.35);
+            }
+        }
+    }
+
+    // .table-manage {
+
+    //     width: 100%;
+    //     max-width: 900px;
+    //     border-collapse: collapse;
+    //     overflow: hidden;
+    //     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    //     // background-color: rgba(255, 255, 255, 0.2); // Hiệu ứng kính mờ
+    //     background: linear-gradient(45deg, #1c246d, #8e98d3);
+
+    //     border-radius: 20px;
+    //     backdrop-filter: blur(24px) saturate(140%); // Mờ + tăng độ đậm màu
+    //     -webkit-backdrop-filter: blur(24px) saturate(140%); // Fix Safari
+
+    //     /* Viền + bóng đổ để bảng nổi lên */
+    //     border: 1px solid rgba(255, 255, 255, 0.25);
+    //     box-shadow:
+    //         0 15px 35px rgba(0, 0, 0, 0.25),
+    //         inset 0 1px 0 rgba(255, 255, 255, 0.3);
+
+    //     thead {
+    //         background: linear-gradient(45deg, #1c246d, #8e98d3);
+
+    //         th {
+    //             font-weight: 600;
+    //             text-transform: uppercase;
+    //             font-size: 0.9rem;
+    //             letter-spacing: 1px;
+    //             padding: 20px 15px;
+
+    //             .th-actions {
+    //                 display: flex;
+    //                 justify-content: center;
+    //                 align-items: center;
+    //                 gap: 8px;
+    //                 /* khoảng cách giữa icon */
+
+    //             }
+    //         }
+    //     }
+
+    //     tbody {
+    //         tr {
+    //             transition: all 0.3s ease;
+    //             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    //             &:hover {
+    //                 background-color: rgba(255, 255, 255, 0.3);
+    //             }
+
+    //             td {
+    //                 padding: 15px;
+    //                 color: #ffffff;
+    //                 border: none; // Bỏ viền để trông mượt hơn
+    //                 position: relative;
+
+    //                 // Hiệu ứng highlight cột khi hover vào cell (từ CSS mẫu của bạn)
+    //                 &:hover:before {
+    //                     background-color: rgba(255, 255, 255, 0.1);
+    //                     // Đẩy dòng lên một chút tạo cảm giác nổi (Floating effect)
+    //                     transform: translateY(-2px);
+    //                     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    //                 }
+    //             }
+    //         }
+    //     }
+
+    //     // Tùy chỉnh riêng cho các nút bấm Actions
+    //     .btn-edit,
+    //     .btn-delete {
+    //         background: none;
+    //         border: none;
+    //         cursor: pointer;
+    //         font-size: 16px;
+    //         transition: transform 0.2s ease-in-out;
+
+
+    //         &:hover {
+    //             transform: scale(1.3);
+    //         }
+    //     }
+
+    //     .btn-edit {
+    //         color: #ffc107; // Màu vàng cho nút sửa
+    //         margin-right: 15px;
+    //     }
+
+    //     .btn-delete {
+    //         color: #ff4d4d; // Màu đỏ cho nút xóa
+    //     }
+    // }
+    // Mobile: giống bottom sheet Apple
+    @media (max-width: 576px) {
+        .modal-dialog {
+            margin: 0;
+            max-width: none;
+        }
+
+        .modal-content {
+            border-radius: 20px 20px 0 0;
+            min-height: 60vh;
+        }
+
+        .modal-footer {
+            padding: 16px 20px;
+            justify-content: flex-end !important;
+        }
+    }
+
+}
+
+.ril__outer {
+    background-color: rgba(0, 0, 0, 0.7) !important;
+    backdrop-filter: blur(5px) !important;
+    z-index: 2000 !important;
+
+    .ril__navButtons,
+    .ril__closeButton,
+    .ril__toolbar {
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+    }
+
+    .ril__inner {
+        .ril__image {
+            border-radius: 12px !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+        }
+    }
+}
+
+.ril__closeButton {
+    opacity: 0.8;
+
+    &:hover {
+        opacity: 1;
+    }
+}
+
+.modal-search-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    gap: 20px;
+    padding: 0 20px;
+    background-color: #fff; // Đảm bảo nền trắng sạch sẽ
+
+    .search-input-container {
+        position: relative;
+        flex: 1;
+        max-width: 800px; // Giới hạn độ rộng để thanh search không quá dài
+        display: flex;
+        align-items: center;
+
+        .icon-search {
+            position: absolute;
+            left: 15px;
+            width: 18px;
+            height: 18px;
+            z-index: 1;
+            pointer-events: none; // Để click xuyên qua icon vào input
+        }
+
+        input {
+            width: 100%;
+            height: 44px;
+            padding: 0 15px 0 45px; // Chừa chỗ bên trái cho icon kính lúp
+            border-radius: 25px; // Bo tròn xịn xò như ảnh
+            border: 1px solid #000; // Viền đen mặc định
+            font-size: 16px;
+            color: #333;
+            transition: all 0.2s ease;
+
+            &::placeholder {
+                color: #757575;
+                font-weight: 400;
+            }
+
+            &:focus {
+                /* ĐÂY LÀ ĐIỂM NHẤN MAYO CLINIC: Viền đứt đoạn khi click vào */
+                outline: 2px dashed #005eb8;
+                outline-offset: 2px; // Tạo khoảng cách nhỏ giữa viền đen và viền xanh đứt đoạn
+                border-color: transparent; // Ẩn viền đen đi để nổi bật viền xanh
+            }
+        }
+
+    }
+
+    .icon-close-custom {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+
+        &:hover {
+            transform: scale(1.1); // Phóng nhẹ khi di chuột vào
+        }
+    }
+}
+
+// .table-manage {
+
+//     width: 100%;
+//     max-width: 900px;
+//     border-collapse: collapse;
+//     overflow: hidden;
+//     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+//     // background-color: rgba(255, 255, 255, 0.2); // Hiệu ứng kính mờ
+//     background: linear-gradient(45deg, #1c246d, #8e98d3);
+
+//     border-radius: 20px;
+//     backdrop-filter: blur(24px) saturate(140%); // Mờ + tăng độ đậm màu
+//     -webkit-backdrop-filter: blur(24px) saturate(140%); // Fix Safari
+
+//     /* Viền + bóng đổ để bảng nổi lên */
+//     border: 1px solid rgba(255, 255, 255, 0.25);
+//     box-shadow:
+//         0 15px 35px rgba(0, 0, 0, 0.25),
+//         inset 0 1px 0 rgba(255, 255, 255, 0.3);
+
+//     thead {
+//         background: linear-gradient(45deg, #1c246d, #8e98d3);
+
+//         th {
+//             //#55608f;
+//             color: #fff;
+//             text-align: left;
+//             padding: 15px;
+
+//             .th-actions {
+//                 display: flex;
+//                 justify-content: center;
+//                 align-items: center;
+//                 gap: 8px;
+//                 /* khoảng cách giữa icon */
+
+//             }
+//         }
+//     }
+
+//     tbody {
+//         tr {
+
+//             &:hover {
+//                 background-color: rgba(255, 255, 255, 0.3);
+//             }
+
+//             td {
+//                 padding: 15px;
+//                 color: #ffffff;
+//                 border: none; // Bỏ viền để trông mượt hơn
+//                 position: relative;
+
+//                 // Hiệu ứng highlight cột khi hover vào cell (từ CSS mẫu của bạn)
+//                 &:hover:before {
+//                     content: "";
+//                     position: absolute;
+//                     left: 0;
+//                     right: 0;
+//                     top: -9999px;
+//                     bottom: -9999px;
+//                     background-color: rgba(255, 255, 255, 0.2);
+//                     z-index: -1;
+//                 }
+//             }
+//         }
+//     }
+
+//     // Tùy chỉnh riêng cho các nút bấm Actions
+//     .btn-edit,
+//     .btn-delete {
+//         background: none;
+//         border: none;
+//         cursor: pointer;
+//         font-size: 16px;
+//         transition: transform 0.2s ease-in-out;
+
+
+//         &:hover {
+//             transform: scale(1.3);
+//         }
+//     }
+
+//     .btn-edit {
+//         color: #ffc107; // Màu vàng cho nút sửa
+//         margin-right: 15px;
+//     }
+
+//     .btn-delete {
+//         color: #ff4d4d; // Màu đỏ cho nút xóa
+//     }
+// }
+.table-manage {
+    margin: auto;
+    padding: 0px;
+    // background: linear-gradient(5deg, #2785c3, #8e98d3);
+    // backdrop-filter: blur(24px) saturate(140%); // Mờ + tăng độ đậm màu
+    width: 100%;
+    max-width: 900px;
+    border-collapse: collapse;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    // background-color: rgba(255, 255, 255, 0.2); // Hiệu ứng kính mờ
+    background: linear-gradient(45deg, #1c246d, #8e98d3);
+
+    border-radius: 20px;
+    backdrop-filter: blur(24px) saturate(140%); // Mờ + tăng độ đậm màu
+    -webkit-backdrop-filter: blur(24px) saturate(140%); // Fix Safari
+
+    /* Viền + bóng đổ để bảng nổi lên */
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+
+    thead {
+        background: linear-gradient(45deg, #1c246d, #8e98d3);
+
+        th {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            padding: 20px 15px;
+
+            .th-actions {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 8px;
+                /* khoảng cách giữa icon */
+
+            }
+        }
+    }
+
+    tbody {
+        tr {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.3);
+            }
+
+            td {
+                padding: 15px;
+                color: #ffffff;
+                border: none; // Bỏ viền để trông mượt hơn
+                position: relative;
+
+                // Hiệu ứng highlight cột khi hover vào cell (từ CSS mẫu của bạn)
+                &:hover:before {
+                    background-color: rgba(255, 255, 255, 0.1);
+                    // Đẩy dòng lên một chút tạo cảm giác nổi (Floating effect)
+                    transform: translateY(-2px);
+                    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+                }
+            }
+        }
+    }
+
+    // Tùy chỉnh riêng cho các nút bấm Actions
+    .btn-edit,
+    .btn-delete {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        transition: transform 0.2s ease-in-out;
+
+
+        &:hover {
+            transform: scale(1.3);
+        }
+    }
+
+    .btn-edit {
+        color: #ffc107; // Màu vàng cho nút sửa
+        margin-right: 15px;
+    }
+
+    .btn-delete {
+        color: #ff4d4d; // Màu đỏ cho nút xóa
+    }
+}

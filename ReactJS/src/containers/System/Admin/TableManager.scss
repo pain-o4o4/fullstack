@@ -1,0 +1,91 @@
+// .table-manage {
+
+//     width: 100%;
+//     max-width: 900px;
+//     border-collapse: collapse;
+//     overflow: hidden;
+//     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+//     // background-color: rgba(255, 255, 255, 0.2); // Hiệu ứng kính mờ
+//     background: linear-gradient(45deg, #1c246d, #8e98d3);
+
+//     border-radius: 20px;
+//     backdrop-filter: blur(24px) saturate(140%); // Mờ + tăng độ đậm màu
+//     -webkit-backdrop-filter: blur(24px) saturate(140%); // Fix Safari
+
+//     /* Viền + bóng đổ để bảng nổi lên */
+//     border: 1px solid rgba(255, 255, 255, 0.25);
+//     box-shadow:
+//         0 15px 35px rgba(0, 0, 0, 0.25),
+//         inset 0 1px 0 rgba(255, 255, 255, 0.3);
+
+//     thead {
+//         background: linear-gradient(45deg, #1c246d, #8e98d3);
+
+//         th {
+//             font-weight: 600;
+//             text-transform: uppercase;
+//             font-size: 0.9rem;
+//             letter-spacing: 1px;
+//             padding: 20px 15px;
+
+//             .th-actions {
+//                 display: flex;
+//                 justify-content: center;
+//                 align-items: center;
+//                 gap: 8px;
+//                 /* khoảng cách giữa icon */
+
+//             }
+//         }
+//     }
+
+//     tbody {
+//         tr {
+//             transition: all 0.3s ease;
+//             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+//             &:hover {
+//                 background-color: rgba(255, 255, 255, 0.3);
+//             }
+
+//             td {
+//                 padding: 15px;
+//                 color: #ffffff;
+//                 border: none; // Bỏ viền để trông mượt hơn
+//                 position: relative;
+
+//                 // Hiệu ứng highlight cột khi hover vào cell (từ CSS mẫu của bạn)
+//                 &:hover:before {
+//                     background-color: rgba(255, 255, 255, 0.1);
+//                     // Đẩy dòng lên một chút tạo cảm giác nổi (Floating effect)
+//                     transform: translateY(-2px);
+//                     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+//                 }
+//             }
+//         }
+//     }
+
+//     // Tùy chỉnh riêng cho các nút bấm Actions
+//     .btn-edit,
+//     .btn-delete {
+//         background: none;
+//         border: none;
+//         cursor: pointer;
+//         font-size: 16px;
+//         transition: transform 0.2s ease-in-out;
+
+
+//         &:hover {
+//             transform: scale(1.3);
+//         }
+//     }
+
+//     .btn-edit {
+//         color: #ffc107; // Màu vàng cho nút sửa
+//         margin-right: 15px;
+//     }
+
+//     .btn-delete {
+//         color: #ff4d4d; // Màu đỏ cho nút xóa
+//     }
+// }

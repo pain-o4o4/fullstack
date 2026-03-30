@@ -1,0 +1,509 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'); // https://healthcarebookings.com/
+
+// https://assets.mayoclinic.org/content/dam/media/global/images/2023/07/27/about-mc-maurice-2100x900.jpg
+body {
+    font-family: 'Inter', sans-serif;
+    max-height: 100vh; // ← Đây là thủ phạm chính
+    // overflow-y: auto;
+
+    .home-header-container {
+        height: 72px; // HealthMatch để header khá cao và thoáng
+        width: 100%;
+        background-color: #ffffff;
+        border-bottom: 1px solid #f1f1f1;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, .04); // Đổ bóng nhẹ cực sang
+        // font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; // Font Apple
+        // justify-content: space-between;
+
+        .home-header-content {
+            width: 100%;
+            max-width: 1200px; // Giới hạn độ rộng nội dung
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+
+            .left-content {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+
+
+                .menu-icon {
+                    width: 40px;
+                    height: 40px;
+                    cursor: pointer;
+                    opacity: 0.7;
+
+                    &:hover {
+                        opacity: 1;
+                    }
+                }
+
+                .header-logo {
+                    width: 160px;
+                    // padding-right: 10px;
+                    margin-right: 10px;
+                    margin-left: 10px;
+                    height: 40px;
+                    background: url('../../assets/images/logo2.svg') no-repeat center;
+                    background-size: contain;
+                    cursor: pointer;
+                }
+            }
+
+            .center-content {
+
+                flex: 1;
+                display: flex;
+                gap: 32px; // Khoảng cách rộng giữa các menu
+                margin-right: 5px;
+                margin-left: 5px;
+                justify-content: center;
+                align-items: center;
+                transition: all 0.3s ease;
+                min-width: 0;
+
+                .menu-content {
+                    flex: 1;
+                    display: flex;
+                    gap: 32px; // Khoảng cách rộng giữa các menu
+                    margin-right: 5px;
+                    margin-left: 5px;
+                    justify-content: center;
+                    align-items: center;
+                    transition: all 0.3s ease;
+                    min-width: 0;
+
+                    @media screen and (max-width: 800px) {
+                        display: none !important;
+                    }
+                }
+
+                .modal-search-wrapper {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 100%;
+                    height: 100%;
+                    gap: 20px;
+                    padding: 0 20px;
+                    background-color: #fff; // Đảm bảo nền trắng sạch sẽ
+
+                    .search-input-container {
+                        position: relative;
+                        flex: 1;
+                        max-width: 800px; // Giới hạn độ rộng để thanh search không quá dài
+                        display: flex;
+                        align-items: center;
+
+                        .icon-search {
+                            position: absolute;
+                            left: 15px;
+                            width: 18px;
+                            height: 18px;
+                            z-index: 1;
+                            pointer-events: none; // Để click xuyên qua icon vào input
+                        }
+
+                        input {
+                            width: 100%;
+                            height: 44px;
+                            padding: 0 15px 0 45px; // Chừa chỗ bên trái cho icon kính lúp
+                            border-radius: 25px; // Bo tròn xịn xò như ảnh
+                            border: 1px solid #000; // Viền đen mặc định
+                            font-size: 16px;
+                            color: #333;
+                            transition: all 0.2s ease;
+
+                            &::placeholder {
+                                color: #757575;
+                                font-weight: 400;
+                            }
+
+                            &:focus {
+                                /* ĐÂY LÀ ĐIỂM NHẤN MAYO CLINIC: Viền đứt đoạn khi click vào */
+                                outline: 2px dashed #005eb8;
+                                outline-offset: 2px; // Tạo khoảng cách nhỏ giữa viền đen và viền xanh đứt đoạn
+                                border-color: transparent; // Ẩn viền đen đi để nổi bật viền xanh
+                            }
+                        }
+                    }
+
+                    .icon-close-custom {
+                        width: 20px;
+                        height: 20px;
+                        cursor: pointer;
+                        transition: transform 0.2s ease;
+
+                        &:hover {
+                            transform: scale(1.1); // Phóng nhẹ khi di chuột vào
+                        }
+                    }
+
+
+                }
+
+                @media screen and (max-width: 600px) {
+                    display: none !important;
+                }
+
+                .child-content {
+                    cursor: pointer;
+                    color: #000;
+                    font-size: 15px;
+                    transition: color 0.2s;
+                    margin-right: 5px;
+                    margin-left: 5px;
+
+                    &:hover {
+                        color: #2785c3; // Màu xanh đặc trưng khi hover
+                    }
+                }
+            }
+
+            .right-content {
+                margin-left: 5px;
+                display: flex;
+                align-items: center;
+                gap: 20px; // Khoảng cách giữa cụm Log in và Icon Search
+                cursor: pointer;
+                margin-right: 5px;
+                /* CHỐT CỐ ĐỊNH ĐỘ RỘNG Ở ĐÂY */
+                width: 150px; // Hoặc con số nào Duy thấy vừa vặn với cụm Login + Search
+                flex-shrink: 0; // QUAN TRỌNG: Ngăn không cho Flexbox bóp nghẹt cột này khi thiếu diện tích
+                flex-grow: 0; // Không cho phép nó tự phình to ra
+                transition: all 0.3s ease;
+                justify-content: flex-end;
+
+                /* Cụm Log in */
+                .login-group {
+                    margin-left: 5px;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px; // Khoảng cách giữa icon User và chữ Log in
+                    transition: opacity 0.2s ease;
+                    opacity: 0.7;
+
+
+                    .icon-user {
+                        color: #000000;
+                        width: 24px;
+                        height: 24px; // Màu đen tuyền của Apple
+                    }
+
+                    .text-login {
+                        white-space: nowrap;
+                        font-size: 15px; // Kích thước chữ vừa phải
+                        font-weight: 400; // Nét chữ mảnh
+                        color: #000000; // Màu đen trùng với icon
+                        letter-spacing: -0.2px; // Giảm khoảng cách chữ cho tinh tế
+                    }
+
+                    @media (max-width: 600px) {
+
+                        .text-login {
+                            display: none; // Ẩn chữ trên điện thoại, chỉ hiện Icon User cho tinh tế
+                        }
+
+                        // .right-content {
+                        //     width: auto; // Trên mobile thì cho nó tự do lại
+                        // }
+                    }
+
+
+
+                    &:hover {
+                        opacity: 1;
+                        // Hiệu ứng mờ nhẹ khi di chuột vào cụm
+                    }
+                }
+
+                .icon-translate {
+                    width: 24px;
+                    height: 24px;
+
+                    @media (max-width: 720px) {
+                        // Hoặc 600px tùy Duy
+                        display: none !important; // Buộc phải ẩn đi
+                    }
+                }
+
+                /* Icon Search */
+                .icon-search {
+                    color: #000000; // Màu xanh dương đặc trưng của Apple
+                    transition: transform 0.2s ease, opacity 0.2s ease;
+                    width: 24px;
+                    height: 24px;
+
+                    &:hover {
+                        transform: scale(1.1);
+                        color: #2785c3; // Nổi nhẹ lên khi hover
+                        opacity: 0.8;
+                    }
+                }
+            }
+
+
+
+        }
+    }
+
+    .home-header-line {
+        // margin-top: 5px;
+        // padding-left: 20px;
+        // padding-right: 20px;
+        color: white;
+        background-color: #f5f5f7;
+        border-bottom: 1px solid #f1f1f1;
+        // box-shadow: 0 2px 4px rgba(0, 0, 0, .04); // Đổ bóng nhẹ cực sang
+
+        .clinical-trial-section {
+            // padding: 100px 20px 80px;
+            // background: #ffffff;
+            // text-align: center;
+
+
+            padding: 100px 20px 80px;
+            text-align: center;
+            position: relative; // Bắt buộc để lớp nền không bị tràn ra ngoài
+            // overflow: hidden;
+
+            &::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+
+                background-image: url('../../assets/images/backgroundBanner.avif');
+                background-size: cover;
+                background-position: center;
+
+                /* === Hiệu ứng mờ DARK kiểu Apple === */
+                filter: brightness(0.45) contrast(1.1) saturate(0.85); // Làm tối + tăng tương phản nhẹ
+                opacity: 0.75; // Độ tối của lớp overlay
+
+                /* Blur nhẹ để tạo cảm giác nhám mờ */
+                backdrop-filter: blur(8px); // Mờ thật sự
+                -webkit-backdrop-filter: blur(8px);
+
+                /* Scale để tránh lộ mép ảnh */
+                transform: scale(1.15);
+
+                z-index: 0;
+            }
+
+            .clinical-trial-container {
+                max-width: 820px;
+                margin: 0 auto;
+                text-align: center;
+                position: relative; // Rất quan trọng
+                z-index: 2;
+
+                /* Badge */
+                .enrolling-badge {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                    background: rgba(255, 255, 255, 0.95);
+                    color: #4e44a4;
+                    padding: 10px 26px;
+                    border-radius: 50px;
+                    font-size: 0.95rem;
+                    font-weight: 600;
+                    margin-bottom: 32px;
+                    box-shadow: 0 4px 15px rgba(107, 33, 168, 0.12); // Bóng tím nhẹ
+                    backdrop-filter: blur(10px);
+                    border: 1px solid rgba(255, 255, 255, 0.6);
+
+                    .icon {
+                        font-size: 1.15rem;
+                    }
+                }
+
+                /* Tiêu đề lớn */
+                .main-title {
+                    // font-size: 3.2rem;
+                    // line-height: 1.15;
+                    // font-weight: 700;
+                    // color: #1e2937;
+                    // margin-bottom: 20px;
+                    font-size: 3.35rem;
+                    line-height: 1.08;
+                    font-weight: 700;
+                    color: #ffffff;
+                    margin-bottom: 24px;
+                    letter-spacing: -0.02em;
+                    text-shadow:
+                        0 2px 4px rgba(0, 0, 0, 0.08),
+                        0 4px 12px rgba(0, 0, 0, 0.06);
+
+                    span {
+                        color: #4e44a4; // Màu tím giống ảnh
+                        font-weight: 700;
+                    }
+
+                    @media (max-width: 768px) {
+                        font-size: 2.75rem;
+                    }
+
+                    @media (max-width: 576px) {
+                        font-size: 2.4rem;
+                    }
+                }
+
+                /* Subtitle */
+                .subtitle {
+                    font-size: 1.28rem;
+                    color: #ffffff;
+                    max-width: 560px;
+                    margin: 0 auto;
+                    line-height: 1.65;
+                    font-weight: 400;
+
+                    /* Làm chữ subtitle nổi hơn một chút */
+                    // text-shadow:
+                    //     0 2px 4px rgba(0, 0, 0, 0.08),
+                    //     0 4px 12px rgba(0, 0, 0, 0.06);
+                }
+
+
+            }
+
+
+        }
+
+        .welcome-container {
+            max-width: 1200px;
+            margin: 40px auto; // 'auto' sẽ giúp cả khối căn giữa màn hình, không lệch trái
+            display: flex;
+            flex-direction: column; // Xếp khối tím trên, 6 thẻ dưới
+            gap: 30px; // Khoảng cách giữa khối tím và dải thẻ
+            padding: 0 24px;
+
+            @media (max-width: 992px) {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 50px;
+            }
+        }
+
+        .welcome-card {
+            margin-top: 20px;
+            background: #4e44a4;
+            border-radius: 24px;
+            padding: 50px 45px;
+
+            h2 {
+                font-size: 2.45rem;
+                line-height: 1.15;
+                margin-bottom: 24px;
+                font-weight: 700;
+            }
+
+            p {
+                font-size: 1.08rem;
+                line-height: 1.7;
+                margin-bottom: 32px;
+            }
+
+            .read-more-btn {
+                display: inline-block;
+                background: rgba(255, 255, 255, 0.22);
+                color: white;
+                padding: 14px 34px;
+                border-radius: 50px;
+                font-weight: 600;
+                text-decoration: none;
+                border: 2px solid rgba(255, 255, 255, 0.35);
+
+                &:hover {
+                    background: white;
+                    color: #22c55e;
+                    transform: translateY(-4px);
+                }
+            }
+        }
+
+        .services-grid {
+            display: grid;
+            // Tự động lấp đầy cột, mỗi cột tối thiểu 150px và tối đa 1fr
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            align-content: start;
+
+            .service-card {
+                background: white;
+                border-radius: 18px; // Bo góc nhỏ lại một chút cho thanh thoát
+                padding: 15px 10px; // Padding nhỏ lại vì diện tích chiều ngang hẹp hơn
+                text-align: center;
+                width: 100%; // Card sẽ co giãn trong khoảng minmax đã định ở trên
+                height: 200px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+                border: 1px solid rgba(0, 0, 0, 0.02);
+                height: 200px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+                cursor: pointer;
+
+                &:hover {
+                    transform: scale(1.05) translateY(-5px);
+                    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+                    border-color: rgba(0, 0, 0, 0.05);
+                    z-index: 10;
+
+                    // Làm chữ đen đậm hơn khi hover card
+                    h3 {
+                        color: #000;
+                    }
+                }
+
+                .icon-circle {
+                    width: 60px; // Kích thước icon nhỏ lại cho vừa mắt
+                    height: 60px;
+                    background: #f5f5f7; // Màu nền xám nhẹ chuẩn Apple
+                    border-radius: 16px; // Bo góc cho icon kiểu Widget
+                    margin-bottom: 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: inherit;
+
+                    img {
+                        width: 32px; // Icon ảnh bên trong
+                        height: 32px;
+                        transition: transform 0.4s ease;
+                    }
+                }
+
+                h3 {
+                    font-size: 0.85rem; // Chữ nhỏ lại để không bị nhảy dòng quá nhiều
+                    font-weight: 600;
+                    line-height: 1.2;
+                    color: #1d1d1f;
+                    margin: 0;
+                    word-wrap: break-word; // Tự ngắt chữ nếu quá dài
+                }
+
+                // Hiệu ứng riêng cho icon khi hover vào card
+                &:hover .icon-circle {
+                    background: #fff;
+                    transform: scale(1.1);
+                }
+            }
+        }
+
+
+    }
+}

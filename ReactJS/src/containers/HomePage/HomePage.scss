@@ -1,0 +1,630 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+.section-specialty,
+.section-OutStandingDoctor,
+.section-handbook {
+    background: #ffffff; // Apple thích nền trắng tinh hoặc xám cực nhạt
+    padding: 60px 0;
+    font-family: 'Inter', sans-serif;
+
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 30px;
+        padding: 0 10%;
+
+        .title-section {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1d1d1f; // Màu đen đặc trưng của Apple
+        }
+
+        .btn-section {
+            background: none;
+            border: none;
+            color: #0066cc;
+            font-size: 17px;
+            cursor: pointer;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    .section-body {
+        padding: 0 5%;
+        position: relative;
+        padding-bottom: 80px; // Tăng thêm một chút để không dính sát slide
+
+        .section-customize {
+            padding: 20px;
+            text-align: center;
+            outline: none;
+
+            .bg-image {
+                width: 100%;
+                height: 250px;
+                background-color: #f5f5f7;
+                border-radius: 18px;
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-position: center center;
+                transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+                &:hover {
+                    transform: scale(1.03);
+                }
+            }
+
+            .section-name {
+                margin-top: 25px;
+                font-size: 21px;
+                font-weight: 600;
+                color: #1d1d1f;
+            }
+
+            .section-desc {
+                margin-top: 10px;
+                font-size: 14px;
+                color: #86868b;
+                line-height: 1.4;
+                padding: 0 10px;
+
+                .line {
+                    font-size: 12px;
+                    display: block;
+                }
+            }
+
+            .section-action {
+                margin-top: 25px; // Khoảng cách thoáng đãng
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 20px;
+
+                .btn-learn-more {
+                    background-color: #0071e3; // Màu xanh Apple chuẩn
+                    color: white;
+                    padding: 8px 18px; // Kích thước nút vừa vặn
+                    font-size: 14px;
+                    font-weight: 400;
+                    border-radius: 980px; // Bo tròn tối đa tạo hình viên thuốc
+                    border: none;
+                    cursor: pointer;
+                    transition: background-color 0.2s ease;
+
+                    &:hover {
+                        background-color: #0077ed; // Sáng lên một chút khi di chuột
+                    }
+                }
+
+                .link-buy {
+                    color: #0066cc;
+                    text-decoration: none;
+                    font-size: 14px;
+                    font-weight: 400;
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+
+
+        .slick-prev,
+        .slick-next {
+            top: auto;
+            bottom: -50px;
+            transform: none;
+            width: 36px;
+            height: 36px;
+            background: #ececf0 !important;
+            border-radius: 50%;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+
+            &::before {
+                color: #1d1d1f !important;
+                font-size: 16px;
+                opacity: 0.6;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+            }
+
+            &:hover {
+                background: #e8e8ed !important;
+
+                &::before {
+                    opacity: 1;
+                }
+            }
+
+            &.slick-disabled {
+                opacity: 0.2;
+                cursor: default;
+            }
+        }
+
+        .slick-prev {
+            left: auto;
+            right: 190px;
+
+            &::before {
+                content: "❮" !important;
+            }
+        }
+
+        .slick-next {
+            right: 130px;
+
+            &::before {
+                content: "❯" !important;
+            }
+        }
+    }
+}
+
+.section-medicalfacility {
+    background: #fff;
+    padding: 60px 0;
+
+    .medical-facility-container {
+        display: flex; // Chia trái - phải
+
+        width: 100%;
+        // border-bottom: 1px solid #f1f1f1;
+        // position: sticky;
+        // top: 0;
+        // z-index: 1000;
+        // display: flex;
+        justify-content: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+        margin: 0 auto;
+        padding: 0 96px;
+        gap: 30px;
+    }
+
+    .medical-facility-header {
+        flex: 0 0 30%; // Chiếm 30% bên trái
+        text-align: left;
+        margin-top: 10px;
+
+        .title-section {
+            font-size: 38px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .desc-section {
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .btn-explore {
+            padding: 10px 25px;
+            border: 2px solid #0066cc;
+            color: #0066cc;
+            background: #fff;
+            border-radius: 25px;
+            font-weight: 500;
+            cursor: pointer;
+
+            &:hover {
+                background: #0066cc;
+                color: #fff;
+            }
+        }
+    }
+
+    .medical-facility-body {
+        flex: 0 0 70%; // Chiếm 70% bên phải cho Slider 6 ô
+        width: 0; // Để tránh lỗi vỡ Slider trong Flexbox
+        position: relative;
+
+        .section-customize {
+            padding: 10px; // Tạo khoảng cách giữa các ô 
+            outline: none;
+
+            .bg-image {
+                width: 100%;
+                height: 250px; // Chiều cao mỗi ô
+                background-size: cover;
+                background-position: center;
+                border-radius: 8px;
+                position: relative;
+                overflow: hidden;
+
+                // Lớp phủ đen mờ phía dưới để nổi chữ trắng
+                &::after {
+                    content: '';
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 60%;
+                    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+                }
+
+                .content-overlay {
+                    position: absolute;
+                    bottom: 20px;
+                    left: 20px;
+                    z-index: 2;
+                    text-align: left;
+
+                    .section-name {
+                        color: #fff;
+                        font-size: 18px;
+                        font-weight: 600;
+                        margin: 0;
+                    }
+
+                    .section-desc {
+                        color: rgba(255, 255, 255, 0.8);
+                        font-size: 13px;
+                        margin: 5px 0 0 0;
+                    }
+                }
+            }
+        }
+
+        // Giữ nguyên nút Prev/Next tròn của ông ở đây
+        .slick-prev,
+        .slick-next {
+            top: auto;
+            bottom: -50px;
+            transform: none;
+            width: 36px;
+            height: 36px;
+            background: #ececf0 !important;
+            border-radius: 50%;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+
+            &::before {
+                color: #1d1d1f !important;
+                font-size: 16px;
+                opacity: 0.6;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+            }
+
+            &:hover {
+                background: #e8e8ed !important;
+
+                &::before {
+                    opacity: 1;
+                }
+            }
+
+            &.slick-disabled {
+                opacity: 0.2;
+                cursor: default;
+            }
+        }
+
+        .slick-prev {
+            left: auto;
+            right: 190px;
+
+            &::before {
+                content: "❮" !important;
+            }
+        }
+
+        .slick-next {
+            right: 130px;
+
+            &::before {
+                content: "❯" !important;
+            }
+        }
+    }
+}
+
+// .section-about {
+//     background: #ffffff;
+//     padding: 60px 0;
+//     font-family: 'Inter', sans-serif;
+//     width: 100%;
+
+//     // border-bottom: 1px solid #f1f1f1;
+//     // position: sticky;
+//     // top: 0;
+//     // z-index: 1000;
+//     // display: flex;
+//     // justify-content: center;
+//     .section-header {
+//         text-align: center;
+//         font-size: 2.1rem;
+//         font-weight: 700;
+//         color: #1e2937;
+//         margin-bottom: 60px;
+//         letter-spacing: -0.02em;
+//     }
+
+//     .section-body {
+//         max-width: 1240px;
+//         margin: 0 auto;
+//         padding: 0 90px;
+//         display: grid;
+//         grid-template-columns: 1fr 1fr;
+//         gap: 100px;
+//         column-gap: 50px;
+//         // justify-items: center;
+//         align-items: center;
+
+//         @media (max-width: 992px) {
+//             grid-template-columns: 1fr;
+//             gap: 50px;
+//         }
+
+//         .left-content {
+//             border-radius: 24px;
+//             overflow: hidden;
+//             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+
+//             iframe {
+//                 border-radius: 24px;
+//                 width: 100%;
+//                 height: 420px;
+
+//                 @media (max-width: 768px) {
+//                     height: 320px;
+//                 }
+//             }
+//         }
+
+//         /* ==================== Nội dung bên phải ==================== */
+//         .right-content {
+//             // padding: 30px 0;
+//             height: 425px;
+//             // padding: 50px 0;
+
+//             h2 {
+//                 font-size: 2.4rem;
+//                 line-height: 1.15;
+//                 font-weight: 700;
+//                 color: #0f172a;
+//                 // margin-bottom: 24px;
+//                 letter-spacing: -0.025em;
+//             }
+
+//             p {
+//                 font-size: 1.08rem;
+//                 line-height: 1.75;
+//                 color: #475569;
+//                 margin-bottom: 20px;
+//             }
+
+//             .features {
+//                 margin-top: 32px;
+//                 display: flex;
+//                 // flex-direction: column;
+//                 gap: 14px;
+
+//                 .feature-item {
+//                     display: flex;
+//                     align-items: center;
+//                     gap: 12px;
+//                     font-size: 1.05rem;
+//                     color: #334155;
+//                     font-weight: 500;
+
+//                     .feature-icon {
+//                         color: #22c55e;
+//                         font-size: 1.4rem;
+//                         font-weight: bold;
+//                     }
+//                 }
+//             }
+//         }
+//     }
+
+//     /* ==================== Video bên trái ==================== */
+
+// }
+.section-about {
+    background: #ffffff;
+    padding: 60px 0;
+    font-family: 'Inter', sans-serif;
+    width: 100%;
+
+    .section-header {
+        text-align: center;
+        font-size: 2.1rem;
+        font-weight: 700;
+        color: #1e2937;
+        margin-bottom: 60px;
+        letter-spacing: -0.02em;
+    }
+
+    .section-body {
+        width: 100%;
+        padding: 0 90px; // cách mép màn hình
+
+        display: grid;
+        grid-template-columns: 1.1fr 1fr; // video to hơn
+        gap: 60px;
+        align-items: center;
+
+        @media (max-width: 1200px) {
+            padding: 0 60px;
+        }
+
+        @media (max-width: 992px) {
+            grid-template-columns: 1fr;
+            gap: 50px;
+            padding: 0 40px;
+        }
+
+        @media (max-width: 768px) {
+            padding: 0 20px;
+        }
+
+        /* ==================== LEFT ==================== */
+        .left-content {
+            width: 100%;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+
+            iframe {
+                width: 100%;
+                height: 420px;
+                border-radius: 24px;
+
+                @media (max-width: 768px) {
+                    height: 320px;
+                }
+            }
+        }
+
+        /* ==================== RIGHT ==================== */
+        .right-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center; // căn giữa dọc
+
+            h2 {
+                font-size: 2.8rem;
+                line-height: 1.15;
+                font-weight: 700;
+                color: #0f172a;
+                letter-spacing: -0.025em;
+                margin-bottom: 20px;
+            }
+
+            p {
+                font-size: 1.15rem;
+                line-height: 1.75;
+                color: #475569;
+                margin-bottom: 16px;
+            }
+
+            .features {
+                margin-top: 24px;
+                display: flex;
+                flex-wrap: wrap; // tránh bị tràn
+                gap: 20px;
+
+                .feature-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    font-size: 1rem;
+                    color: #334155;
+                    font-weight: 500;
+
+                    .feature-icon {
+                        color: #22c55e;
+                        font-size: 1.3rem;
+                        font-weight: bold;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.section-homefooter {
+    width: 100%;
+    background-color: #ffffff;
+    border-top: 1px solid #e5e7eb; // Đường kẻ cực mảnh
+    padding: 10px 0;
+    margin-top: 50px;
+
+    .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between; // Đẩy text sang trái, icon sang phải
+        align-items: center;
+        padding: 0 20px;
+
+        p {
+            margin: 0;
+            color: #000207; // Màu xám nhạt tinh tế
+            font-size: 0.85rem;
+            font-weight: 400;
+
+            a {
+                color: #2785c3;
+                text-decoration: none;
+                margin: 0 5px;
+
+                &:hover {
+                    text-decoration: underline;
+                    color: #1c246d;
+                }
+            }
+        }
+
+        // --- PHẦN SCSS CHO ICON ĐÂY ---
+        .social-links {
+            display: flex;
+            gap: 20px; // Khoảng cách giữa các icon
+            align-items: center;
+
+            a {
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: transform 0.2s ease;
+
+                // Hiệu ứng nhích nhẹ lên khi di chuột vào
+                &:hover {
+                    transform: translateY(-3px);
+                }
+
+                i {
+                    font-size: 1.4rem; // Kích thước icon vừa vặn
+                    color: #000000; // Màu xám đậm (không dùng đen tuyền nhìn sẽ thô)
+                    transition: color 0.2s;
+
+                    // Màu riêng khi hover vào từng loại icon
+                    &.fa-facebook-square:hover {
+                        color: #1877f2; // Màu xanh Facebook
+                    }
+
+                    &.fa-youtube:hover {
+                        color: #ff0000; // Màu đỏ Youtube
+                    }
+
+                    // Nếu dùng icon chung chung thì để màu xanh thương hiệu
+                    &:hover {
+                        color: #1c246d;
+                    }
+                }
+            }
+        }
+    }
+
+    // Responsive cho iPhone (Xếp chồng dọc)
+    @media (max-width: 768px) {
+        .footer-content {
+            flex-direction: column;
+            gap: 20px;
+            text-align: center;
+
+            p {
+                order: 2; // Cho chữ xuống dưới
+            }
+
+            .social-links {
+                order: 1; // Cho icon lên trên nhìn app-like hơn
+            }
+        }
+    }
+}

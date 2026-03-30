@@ -1,0 +1,1 @@
+export { default as adminService, userService } from './adminService';
