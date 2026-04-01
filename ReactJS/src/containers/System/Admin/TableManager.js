@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
-import './TableManager.scss';
+// import './TableManager.scss';
 import * as action from '../../../store/actions';
 class TableManager extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            userRedux: []
+            userRedux: [],
+            isOpenModalEdit: false
+
         }
     }
     componentDidMount() {
@@ -22,6 +24,11 @@ class TableManager extends Component {
     }
     handleDeleteUser = (user) => {
         this.props.deleteUserRedux(user.id);
+    }
+    handleEditUser = (user) => {
+        // this.props.editUserRedux(user);
+        this.props.handleEditUserFromParent(user);
+
     }
     render() {
         console.log('>>> check props listUsers: ', this.props.listUsers);
@@ -48,7 +55,8 @@ class TableManager extends Component {
                                     <td>{item.lastName}</td>
                                     <td>{item.address}</td>
                                     <td className="actions-cell">
-                                        <button className="btn-edit" title="Edit">
+                                        <button className="btn-edit" title="Edit"
+                                            onClick={() => { this.handleEditUser(item) }}>
                                             <i className="fas fa-pencil-alt"></i>
                                         </button>
                                         <button className="btn-delete" title="Delete"
@@ -75,14 +83,16 @@ class TableManager extends Component {
 
 const mapStateToProps = state => {
     return {
-        listUsers: state.admin.users
+        listUsers: state.admin.users,
+        editUser: state.admin.editUser
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
         fetchUserRedux: () => dispatch(action.fetchAllUserStart()),
-        deleteUserRedux: (id) => dispatch(action.deleteUser(id))
+        deleteUserRedux: (id) => dispatch(action.deleteUser(id)),
+        editUserRedux: (user) => dispatch(action.editUser(user))
     };
 };
 

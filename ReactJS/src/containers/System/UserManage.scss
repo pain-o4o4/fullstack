@@ -282,6 +282,28 @@ body {
                     flex: 1 1 100%;
                 }
 
+                .preview-image {
+                    width: 100px;
+                    height: 100px;
+                    border: 1px solid rgba(255, 255, 255, 0.3); // Đổi sang viền kính cho hợp tone
+                    margin-top: 10px;
+
+                    // Cấu hình cực kỳ quan trọng để hiện ảnh Base64
+                    background-size: cover; // Ảnh phủ kín div
+                    background-position: center; // Căn giữa ảnh
+                    background-repeat: no-repeat;
+
+                    border-radius: 12px; // Bo góc mượt kiểu Apple
+                    cursor: pointer;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                    transition: transform 0.2s ease;
+
+                    &:hover {
+                        transform: scale(1.05); // Hiệu ứng nhẹ khi di chuột vào
+                        border-color: rgba(255, 255, 255, 0.6);
+                    }
+                }
+
                 label {
                     display: block;
                     margin-bottom: 8px;
@@ -739,6 +761,7 @@ body {
 //     }
 // }
 .table-manage {
+    margin-top: 30px !important;
     margin: auto;
     padding: 0px;
     // background: linear-gradient(5deg, #2785c3, #8e98d3);

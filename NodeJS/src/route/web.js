@@ -1,6 +1,7 @@
 import express from "express"
 import homeController, { getHomePage } from "../controller/homeController"
 import userController from "../controller/userController"
+import doctorController from "../controller/doctorController"
 let router = express.Router()
 
 let initWebRoutes = (app) => {
@@ -18,6 +19,7 @@ let initWebRoutes = (app) => {
     // Trong file web.js
     router.post('/api/create-new-user', userController.handleCreateNewUser);
     router.get('/api/allcode', userController.getAllCode);
+    router.get('/api/top-doctor-home', doctorController.getTopDoctorHome);
 
     //rest api
 

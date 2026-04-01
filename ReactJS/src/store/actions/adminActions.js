@@ -1,5 +1,5 @@
 import actionTypes from './actionTypes';
-import { getAllCodeService, createNewUsersService, getAllUsers, deleteUserService } from '../../services/userService';
+import { getAllCodeService, createNewUsersService, getAllUsers, deleteUserService, editUserService, getTopDoctorHomeService } from '../../services/userService';
 import { toast } from 'react-toastify';
 export const fetchGenderStart = () => {
     return async (dispatch, getState) => {
@@ -120,7 +120,9 @@ export const fetchAllUserStart = () => {
 
         try {
             let res = await getAllUsers('ALL');
-            console.log('>>> Duy check res từ API:', res); // DÒNG NÀY ĐỂ DEBUG
+            // let res = await getTopDoctorHomeService('100');
+            console.log('res1', res)
+            console.log('>>> CMM check res từ API:', res); // DÒNG NÀY ĐỂ DEBUG
             if (res && res.errCode === 0) {
                 dispatch(fetchAllUserSuccess(res.users));
             } else {
@@ -170,3 +172,60 @@ export const deleteUserSuccess = () => ({
 export const deleteUserFail = () => ({
     type: actionTypes.DELETE_USER_FAIL
 })
+
+export const editUser = (data) => {
+    return async (dispatch, getState) => {
+        try {
+            let res = await editUserService(data);
+            console.log('res', res)
+            if (res && res.errCode === 0) {
+                toast.success('editUserSuccess user succeed!');
+                dispatch(editUserSuccess());
+                dispatch(fetchAllUserStart());
+            } else {
+                dispatch(editUserFail());
+                toast.error('editUserFail user fail!');
+            }
+        } catch (e) {
+            dispatch(editUserFail());
+            console.log('editUserFail error: ', e);
+            toast.error('editUserFail user fail!');
+        }
+    };
+};
+
+export const editUserSuccess = () => ({
+    type: actionTypes.EDIT_USER_SUCCESS,
+    // data: data
+});
+export const editUserFail = () => ({
+    type: actionTypes.EDIT_USER_FAIL
+})
+// export const editUserbtn = (user) => ({
+//     type: actionTypes.EDIT_USER,
+//     user: user
+// })
+export const fetchTopDoctor = () => {
+    return async (dispatch, getState) => {
+        try {
+            let res = await getTopDoctorHomeService('10');
+            // console.log('res data from service (action)', res)
+            console.log('>>> CMM check res từ API:', res); // DÒNG NÀY ĐỂ DEBUG
+            if (res && res.errCode === 0) {
+                dispatch({
+                    type: actionTypes.FETCH_TOP_DOCTOR_SUCCESS,
+                    dataDoctors: res.data
+                });
+            } else {
+                dispatch({
+                    type: actionTypes.FETCH_TOP_DOCTOR_FAIL
+                });
+            }
+        } catch (e) {
+            console.log('fetchGenderStart error: ', e);
+        }
+    };
+}
+// export const fetchTopDoctorFail = () => ({
+//     type: actionTypes.FETCH_TOP_DOCTOR_FAIL
+// })

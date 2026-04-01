@@ -1,3 +1,4 @@
+import { editUser } from '../actions';
 import actionTypes from '../actions/actionTypes';
 
 const initialState = {
@@ -5,7 +6,10 @@ const initialState = {
     genders: [],
     roles: [],
     users: [],
-    positions: []
+    positions: [],
+    topDoctors: [],
+    editUser: [],
+
 }
 
 const adminReducer = (state = initialState, action) => {
@@ -105,6 +109,26 @@ const adminReducer = (state = initialState, action) => {
         //     return {
         //         ...state,
         //     }
+        case actionTypes.CREATE_USER_SUCCESS:
+            return {
+                ...state,
+                editUser: action.data
+            }
+        case actionTypes.CREATE_USER_FAIL:
+            return {
+                ...state,
+                editUser: []
+            }
+        case actionTypes.FETCH_TOP_DOCTOR_SUCCESS:
+            return {
+                ...state,
+                topDoctors: action.dataDoctors
+            }
+        case actionTypes.FETCH_TOP_DOCTOR_FAIL:
+            return {
+                ...state,
+                topDoctors: []
+            }
         default:
             return state;
     }

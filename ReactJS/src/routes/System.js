@@ -15,11 +15,21 @@ class System extends Component {
                 {isLoggedIn && <Header />}
                 <div className="system-container">
                     <div className="system-list">
-                        <Switch>
+                        {/* <Switch>
                             <Route path="/system/crud" component={UserManage} />
                             <Route path="/system/crud-redux" component={UserRedux} />
                             {/* <Route path="/system/register-package-group-or-account" component={RegisterPackageGroupOrAcc} /> */}
-                            <Route component={() => { return (<Redirect to={systemMenuPath} />) }} />
+                        {/* <Route component={() => { return (<Redirect to={systemMenuPath} />) }} /> */}
+                        {/* </Switch> */}
+                        <Switch>
+                            <Route path="/system/crud" component={UserManage} />
+                            <Route path="/system/crud-redux" component={UserRedux} />
+
+                            {/* Thêm dòng này để xử lý khi chỉ vào /system */}
+                            <Route exact path="/system" render={() => <Redirect to="/system/crud-redux" />} />
+
+                            {/* Sửa lại dòng Redirect mặc định cuối cùng cho an toàn */}
+                            <Redirect from="/system" to="/system/crud-redux" />
                         </Switch>
                     </div>
                 </div>
