@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-// import './Specialty.scss';
+import './Handbook.scss';
 // import { FormattedMessage } from 'react-intl';
 import Slider from 'react-slick';
 import { HandBookData } from './Data/HandBookData';   // Đúng

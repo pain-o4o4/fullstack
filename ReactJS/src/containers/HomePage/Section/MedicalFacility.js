@@ -21,10 +21,25 @@ class MedicalFacility extends Component {
             dots: false,
             infinite: true,
             speed: 500,
-            slidesToShow: 3,
-            slidesToScroll: 3,
-            rows: 2, // Đây là chìa khóa để ra 2 hàng
+            slidesToShow: 3,        // Desktop: hiển thị 3 cột
+            slidesToScroll: 3,      // Desktop: vuốt 3 cùng lúc
+            rows: 2,                // Desktop: 2 hàng
             slidesPerRow: 1,
+            arrows: true,           // hiển thị nút mũi tên
+
+            // ==================== RESPONSIVE ====================
+            responsive: [
+                {
+                    breakpoint: 767,   // Dưới 768px (điện thoại)
+                    settings: {
+                        slidesToShow: 1,      // 1 card mỗi lần
+                        slidesToScroll: 1,    // vuốt từng cái 1
+                        rows: 1,              // chỉ 1 hàng
+                        slidesPerRow: 1,
+                        arrows: true          // vẫn giữ nút mũi tên
+                    }
+                }
+            ]
         };
 
         return (
@@ -37,20 +52,23 @@ class MedicalFacility extends Component {
                         <button className='btn-explore'>Explore all locations</button>
                     </div>
 
-                    {/* Khối bên phải: Slider 6 ô */}
+                    {/* Khối bên phải: Slider */}
                     <div className='medical-facility-body'>
                         <Slider {...settings}>
                             {medicalFacilities.map((item, index) => {
                                 return (
                                     <div className='section-customize' key={index}>
-                                        <div className='bg-image' style={{ backgroundImage: `url(${item.img})` }}>
+                                        <div
+                                            className='bg-image'
+                                            style={{ backgroundImage: `url(${item.img})` }}
+                                        >
                                             <div className='content-overlay'>
                                                 <h3 className='section-name'>{item.name} ›</h3>
                                                 <p className='section-desc'>{item.address}</p>
                                             </div>
                                         </div>
                                     </div>
-                                )
+                                );
                             })}
                         </Slider>
                     </div>

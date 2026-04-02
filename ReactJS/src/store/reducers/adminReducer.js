@@ -9,6 +9,7 @@ const initialState = {
     positions: [],
     topDoctors: [],
     editUser: [],
+    allDoctos: []
 
 }
 
@@ -86,29 +87,16 @@ const adminReducer = (state = initialState, action) => {
                 ...state
             }
         case actionTypes.FETCH_ALL_USERS_SUCCESS:
-            // Nhớ check lại bên adminActions.js xem Duy gửi qua là 'users' hay 'data' nhé
-            // Theo như action Duy gửi lúc nãy thì là 'users'
-            // state.users = action.users;
             return {
                 ...state,
                 users: action.users
             }
-
         case actionTypes.FETCH_ALL_USERS_FAILED:
             // state.users = [];
             return {
                 ...state,
                 users: []
-
             }
-
-        // Case Create User của Duy đang hơi bị "lẫn" 
-        // case actionTypes.CREATE_USER_SUCCESS:
-        //     // Khi tạo thành công, Duy không nên gán state.users = action.users ở đây 
-        //     // vì action này thường chỉ trả về thông báo thành công, không trả về cả list.
-        //     return {
-        //         ...state,
-        //     }
         case actionTypes.CREATE_USER_SUCCESS:
             return {
                 ...state,
@@ -128,6 +116,16 @@ const adminReducer = (state = initialState, action) => {
             return {
                 ...state,
                 topDoctors: []
+            }
+        case actionTypes.FETCH_ALL_DOCTORS_SUCCESS:
+            return {
+                ...state,
+                allDoctors: action.dataDoctors
+            }
+        case actionTypes.FETCH_ALL_DOCTORS_FAIL:
+            return {
+                ...state,
+                allDoctors: []
             }
         default:
             return state;

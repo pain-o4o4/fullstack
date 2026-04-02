@@ -70,7 +70,7 @@ class App extends Component {
                         /> */}
                         <ToastContainer
                             position='bottom-right'
-                            aotuClose={5000}
+                            aotuClose={1000}
                             hideProgressBar={false}
                             newestOnTop={false}
                             closeOnClick

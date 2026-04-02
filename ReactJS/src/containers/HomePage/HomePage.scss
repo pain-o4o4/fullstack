@@ -1,189 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-.section-specialty,
-.section-OutStandingDoctor,
-.section-handbook {
-    background: #ffffff; // Apple thích nền trắng tinh hoặc xám cực nhạt
-    padding: 60px 0;
-    font-family: 'Inter', sans-serif;
 
-
-    .section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        margin-bottom: 30px;
-        padding: 0 10%;
-
-        .title-section {
-            font-size: 28px;
-            font-weight: 600;
-            color: #1d1d1f; // Màu đen đặc trưng của Apple
-        }
-
-        .btn-section {
-            background: none;
-            border: none;
-            color: #0066cc;
-            font-size: 17px;
-            cursor: pointer;
-
-            &:hover {
-                text-decoration: underline;
-            }
-        }
-    }
-
-    .section-body {
-        padding: 0 5%;
-        position: relative;
-        padding-bottom: 80px; // Tăng thêm một chút để không dính sát slide
-
-        .section-customize {
-            padding: 20px;
-            text-align: center;
-            outline: none;
-
-            .bg-image {
-                width: 100%;
-                height: 250px;
-                background-color: #f5f5f7;
-                border-radius: 18px;
-                background-size: cover;
-                background-repeat: no-repeat;
-                background-position: center center;
-                transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-
-                &:hover {
-                    transform: scale(1.03);
-                }
-            }
-
-            .section-name {
-                margin-top: 25px;
-                font-size: 21px;
-                font-weight: 600;
-                color: #1d1d1f;
-            }
-
-            .section-desc {
-                margin-top: 10px;
-                font-size: 14px;
-                color: #86868b;
-                line-height: 1.4;
-                padding: 0 10px;
-
-                .line {
-                    font-size: 12px;
-                    display: block;
-                }
-            }
-
-            .section-action {
-                margin-top: 25px; // Khoảng cách thoáng đãng
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 20px;
-
-                .btn-learn-more {
-                    background-color: #0071e3; // Màu xanh Apple chuẩn
-                    color: white;
-                    padding: 8px 18px; // Kích thước nút vừa vặn
-                    font-size: 14px;
-                    font-weight: 400;
-                    border-radius: 980px; // Bo tròn tối đa tạo hình viên thuốc
-                    border: none;
-                    cursor: pointer;
-                    transition: background-color 0.2s ease;
-
-                    &:hover {
-                        background-color: #0077ed; // Sáng lên một chút khi di chuột
-                    }
-                }
-
-                .link-buy {
-                    color: #0066cc;
-                    text-decoration: none;
-                    font-size: 14px;
-                    font-weight: 400;
-
-                    &:hover {
-                        text-decoration: underline;
-                    }
-                }
-            }
-        }
-
-
-        .slick-prev,
-        .slick-next {
-            top: auto;
-            bottom: -50px;
-            transform: none;
-            width: 36px;
-            height: 36px;
-            background: #ececf0 !important;
-            border-radius: 50%;
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-
-            &::before {
-                color: #1d1d1f !important;
-                font-size: 16px;
-                opacity: 0.6;
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-            }
-
-            &:hover {
-                background: #e8e8ed !important;
-
-                &::before {
-                    opacity: 1;
-                }
-            }
-
-            &.slick-disabled {
-                opacity: 0.2;
-                cursor: default;
-            }
-        }
-
-        .slick-prev {
-            left: auto;
-            right: 190px;
-
-            &::before {
-                content: "❮" !important;
-            }
-        }
-
-        .slick-next {
-            right: 130px;
-
-            &::before {
-                content: "❯" !important;
-            }
-        }
-    }
-}
 
 .section-medicalfacility {
     background: #fff;
-    padding: 60px 0;
+    padding: 0 380px 80px;
 
     .medical-facility-container {
-        display: flex; // Chia trái - phải
-
+        display: flex;
         width: 100%;
-        // border-bottom: 1px solid #f1f1f1;
-        // position: sticky;
-        // top: 0;
-        // z-index: 1000;
-        // display: flex;
         justify-content: center;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
         margin: 0 auto;
@@ -192,7 +17,7 @@
     }
 
     .medical-facility-header {
-        flex: 0 0 30%; // Chiếm 30% bên trái
+        flex: 0 0 30%;
         text-align: left;
         margin-top: 10px;
 
@@ -225,24 +50,23 @@
     }
 
     .medical-facility-body {
-        flex: 0 0 70%; // Chiếm 70% bên phải cho Slider 6 ô
-        width: 0; // Để tránh lỗi vỡ Slider trong Flexbox
+        flex: 0 0 70%;
+        width: 0;
         position: relative;
 
         .section-customize {
-            padding: 10px; // Tạo khoảng cách giữa các ô 
+            padding: 10px;
             outline: none;
 
             .bg-image {
                 width: 100%;
-                height: 250px; // Chiều cao mỗi ô
+                height: 250px;
                 background-size: cover;
                 background-position: center;
                 border-radius: 8px;
                 position: relative;
                 overflow: hidden;
 
-                // Lớp phủ đen mờ phía dưới để nổi chữ trắng
                 &::after {
                     content: '';
                     position: absolute;
@@ -276,7 +100,7 @@
             }
         }
 
-        // Giữ nguyên nút Prev/Next tròn của ông ở đây
+        /* Nút slider giữ nguyên như cũ */
         .slick-prev,
         .slick-next {
             top: auto;
@@ -330,110 +154,48 @@
             }
         }
     }
+
+    /* =============== CHỈ THAY ĐỔI KHI LÀ ĐIỆN THOẠI =============== */
+    @media (max-width: 1024px) {
+        padding: 40px 20px 60px; // giảm padding cho vừa màn hình mobile
+
+        .medical-facility-container {
+            flex-direction: column; // header và body xếp dọc
+            gap: 35px;
+            padding: 0 15px;
+        }
+
+        .medical-facility-header {
+            flex: none; // full width
+            text-align: center;
+        }
+
+        .medical-facility-body {
+            flex: none;
+            width: 100%;
+
+            .section-customize {
+                padding: 8px 0; // giảm padding ngang trên mobile
+            }
+
+            /* Nút slider trên mobile - dịch xuống dưới và căn giữa hoặc sát phải */
+            .slick-prev,
+            .slick-next {
+                bottom: -40px;
+            }
+
+            .slick-prev {
+                right: 90px; // điều chỉnh vị trí cho gọn trên mobile
+            }
+
+            .slick-next {
+                right: 40px;
+            }
+        }
+    }
 }
 
-// .section-about {
-//     background: #ffffff;
-//     padding: 60px 0;
-//     font-family: 'Inter', sans-serif;
-//     width: 100%;
 
-//     // border-bottom: 1px solid #f1f1f1;
-//     // position: sticky;
-//     // top: 0;
-//     // z-index: 1000;
-//     // display: flex;
-//     // justify-content: center;
-//     .section-header {
-//         text-align: center;
-//         font-size: 2.1rem;
-//         font-weight: 700;
-//         color: #1e2937;
-//         margin-bottom: 60px;
-//         letter-spacing: -0.02em;
-//     }
-
-//     .section-body {
-//         max-width: 1240px;
-//         margin: 0 auto;
-//         padding: 0 90px;
-//         display: grid;
-//         grid-template-columns: 1fr 1fr;
-//         gap: 100px;
-//         column-gap: 50px;
-//         // justify-items: center;
-//         align-items: center;
-
-//         @media (max-width: 992px) {
-//             grid-template-columns: 1fr;
-//             gap: 50px;
-//         }
-
-//         .left-content {
-//             border-radius: 24px;
-//             overflow: hidden;
-//             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
-
-//             iframe {
-//                 border-radius: 24px;
-//                 width: 100%;
-//                 height: 420px;
-
-//                 @media (max-width: 768px) {
-//                     height: 320px;
-//                 }
-//             }
-//         }
-
-//         /* ==================== Nội dung bên phải ==================== */
-//         .right-content {
-//             // padding: 30px 0;
-//             height: 425px;
-//             // padding: 50px 0;
-
-//             h2 {
-//                 font-size: 2.4rem;
-//                 line-height: 1.15;
-//                 font-weight: 700;
-//                 color: #0f172a;
-//                 // margin-bottom: 24px;
-//                 letter-spacing: -0.025em;
-//             }
-
-//             p {
-//                 font-size: 1.08rem;
-//                 line-height: 1.75;
-//                 color: #475569;
-//                 margin-bottom: 20px;
-//             }
-
-//             .features {
-//                 margin-top: 32px;
-//                 display: flex;
-//                 // flex-direction: column;
-//                 gap: 14px;
-
-//                 .feature-item {
-//                     display: flex;
-//                     align-items: center;
-//                     gap: 12px;
-//                     font-size: 1.05rem;
-//                     color: #334155;
-//                     font-weight: 500;
-
-//                     .feature-icon {
-//                         color: #22c55e;
-//                         font-size: 1.4rem;
-//                         font-weight: bold;
-//                     }
-//                 }
-//             }
-//         }
-//     }
-
-//     /* ==================== Video bên trái ==================== */
-
-// }
 .section-about {
     background: #ffffff;
     padding: 60px 0;
@@ -451,7 +213,7 @@
 
     .section-body {
         width: 100%;
-        padding: 0 90px; // cách mép màn hình
+        padding: 0 380px 80px; // cách mép màn hình
 
         display: grid;
         grid-template-columns: 1.1fr 1fr; // video to hơn

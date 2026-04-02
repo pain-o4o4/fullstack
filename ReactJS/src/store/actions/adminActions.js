@@ -1,5 +1,10 @@
 import actionTypes from './actionTypes';
-import { getAllCodeService, createNewUsersService, getAllUsers, deleteUserService, editUserService, getTopDoctorHomeService } from '../../services/userService';
+import {
+    getAllCodeService, createNewUsersService,
+    getAllUsers, deleteUserService, editUserService,
+    getTopDoctorHomeService, getAllDoctorsService,
+    postInforDoctorService
+} from '../../services/userService';
 import { toast } from 'react-toastify';
 export const fetchGenderStart = () => {
     return async (dispatch, getState) => {
@@ -177,7 +182,8 @@ export const editUser = (data) => {
     return async (dispatch, getState) => {
         try {
             let res = await editUserService(data);
-            console.log('res', res)
+            console.log('res editUserService', res)
+            console.log('>>> Check action type:', actionTypes.EDIT_USER_SUCCESS);
             if (res && res.errCode === 0) {
                 toast.success('editUserSuccess user succeed!');
                 dispatch(editUserSuccess());
@@ -226,6 +232,54 @@ export const fetchTopDoctor = () => {
         }
     };
 }
-// export const fetchTopDoctorFail = () => ({
-//     type: actionTypes.FETCH_TOP_DOCTOR_FAIL
-// })
+export const fetchAllDoctors = () => {
+    return async (dispatch, getState) => {
+        try {
+            let res = await getAllDoctorsService();
+            console.log('>>> CMM check res từ API:', res);
+
+            if (res && res.errCode === 0) {
+                dispatch({
+                    type: actionTypes.FETCH_ALL_DOCTORS_SUCCESS,
+                    dataDoctors: res.data
+                });
+            } else {
+                dispatch({
+                    type: actionTypes.FETCH_ALL_DOCTORS_FAIL
+                });
+            }
+        } catch (e) {
+            console.error('fetchAllDoctors error:', e);
+            dispatch({
+                type: actionTypes.FETCH_ALL_DOCTORS_FAIL
+            });
+        }
+    }
+}
+export const saveDetailDoctors = (data) => {
+    return async (dispatch, getState) => {
+        try {
+            let res = await postInforDoctorService(data);
+            console.log('>>> CMM check res từ API:', res);
+
+            if (res && res.errCode === 0) {
+                dispatch({
+                    type: actionTypes.POST_DETAIL_DOCTORS_SUCCESS,
+                });
+                toast.success('Update detail doctor succeed!');
+                dispatch(fetchAllDoctors());
+            } else {
+                dispatch({
+                    type: actionTypes.POST_DETAIL_DOCTORS_FAIL
+                });
+                toast.error('Update detail doctor fail!');
+            }
+        } catch (e) {
+            console.error('saveDetailDoctors error:', e);
+            toast.error('Update detail doctor fail!');
+            dispatch({
+                type: actionTypes.POST_DETAIL_DOCTORS_FAIL
+            });
+        }
+    }
+}

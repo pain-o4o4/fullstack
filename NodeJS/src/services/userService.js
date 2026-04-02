@@ -172,7 +172,8 @@ let updateUserData = (data) => {
                 });
             }
             let user = await db.User.findOne({
-                where: { id: data.id }
+                where: { id: data.id },
+                raw: false
             });
             if (user) {
                 user.firstName = data.firstName;
@@ -182,7 +183,9 @@ let updateUserData = (data) => {
                 user.roleID = data.roleID;
                 user.positionId = data.positionId;
                 user.gender = data.gender;
-
+                if (data.avatar) {
+                    user.image = data.avatar;
+                }
                 await user.save();
             } else {
                 resolve({
@@ -222,6 +225,7 @@ let getAllCodeService = (type) => {
         }
     });
 };
+
 export default {
     handleUserLogin: handleUserLogin,
     checkUserEmail: checkUserEmail,
@@ -229,5 +233,6 @@ export default {
     createNewUser: createNewUser,
     deleteUserById: deleteUserById,
     updateUserData: updateUserData,
-    getAllCodeService: getAllCodeService
+    getAllCodeService: getAllCodeService,
+    // postInforDoctorService: postInforDoctorService
 };

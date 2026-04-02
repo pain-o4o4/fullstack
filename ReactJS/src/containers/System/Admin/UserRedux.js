@@ -58,21 +58,21 @@ class UserRedux extends Component {
         if (prevProps.genders !== this.props.genders) {
             this.setState({
                 genderArr: this.props.genders,
-                genders: this.props.genders && this.props.genders.length > 0 ? this.props.genders[0].key : ''
+                genders: this.props.genders && this.props.genders.length > 0 ? this.props.genders[0].keyMap : ''
             })
         }
         // 2. Cập nhật danh sách Role
         if (prevProps.roles !== this.props.roles) {
             this.setState({
                 roleArr: this.props.roles,
-                roles: this.props.roles && this.props.roles.length > 0 ? this.props.roles[0].key : ''
+                roles: this.props.roles && this.props.roles.length > 0 ? this.props.roles[0].keyMap : ''
             })
         }
         // 3. Cập nhật danh sách Position
         if (prevProps.positions !== this.props.positions) {
             this.setState({
                 positionArr: this.props.positions,
-                positions: this.props.positions && this.props.positions.length > 0 ? this.props.positions[0].key : ''
+                positions: this.props.positions && this.props.positions.length > 0 ? this.props.positions[0].keyMap : ''
             })
         }
 
@@ -82,9 +82,9 @@ class UserRedux extends Component {
                 email: '', password: '', firstName: '', lastName: '',
                 phoneNumber: '', address: '', avatar: '', previewImgURL: '', userEditId: '',
                 // Quan trọng: Tên biến state phải là genders, roles, positions (có chữ s)
-                genders: this.props.genders && this.props.genders.length > 0 ? this.props.genders[0].key : '',
-                roles: this.props.roles && this.props.roles.length > 0 ? this.props.roles[0].key : '',
-                positions: this.props.positions && this.props.positions.length > 0 ? this.props.positions[0].key : '',
+                genders: this.props.genders && this.props.genders.length > 0 ? this.props.genders[0].keyMap : '',
+                roles: this.props.roles && this.props.roles.length > 0 ? this.props.roles[0].keyMap : '',
+                positions: this.props.positions && this.props.positions.length > 0 ? this.props.positions[0].keyMap : '',
                 action: CRUD_ACTION.CREATE // Reset trạng thái về thêm mới
             })
         }
@@ -176,7 +176,7 @@ class UserRedux extends Component {
         this.setState({
             ...copyState
         });
-        console.log('>>> check state: ', this.state);
+        console.log('>>> check state :)))))))))))))))))): ', this.state);
     }
 
     // handleEditUserFromParent = (user) => {
@@ -328,7 +328,7 @@ class UserRedux extends Component {
                                         {gender && gender.length > 0 &&
                                             gender.map((item, index) => {
                                                 return (
-                                                    <option key={index} value={item.key}>
+                                                    <option key={index} value={item.keyMap}>
                                                         {/* Hiển thị giá trị dựa trên ngôn ngữ đang chọn */}
                                                         {language === LANGUAGES.VI ? item.valueVi : item.valueEn}
                                                     </option>
@@ -348,7 +348,7 @@ class UserRedux extends Component {
                                         {position && position.length > 0 &&
                                             position.map((item, index) => {
                                                 return (
-                                                    <option key={index} value={item.key}>
+                                                    <option key={index} value={item.keyMap}>
                                                         {/* Hiển thị giá trị dựa trên ngôn ngữ đang chọn */}
                                                         {language === LANGUAGES.VI ? item.valueVi : item.valueEn}
                                                     </option>
@@ -367,7 +367,7 @@ class UserRedux extends Component {
                                         {role && role.length > 0 &&
                                             role.map((item, index) => {
                                                 return (
-                                                    <option key={index} value={item.key}>
+                                                    <option key={index} value={item.keyMap}>
                                                         {/* Hiển thị giá trị dựa trên ngôn ngữ đang chọn */}
                                                         {language === LANGUAGES.VI ? item.valueVi : item.valueEn}
                                                     </option>

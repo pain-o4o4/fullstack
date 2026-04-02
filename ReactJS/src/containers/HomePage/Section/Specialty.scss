@@ -1,0 +1,169 @@
+.section-specialty {
+    background: #ffffff; // Apple thích nền trắng tinh hoặc xám cực nhạt
+    padding: 60px 0;
+    font-family: 'Inter', sans-serif;
+    // margin-bottom: 30px;
+
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 30px;
+        padding: 0 20%;
+
+        .title-section {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1d1d1f; // Màu đen đặc trưng của Apple
+        }
+
+        .btn-section {
+            background: none;
+            border: none;
+            color: #0066cc;
+            font-size: 17px;
+            cursor: pointer;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    .section-body {
+        padding: 0 20%;
+        position: relative;
+        padding-bottom: 80px; // Tăng thêm một chút để không dính sát slide
+
+        .section-customize {
+            padding: 20px;
+            text-align: center;
+            outline: none;
+
+            .bg-image {
+                width: 100%;
+                height: 250px;
+                background-color: #f5f5f7;
+                border-radius: 18px;
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-position: center center;
+                transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+                &:hover {
+                    transform: scale(1.03);
+                }
+            }
+
+            .section-name {
+                margin-top: 25px;
+                font-size: 21px;
+                font-weight: 600;
+                color: #1d1d1f;
+            }
+
+            .section-desc {
+                margin-top: 10px;
+                font-size: 14px;
+                color: #86868b;
+                line-height: 1.4;
+                padding: 0 10px;
+
+                .line {
+                    font-size: 12px;
+                    display: block;
+                }
+            }
+
+            .section-action {
+                margin-top: 25px; // Khoảng cách thoáng đãng
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 20px;
+
+                .btn-learn-more {
+                    background-color: #0071e3; // Màu xanh Apple chuẩn
+                    color: white;
+                    padding: 8px 18px; // Kích thước nút vừa vặn
+                    font-size: 14px;
+                    font-weight: 400;
+                    border-radius: 980px; // Bo tròn tối đa tạo hình viên thuốc
+                    border: none;
+                    cursor: pointer;
+                    transition: background-color 0.2s ease;
+
+                    &:hover {
+                        background-color: #0077ed; // Sáng lên một chút khi di chuột
+                    }
+                }
+
+                .link-buy {
+                    color: #0066cc;
+                    text-decoration: none;
+                    font-size: 14px;
+                    font-weight: 400;
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+
+
+        .slick-prev,
+        .slick-next {
+            top: auto;
+            bottom: -50px;
+            transform: none;
+            width: 36px;
+            height: 36px;
+            background: #ececf0 !important;
+            border-radius: 50%;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+
+            &::before {
+                color: #1d1d1f !important;
+                font-size: 16px;
+                opacity: 0.6;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+            }
+
+            &:hover {
+                background: #e8e8ed !important;
+
+                &::before {
+                    opacity: 1;
+                }
+            }
+
+            &.slick-disabled {
+                opacity: 0.2;
+                cursor: default;
+            }
+        }
+
+        .slick-prev {
+            left: auto;
+            right: 190px;
+
+            &::before {
+                content: "❮" !important;
+            }
+        }
+
+        .slick-next {
+            right: 130px;
+
+            &::before {
+                content: "❯" !important;
+            }
+        }
+    }
+}
