@@ -54,26 +54,47 @@ let getAllDoctorsService = () => {
         }
     });
 }
+
 let postInforDoctorService = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.doctorId || !data.contentHTML || !data.contentMarkdown || !data.description) {
-                resolve({
+            // 1. Check xem có thiếu cái gì quan trọng không
+            if (!data.doctorId || !data.contentHTML || !data.contentMarkdown) {
+                return resolve({
                     errCode: 1,
                     errMessage: "Missing required parameters!"
                 });
             }
-            await db.Markdown.create({
-                contentHTML: data.contentHTML,
-                contentMarkdown: data.contentMarkdown,
-                description: data.description,
-                doctorId: data.doctorId
+
+            // 2. Tìm xem ông bác sĩ này đã có bài giới thiệu chưa
+            let doctorMarkdown = await db.Markdown.findOne({
+                where: { doctorId: data.doctorId },
+                raw: false // Phải để false để dùng được hàm .save()
             });
+
+            if (doctorMarkdown) {
+                // NẾU CÓ RỒI -> CẬP NHẬT (EDIT)
+                doctorMarkdown.contentHTML = data.contentHTML;
+                doctorMarkdown.contentMarkdown = data.contentMarkdown;
+                doctorMarkdown.description = data.description;
+                await doctorMarkdown.save();
+            } else {
+                // NẾU CHƯA CÓ -> TẠO MỚI (CREATE)
+                await db.Markdown.create({
+                    contentHTML: data.contentHTML,
+                    contentMarkdown: data.contentMarkdown,
+                    description: data.description,
+                    doctorId: data.doctorId,
+                });
+            }
+
             resolve({
                 errCode: 0,
-                errMessage: "Save infor doctor successfully!"
+                errMessage: "Save info doctor successfully!"
             });
         } catch (error) {
+            // Log lỗi thật sự ra đây để soi cho dễ
+            console.log('>>> LỖI SQL CHI TIẾT TẠI ĐÂY:', error);
             reject(error);
         }
     })

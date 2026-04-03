@@ -7,7 +7,7 @@ import './ManageDoctor.scss'
 import MdEditor from 'react-markdown-editor-lite'
 import 'react-markdown-editor-lite/lib/index.css'
 import Select from 'react-select';
-import { LANGUAGES } from '../../../utils/constant'
+import { LANGUAGES, manageActions } from '../../../utils/constant'
 
 const mdParser = new MarkdownIt
 
@@ -20,6 +20,7 @@ class ManageDoctor extends Component {
             contentMarkdown: '',
             description: '',
             listAllDoctors: [],
+            hasOldData: false,
 
 
         }
@@ -147,7 +148,7 @@ const mapDispatchToProps = dispatch => {
         // deleteUserRedux: (id) => dispatch(action.deleteUser(id)),
         fetchAllDoctors: () => dispatch(action.fetchAllDoctors()),
         // editUserRedux: (user) => dispatch(action.editUser(user))
-        saveDetailDoctors: (data) => dispatch(action.saveDetailDoctors(data))
+        saveDetailDoctor: (data) => dispatch(action.saveDetailDoctor(data))
     };
 };
 

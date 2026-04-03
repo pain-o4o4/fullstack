@@ -26,3 +26,9 @@ export const YesNoObj = {
     YES: 'Y',
     NO: 'N'
 }
+// src/utils/constant.js (React)
+export const manageActions = {
+    ADD: "ADD",
+    EDIT: "EDIT",
+    DELETE: "DELETE"
+};

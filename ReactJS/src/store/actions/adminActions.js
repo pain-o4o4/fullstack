@@ -256,7 +256,7 @@ export const fetchAllDoctors = () => {
         }
     }
 }
-export const saveDetailDoctors = (data) => {
+export const saveDetailDoctor = (data) => {
     return async (dispatch, getState) => {
         try {
             let res = await postInforDoctorService(data);
