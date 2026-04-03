@@ -3,7 +3,7 @@ import {
     getAllCodeService, createNewUsersService,
     getAllUsers, deleteUserService, editUserService,
     getTopDoctorHomeService, getAllDoctorsService,
-    postInforDoctorService
+    postInforDoctorService, getDetailDoctorByIdService
 } from '../../services/userService';
 import { toast } from 'react-toastify';
 export const fetchGenderStart = () => {
@@ -279,6 +279,30 @@ export const saveDetailDoctor = (data) => {
             toast.error('Update detail doctor fail!');
             dispatch({
                 type: actionTypes.POST_DETAIL_DOCTORS_FAIL
+            });
+        }
+    }
+}
+
+export const getDetailDoctor = (id) => {
+    return async (dispatch, getState) => {
+        try {
+            let res = await getDetailDoctorByIdService(id);
+            console.log('>>> CMM check res từ API:', res);
+            if (res && res.errCode === 0) {
+                dispatch({
+                    type: actionTypes.GET_DETAIL_DOCTOR_SUCCESS,
+                    detailDoctor: res.data
+                });
+            } else {
+                dispatch({
+                    type: actionTypes.GET_DETAIL_DOCTOR_FAIL
+                });
+            }
+        } catch (e) {
+            console.error('getDetailDoctors error:', e);
+            dispatch({
+                type: actionTypes.GET_DETAIL_DOCTOR_FAIL
             });
         }
     }

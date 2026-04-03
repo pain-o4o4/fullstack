@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
          * The `models/index` file will call this method automatically.
          */
         static associate(models) {
-            Markdown.belongsTo(models.User, { foreignKey: 'doctorId' })
+            Markdown.belongsTo(models.User, { foreignKey: 'doctorId', as: 'markdownData' });
 
         }
     }

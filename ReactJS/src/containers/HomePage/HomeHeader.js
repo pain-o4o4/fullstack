@@ -100,7 +100,7 @@ class HomeHeader extends Component {
                         </div>
                     </div>
                 </div>
-                <div className="home-header-line">
+                {this.props.isShowBanner === false && <div className="home-header-line">
                     <div className="clinical-trial-section">
 
                         <div className="clinical-trial-container">
@@ -156,7 +156,8 @@ class HomeHeader extends Component {
                         </div>
 
                     </div>
-                </div>
+                </div>}
+
             </React.Fragment>
         );
     }

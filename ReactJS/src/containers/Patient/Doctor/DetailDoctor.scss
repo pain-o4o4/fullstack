@@ -1,0 +1,107 @@
+.doctor-detail-container {
+    // Yêu cầu chính: Cách lề 20% mỗi bên
+    padding: 40px 20px;
+    margin: 0 20% !important;
+    background-color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #1d1d1f; // Màu đen đặc trưng của Apple
+
+    .intro-doctor {
+        display: flex;
+        gap: 30px;
+        margin-bottom: 50px;
+        align-items: center;
+
+        .content-left {
+            width: 140px;
+            height: 140px;
+            border-radius: 28px; // Bo góc kiểu "Squircle" của iOS
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            flex-shrink: 0;
+            // Hiệu ứng bóng đổ rất nhẹ
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .content-right {
+            .up {
+                font-size: 32px;
+                font-weight: 700;
+                letter-spacing: -0.022em; // Khoảng cách chữ hẹp kiểu Apple
+                color: #1d1d1f;
+                margin-bottom: 8px;
+            }
+
+            .down {
+                font-size: 17px;
+                line-height: 1.47;
+                font-weight: 400;
+                color: #86868b; // Màu xám phụ của Apple
+                text-align: justify;
+            }
+        }
+    }
+
+    .detail-info-doctor {
+        padding-top: 40px;
+        border-top: 1px solid #d2d2d7; // Đường kẻ mảnh, tinh tế
+
+        // Style cho nội dung Markdown bên trong
+        div {
+            font-size: 17px;
+            line-height: 1.6;
+            color: #1d1d1f;
+
+            h2,
+            h3 {
+                font-weight: 600;
+                font-size: 24px;
+                margin-top: 35px;
+                margin-bottom: 15px;
+                letter-spacing: -0.01em;
+            }
+
+            p {
+                margin-bottom: 20px;
+            }
+
+            ul {
+                list-style-type: disc;
+                padding-left: 20px;
+
+                li {
+                    margin-bottom: 10px;
+                }
+            }
+
+            img {
+                max-width: 100%;
+                border-radius: 20px;
+                margin: 30px 0;
+            }
+        }
+    }
+}
+
+// Responsive cho máy tính bảng và điện thoại (để không bị quá hẹp)
+@media (max-width: 1200px) {
+    .doctor-detail-container {
+        margin: 0 10% !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .doctor-detail-container {
+        margin: 0 5% !important;
+
+        .intro-doctor {
+            flex-direction: column;
+            text-align: center;
+
+            .content-right .up {
+                font-size: 24px;
+            }
+        }
+    }
+}

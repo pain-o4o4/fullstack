@@ -12,16 +12,19 @@ let initWebRoutes = (app) => {
     router.get("/edit-crud/:id", homeController.editCRUD);
     router.get("/delete-crud/:id", homeController.deleteCRUD);
     router.post("/put-crud/:id", homeController.putCRUD);
+
     router.post("/api/login", userController.handleLogin);
     router.get("/api/get-all-users", userController.handleGetAllUsers);
     router.put("/api/edit-user", userController.handleEditUser);
     router.delete("/api/delete-user", userController.handleDeleteUser);
-    // Trong file web.js
     router.post('/api/create-new-user', userController.handleCreateNewUser);
     router.get('/api/allcode', userController.getAllCode);
+
     router.get('/api/top-doctor-home', doctorController.getTopDoctorHome);
     router.get('/api/get-all-doctors', doctorController.getAllDoctors);
     router.post('/api/save-infor-doctor', doctorController.postInforDoctor);
+    router.get('/api/get-detail-doctor-by-id', doctorController.getDetailDoctorById);
+
 
     //rest api
 

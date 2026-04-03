@@ -9,8 +9,8 @@ const initialState = {
     positions: [],
     topDoctors: [],
     editUser: [],
-    allDoctos: []
-
+    allDoctors: [], // Fix lỗi chính tả
+    detailDoctor: {}, // Đổi từ [] sang {} vì đây là 1 đối tượng bác sĩ
 }
 
 const adminReducer = (state = initialState, action) => {
@@ -126,6 +126,16 @@ const adminReducer = (state = initialState, action) => {
             return {
                 ...state,
                 allDoctors: []
+            }
+        case actionTypes.GET_DETAIL_DOCTOR_SUCCESS:
+            return {
+                ...state,
+                detailDoctor: action.detailDoctor
+            }
+        case actionTypes.GET_DETAIL_DOCTOR_FAIL:
+            return {
+                ...state,
+                detailDoctor: {}
             }
         default:
             return state;

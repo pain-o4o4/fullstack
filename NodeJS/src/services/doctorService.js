@@ -99,8 +99,56 @@ let postInforDoctorService = (data) => {
         }
     })
 }
+let getDetailDoctorByIdService = (idInput) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!idInput) {
+                return resolve({
+                    errCode: 1,
+                    errMessage: "Missing required parameters!"
+                });
+            }
+            let infor = await db.User.findOne({
+                where: { id: idInput },
+                attributes: {
+                    exclude: ["password"],
+                },
+                include: [
+                    {
+                        model: db.Allcode,
+                        as: "positionData",
+                        attributes: ["valueEn", "valueVi"],
+                    },
+                    {
+                        model: db.Allcode,
+                        as: "genderData",
+                        attributes: ["valueEn", "valueVi"],
+                    },
+                    {
+                        model: db.Markdown,
+                        as: "markdownData", // Thêm as vào đây cho khớp với associate
+                        attributes: ["description", "contentHTML", "contentMarkdown"],
+                    },
+                ],
+                raw: false,
+                nest: true,
+            });
+            if (infor && infor.image) {
+                // Dùng Buffer.from thay cho new Buffer
+                infor.image = Buffer.from(infor.image, 'base64').toString('binary');
+            }
+            resolve({
+                errCode: 0,
+                data: infor,
+            });
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
 export default {
     getTopDoctorHomeService: getTopDoctorHomeService,
     getAllDoctorsService: getAllDoctorsService,
-    postInforDoctorService: postInforDoctorService
+    postInforDoctorService: postInforDoctorService,
+    getDetailDoctorByIdService: getDetailDoctorByIdService
 };
