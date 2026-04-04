@@ -10,7 +10,8 @@ const initialState = {
     topDoctors: [],
     editUser: [],
     allDoctors: [], // Fix lỗi chính tả
-    detailDoctor: {}, // Đổi từ [] sang {} vì đây là 1 đối tượng bác sĩ
+    detailDoctor: {},
+    allScheduleTime: []
 }
 
 const adminReducer = (state = initialState, action) => {
@@ -136,6 +137,16 @@ const adminReducer = (state = initialState, action) => {
             return {
                 ...state,
                 detailDoctor: {}
+            }
+        case actionTypes.FETCH_ALLCODE_SCHEDULE_TIME_SUCCESS:
+            return {
+                ...state,
+                allScheduleTime: action.dataTime
+            }
+        case actionTypes.FETCH_ALLCODE_SCHEDULE_TIME_FAIL:
+            return {
+                ...state,
+                allScheduleTime: []
             }
         default:
             return state;

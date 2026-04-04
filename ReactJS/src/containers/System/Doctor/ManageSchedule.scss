@@ -1,0 +1,150 @@
+.manage-schedule-container {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    max-width: 100%;
+    height: 100vh;
+    // margin: 40px auto;
+    // padding: 0 20px;
+    background: #ffffff;
+    color: #1c1c1e;
+
+    .m-s-title {
+        font-size: 2.4rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 50px;
+        color: #1c1c1e;
+        letter-spacing: -0.02em;
+    }
+
+    .container {
+        background: #f8f9fa;
+        border-radius: 20px;
+        padding: 40px 50px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+
+            .form-group {
+                flex: 1;
+                min-width: 300px;
+
+                label {
+                    display: block;
+                    font-size: 1.05rem;
+                    font-weight: 600;
+                    margin-bottom: 10px;
+                    color: #3c3c43;
+                }
+
+                .Select, 
+                .form-control {
+                    width: 100%;
+                    height: 52px;
+                    padding: 0 16px;
+                    font-size: 1.05rem;
+                    border: 1.5px solid #d2d2d7;
+                    border-radius: 12px;
+                    background: #ffffff;
+                    transition: all 0.25s ease;
+
+                    &:focus {
+                        border-color: #007aff;
+                        box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15);
+                        outline: none;
+                    }
+                }
+            }
+        }
+
+        /* Khu vực chọn khung giờ */
+        .pick-hour-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+
+            .btn-schedule {
+                // padding: 12px 24px;
+                height: 40px;
+                width: 150px;
+                border: 1.5px solid #d2d2d7;
+                background: #ffffff;
+                border-radius: 30px;
+                font-size: 1.02rem;
+                font-weight: 500;
+                color: #1c1c1e;
+                cursor: pointer;
+                transition: all 0.25s ease;
+                white-space: nowrap;
+
+                &:hover {
+                    border-color: #007aff;
+                    background: rgba(0, 122, 255, 0.05);
+                }
+
+                &.active {
+                    background: #007aff;
+                    color: white;
+                    border-color: #007aff;
+                    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.25);
+                }
+            }
+        }
+
+        /* Nút Lưu lịch */
+        .btn-save-schedule {
+            margin-top: 40px;
+            width: 100%;
+            max-width: 320px;
+            height: 40px ;
+            width: 150px;
+            background: #007aff;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 16px rgba(0, 122, 255, 0.25);
+
+            &:hover {
+                background: #0062d1;
+                transform: translateY(-2px);
+                box-shadow: 0 10px 22px rgba(0, 122, 255, 0.35);
+            }
+
+            &:active {
+                transform: translateY(0);
+            }
+        }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        padding: 20px 15px;
+
+        .m-s-title {
+            font-size: 2rem;
+        }
+
+        .container {
+            padding: 30px 20px;
+
+            .row .form-group {
+                min-width: 100%;
+            }
+
+            .pick-hour-container {
+                justify-content: center;
+            }
+
+            .btn-save-schedule {
+                max-width: 100%;
+            }
+        }
+    }
+}

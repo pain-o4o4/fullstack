@@ -12,6 +12,7 @@ import ModalSearchHeader from './ModalSearchHeader.js';
 import { LANGUAGES } from '../../utils/constant';
 import { changeLanguageApp } from "../../store/actions";
 import actionTypes from '../../store/actions/actionTypes';
+import { withRouter } from 'react-router';
 class HomeHeader extends Component {
     constructor(props) {
         super(props);
@@ -35,6 +36,11 @@ class HomeHeader extends Component {
             isShowSearch: true
         });
     }
+    returnToHome = () => {
+        if (this.props.history) {
+            this.props.history.push(`/home`);
+        }
+    }
 
     render() {
         console.log(">>> check props: ", this.props.userInfo);
@@ -45,7 +51,9 @@ class HomeHeader extends Component {
                     <div className='home-header-content'>
                         <div className='left-content'>
                             <img src={menu} className="menu-icon" alt="Menu" />
-                            <div className='header-logo'></div>
+                            <div className='header-logo'
+                                onClick={() => this.returnToHome()}
+                            ></div>
                         </div>
                         <div className='center-content'>
                             {this.state.isShowSearch ? (
@@ -100,7 +108,8 @@ class HomeHeader extends Component {
                         </div>
                     </div>
                 </div>
-                {this.props.isShowBanner === false && <div className="home-header-line">
+
+                {this.props.isShowBanner === true && <div className="home-header-line">
                     <div className="clinical-trial-section">
 
                         <div className="clinical-trial-container">
@@ -179,4 +188,5 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(HomeHeader);
+// export default connect(mapStateToProps, mapDispatchToProps)(HomeHeader);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(HomeHeader));

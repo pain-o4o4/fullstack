@@ -48,10 +48,10 @@ class Menu extends Component {
                         </div>
                     </Fragment>
                 ) : (
-                        <Link to={link} className="menu-link" onClick={onLinkClick}>
-                            <FormattedMessage id={name} />
-                        </Link>
-                    )}
+                    <Link to={link} className="menu-link" onClick={onLinkClick}>
+                        <FormattedMessage id={name} />
+                    </Link>
+                )}
             </li>
         );
     }
@@ -188,9 +188,9 @@ class Navigator extends Component {
         const { menus, location, onLinkClick } = this.props;
         return (
             <Fragment>
-                <ul className="navigator-menu list-unstyled">
+                <div className="navigator-menu list-unstyled">
                     {
-                        menus.map((group, groupIndex) => {
+                        menus?.map((group, groupIndex) => {
                             return (
                                 <Fragment key={groupIndex}>
                                     <MenuGroupWithRouter name={group.name}>
@@ -227,7 +227,7 @@ class Navigator extends Component {
                             );
                         })
                     }
-                </ul>
+                </div>
             </Fragment>
         );
     }

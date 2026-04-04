@@ -43,7 +43,19 @@ class DetailDoctor extends Component {
         console.log(this.props.match.params.id)
         return (
             <React.Fragment>
-                <HomeHeader isShowBanner={true} />
+                <HomeHeader isShowBanner={false} />
+                <div className="breadcrumb-container">
+                    <div className="breadcrumb">
+                        <span
+                            className="home-link"
+                            onClick={() => this.props.history.push('/home')}
+                        >
+                            Home
+                        </span>
+                        <span className="separator">›</span>
+                        <span className="current-page">Detail Doctor</span>
+                    </div>
+                </div>
                 <div className='doctor-detail-container'>
                     <div className='intro-doctor'>
                         <div className='content-left'

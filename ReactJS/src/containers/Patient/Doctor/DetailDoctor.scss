@@ -1,106 +1,178 @@
-.doctor-detail-container {
-    // Yêu cầu chính: Cách lề 20% mỗi bên
-    padding: 40px 20px;
-    margin: 0 20% !important;
-    background-color: #ffffff;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    color: #1d1d1f; // Màu đen đặc trưng của Apple
+/* ==================== BREADCRUMB - MAYO CLINIC STYLE ==================== */
+.breadcrumb-container {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding:  20px;
+    background: #fff;
+    color: #1a1a1a;
+            // display: flex;
+        gap: 80px;
+        // padding: 80px 0 100px;
+        align-items: flex-start;
+}
 
+.breadcrumb {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    font-size: 0.98rem;
+    color: #666;
+
+    .home-link {
+        color: #0066cc;
+        cursor: pointer;
+        font-weight: 500;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    .separator {
+        margin: 0 10px;
+        color: #999;
+    }
+
+    .current-page {
+        color: #1a1a1a;
+        font-weight: 500;
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .breadcrumb-container {
+        padding: 16px 0;
+    }
+    
+    .breadcrumb {
+        padding: 0 15px;
+        font-size: 0.95rem;
+    }
+}
+.doctor-detail-container {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    background: #fff;
+    color: #1a1a1a;
+
+    /* ==================== INTRO DOCTOR - GIỐNG MAYO CLINIC ==================== */
     .intro-doctor {
         display: flex;
-        gap: 30px;
-        margin-bottom: 50px;
-        align-items: center;
+        gap: 80px;
+        padding: 80px 0 100px;
+        align-items: flex-start;
+
+        @media (max-width: 992px) {
+            flex-direction: column;
+            gap: 40px;
+            text-align: center;
+            padding: 60px 0;
+        }
 
         .content-left {
-            width: 140px;
-            height: 140px;
-            border-radius: 28px; // Bo góc kiểu "Squircle" của iOS
-            background-repeat: no-repeat;
+            flex: 0 0 420px;
+            height: 480px;
             background-size: cover;
             background-position: center;
-            flex-shrink: 0;
-            // Hiệu ứng bóng đổ rất nhẹ
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            background-repeat: no-repeat;
+            border-radius: 16px;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+
+            /* Hiệu ứng overlay nhẹ như Mayo */
+            &::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(to bottom, rgba(0,0,0,0.08), rgba(0,0,0,0.25));
+                border-radius: 16px;
+                pointer-events: none;
+            }
+
+            @media (max-width: 992px) {
+                height: 380px;
+                flex: none;
+                margin: 0 auto;
+                max-width: 420px;
+            }
         }
 
         .content-right {
+            flex: 1;
+            padding-top: 20px;
+
             .up {
-                font-size: 32px;
+                font-size: 2.35rem;
                 font-weight: 700;
-                letter-spacing: -0.022em; // Khoảng cách chữ hẹp kiểu Apple
-                color: #1d1d1f;
-                margin-bottom: 8px;
+                line-height: 1.2;
+                margin-bottom: 24px;
+                color: #1a1a1a;
             }
 
             .down {
-                font-size: 17px;
-                line-height: 1.47;
-                font-weight: 400;
-                color: #86868b; // Màu xám phụ của Apple
-                text-align: justify;
+                font-size: 1.22rem;
+                line-height: 1.75;
+                color: #444;
+                max-width: 620px;
             }
         }
     }
 
+    /* ==================== NỘI DUNG MARKDOWN ==================== */
     .detail-info-doctor {
-        padding-top: 40px;
-        border-top: 1px solid #d2d2d7; // Đường kẻ mảnh, tinh tế
+        padding-bottom: 120px;
 
-        // Style cho nội dung Markdown bên trong
-        div {
-            font-size: 17px;
-            line-height: 1.6;
-            color: #1d1d1f;
+        > div {
+            max-width: 780px;
+            margin: 0 auto;
 
-            h2,
-            h3 {
-                font-weight: 600;
-                font-size: 24px;
-                margin-top: 35px;
-                margin-bottom: 15px;
-                letter-spacing: -0.01em;
+            h1, h2, h3 {
+                color: #1a1a1a;
+                font-weight: 700;
+                margin: 2.5em 0 1em;
+            }
+
+            h2 {
+                font-size: 2.1rem;
+                border-bottom: 3px solid #0066cc;
+                padding-bottom: 14px;
             }
 
             p {
-                margin-bottom: 20px;
-            }
-
-            ul {
-                list-style-type: disc;
-                padding-left: 20px;
-
-                li {
-                    margin-bottom: 10px;
-                }
+                font-size: 1.18rem;
+                line-height: 1.78;
+                margin-bottom: 1.8em;
+                color: #333;
             }
 
             img {
                 max-width: 100%;
-                border-radius: 20px;
-                margin: 30px 0;
+                border-radius: 12px;
+                margin: 35px 0;
+                box-shadow: 0 12px 30px rgba(0,0,0,0.08);
             }
         }
     }
 }
 
-// Responsive cho máy tính bảng và điện thoại (để không bị quá hẹp)
-@media (max-width: 1200px) {
-    .doctor-detail-container {
-        margin: 0 10% !important;
-    }
-}
-
+/* Responsive */
 @media (max-width: 768px) {
     .doctor-detail-container {
-        margin: 0 5% !important;
-
         .intro-doctor {
-            flex-direction: column;
-            text-align: center;
+            padding: 50px 0 70px;
+            gap: 30px;
 
-            .content-right .up {
-                font-size: 24px;
+            .content-left {
+                height: 340px;
+            }
+
+            .up {
+                font-size: 1.95rem;
             }
         }
     }
