@@ -23,7 +23,7 @@ module.exports = {
                 type: Sequelize.INTEGER
             },
             date: {
-                type: Sequelize.STRING
+                type: Sequelize.STRING // Thay cho Sequelize.TIMESTAMP
             },
             timeType: {
                 type: Sequelize.STRING

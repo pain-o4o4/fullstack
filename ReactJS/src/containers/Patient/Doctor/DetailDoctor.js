@@ -6,6 +6,7 @@ import { LANGUAGES } from '../../../utils/constant'
 import './DetailDoctor.scss'
 import HomeHeader from '../../HomePage/HomeHeader';
 import * as action from '../../../store/actions'
+import ScheduleDoctor from './ScheduleDoctor'
 class DetailDoctor extends Component {
     constructor(props) {
         super(props);
@@ -56,6 +57,7 @@ class DetailDoctor extends Component {
                         <span className="current-page">Detail Doctor</span>
                     </div>
                 </div>
+
                 <div className='doctor-detail-container'>
                     <div className='intro-doctor'>
                         <div className='content-left'
@@ -72,7 +74,19 @@ class DetailDoctor extends Component {
                             </div>
                         </div>
                     </div>
-
+                    <div className='schedule-doctor'>
+                        <div className='content-left'>
+                            <ScheduleDoctor />
+                        </div>
+                        <div className='content-right'>
+                            {/* <div className='up'>
+                            <FormattedMessage id='patient.detail-doctor.schedule' />
+                        </div> class="intro-doctor"
+                        <div className='down'>
+                            <FormattedMessage id='patient.detail-doctor.description' />
+                        </div> */}
+                        </div>
+                    </div>
                     {/* Hiển thị nội dung Markdown bằng dangerouslySetInnerHTML */}
                     <div className='detail-info-doctor'>
                         {detailDoctor && detailDoctor.markdownData && detailDoctor.markdownData.contentHTML

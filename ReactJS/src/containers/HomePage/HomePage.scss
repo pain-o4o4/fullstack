@@ -4,7 +4,7 @@
 
 .section-medicalfacility {
     background: #fff;
-    padding: 0 380px 80px;
+    padding: 0 20% 80px;
 
     .medical-facility-container {
         display: flex;
@@ -12,7 +12,7 @@
         justify-content: center;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
         margin: 0 auto;
-        padding: 0 96px;
+        // padding: 0 96px;
         gap: 30px;
     }
 
@@ -198,7 +198,8 @@
 
 .section-about {
     background: #ffffff;
-    padding: 60px 0;
+        padding: 0 20% 80px;
+
     font-family: 'Inter', sans-serif;
     width: 100%;
 
@@ -213,7 +214,7 @@
 
     .section-body {
         width: 100%;
-        padding: 0 380px 80px; // cách mép màn hình
+         // cách mép màn hình
 
         display: grid;
         grid-template-columns: 1.1fr 1fr; // video to hơn

@@ -1,19 +1,21 @@
+
 'use strict';
-const {
-    Model
-} = require('sequelize');
+const { Model } = require('sequelize'); //
+
 module.exports = (sequelize, DataTypes) => {
-    class schedule extends Model {
-        /**
-         * Helper method for defining associations.
-         * This method is not a part of Sequelize lifecycle.
-         * The `models/index` file will call this method automatically.
-         */
+    // 1. Đổi tên class thành Schedule (viết hoa chữ cái đầu)
+    class Schedule extends Model {
         static associate(models) {
-            // define association here
+            // 2. Dùng đúng tên class Schedule ở đây
+            Schedule.belongsTo(models.Allcode, {
+                foreignKey: 'timeType',
+                targetKey: 'keyMap',
+                as: 'timeTypeData'
+            });
         }
     }
-    schedule.init({
+
+    Schedule.init({
         currentNumber: DataTypes.INTEGER,
         maxNumber: DataTypes.INTEGER,
         date: DataTypes.STRING,
@@ -22,7 +24,10 @@ module.exports = (sequelize, DataTypes) => {
         roleId: DataTypes.STRING
     }, {
         sequelize,
-        modelName: 'schedule',
+        modelName: 'Schedule', // modelName là 'Schedule' (S hoa)
+        tableName: 'schedules'
     });
-    return schedule;
+
+    // 3. Return đúng class Schedule
+    return Schedule;
 };

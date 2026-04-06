@@ -93,5 +93,9 @@
         "choose-doctor": "Choose Doctor",
         "choose-day": "Choose Day",
         "save": "Save Schedule"
+    },
+    "schedule-doctor": {
+        "calendar": "Calendar",
+        "time": "Time"
     }
 }

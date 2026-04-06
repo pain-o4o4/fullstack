@@ -65,5 +65,9 @@
         "choose-doctor": "Chọn bác sỹ",
         "choose-day": "Chọn ngày",
         "save": "Lưu lịch khám"
+    },
+    "schedule-doctor": {
+        "calendar": "Lịch khám",
+        "time": "Thời gian khám bệnh"
     }
 }

@@ -10,7 +10,7 @@ import DatePicker from '../../../components/Input/DatePicker';
 import moment from 'moment';
 import { toast } from 'react-toastify';
 import _ from 'lodash';
-
+import { bulkCreateScheduleService } from '../../../services/userService'
 class ManageSchedule extends Component {
     constructor(props) {
         super(props);
@@ -19,6 +19,7 @@ class ManageSchedule extends Component {
             selectedOption: {},
             currentDate: '',
             listAllScheduleTime: [],
+            resultBulk: []
 
         };
     }
@@ -109,7 +110,7 @@ class ManageSchedule extends Component {
             });
         }
     }
-    handleSaveSchedule = () => {
+    handleSaveSchedule = async () => {
         let { listAllScheduleTime, selectedOption, currentDate } = this.state;
         let result = [];
         if (!currentDate) {
@@ -117,6 +118,8 @@ class ManageSchedule extends Component {
             return;
         }
         let formartedDate = moment(currentDate).format(dateFormat.SEND_TO_SERVER);
+        // let formartedDate = moment(currentDate).unix();
+        // let formartedDate = new Date(currentDate).getTime();
         if (selectedOption && _.isEmpty(selectedOption)) {
             toast.error('Invalid choose doctor!');
             return;
@@ -125,11 +128,12 @@ class ManageSchedule extends Component {
         if (listAllScheduleTime && listAllScheduleTime.length > 0) {
             let schedule = listAllScheduleTime.filter(item => item.isSelected === true);
             if (schedule && schedule.length > 0) {
-                let selectedTime = schedule.map(item => {
+                schedule.map(item => {
                     let object = {};
                     object.doctorId = selectedOption.value;
                     object.date = formartedDate;
                     object.timeType = item.value;
+
                     result.push(object);
                     return result;
                 });
@@ -140,11 +144,19 @@ class ManageSchedule extends Component {
                 return;
             }
         }
-        return console.log('result', result);
+        let res = await bulkCreateScheduleService({
+            arrSchedule: result,
+            doctorId: selectedOption.value, // Gửi thêm cái này ra ngoài
+            date: formartedDate             // Gửi thêm cái này ra ngoài
+        });
+        this.setState({
+            resultBulk: result
+        })
+        return console.log('result', res);
     }
 
     render() {
-        console.log('did update', this.props.allScheduleTime);
+        console.log('did update', this.state);
 
         let { language } = this.props;
         let { listAllScheduleTime } = this.state;

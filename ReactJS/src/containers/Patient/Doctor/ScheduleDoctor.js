@@ -1,0 +1,168 @@
+import React, { Component } from 'react';
+import { connect } from "react-redux";
+import { getScheduleByDate } from '../../../services/userService'
+import { LANGUAGES } from '../../../utils/constant'
+import './ScheduleDoctor.scss'
+import moment from 'moment'
+import { withRouter } from 'react-router'; // hoặc 'react-router-dom'
+import 'moment/locale/vi';
+import calendar_icon from '../../../assets/images/calendar_icon.svg'
+import { FormattedMessage } from 'react-intl';
+class ScheduleDoctor extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            ScheduleDoctor: {},
+            allDay: [],
+            allTime: [],
+            allAvalabelTime: [],
+        }
+    }
+    // 1. Tạo một hàm riêng để build mảng ngày
+    getArrDays = (language) => {
+        let allDays = [];
+        for (let i = 0; i < 7; i++) {
+            let object = {};
+            if (i === 0) {
+                // Nếu là ngày hiện tại, hiển thị "Hôm nay" thay vì "Thứ ..."
+                let ddMM = moment(new Date()).format('DD/MM');
+                object.label = language === LANGUAGES.VI ? `Hôm nay - ${ddMM}` : `Today - ${ddMM}`;
+            } else {
+                let label = moment(new Date()).add(i, 'days').locale(language).format('ddd - DD/MM');
+                object.label = label.charAt(0).toUpperCase() + label.slice(1);
+            }
+
+            object.value = moment(new Date()).add(i, 'days').startOf('day').valueOf();
+            allDays.push(object);
+        }
+        return allDays;
+    }
+
+    async componentDidMount() {
+        let { language } = this.props;
+        let allDay = this.getArrDays(language);
+        this.setState({
+            allDay: allDay
+        });
+        if (this.props.match && this.props.match.params.id) {
+            let doctorId = this.props.match.params.id;
+            let today = allDay[0].value;
+
+            let res = await getScheduleByDate(doctorId, today);
+            if (res && res.errCode === 0) {
+                this.setState({
+                    allAvalabelTime: res.data ? res.data : []
+                });
+            }
+        }
+    }
+
+    async componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props.language !== prevProps.language) {
+            let allDay = this.getArrDays(this.props.language);
+            this.setState({
+                allDay: allDay
+            });
+        }
+        if (this.props.match.params.id !== prevProps.match.params.id) {
+            let doctorId = this.props.match.params.id;
+            let today = this.state.allDay[0].value;
+            let res = await getScheduleByDate(doctorId, today);
+            if (res && res.errCode === 0) {
+                this.setState({
+                    allAvalabelTime: res.data ? res.data : []
+                });
+            }
+        }
+    }
+    handleChangeSelect = async (e) => {
+        if (this.props.match && this.props.match.params.id) {
+            let doctorId = this.props.match.params.id;
+            let date = e.target.value;
+            let res = await getScheduleByDate(doctorId, date);
+            // if (res && res.errCode === 0) {
+            //     this.setState({
+            //         allAvalabelTime: res.data ? res.data : []
+            //     })
+            // }
+            this.setState({
+                allAvalabelTime: res.data
+            })
+            console.log('check  getScheduleByDate(doctorId, date);', doctorId, "date", date, "res get form api", res);
+        }
+    }
+    render() {
+        let { allDay, allAvalabelTime } = this.state
+        let { language } = this.props
+        // console.log('check state', this.state.allAvalabelTime);
+        let doctorId = this.props.match && this.props.match.params ? this.props.match.params.id : '';
+        return (
+            <React.Fragment>
+                {/* <HomeHeader isShowBanner={false} /> */}
+                <div className="schedule-doctor-container">
+
+                    <div className='all-schedule'>
+                        <select
+                            onChange={(e) => this.handleChangeSelect(e)}
+                        >
+                            {allDay && allDay.length > 0 &&
+                                allDay.map((item, index) => {
+                                    return (
+                                        <option
+                                            key={index}
+                                            value={item.value}>
+                                            {item.label}
+                                        </option>
+                                    )
+                                })}
+
+                        </select>
+                    </div>
+                    <div className='all-schedule-time'></div>
+                    <div className='text-calendar'>
+                        <span>
+                            <img src={calendar_icon} alt="calendar" />
+                            <FormattedMessage id="schedule-doctor.calendar" />
+                        </span>
+
+                    </div>
+                    <div className="time-content">
+                        {allAvalabelTime && allAvalabelTime.length > 0 &&
+                            allAvalabelTime.map((item, index) => {
+                                return (
+                                    <button
+                                        key={index}
+                                        className="time-content-btn"
+
+                                    >
+                                        {language === 'vi'
+                                            ? item.timeTypeData.valueVi
+                                            : item.timeTypeData.valueEn
+                                        }
+                                    </button>
+                                )
+                            })}
+                    </div>
+                </div>
+            </React.Fragment>
+        );
+    }
+}
+
+const mapStateToProps = state => {
+    return {
+        language: state.app.language,
+        // ScheduleDoctor: state.admin.ScheduleDoctor
+
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+
+        // getScheduleDoctor: (id) => dispatch(action.getScheduleDoctor(id))
+    };
+};
+
+// import { withRouter } from 'react-router'; // hoặc 'react-router-dom'
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ScheduleDoctor));
