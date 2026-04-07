@@ -63,8 +63,10 @@ let getAllDoctorsService = () => {
 let postInforDoctorService = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            // 1. Check xem có thiếu cái gì quan trọng không
-            if (!data.doctorId || !data.contentHTML || !data.contentMarkdown) {
+
+            if (!data.doctorId || !data.contentHTML || !data.contentMarkdown || !data.action
+                || !data.selectedPrice || !data.selectedPayment || !data.selectedProvince
+                || !data.nameClinic || !data.addressClinic || !data.note) {
                 return resolve({
                     errCode: 1,
                     errMessage: "Missing required parameters!"
@@ -92,7 +94,32 @@ let postInforDoctorService = (data) => {
                     doctorId: data.doctorId,
                 });
             }
-
+            let doctorInfor = await db.Doctor_infor.findOne({
+                where: { doctorId: data.doctorId },
+                raw: false
+            })
+            if (doctorInfor) {
+                // EDIT
+                doctorInfor.doctorId = data.doctorId;
+                doctorInfor.priceId = data.selectedPrice;
+                doctorInfor.provinceId = data.selectedProvince;
+                doctorInfor.paymentId = data.selectedPayment;
+                doctorInfor.nameClinic = data.nameClinic;
+                doctorInfor.addressClinic = data.addressClinic;
+                doctorInfor.note = data.note;
+                await doctorInfor.save();
+            }
+            else {// EDIT
+                await db.Doctor_infor.create({
+                    doctorId: data.doctorId,
+                    priceId: data.selectedPrice,
+                    provinceId: data.selectedProvince,
+                    paymentId: data.selectedPayment,
+                    nameClinic: data.nameClinic,
+                    addressClinic: data.addressClinic,
+                    note: data.note,
+                });
+            }
             resolve({
                 errCode: 0,
                 errMessage: "Save info doctor successfully!"
