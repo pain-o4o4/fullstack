@@ -66,6 +66,21 @@
         "choose-day": "Chọn ngày",
         "save": "Lưu lịch khám"
     },
+    "manage-doctor": {
+        "title": "Quản lý bác sỹ",
+        "infor": "Thông tin bác sĩ",
+        "select": "Chọn bác sỹ",
+        "price": "Chọn giá",
+        "payment": "Chọn phương thức",
+        "province": "Chọn thành phố",
+        "clinic": "Tên phòng khám",
+        "address": "Địa chỉ phòng khám",
+        "note": "Ghi chú"
+    },
+    "co_mun": {
+        "comment": "Từ đây trở xuống thuộc về user, phía trên là admin",
+        "like": "Thich"
+    },
     "schedule-doctor": {
         "calendar": "Lịch khám",
         "time": "Thời gian khám bệnh"

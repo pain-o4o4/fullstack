@@ -43,34 +43,6 @@
             "manage-schedule": "Manage Schedule"
         }
     },
-    "system": {
-        "user-manage": {
-            "fail-to-load-fouser": "Fail to load system users list",
-            "user-id": "User ID",
-            "usertype": "User type",
-            "username": "Username",
-            "fullname": "Fullname",
-            "mobile": "Phone",
-            "email": "Email",
-            "status": "Status",
-            "add-user": "Add user",
-            "edit-user": "Edit user information",
-            "password": "Password",
-            "retype-password": "Retype password",
-            "add-user-success": "Add user successfully",
-            "edit-user-success": "Change user information successfully",
-            "add-user-fail": "Fail to add user",
-            "edit-user-fail": "Fail to change user information",
-            "del-user-success": "Delete user successfully",
-            "del-user-fail": "Fail to delete user",
-            "invalid-input": {
-                "username": "Please fill in username",
-                "fullname": "Please fill in fullname",
-                "password": "Please fill in password"
-            },
-            "sure-delete-user": "Are you sure to delete this user?"
-        }
-    },
     "manage-user": {
         "add": "Add a new user",
         "edit": "Edit a new user",
@@ -93,6 +65,17 @@
         "choose-doctor": "Choose Doctor",
         "choose-day": "Choose Day",
         "save": "Save Schedule"
+    },
+    "manage-doctor": {
+        "title": "Manage doctor",
+        "infor": "Indormation doctor",
+        "select": "Select doctor",
+        "price": "Choose Price",
+        "payment": "Choose Payment",
+        "province": "Choose Province",
+        "clinic": "The name of the clinic",
+        "address": "The address of the clinic",
+        "note": "Note"
     },
     "schedule-doctor": {
         "calendar": "Calendar",
