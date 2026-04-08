@@ -114,15 +114,47 @@ class ManageDoctor extends Component {
     }
     handleChange = async (selectedDoctor) => {
         this.setState({ selectedDoctor });
+        let { listPayment, listPrice, listProvince } = this.state
         console.log('this.state.selectedDoctor selectedDoctor', selectedDoctor);
         let res = await getDetailDoctorByIdService(selectedDoctor.value);
 
         if (res && res.errCode === 0 && res.data && res.data.markdownData) {
             let markdown = res.data.markdownData;
+            let addressClinic = '', nameClinic = '', note = '',
+                provinceId = '', priceId = '', paymentId = '', selectedProvince = "", selectedPrice = "",
+                selectedPayment = ""
+            if (res.data.Doctor_infor) {
+                addressClinic = res.data.Doctor_infor.addressClinic
+                nameClinic = res.data.Doctor_infor.nameClinic
+                note = res.data.Doctor_infor.note
+
+                provinceId = res.data.Doctor_infor.provinceId
+                priceId = res.data.Doctor_infor.priceId
+                paymentId = res.data.Doctor_infor.paymentId
+
+                selectedPayment = listPayment.find(item => {
+                    return item && item.value === paymentId
+                })
+                selectedProvince = listProvince.find(item => {
+                    return item && item.value === provinceId
+                })
+                selectedPrice = listPrice.find(item => {
+                    return item && item.value === priceId
+                })
+                console.log("check find array res.data.Doctor_infor: ", selectedPayment)
+            }
             this.setState({
                 description: markdown.description || '',
                 contentHTML: markdown.contentHTML || '',
                 contentMarkdown: markdown.contentMarkdown || '',
+
+                addressClinic: addressClinic,
+                nameClinic: nameClinic,
+                note: note,
+
+                selectedProvince: selectedProvince,
+                selectedPrice: selectedPrice,
+                selectedPayment, selectedPayment,
                 hasOldData: true // Đã có dữ liệu cũ 
             });
         } else {

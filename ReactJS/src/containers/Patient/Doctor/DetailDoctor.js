@@ -7,11 +7,14 @@ import './DetailDoctor.scss'
 import HomeHeader from '../../HomePage/HomeHeader';
 import * as action from '../../../store/actions'
 import ScheduleDoctor from './ScheduleDoctor'
+import ExtraInforDoctor from './ScheduleDoctor'
 class DetailDoctor extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            detailDoctor: {}
+            detailDoctor: {},
+            currentDoctorId: -1,
+
         }
     }
     componentDidMount() {
@@ -76,15 +79,15 @@ class DetailDoctor extends Component {
                     </div>
                     <div className='schedule-doctor'>
                         <div className='content-left'>
-                            <ScheduleDoctor />
+                            <ScheduleDoctor
+                                doctorIdFromParent={this.state.currentDoctorId}
+                            />
                         </div>
                         <div className='content-right'>
-                            {/* <div className='up'>
-                            <FormattedMessage id='patient.detail-doctor.schedule' />
-                        </div> class="intro-doctor"
-                        <div className='down'>
-                            <FormattedMessage id='patient.detail-doctor.description' />
-                        </div> */}
+                            <ExtraInforDoctor
+                                doctorIdFromParent={this.state.currentDoctorId}
+
+                            />
                         </div>
                     </div>
                     {/* Hiển thị nội dung Markdown bằng dangerouslySetInnerHTML */}

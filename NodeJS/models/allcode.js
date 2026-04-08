@@ -13,11 +13,13 @@ module.exports = (sequelize, DataTypes) => {
             Allcode.hasMany(models.User, { foreignKey: 'positionId' })
             Allcode.hasMany(models.User, { foreignKey: 'gender' })
             // Một khung giờ có thể áp dụng cho nhiều lịch trình
-            Allcode.hasMany(models.Schedule, {
-                foreignKey: 'timeType',
-                as: 'scheduleData'
-            });
-        }
+            Allcode.hasMany(models.Schedule, { foreignKey: 'timeType', as: 'scheduleData' });
+
+            Allcode.hasMany(models.Schedule, { foreignKey: 'priceId', as: 'priceTypeData' });
+            Allcode.hasMany(models.Schedule, { foreignKey: 'provinceId', as: 'provinceTypeData' });
+            Allcode.hasMany(models.Schedule, { foreignKey: 'paymentId', as: 'paymentTypeData' });
+
+        } 
     }
     Allcode.init({
         type: DataTypes.STRING,
