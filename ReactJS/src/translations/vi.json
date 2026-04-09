@@ -83,6 +83,10 @@
     },
     "schedule-doctor": {
         "calendar": "Lịch khám",
-        "time": "Thời gian khám bệnh"
+        "time": "Thời gian khám bệnh",
+        "price": "Giá khám bệnh",
+        "hide-price": "Thu gọn",
+        "show-price": "Hiển thị",
+        "text-address": "Địa chỉ chi tiết"
     }
 }

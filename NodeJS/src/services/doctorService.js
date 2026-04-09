@@ -289,35 +289,41 @@ let getScheduleByDateService = (doctorId, date) => {
 let getExtraDoctorById = (inputId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!doctorId) {
+            // 1. Sửa doctorId thành inputId cho khớp với tham số nhận vào
+            if (!inputId) {
                 resolve({
                     errCode: 1,
                     errMessage: "Missing required parameters!"
-
                 })
             } else {
-                let data = await db.Doctor_infor.findOne({
+                let data = await db.Doctor_infor.findOne({ // Lưu ý: Thường là Doctor_Infor (chữ I viết hoa)
                     where: {
                         doctorId: inputId,
-
                     },
-
                     attributes: {
                         exclude: ["id", "doctorId"]
                     },
-                    inculde: [
-                        { mode: db.Allcode, as: 'priceTypeData', attributes: ['valueEn', 'valueVi'] },
-                        { mode: db.Allcode, as: 'provinceTypeData', attributes: ['valueEn', 'valueVi'] },
-                        { mode: db.Allcode, as: 'paymentTypeData', attributes: ['valueEn', 'valueVi'] },
+                    // 2. Sửa 'inculde' thành 'include'
+                    include: [
+                        // 3. Sửa 'mode' thành 'model'
+                        { model: db.Allcode, as: 'priceTypeData', attributes: ['valueEn', 'valueVi'] },
+                        { model: db.Allcode, as: 'provinceTypeData', attributes: ['valueEn', 'valueVi'] },
+                        { model: db.Allcode, as: 'paymentTypeData', attributes: ['valueEn', 'valueVi'] },
                     ],
                     raw: false,
                     nest: true,
                 })
-                if (!data) data = {}
+
+                if (!data) data = {};
+
+                // ĐỪNG QUÊN resolve data về cho Controller
+                resolve({
+                    errCode: 0,
+                    data: data
+                });
             }
         } catch (error) {
             reject(error);
-
         }
     })
 }

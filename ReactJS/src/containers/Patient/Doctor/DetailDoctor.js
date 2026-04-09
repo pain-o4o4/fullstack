@@ -7,23 +7,24 @@ import './DetailDoctor.scss'
 import HomeHeader from '../../HomePage/HomeHeader';
 import * as action from '../../../store/actions'
 import ScheduleDoctor from './ScheduleDoctor'
-import ExtraInforDoctor from './ScheduleDoctor'
+import ExtraInforDoctor from './ExtraInforDoctor'
 class DetailDoctor extends Component {
     constructor(props) {
         super(props);
         this.state = {
             detailDoctor: {},
-            currentDoctorId: -1,
+            currentDoctorId: this.props.match.params.id ? this.props.match.params.id : -1,
 
         }
     }
+
     componentDidMount() {
+
         if (this.props.match && this.props.match.params.id) {
             let id = this.props.match.params.id;
-            console.log(id);
-        }
-        if (this.props.match && this.props.match.params.id) {
-            let id = this.props.match.params.id;
+            this.setState({
+                currentDoctorId: id // Thêm dòng này
+            });
             this.props.getDetailDoctor(id);
         }
     }
@@ -32,6 +33,17 @@ class DetailDoctor extends Component {
             this.setState({
                 detailDoctor: this.props.detailDoctor
             })
+        }
+        if (prevProps.match.params.id !== this.props.match.params.id) {
+            let id = this.props.match.params.id;
+
+            // Cập nhật currentDoctorId vào state
+            this.setState({
+                currentDoctorId: id
+            });
+
+            // Gọi API lấy chi tiết bác sĩ
+            this.props.getDetailDoctor(id);
         }
     }
     render() {
