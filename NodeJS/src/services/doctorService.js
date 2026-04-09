@@ -161,6 +161,28 @@ let getDetailDoctorByIdService = (idInput) => {
                         as: "markdownData", // Thêm as vào đây cho khớp với associate
                         attributes: ["description", "contentHTML", "contentMarkdown"],
                     },
+                    {
+                        model: db.Doctor_infor,
+                        as: "doctorinforData", // Thêm as vào đây cho khớp với associate
+                        attributes: { exclude: ["id", "createdAt", "updatedAt", "doctorId"], },
+                        include: [
+                            {
+                                model: db.Allcode,
+                                as: "priceTypeData",
+                                attributes: ["valueEn", "valueVi"],
+                            },
+                            {
+                                model: db.Allcode,
+                                as: "provinceTypeData",
+                                attributes: ["valueEn", "valueVi"],
+                            },
+                            {
+                                model: db.Allcode,
+                                as: "paymentTypeData",
+                                attributes: ["valueEn", "valueVi"],
+                            },
+                        ]
+                    },
                 ],
                 raw: false,
                 nest: true,

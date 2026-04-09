@@ -114,23 +114,60 @@ class ManageDoctor extends Component {
     }
     handleChange = async (selectedDoctor) => {
         this.setState({ selectedDoctor });
-        console.log('this.state.selectedDoctor selectedDoctor', selectedDoctor);
         let res = await getDetailDoctorByIdService(selectedDoctor.value);
+        let { listPrice, listPayment, listProvince } = this.state;
 
-        if (res && res.errCode === 0 && res.data && res.data.markdownData) {
+        if (res && res.errCode === 0 && res.data) {
             let markdown = res.data.markdownData;
+            let doctorInfor = res.data.doctorinforData;
+            let addressClinic = '', nameClinic = '', note = '',
+                priceId = '', paymentId = '', provinceId = '',
+                selectedPrice = '', selectedPayment = '', selectedProvince = '';
+
+            if (doctorInfor) {
+                addressClinic = doctorInfor.addressClinic;
+                nameClinic = doctorInfor.nameClinic;
+                note = doctorInfor.note;
+
+                priceId = doctorInfor.priceId;
+                paymentId = doctorInfor.paymentId;
+                provinceId = doctorInfor.provinceId;
+
+
+
+                selectedPrice = listPrice.find(item => {
+                    return item && item.value === doctorInfor.priceId;
+                });
+                selectedPayment = listPayment.find(item => {
+                    return item && item.value === doctorInfor.paymentId
+                });
+                selectedProvince = listProvince.find(item => {
+                    return item && item.value === doctorInfor.provinceId
+                });
+            }
+
             this.setState({
-                description: markdown.description || '',
-                contentHTML: markdown.contentHTML || '',
-                contentMarkdown: markdown.contentMarkdown || '',
-                hasOldData: true // Đã có dữ liệu cũ 
+                // nhóm markdown
+                description: markdown ? markdown.description : '',
+                contentHTML: markdown ? markdown.contentHTML : '',
+                contentMarkdown: markdown ? markdown.contentMarkdown : '',
+                hasOldData: markdown ? true : false,
+
+                // nhóm extra infor
+                addressClinic: addressClinic,
+                nameClinic: nameClinic,
+                note: note,
+                selectedPrice: selectedPrice,
+                selectedPayment: selectedPayment,
+                selectedProvince: selectedProvince
             });
         } else {
+            // reset state nếu có lỗi hoặc bác sĩ mới tinh
             this.setState({
-                description: '',
-                contentHTML: '',
-                contentMarkdown: '',
-                hasOldData: false // Chưa có dữ liệu, sẽ là lưu mới
+                description: '', contentHTML: '', contentMarkdown: '',
+                hasOldData: false,
+                addressClinic: '', nameClinic: '', note: '',
+                selectedPrice: '', selectedPayment: '', selectedProvince: ''
             });
         }
     }
@@ -193,9 +230,14 @@ class ManageDoctor extends Component {
             ...stateCopy
         });
     }
-    render() {
+    render(
+
+    ) {
+
         console.log('check state this state list All Doctors', this.state.listAllDoctors)
         console.log('this.props.allDoctors', this.props.allDoctors)
+        console.log('check state this state', this.state)
+
         return (
             <React.Fragment>
                 <div className='manage-doctor-container'>

@@ -12,11 +12,11 @@ module.exports = (sequelize, DataTypes) => {
         static associate(models) {
             Allcode.hasMany(models.User, { foreignKey: 'positionId' })
             Allcode.hasMany(models.User, { foreignKey: 'gender' })
-            // Một khung giờ có thể áp dụng cho nhiều lịch trình
-            Allcode.hasMany(models.Schedule, {
-                foreignKey: 'timeType',
-                as: 'scheduleData'
-            });
+            Allcode.hasMany(models.Schedule, { foreignKey: 'timeType', as: 'scheduleData' });
+
+            Allcode.hasMany(models.Doctor_infor, { foreignKey: 'priceId', as: 'priceTypeData' });
+            Allcode.hasMany(models.Doctor_infor, { foreignKey: 'provinceId', as: 'provinceTypeData' });
+            Allcode.hasMany(models.Doctor_infor, { foreignKey: 'paymentId', as: 'paymentTypeData' });
         }
     }
     Allcode.init({
