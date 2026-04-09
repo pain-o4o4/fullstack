@@ -191,6 +191,7 @@ let getDetailDoctorByIdService = (idInput) => {
                 // Dùng Buffer.from thay cho new Buffer
                 infor.image = Buffer.from(infor.image, 'base64').toString('binary');
             }
+            if (!infor) { infor = {} }
             resolve({
                 errCode: 0,
                 data: infor,
@@ -285,11 +286,47 @@ let getScheduleByDateService = (doctorId, date) => {
         }
     })
 }
+let getExtraDoctorById = (inputId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!doctorId) {
+                resolve({
+                    errCode: 1,
+                    errMessage: "Missing required parameters!"
+
+                })
+            } else {
+                let data = await db.Doctor_infor.findOne({
+                    where: {
+                        doctorId: inputId,
+
+                    },
+
+                    attributes: {
+                        exclude: ["id", "doctorId"]
+                    },
+                    inculde: [
+                        { mode: db.Allcode, as: 'priceTypeData', attributes: ['valueEn', 'valueVi'] },
+                        { mode: db.Allcode, as: 'provinceTypeData', attributes: ['valueEn', 'valueVi'] },
+                        { mode: db.Allcode, as: 'paymentTypeData', attributes: ['valueEn', 'valueVi'] },
+                    ],
+                    raw: false,
+                    nest: true,
+                })
+                if (!data) data = {}
+            }
+        } catch (error) {
+            reject(error);
+
+        }
+    })
+}
 export default {
     getTopDoctorHomeService: getTopDoctorHomeService,
     getAllDoctorsService: getAllDoctorsService,
     postInforDoctorService: postInforDoctorService,
     getDetailDoctorByIdService: getDetailDoctorByIdService,
     bulkCreateScheduleService: bulkCreateScheduleService,
-    getScheduleByDateService: getScheduleByDateService
+    getScheduleByDateService: getScheduleByDateService,
+    getExtraDoctorById: getExtraDoctorById
 };
