@@ -87,6 +87,9 @@
         "price": "Giá khám bệnh",
         "hide-price": "Thu gọn",
         "show-price": "Hiển thị",
-        "text-address": "Địa chỉ chi tiết"
+        "text-address": "Địa chỉ chi tiết",
+        "title": "Thông tin đặt lịch khám",
+        "cancel": "hủy",
+        "confirm": "Lưu lịch khám"
     }
 }

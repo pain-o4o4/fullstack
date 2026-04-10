@@ -327,6 +327,62 @@ let getExtraDoctorById = (inputId) => {
         }
     })
 }
+let getProfileDoctorById = (doctorId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!doctorId) {
+                resolve({
+                    errCode: 1,
+                    errMessage: "Missing required parameters!"
+                })
+            } else {
+                let data = await db.User.findOne({
+                    where: {
+                        id: doctorId,
+                    },
+                    attributes: {
+                        exclude: ["password"],
+                    },
+                    include: [
+                        {
+                            model: db.Markdown,
+                            as: "markdownData", // Thêm as vào đây cho khớp với associate
+
+                            attributes: ["description", "contentHTML", "contentMarkdown"]
+                        },
+                        {
+                            model: db.Allcode,
+                            as: "positionData",
+                            attributes: ["valueEn", "valueVi"],
+                        },
+                        {
+                            model: db.Doctor_infor,
+                            as: "doctorinforData",
+                            attributes: {
+                                exclude: ["id", "doctorId"]
+                            },
+                            include: [
+                                { model: db.Allcode, as: "priceTypeData", attributes: ["valueEn", "valueVi"] },
+                                { model: db.Allcode, as: "provinceTypeData", attributes: ["valueEn", "valueVi"] },
+                                { model: db.Allcode, as: "paymentTypeData", attributes: ["valueEn", "valueVi"] },
+                            ]
+
+                        },
+                    ],
+                    raw: false,
+                    nest: true,
+                })
+                if (!data) data = {};
+                resolve({
+                    errCode: 0,
+                    data: data
+                });
+            }
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
 export default {
     getTopDoctorHomeService: getTopDoctorHomeService,
     getAllDoctorsService: getAllDoctorsService,
@@ -334,5 +390,6 @@ export default {
     getDetailDoctorByIdService: getDetailDoctorByIdService,
     bulkCreateScheduleService: bulkCreateScheduleService,
     getScheduleByDateService: getScheduleByDateService,
-    getExtraDoctorById: getExtraDoctorById
+    getExtraDoctorById: getExtraDoctorById,
+    getProfileDoctorById: getProfileDoctorById,
 };

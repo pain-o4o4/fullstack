@@ -8,6 +8,7 @@ import { withRouter } from 'react-router'; // hoặc 'react-router-dom'
 import 'moment/locale/vi';
 import calendar_icon from '../../../assets/images/calendar_icon.svg'
 import { FormattedMessage } from 'react-intl';
+import BookingModal from './Modal/BookingModal';
 class ScheduleDoctor extends Component {
     constructor(props) {
         super(props);
@@ -16,6 +17,9 @@ class ScheduleDoctor extends Component {
             allDay: [],
             allTime: [],
             allAvalabelTime: [],
+            isTheModalOpen: false,
+
+            dataTimeModal: {}
         }
     }
     // 1. Tạo một hàm riêng để build mảng ngày
@@ -91,11 +95,23 @@ class ScheduleDoctor extends Component {
             console.log('check  getScheduleByDate(doctorId, date);', doctorId, "date", date, "res get form api", res);
         }
     }
+    handleClickSheduleTime = (time) => {
+        this.setState({
+            isTheModalOpen: true,
+            dataTimeModal: time
+        })
+    }
+    closeModal = () => {
+        this.setState({
+            isTheModalOpen: false
+        })
+    }
     render() {
-        let { allDay, allAvalabelTime } = this.state
+        let { allDay, allAvalabelTime, isTheModalOpen } = this.state
         let { language } = this.props
         // console.log('check state', this.state.allAvalabelTime);
         let doctorId = this.props.match && this.props.match.params ? this.props.match.params.id : '';
+        console.log('check doctorId', this.state.dataTimeModal);
         return (
             <React.Fragment>
                 {/* <HomeHeader isShowBanner={false} /> */}
@@ -133,7 +149,10 @@ class ScheduleDoctor extends Component {
                                     <button
                                         key={index}
                                         className="time-content-btn"
-
+                                        onClick={() => {
+                                            console.log("Dữ liệu item khi click:", item);
+                                            this.handleClickSheduleTime(item);
+                                        }}
                                     >
                                         {language === 'vi'
                                             ? item.timeTypeData.valueVi
@@ -144,6 +163,14 @@ class ScheduleDoctor extends Component {
                             })}
                     </div>
                 </div>
+                <>
+                    <BookingModal
+                        isTheModalOpen={isTheModalOpen}
+                        closeModal={this.closeModal}
+                        dataTimeModal={this.state.dataTimeModal}
+                    // doctorId={doctorId}
+                    />
+                </>
             </React.Fragment>
         );
     }

@@ -83,6 +83,9 @@
         "price": "Price of visit",
         "hide-price": "Hide",
         "show-price": "Show more",
-        "text-address": "The address of the clinic"
+        "text-address": "The address of the clinic",
+        "title": "Schedule information",
+        "cancel": "Cancel",
+        "confirm": "Confirm schedule"
     }
 }

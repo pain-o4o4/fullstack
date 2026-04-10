@@ -1,0 +1,62 @@
+    .intro-doctor {
+        display: flex;
+        gap: 80px;
+        padding: 80px 0 100px;
+        align-items: flex-start;
+
+        @media (max-width: 992px) {
+            flex-direction: column;
+            gap: 40px;
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .content-left {
+            flex: 0 0 420px;
+            height: 480px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 16px;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+
+            /* Hiệu ứng overlay nhẹ như Mayo */
+            &::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(to bottom, rgba(0,0,0,0.08), rgba(0,0,0,0.25));
+                border-radius: 16px;
+                pointer-events: none;
+            }
+
+            @media (max-width: 992px) {
+                height: 380px;
+                flex: none;
+                margin: 0 auto;
+                max-width: 420px;
+            }
+        }
+
+        .content-right {
+            flex: 1;
+            padding-top: 20px;
+
+            .up {
+                font-size: 2.35rem;
+                font-weight: 700;
+                line-height: 1.2;
+                margin-bottom: 24px;
+                color: #1a1a1a;
+            }
+
+            .down {
+                font-size: 1.22rem;
+                line-height: 1.75;
+                color: #444;
+                max-width: 620px;
+            }
+        }
+    }

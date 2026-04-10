@@ -5,6 +5,7 @@ import { LANGUAGES } from '../../../utils/constant'
 import './ExtraInforDoctor.scss'
 import { withRouter } from 'react-router'; // hoặc 'react-router-dom'
 import { FormattedMessage } from 'react-intl';
+import { FormattedNumber } from 'react-intl';
 class ExtraInforDoctor extends Component {
     constructor(props) {
         super(props);
