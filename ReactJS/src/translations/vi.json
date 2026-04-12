@@ -90,6 +90,21 @@
         "text-address": "Địa chỉ chi tiết",
         "title": "Thông tin đặt lịch khám",
         "cancel": "hủy",
-        "confirm": "Lưu lịch khám"
+        "confirm": "Lưu lịch khám",
+        "fullName": "Họ tên",
+        "email": "Email",
+        "phoneNumber": "Số điện thoại",
+        "address": "Địa chỉ",
+        "gender": "Giới tính",
+        "reason": "Lý do",
+        "birthday": "Ngay sinh"
+    },
+    "verify-email": {
+        "loading": "Đang xác thực dữ liệu...",
+        "success-title": "Xác nhận thành công",
+        "success-desc": "Lịch hẹn của bạn đã được ghi nhận. Cảm ơn bạn đã tin tưởng chúng tôi.",
+        "failed-title": "Xác nhận thất bại",
+        "failed-desc": "Liên kết không hợp lệ hoặc đã hết hạn. Vui lòng kiểm tra lại email.",
+        "back-home": "Quay lại trang chủ"
     }
 }

@@ -107,11 +107,11 @@ class ScheduleDoctor extends Component {
         })
     }
     render() {
-        let { allDay, allAvalabelTime, isTheModalOpen } = this.state
+        let { allDay, allAvalabelTime, isTheModalOpen, dataTimeModal } = this.state
         let { language } = this.props
         // console.log('check state', this.state.allAvalabelTime);
         let doctorId = this.props.match && this.props.match.params ? this.props.match.params.id : '';
-        console.log('check doctorId', this.state.dataTimeModal);
+        console.log('check doctorId', this.state);
         return (
             <React.Fragment>
                 {/* <HomeHeader isShowBanner={false} /> */}

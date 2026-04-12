@@ -6,6 +6,7 @@ import { withRouter } from 'react-router'; // hoặc 'react-router-dom'
 import { FormattedMessage } from 'react-intl';
 import './ProfileDoctor.scss'
 import { FormattedNumber } from 'react-intl';
+import DatePicker from '../../../../src/components/Input/DatePicker';
 class ProfileDoctor extends Component {
     constructor(props) {
         super(props);
@@ -17,6 +18,7 @@ class ProfileDoctor extends Component {
 
     async componentDidMount() {
         let data = await this.getProfileDoctor(this.props.doctorId)
+        this.props.doctorNameFromParent(data.lastName + ' ' + data.firstName)
         this.setState({
             dataProfile: data
         })
@@ -25,6 +27,8 @@ class ProfileDoctor extends Component {
         let result = {}
         if (doctorId) {
             let res = await getProfileDoctorById(doctorId)
+            this.props.doctorNameFromParent(res.lastName + ' ' + res.firstName)
+
             if (res && res.errCode === 0) {
                 result = res.data
             }
@@ -33,7 +37,9 @@ class ProfileDoctor extends Component {
     }
     async componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props.doctorId !== prevProps.doctorId) {
+
             let data = await this.getProfileDoctor(this.props.doctorId)
+
             this.setState({
                 dataProfile: data
             })
@@ -45,7 +51,7 @@ class ProfileDoctor extends Component {
         let { dataProfile } = this.state
         let { language, isShowDescription, dataTimeModal } = this.props
         let nameVi = '', nameEn = ''
-
+        console.log('dataProfile', dataProfile)
         if (dataProfile && dataProfile.positionData) {
             nameVi = `${dataProfile.positionData.valueVi}, ${dataProfile.lastName} ${dataProfile.firstName}`;
             nameEn = `${dataProfile.positionData.valueEn}, ${dataProfile.firstName} ${dataProfile.lastName}`;
@@ -64,9 +70,12 @@ class ProfileDoctor extends Component {
                         <div className='down'>
                             {isShowDescription === true ?
                                 <>
-                                    {dataProfile && dataProfile.Markdown && dataProfile.Markdown.description && (
-                                        <span>{dataProfile.Markdown.description}</span>
-                                    )}
+                                    {dataProfile && dataProfile.markdownData
+                                        && dataProfile.markdownData
+                                            .description && (
+                                            <span>{dataProfile.markdownData
+                                                .description}</span>
+                                        )}
                                 </>
                                 :
                                 <>

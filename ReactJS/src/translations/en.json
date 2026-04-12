@@ -86,6 +86,21 @@
         "text-address": "The address of the clinic",
         "title": "Schedule information",
         "cancel": "Cancel",
-        "confirm": "Confirm schedule"
+        "confirm": "Confirm schedule",
+        "fullName": "Full name",
+        "email": "Email",
+        "phoneNumber": "Phone number",
+        "address": "Address",
+        "gender": "Gender",
+        "reason": "Reason",
+        "birthday": "Birthday"
+    },
+    "verify-email": {
+        "loading": "Verifying data...",
+        "success-title": "Verification Successful",
+        "success-desc": "Your appointment has been recorded. Thank you for choosing us.",
+        "failed-title": "Verification Failed",
+        "failed-desc": "The link is invalid or has expired. Please check your email again.",
+        "back-home": "Back to Home"
     }
 }
