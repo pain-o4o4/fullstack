@@ -4,7 +4,7 @@ require("dotenv").config();
 import _ from "lodash";
 import { Op } from 'sequelize';
 import moment from 'moment'
-// Hoặc nếu ông dùng require: const { Op } = require('sequelize');
+// const { Op } = require('sequelize');
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE
 
 let getTopDoctorHomeService = (limit) => {
@@ -73,20 +73,18 @@ let postInforDoctorService = (data) => {
                 });
             }
 
-            // 2. Tìm xem ông bác sĩ này đã có bài giới thiệu chưa
+
             let doctorMarkdown = await db.Markdown.findOne({
                 where: { doctorId: data.doctorId },
-                raw: false // Phải để false để dùng được hàm .save()
+                raw: false
             });
 
             if (doctorMarkdown) {
-                // NẾU CÓ RỒI -> CẬP NHẬT (EDIT)
                 doctorMarkdown.contentHTML = data.contentHTML;
                 doctorMarkdown.contentMarkdown = data.contentMarkdown;
                 doctorMarkdown.description = data.description;
                 await doctorMarkdown.save();
             } else {
-                // NẾU CHƯA CÓ -> TẠO MỚI (CREATE)
                 await db.Markdown.create({
                     contentHTML: data.contentHTML,
                     contentMarkdown: data.contentMarkdown,
@@ -125,8 +123,7 @@ let postInforDoctorService = (data) => {
                 errMessage: "Save info doctor successfully!"
             });
         } catch (error) {
-            // Log lỗi thật sự ra đây để soi cho dễ
-            console.log('>>> LỖI SQL CHI TIẾT TẠI ĐÂY:', error);
+            console.log('>>> check error:', error);
             reject(error);
         }
     })
@@ -158,12 +155,12 @@ let getDetailDoctorByIdService = (idInput) => {
                     },
                     {
                         model: db.Markdown,
-                        as: "markdownData", // Thêm as vào đây cho khớp với associate
+                        as: "markdownData",
                         attributes: ["description", "contentHTML", "contentMarkdown"],
                     },
                     {
                         model: db.Doctor_infor,
-                        as: "doctorinforData", // Thêm as vào đây cho khớp với associate
+                        as: "doctorinforData",
                         attributes: { exclude: ["id", "createdAt", "updatedAt", "doctorId"], },
                         include: [
                             {
@@ -188,7 +185,6 @@ let getDetailDoctorByIdService = (idInput) => {
                 nest: true,
             });
             if (infor && infor.image) {
-                // Dùng Buffer.from thay cho new Buffer
                 infor.image = Buffer.from(infor.image, 'base64').toString('binary');
             }
             if (!infor) { infor = {} }
@@ -219,15 +215,12 @@ let bulkCreateScheduleService = (data) => {
                     item.maxNumber = MAX_NUMBER_SCHEDULE;
                     return item;
                 });
-
-                // await db.Schedule.bulkCreate(schedule);
             }
             let existing = await db.Schedule.findAll({
                 where: { doctorId: data.doctorId, date: data.date },
                 attributes: ['timeType', 'date', 'doctorId', 'maxNumber']
             });
             let toCreate = _.differenceWith(schedule, existing, (a, b) => {
-                // Nếu trùng cả timeType và date thì coi như đã tồn tại (bỏ qua)
                 return a.timeType === b.timeType && a.date === b.date;
             });
             if (toCreate && toCreate.length > 0) {
@@ -244,7 +237,6 @@ let bulkCreateScheduleService = (data) => {
         }
     })
 }
-// Nhớ import Op ở đầu file: import { Op } from 'sequelize';
 
 let getScheduleByDateService = (doctorId, date) => {
     return new Promise(async (resolve, reject) => {
@@ -262,7 +254,6 @@ let getScheduleByDateService = (doctorId, date) => {
 
                     where: {
                         doctorId: doctorId,
-                        // Chỉ cần so sánh chuỗi trực tiếp, vì DB của ông là STRING
                         date: queryDate
                     },
                     include: [
@@ -289,21 +280,19 @@ let getScheduleByDateService = (doctorId, date) => {
 let getExtraDoctorById = (inputId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            // 1. Sửa doctorId thành inputId cho khớp với tham số nhận vào
             if (!inputId) {
                 resolve({
                     errCode: 1,
                     errMessage: "Missing required parameters!"
                 })
             } else {
-                let data = await db.Doctor_infor.findOne({ // Lưu ý: Thường là Doctor_Infor (chữ I viết hoa)
+                let data = await db.Doctor_infor.findOne({
                     where: {
                         doctorId: inputId,
                     },
                     attributes: {
                         exclude: ["id", "doctorId"]
                     },
-                    // 2. Sửa 'inculde' thành 'include'
                     include: [
                         // 3. Sửa 'mode' thành 'model'
                         { model: db.Allcode, as: 'priceTypeData', attributes: ['valueEn', 'valueVi'] },
@@ -316,7 +305,7 @@ let getExtraDoctorById = (inputId) => {
 
                 if (!data) data = {};
 
-                // ĐỪNG QUÊN resolve data về cho Controller
+
                 resolve({
                     errCode: 0,
                     data: data
@@ -346,7 +335,7 @@ let getProfileDoctorById = (doctorId) => {
                     include: [
                         {
                             model: db.Markdown,
-                            as: "markdownData", // Thêm as vào đây cho khớp với associate
+                            as: "markdownData",
 
                             attributes: ["description", "contentHTML", "contentMarkdown"]
                         },

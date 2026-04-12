@@ -80,7 +80,7 @@
     "schedule-doctor": {
         "calendar": "Calendar",
         "time": "Time",
-        "price": "Price of visit",
+        "price": "Price of visit: ",
         "hide-price": "Hide",
         "show-price": "Show more",
         "text-address": "The address of the clinic",

@@ -226,6 +226,8 @@ class BookingModal extends Component {
                                     value={this.state.selectedGender}
                                     onChange={this.handleChangeSelect}
                                     options={this.state.genders}
+                                    className="react-select-container" // Class bọc ngoài
+                                    classNamePrefix="react-select"     // Tiền tố cho các class con
                                 />
                             </div>
                         </div>

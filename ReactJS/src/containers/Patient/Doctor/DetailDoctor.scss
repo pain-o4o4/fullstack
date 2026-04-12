@@ -1,179 +1,118 @@
-/* ==================== BREADCRUMB - MAYO CLINIC STYLE ==================== */
-.breadcrumb-container {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding:  20px;
-    background: #fff;
-    color: #1a1a1a;
-            // display: flex;
-        gap: 80px;
-        // padding: 80px 0 100px;
-        align-items: flex-start;
-}
-
-.breadcrumb {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-    font-size: 0.98rem;
-    color: #666;
-
-    .home-link {
-        color: #0066cc;
-        cursor: pointer;
-        font-weight: 500;
-
-        &:hover {
-            text-decoration: underline;
-        }
-    }
-
-    .separator {
-        margin: 0 10px;
-        color: #999;
-    }
-
-    .current-page {
-        color: #1a1a1a;
-        font-weight: 500;
-    }
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .breadcrumb-container {
-        padding: 16px 0;
-    }
-    
-    .breadcrumb {
-        padding: 0 15px;
-        font-size: 0.95rem;
-    }
-}
+/* Tổng thể container */
 .doctor-detail-container {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: #ffffff;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 20px;
-    background: #fff;
-    color: #1a1a1a;
+    padding: 40px 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+.intro-doctor {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 50px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #f5f5f7;
 
-    /* ==================== INTRO DOCTOR - GIỐNG MAYO CLINIC ==================== */
-    .intro-doctor {
+    .content-left {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%; // Hình tròn kiểu Apple Profile
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    }
+
+    .content-right {
+        flex: 1;
         display: flex;
-        gap: 80px;
-        padding: 80px 0 100px;
-        align-items: flex-start;
+        flex-direction: column;
+        justify-content: center;
 
-        @media (max-width: 992px) {
-            flex-direction: column;
-            gap: 40px;
-            text-align: center;
-            padding: 60px 0;
+        .up {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1d1d1f;
+            letter-spacing: -0.5px;
+            margin-bottom: 10px;
         }
 
-        .content-left {
-            flex: 0 0 420px;
-            height: 480px;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            border-radius: 16px;
-            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            position: relative;
-
-            /* Hiệu ứng overlay nhẹ như Mayo */
-            &::after {
-                content: '';
-                position: absolute;
-                inset: 0;
-                background: linear-gradient(to bottom, rgba(0,0,0,0.08), rgba(0,0,0,0.25));
-                border-radius: 16px;
-                pointer-events: none;
-            }
-
-            @media (max-width: 992px) {
-                height: 380px;
-                flex: none;
-                margin: 0 auto;
-                max-width: 420px;
-            }
-        }
-
-        .content-right {
-            flex: 1;
-            padding-top: 20px;
-
-            .up {
-                font-size: 2.35rem;
-                font-weight: 700;
-                line-height: 1.2;
-                margin-bottom: 24px;
-                color: #1a1a1a;
-            }
-
-            .down {
-                font-size: 1.22rem;
-                line-height: 1.75;
-                color: #444;
-                max-width: 620px;
-            }
-        }
-    }
-
-    /* ==================== NỘI DUNG MARKDOWN ==================== */
-    .detail-info-doctor {
-        padding-bottom: 120px;
-
-        > div {
-            max-width: 780px;
-            margin: 0 auto;
-
-            h1, h2, h3 {
-                color: #1a1a1a;
-                font-weight: 700;
-                margin: 2.5em 0 1em;
-            }
-
-            h2 {
-                font-size: 2.1rem;
-                border-bottom: 3px solid #0066cc;
-                padding-bottom: 14px;
-            }
-
-            p {
-                font-size: 1.18rem;
-                line-height: 1.78;
-                margin-bottom: 1.8em;
-                color: #333;
-            }
-
-            img {
-                max-width: 100%;
-                border-radius: 12px;
-                margin: 35px 0;
-                box-shadow: 0 12px 30px rgba(0,0,0,0.08);
-            }
+        .down {
+            font-size: 16px;
+            color: #48484a;
+            line-height: 1.5;
+            max-width: 800px;
         }
     }
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .doctor-detail-container {
-        .intro-doctor {
-            padding: 50px 0 70px;
-            gap: 30px;
+/* Schedule & Extra Info Section */
+.schedule-doctor {
+    display: flex;
+    gap: 40px;
+    background: #f5f5f7; // Nền xám nhạt nhẹ nhàng
+    padding: 30px;
+    border-radius: 24px; // Bo góc lớn kiểu iOS
+    margin-bottom: 50px;
 
-            .content-left {
-                height: 340px;
-            }
+    .content-left {
+        flex: 1;
+        border-right: 1px solid #e5e5e7;
+        padding-right: 20px;
+    }
 
-            .up {
-                font-size: 1.95rem;
-            }
-        }
+    .content-right {
+        flex: 1;
+        padding-left: 20px;
     }
 }
+
+/* Nội dung Markdown phía dưới */
+.detail-info-doctor {
+    padding: 20px;
+    color: #1d1d1f;
+    line-height: 1.6;
+    font-size: 17px;
+
+    /* Tùy chỉnh lại các thẻ HTML bên trong dangerouslySetInnerHTML */
+    h2, h3 {
+        font-weight: 600;
+        margin-top: 30px;
+        margin-bottom: 15px;
+        letter-spacing: -0.3px;
+    }
+
+    p { margin-bottom: 15px; color: #424245; }
+}
+
+}
+
+/* Breadcrumb phong cách Apple */
+.breadcrumb-container {
+    padding: 0 20%;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(15px); // Hiệu ứng kính mờ đặc trưng
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 12px 0;
+    border-bottom: 1px solid #f2f2f2;
+
+    .breadcrumb {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 20px;
+        font-size: 14px;
+        color: #86868b;
+
+        .home-link {
+            cursor: pointer;
+            transition: color 0.2s;
+            &:hover { color: #0071e3; } // Apple Blue
+        }
+
+        .separator { margin: 0 8px; color: #d2d2d7; }
+        .current-page { color: #1d1d1f; font-weight: 500; }
+    }
+}
+
+/* Intro Doctor Section */

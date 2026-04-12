@@ -1,62 +1,60 @@
-    .intro-doctor {
+.infor-doctor {
+    display: flex;
+    align-items: flex-start; // Căn đỉnh để text dài không bị đẩy ảnh xuống giữa
+    gap: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.5); // Nền nhẹ trong Modal
+    border-radius: 20px;
+    margin-bottom: 25px;
+
+    .content-left {
+        // Thu nhỏ ảnh lại theo đúng chuẩn Apple Profile
+        width: 70px !important;
+        height: 70px !important;
+        min-width: 70px; // Đảm bảo không bị co lại khi text bên phải quá dài
+        
+        border-radius: 50%; // Hình tròn mềm mại
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        
+        border: 2px solid #ffffff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); // Đổ bóng nhẹ cho ảnh nổi lên
+    }
+
+    .content-right {
+        flex: 1; // Chiếm toàn bộ không gian còn lại
         display: flex;
-        gap: 80px;
-        padding: 80px 0 100px;
-        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
 
-        @media (max-width: 992px) {
-            flex-direction: column;
-            gap: 40px;
-            text-align: center;
-            padding: 60px 0;
+        .doctor-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1d1d1f; // Jet Black
+            letter-spacing: -0.5px;
         }
 
-        .content-left {
-            flex: 0 0 420px;
-            height: 480px;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            border-radius: 16px;
-            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.1);
+        .doctor-description {
+            font-size: 15px;
+            color: #86868b; // Màu xám phụ của Apple
+            line-height: 1.5;
+            
+            // Nếu bạn muốn hiển thị nhiều thông tin hơn (giới hạn 3 dòng chẳng hạn)
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
             overflow: hidden;
-            position: relative;
-
-            /* Hiệu ứng overlay nhẹ như Mayo */
-            &::after {
-                content: '';
-                position: absolute;
-                inset: 0;
-                background: linear-gradient(to bottom, rgba(0,0,0,0.08), rgba(0,0,0,0.25));
-                border-radius: 16px;
-                pointer-events: none;
-            }
-
-            @media (max-width: 992px) {
-                height: 380px;
-                flex: none;
-                margin: 0 auto;
-                max-width: 420px;
-            }
         }
 
-        .content-right {
-            flex: 1;
-            padding-top: 20px;
-
-            .up {
-                font-size: 2.35rem;
-                font-weight: 700;
-                line-height: 1.2;
-                margin-bottom: 24px;
-                color: #1a1a1a;
-            }
-
-            .down {
-                font-size: 1.22rem;
-                line-height: 1.75;
-                color: #444;
-                max-width: 620px;
-            }
+        /* Thêm một dòng "Label" nhỏ phía trên tên nếu cần (VD: BÁC SĨ CHUYÊN KHOA) */
+        &::before {
+            content: "MEDICAL PROFILE";
+            font-size: 11px;
+            font-weight: 600;
+            color: #0071e3;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
         }
     }
+}

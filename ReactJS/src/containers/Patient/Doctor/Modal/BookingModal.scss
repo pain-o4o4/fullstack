@@ -1,0 +1,220 @@
+/* Tùy chỉnh lớp bọc ngoài cùng của Modal từ Reactstrap */
+.booking-modal {
+    // width: 100% !important;// Apple thường dùng modal không quá rộng
+    margin-top: 50px !important;
+
+    .modal-content {
+        border-radius: 28px !important; // Bo góc lớn kiểu iOS
+        border: none !important;
+        background: rgba(255, 255, 255, 0.9) !important;
+        backdrop-filter: blur(20px) !important; // Hiệu ứng kính mờ
+        -webkit-backdrop-filter: blur(20px) !important;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important;
+        overflow: hidden;
+    }
+}
+
+.booking-modal-content {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+
+    /* Header tối giản */
+    .booking-modal-header {
+        padding: 24px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #1d1d1f;
+        }
+
+        .close {
+            background: #e8e8ed; // Màu nền nút đóng kiểu Apple
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            opacity: 0.8;
+            transition: all 0.2s;
+
+            span {
+                font-size: 20px;
+                color: #86868b;
+                line-height: 0;
+                margin-top: -2px;
+            }
+
+            &:hover {
+                opacity: 1;
+                background: #d2d2d7;
+            }
+        }
+    }
+
+    .booking-modal-body {
+        padding: 30px;
+
+        /* Phần Profile bác sĩ bên trong Modal */
+        .infor-doctor {
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 18px;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+
+        /* Tùy chỉnh các ô Input */
+        .form-group {
+            margin-bottom: 20px;
+
+            label {
+                font-size: 14px;
+                font-weight: 600;
+                color: #86868b;
+                margin-bottom: 8px;
+                display: block;
+                margin-left: 4px;
+            }
+
+            .form-control {
+                    background: rgba(0, 0, 0, 0.03); // Màu nền input đặc trưng Apple
+                border: 2px solid transparent !important;
+                border-radius: 12px !important;
+                padding: 12px 16px !important;
+                height: auto !important;
+                font-size: 15px !important;
+                color: #1d1d1f !important;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                
+                &:focus {
+                    background: #ffffff !important;
+                    border-color: #0071e3 !important; // Apple Blue
+                    box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1) !important;
+                }
+                
+            }
+
+            /* Custom cho React-Select và DatePicker nếu chúng dùng chung class */
+            .react-select__control {
+                background: rgba(0, 0, 0, 0.03) !important;
+                border-radius: 12px !important;
+                heigth: auto !important;
+                border: none !important;
+                padding: 4px !important;
+            }
+        }
+    }
+
+    /* Footer Buttons */
+    .booking-modal-footer {
+        padding: 20px 30px 40px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+
+        .btn-primary {
+            // Nút Xác nhận (Confirm)
+            background: #0071e3 !important;
+            border: none !important;
+            border-radius: 12px !important;
+            padding: 0px 16px !important;
+            height: 35px;
+            font-weight: 600 !important;
+            font-size: 15px !important;
+            transition: all 0.2s !important;
+
+            &:hover {
+                background: #0077ed !important;
+                transform: scale(1.02);
+            }
+
+            &:active {
+                transform: scale(0.98);
+            }
+        }
+
+        /* Nút Hủy (Cancel) kiểu Apple thường là text link hoặc nút xám */
+        .btn-primary:first-child { 
+            background: #f5f5f7 !important;
+            color: #1d1d1f !important;
+            
+            &:hover {
+                background: #e8e8ed !important;
+            }
+        }
+    }
+}
+.react-select-container {
+    // Thanh điều khiển chính (Cái ô input Duy nhìn thấy)
+    .react-select__control {
+        background-color: #f5f5f7 !important; // Màu xám nhạt Apple
+        border-radius: 12px !important;
+        border: 2px solid transparent !important;
+        min-height: 44px;
+        box-shadow: none !important;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background-color: #e8e8ed !important;
+        }
+
+        // Khi click vào ô select
+        &--is-focused {
+            background-color: #ffffff !important;
+            border-color: #0071e3 !important; // Xanh Apple
+            box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1) !important;
+        }
+    }
+
+    // Phần chứa chữ hiển thị
+    .react-select__single-value {
+        color: #1d1d1f !important;
+        font-size: 15px;
+    }
+
+    // Phần placeholder (Chọn giới tính...)
+    .react-select__placeholder {
+        color: #86868b !important;
+        font-size: 15px;
+    }
+
+    // Cái menu đổ xuống
+    .react-select__menu {
+        border-radius: 12px !important;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        z-index: 1000;
+    }
+
+    // Từng item trong danh sách (Nam, Nữ, Khác)
+    .react-select__option {
+        cursor: pointer;
+        font-size: 15px;
+        padding: 10px 15px;
+
+        // Khi rê chuột qua item
+        &--is-focused {
+            background-color: #f5f5f7 !important;
+            color: #1d1d1f !important;
+        }
+
+        // Khi item đang được chọn
+        &--is-selected {
+            background-color: #0071e3 !important;
+            color: #ffffff !important;
+        }
+    }
+
+    // Ẩn cái gạch dọc chia cách icon mũi tên cho sạch
+    .react-select__indicator-separator {
+        display: none;
+    }
+}

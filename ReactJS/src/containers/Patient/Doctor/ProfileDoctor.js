@@ -30,7 +30,11 @@ class ProfileDoctor extends Component {
             this.props.doctorNameFromParent(res.lastName + ' ' + res.firstName)
 
             if (res && res.errCode === 0) {
-                result = res.data
+                result = res.data;
+                if (result && result.image) {
+                    // Nếu result.image là Buffer, convert sang Base64
+                    result.image = new Buffer(result.image, 'base64').toString('binary');
+                }
             }
         }
         return result
@@ -68,7 +72,7 @@ class ProfileDoctor extends Component {
                             {language === LANGUAGES.VI ? nameVi : nameEn}
                         </div>
                         <div className='down'>
-                            {isShowDescription === true ?
+                            {isShowDescription === false ?
                                 <>
                                     {dataProfile && dataProfile.markdownData
                                         && dataProfile.markdownData
