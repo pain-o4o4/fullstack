@@ -6,6 +6,7 @@ import UserRedux from '../containers/System/Admin/UserRedux';
 import ManageDoctor from '../containers/System/Admin/ManageDoctor';
 // import RegisterPackageGroupOrAcc from '../containers/System/RegisterPackageGroupOrAcc';
 import Header from '../containers/Header/Header';
+import ManageSpecialty from '../containers/System/Specialty/ManageSpecialty';
 class System extends Component {
 
     render() {
@@ -25,11 +26,10 @@ class System extends Component {
                             <Route path="/system/user-manage" component={UserManage} />
                             <Route path="/system/crud-redux" component={UserRedux} />
                             <Route path="/system/manage-doctor" component={ManageDoctor} />
+                            <Route path="/system/manage-specialty" component={ManageSpecialty} />
 
-                            {/* Thêm dòng này để xử lý khi chỉ vào /system */}
-                            <Route exact path="/system" render={() => <Redirect to="/system/user-manage" />} />
 
-                            {/* Sửa lại dòng Redirect mặc định cuối cùng cho an toàn */}
+
                             <Redirect from="/system" to="/system/user-manage" />
                         </Switch>
                     </div>

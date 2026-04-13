@@ -1,0 +1,84 @@
+.manage-specialty-container {
+    padding: 20px;
+
+    .manage-specialty-title {
+        text-transform: uppercase;
+        font-weight: 600;
+        font-size: 18px;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .add-new-specialty {
+        .form-group {
+            margin-bottom: 15px;
+
+            label {
+                font-weight: 500;
+                margin-bottom: 5px;
+            }
+        }
+
+        .preview-img-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+
+            .label-upload {
+                background: #eee;
+                padding: 6px 15px;
+                border-radius: 4px;
+                cursor: pointer;
+                border: 1px solid #ccc;
+                transition: all 0.3s ease;
+
+                &:hover {
+                    background: #ddd;
+                }
+
+                i {
+                    margin-left: 5px;
+                    color: #45c3d2;
+                }
+            }
+
+            .preview-image {
+                width: 120px;
+                height: 60px;
+                border: 1px solid #ddd;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: contain;
+                cursor: pointer;
+                border-radius: 4px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+                &:hover {
+                    border-color: #45c3d2;
+                }
+            }
+        }
+
+        .btn-save-specialty {
+            margin-top: 25px;
+            padding: 8px 30px;
+            background-color: #ffc107;
+            border: none;
+            color: #000;
+            font-weight: 600;
+            border-radius: 4px;
+            transition: opacity 0.2s;
+
+            &:hover {
+                opacity: 0.8;
+            }
+        }
+    }
+}
+
+// Tùy chỉnh nhẹ cho cái Markdown Editor để nó fit với layout
+.rc-md-editor {
+    border: 1px solid #ccc !important;
+    border-radius: 4px;
+    margin-top: 10px;
+}
