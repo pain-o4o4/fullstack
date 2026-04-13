@@ -11,7 +11,6 @@ import 'react-markdown-editor-lite/lib/index.css';
 import Lightbox from 'react-image-lightbox';
 import 'react-image-lightbox/style.css';
 import CommonUtils from '../../../utils/CommonUtils';
-
 // Chỉ viết logic bên dưới các dòng import
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 
