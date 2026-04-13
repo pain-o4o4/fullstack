@@ -25,7 +25,9 @@ class OutStandingDoctor extends Component {
 
     }
     componentDidUpdate(prevProps, prevState, snapshot) {
+
         if (prevProps.topDoctors !== this.props.topDoctors) {
+            console.log('>>> Data mới từ Redux:', this.props.topDoctors);
             this.setState({
                 arrDoctors: this.props.topDoctors
             })
