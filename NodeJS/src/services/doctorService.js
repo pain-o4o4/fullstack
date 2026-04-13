@@ -45,7 +45,7 @@ let getAllDoctorsService = () => {
     return new Promise(async (resolve, reject) => {
         try {
             let doctors = await db.User.findAll({
-                where: { roleID: "R2" },
+                where: { roleId: "R2" },
                 attributes: {
                     exclude: ["password", "image"],
                 },

@@ -36,7 +36,7 @@ let postBookAppointmentService = async (infor) => {
                     where: { email: infor.email },
                     defaults: {
                         email: infor.email,
-                        roleId: 'R3', // Kiểm tra lại roleId hay roleID trong model nhé
+                        roleId: 'R3', // Kiểm tra lại roleId hay roleId trong model nhé
                         gender: infor.gender,
                         address: infor.address,
                         firstName: infor.fullName

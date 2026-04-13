@@ -146,7 +146,7 @@ class UserRedux extends Component {
                 address: this.state.address,
                 phonenumber: this.state.phoneNumber,
                 gender: this.state.genders,
-                roleID: this.state.roles,
+                roleId: this.state.roles,
                 positionId: this.state.positions,
                 avatar: this.state.avatar
             });
@@ -162,7 +162,7 @@ class UserRedux extends Component {
                     address: this.state.address,
                     phonenumber: this.state.phoneNumber,
                     gender: this.state.genders,
-                    roleID: this.state.roles,
+                    roleId: this.state.roles,
                     positionId: this.state.positions,
                     avatar: this.state.avatar
                 }
@@ -202,7 +202,7 @@ class UserRedux extends Component {
 
     //         genders: user.gender || '',
     //         positions: user.positionId || '',
-    //         roles: user.roleID || '',
+    //         roles: user.roleId || '',
 
     //         avatar: imageBase64,           // Lưu base64 để gửi API
     //         previewImgURL: imageBase64,   // Dùng để hiển thị ảnh
@@ -229,7 +229,7 @@ class UserRedux extends Component {
             address: user.address,
             genders: user.gender,
             positions: user.positionId,
-            roles: user.roleID,
+            roles: user.roleId,
 
             // --- QUAN TRỌNG NHẤT Ở ĐÂY ---
             avatar: imageBase64,           // Lưu để gửi ngược lại API khi Save
