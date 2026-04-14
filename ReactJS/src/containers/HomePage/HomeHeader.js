@@ -50,7 +50,7 @@ class HomeHeader extends Component {
                 <div className='home-header-container'>
                     <div className='home-header-content'>
                         <div className='left-content'>
-                            <img src={menu} className="menu-icon" alt="Menu" />
+                            {/* <img src={menu} className="menu-icon" alt="Menu" /> */}
                             <div className='header-logo'
                                 onClick={() => this.returnToHome()}
                             ></div>

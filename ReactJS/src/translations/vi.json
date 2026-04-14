@@ -77,6 +77,13 @@
         "address": "Địa chỉ phòng khám",
         "note": "Ghi chú"
     },
+    "manage-specialty": {
+        "title": "Quản lý chuyên khoa",
+        "name": "Tên chuyên khoa",
+        "image": "Ảnh chuyên khoa",
+        "save": "Lưu",
+        "image-place": "Chọn"
+    },
     "co_mun": {
         "comment": "Từ đây trở xuống thuộc về user, phía trên là admin",
         "like": "Thich"

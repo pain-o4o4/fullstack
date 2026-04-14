@@ -77,6 +77,13 @@
         "address": "The address of the clinic",
         "note": "Note"
     },
+    "manage-specialty": {
+        "title": "Manage Specialty",
+        "name": "Name Specialty",
+        "image": "Image Specialty",
+        "save": "Save",
+        "image-place": "Selector"
+    },
     "schedule-doctor": {
         "calendar": "Calendar",
         "time": "Time",
