@@ -12,6 +12,16 @@
         "password": "Mật khẩu",
         "userpass-wrong": "Sai tên đăng nhập hoặc mật khẩu!"
     },
+    "list": {
+        "specialty": {
+            "title": "Danh sách chuyên khoa",
+            "search": "Tìm kiếm"
+        },
+        "clinic": {
+            "title": "Danh sách cơ sở y tế",
+            "search": "Tìm kiếm"
+        }
+    },
     "menu": {
         "system": {
             "header": "Hệ thống",

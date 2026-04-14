@@ -41,6 +41,8 @@
 
         .section-customize {
             background: #f5f5f7;
+            
+            
             margin: 0 15px; 
             padding: 30px;
             border-radius: 28px; // Bo góc lớn kiểu iPhone
@@ -64,13 +66,32 @@
                 margin-bottom: 25px;
             }
 
-            .section-name {
-                font-size: 21px;
-                font-weight: 600;
-                color: #1d1d1f;
-                margin-bottom: 8px;
-                letter-spacing: -0.011em;
-            }
+           .section-name {
+    font-size: 21px;
+    font-weight: 600;
+    color: #1d1d1f;
+    margin-bottom: 8px;
+    letter-spacing: -0.011em;
+    
+    /* Cấu hình khung chứa */
+    width: 100%;             /* Hoặc một con số cố định như 200px */
+    overflow: hidden;        /* Ẩn phần thừa */
+    white-space: nowrap;     /* Không cho xuống dòng */
+    position: relative;
+}
+
+/* Hiệu ứng lướt chậm khi hover vào hoặc tự động */
+.section-name:hover span {
+    display: inline-block;
+    padding-left: 30%;       /* Khoảng nghỉ đầu */
+    animation: marquee 5s linear infinite; /* 15s là rất chậm, Duy muốn chậm nữa thì tăng lên 20s */
+}
+
+/* Định nghĩa chuyển động */
+@keyframes marquee {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
 
             .section-desc {
                 font-size: 15px;

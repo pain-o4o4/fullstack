@@ -3,7 +3,8 @@ import {
     getAllCodeService, createNewUsersService,
     getAllUsers, deleteUserService, editUserService,
     getTopDoctorHomeService, getAllDoctorsService,
-    postInforDoctorService, getDetailDoctorByIdService
+    postInforDoctorService, getDetailDoctorByIdService,
+    getAllSpecialty
 } from '../../services/userService';
 import { toast } from 'react-toastify';
 export const fetchGenderStart = () => {
@@ -363,3 +364,25 @@ export const fetchRequiredDoctorInforSuccess = (allRequiredData) => ({
 export const fetchRequiredDoctorInforFail = () => ({
     type: actionTypes.FETCH_REQUIRED_DOCTOR_INFOR_FAIL
 });
+export const fecthAllSpecialties = () => {
+    return async (dispatch, getState) => {
+        try {
+            let res = await getAllSpecialty();
+            if (res && res.errCode === 0) {
+                dispatch({
+                    type: actionTypes.FETCH_ALL_SPECIALTY_SUCCESS,
+                    data: res.data
+                })
+            } else {
+                dispatch({
+                    type: actionTypes.FETCH_ALL_SPECIALTY_FAIL
+                })
+            }
+        } catch (e) {
+            console.log('fetchSpecialty error: ', e);
+            dispatch({
+                type: actionTypes.FETCH_ALL_SPECIALTY_FAIL
+            })
+        }
+    }
+}

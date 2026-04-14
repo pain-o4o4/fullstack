@@ -9,10 +9,11 @@ const initialState = {
     positions: [],
     topDoctors: [],
     editUser: [],
-    allDoctors: [], // Fix lỗi chính tả
+    allDoctors: [],
     detailDoctor: {},
     allScheduleTime: [],
-    allRequiredDoctorInfor: {}
+    allRequiredDoctorInfor: {},
+    allSpecialties: [],
 }
 
 const adminReducer = (state = initialState, action) => {
@@ -158,6 +159,16 @@ const adminReducer = (state = initialState, action) => {
             return {
                 ...state,
                 allRequiredDoctorInfor: []
+            }
+        case actionTypes.FETCH_ALL_SPECIALTY_SUCCESS:
+            return {
+                ...state,
+                allSpecialties: action.data
+            }
+        case actionTypes.FETCH_ALL_SPECIALTY_FAIL:
+            return {
+                ...state,
+                allSpecialties: []
             }
         default:
             return state;

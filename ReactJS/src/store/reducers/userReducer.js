@@ -2,7 +2,8 @@ import actionTypes from '../actions/actionTypes';
 
 const initialState = {
     isLoggedIn: false,
-    userInfo: null
+    userInfo: null,
+
 }
 
 // Đổi tên từ appReducer thành userReducer ở đây

@@ -27,7 +27,7 @@ let postCreateNewSpecialtyService = async (data) => {
 
                 resolve({
                     errCode: 0,
-                    errMessage: 'Save specialty thành công!'
+                    errMessage: 'Save specialty success!'
                 });
             }
         } catch (error) {
@@ -36,25 +36,34 @@ let postCreateNewSpecialtyService = async (data) => {
     })
 }
 let getAllSpecialtyService = async () => {
-    return new promise(async (resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         try {
             let data = await db.Specialty.findAll({
-                attributes: ['id', 'descriptionHTML', 'descriptionMarkdown', 'image', 'name']
-            })
+                // Thêm 'id' vào để Frontend có key khi render list (quan trọng)
+                attributes: ['id', 'name', 'image', 'descriptionHTML', 'descriptionMarkdown']
+            });
+
             if (data && data.length > 0) {
-                data.map((item) => {
-                    item.image = new Buffer(item.image, 'base64').toString('binary');
-                })
+                data = data.map((item) => {
+                    if (item.image) {
+                        // Sử dụng Buffer.from thay vì new Buffer (đã bị deprecated)
+                        item.image = Buffer.from(item.image, 'base64').toString('binary');
+                    }
+                    return item;
+                });
             }
+
             resolve({
                 errCode: 0,
+                errMessage: 'OK',
                 data: data
-            })
+            });
         } catch (error) {
-            reject(error)
+            console.log("Check error from service: ", error);
+            reject(error);
         }
-    })
-}
+    });
+};
 export default {
     postCreateNewSpecialtyService,
     getAllSpecialtyService
