@@ -85,7 +85,9 @@
         "province": "Chọn thành phố",
         "clinic": "Tên phòng khám",
         "address": "Địa chỉ phòng khám",
-        "note": "Ghi chú"
+        "note": "Ghi chú",
+        "choose-specialty": "Chọn chuyên khoa",
+        "choose-clinic": "Chọn cơ sở y tế"
     },
     "manage-specialty": {
         "title": "Quản lý chuyên khoa",

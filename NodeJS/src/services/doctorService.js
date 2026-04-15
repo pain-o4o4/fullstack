@@ -66,10 +66,10 @@ let postInforDoctorService = (data) => {
 
             if (!data.doctorId || !data.contentHTML || !data.contentMarkdown || !data.action
                 || !data.selectedPrice || !data.selectedPayment || !data.selectedProvince
-                || !data.nameClinic || !data.addressClinic || !data.note) {
+                || !data.nameClinic || !data.addressClinic || !data.note || !data.specialtyId) {
                 return resolve({
                     errCode: 1,
-                    errMessage: "Missing required parameters!"
+                    errMessage: "Missing required parameters !"
                 });
             }
 
@@ -105,6 +105,7 @@ let postInforDoctorService = (data) => {
                 doctorInfor.nameClinic = data.nameClinic;
                 doctorInfor.addressClinic = data.addressClinic;
                 doctorInfor.note = data.note;
+                doctorInfor.specialtyId = data.specialtyId;
                 await doctorInfor.save();
             }
             else {// EDIT
@@ -116,6 +117,7 @@ let postInforDoctorService = (data) => {
                     nameClinic: data.nameClinic,
                     addressClinic: data.addressClinic,
                     note: data.note,
+                    specialtyId: data.specialtyId
                 });
             }
             resolve({

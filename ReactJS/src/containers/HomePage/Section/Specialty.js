@@ -3,10 +3,11 @@ import { connect } from 'react-redux';
 import './Specialty.scss';
 // import { FormattedMessage } from 'react-intl';
 import Slider from 'react-slick';
-import { SpecialtyData } from './Data/SpecialtyData';   // Đúng
+import { withRouter } from 'react-router-dom';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import * as action from '../../../store/actions'
+// import { withRouter } from 'react-router-dom/cjs/react-router-dom.min';
 class Specialty extends Component {
     constructor(props) {
         super(props);
@@ -24,7 +25,11 @@ class Specialty extends Component {
             })
         }
     }
-
+    handleViewDetailSpecialty = (item) => {
+        if (this.props.history) {
+            this.props.history.push(`/detail-specialty/${item.id}`);
+        }
+    }
     render() {
         let { dataSpecialty } = this.state;
 
@@ -39,13 +44,16 @@ class Specialty extends Component {
                         {dataSpecialty && dataSpecialty.length > 0 &&
                             dataSpecialty.map((item, index) => {
                                 return (
-                                    <div className='section-customize' key={index}>
+                                    <div
+                                        className='section-customize'
+                                        key={index}
+                                        onClick={() => this.handleViewDetailSpecialty(item)} // Cho nó vào trong thẻ mở
+                                    >
                                         <div
                                             className='bg-image'
-                                            style={{ backgroundImage: `url(${item.image})` }} // Dùng item.image từ DB
+                                            style={{ backgroundImage: `url(${item.image})` }}
                                         ></div>
                                         <div className='section-name'><span>{item.name}</span></div>
-
                                     </div>
                                 )
                             })
@@ -71,4 +79,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Specialty);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Specialty));

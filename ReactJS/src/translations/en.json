@@ -75,7 +75,9 @@
         "province": "Choose Province",
         "clinic": "The name of the clinic",
         "address": "The address of the clinic",
-        "note": "Note"
+        "note": "Note",
+        "choose-specialty": "Chooose Specialty",
+        "choose-clinic": "Chooose Clinic"
     },
     "manage-specialty": {
         "title": "Manage Specialty",
