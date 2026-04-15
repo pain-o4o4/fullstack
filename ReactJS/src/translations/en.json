@@ -86,6 +86,14 @@
         "save": "Save",
         "image-place": "Selector"
     },
+    "manage-clinic": {
+        "title": "Manage Clinic",
+        "name": "Name Clinic",
+        "image": "Image Clinic",
+        "address": "Address Clinic",
+        "save": "Save",
+        "image-place": "Selector"
+    },
     "schedule-doctor": {
         "calendar": "Calendar",
         "time": "Time",

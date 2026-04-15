@@ -1,42 +1,55 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-// import './MedicalFacility.scss';
+import * as action from '../../../store/actions'
 // import { FormattedMessage } from 'react-intl';
+import { withRouter } from 'react-router-dom';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import { medicalFacilities } from './Data/medicalFacilitiesData'
 class MedicalFacility extends Component {
     constructor(props) {
         super(props);
         this.state = {
-
+            dataClinics: []
         }
     }
-
-
-
+    componentDidMount() {
+        this.props.getRequiredDoctorInfor()
+    }
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevProps.allRequiredDoctorInfor.resClinic !==
+            this.props.allRequiredDoctorInfor.resClinic) {
+            this.setState({
+                dataClinics: this.props.allRequiredDoctorInfor.resClinic
+            })
+        }
+    }
+    handleViewDetailClinic = (item) => {
+        if (this.props.history) {
+            this.props.history.push(`/detail-clinic/${item.id}`);
+        }
+    }
     render() {
         let settings = {
             dots: false,
             infinite: true,
             speed: 500,
-            slidesToShow: 3,        // Desktop: hiển thị 3 cột
-            slidesToScroll: 3,      // Desktop: vuốt 3 cùng lúc
-            rows: 2,                // Desktop: 2 hàng
+            slidesToShow: 3,
+            slidesToScroll: 3,
+            rows: 2,
             slidesPerRow: 1,
-            arrows: true,           // hiển thị nút mũi tên
+            arrows: true,
 
-            // ==================== RESPONSIVE ====================
+
             responsive: [
                 {
-                    breakpoint: 767,   // Dưới 768px (điện thoại)
+                    breakpoint: 767,
                     settings: {
-                        slidesToShow: 1,      // 1 card mỗi lần
-                        slidesToScroll: 1,    // vuốt từng cái 1
-                        rows: 1,              // chỉ 1 hàng
+                        slidesToShow: 1,
+                        slidesToScroll: 1,
+                        rows: 1,
                         slidesPerRow: 1,
-                        arrows: true          // vẫn giữ nút mũi tên
+                        arrows: true
                     }
                 }
             ]
@@ -45,32 +58,39 @@ class MedicalFacility extends Component {
         return (
             <div className='section-medicalfacility'>
                 <div className='medical-facility-container'>
-                    {/* Khối bên trái: Tiêu đề */}
+
                     <div className='medical-facility-header'>
                         <h2 className='title-section'>Locations</h2>
                         <p className='desc-section'>Learn more about Mayo Clinic locations or choose a specific location.</p>
                         <button className='btn-explore'>Explore all locations</button>
                     </div>
 
-                    {/* Khối bên phải: Slider */}
+
                     <div className='medical-facility-body'>
-                        <Slider {...settings}>
-                            {medicalFacilities.map((item, index) => {
-                                return (
-                                    <div className='section-customize' key={index}>
+                        {/* Thêm điều kiện check length ở đây */}
+                        {this.state.dataClinics && this.state.dataClinics.length > 0 &&
+                            <Slider {...settings}>
+                                {this.state.dataClinics.map((item, index) => {
+                                    return (
                                         <div
-                                            className='bg-image'
-                                            style={{ backgroundImage: `url(${item.img})` }}
-                                        >
-                                            <div className='content-overlay'>
-                                                <h3 className='section-name'>{item.name} ›</h3>
-                                                <p className='section-desc'>{item.address}</p>
+                                            onClick={() => this.handleViewDetailClinic(item)}
+
+                                            className='section-customize'
+                                            key={index}>
+                                            <div
+                                                className='bg-image'
+                                                style={{ backgroundImage: `url(${item.image})` }} // Đổi thành item.image
+                                            >
+                                                <div className='content-overlay'>
+                                                    <h3 className='section-name'>{item.name} ›</h3>
+                                                    <p className='section-desc'>{item.address}</p>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                );
-                            })}
-                        </Slider>
+                                    );
+                                })}
+                            </Slider>
+                        }
                     </div>
                 </div>
             </div>
@@ -81,14 +101,15 @@ class MedicalFacility extends Component {
 const mapStateToProps = state => {
     return {
         isLoggedIn: state.user.isLoggedIn,
-        language: state.app.language
+        language: state.app.language,
+        allRequiredDoctorInfor: state.admin.allRequiredDoctorInfor
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-
+        getRequiredDoctorInfor: () => dispatch(action.getRequiredDoctorInfor())
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(MedicalFacility);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(MedicalFacility));

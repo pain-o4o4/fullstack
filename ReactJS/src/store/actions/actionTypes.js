@@ -75,6 +75,7 @@ const actionTypes = Object.freeze({
     //specialty
     FETCH_ALL_SPECIALTY_SUCCESS: 'FETCH_ALL_SPECIALTY_SUCCESS',
     FETCH_ALL_SPECIALTY_FAIL: 'FETCH_ALL_SPECIALTY_FAIL',
+
 })
 
 export default actionTypes;

@@ -47,8 +47,7 @@ class Specialty extends Component {
                                     <div
                                         className='section-customize'
                                         key={index}
-                                        onClick={() => this.handleViewDetailSpecialty(item)} // Cho nó vào trong thẻ mở
-                                    >
+                                        onClick={() => this.handleViewDetailSpecialty(item)} >
                                         <div
                                             className='bg-image'
                                             style={{ backgroundImage: `url(${item.image})` }}

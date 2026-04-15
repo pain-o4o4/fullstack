@@ -77,19 +77,22 @@ class ManageDoctor extends Component {
                 resPrice,
                 resPayment,
                 resProvince,
-                resSpecialty
+                resSpecialty,
+                resClinic
             } = this.props.allRequiredDoctorInfor;
             let dataSelectPrice = this.buildDataInput(resPrice, 'PRICE');
             let dataSelectPayment = this.buildDataInput(resPayment, 'PAYMENT');
             let dataSelectProvince = this.buildDataInput(resProvince, 'PROVINCE');
             let dataSelectSpecialty = this.buildDataInput(resSpecialty, 'SPECIALTY');
+            let dataSelectClinic = this.buildDataInput(resClinic, 'CLINIC');
             console.log('allRequiredDoctorInfor', dataSelectPrice, dataSelectPayment, dataSelectProvince, dataSelectSpecialty);
 
             this.setState({
                 listPrice: dataSelectPrice,
                 listPayment: dataSelectPayment,
                 listProvince: dataSelectProvince,
-                listSpecialty: dataSelectSpecialty
+                listSpecialty: dataSelectSpecialty,
+                listClinic: dataSelectClinic
             })
 
         }
@@ -104,7 +107,7 @@ class ManageDoctor extends Component {
     handleSaveContent = () => {
         let { hasOldData, selectedDoctor,
             selectedPrice, selectedPayment, selectedProvince,
-            selectedSpecialty,
+            selectedSpecialty, selectedClinic,
             nameClinic, addressClinic, note,
         } = this.state;
 
@@ -121,6 +124,7 @@ class ManageDoctor extends Component {
             selectedPayment: selectedPayment && selectedPayment.value ? selectedPayment.value : '',
             selectedProvince: selectedProvince && selectedProvince.value ? selectedProvince.value : '',
             specialtyId: selectedSpecialty && selectedSpecialty.value ? selectedSpecialty.value : '',
+            clinicId: selectedClinic && selectedClinic.value ? selectedClinic.value : '',
 
             nameClinic: nameClinic,
             addressClinic: addressClinic,
@@ -131,7 +135,7 @@ class ManageDoctor extends Component {
     handleChange = async (selectedDoctor) => {
         this.setState({ selectedDoctor });
         let res = await getDetailDoctorByIdService(selectedDoctor.value);
-        let { listPrice, listPayment, listProvince, listSpecialty } = this.state;
+        let { listPrice, listPayment, listProvince, listSpecialty, listClinic } = this.state;
 
         if (res && res.errCode === 0 && res.data) {
             let markdown = res.data.markdownData;
@@ -139,7 +143,8 @@ class ManageDoctor extends Component {
             let addressClinic = '', nameClinic = '', note = '',
                 priceId = '', paymentId = '', provinceId = '',
                 selectedPrice = '', selectedPayment = '',
-                selectedProvince = '', selectedSpecialty = '';
+                selectedProvince = '', selectedSpecialty = '',
+                selectedClinic = '';
 
             if (doctorInfor) {
                 addressClinic = doctorInfor.addressClinic;
@@ -164,6 +169,9 @@ class ManageDoctor extends Component {
                 selectedSpecialty = listSpecialty.find(item => {
                     return item && item.value === doctorInfor.specialtyId
                 });
+                selectedClinic = listClinic.find(item => {
+                    return item && item.value === doctorInfor.clinicId
+                });
             }
 
             this.setState({
@@ -180,15 +188,19 @@ class ManageDoctor extends Component {
                 selectedPrice: selectedPrice,
                 selectedPayment: selectedPayment,
                 selectedProvince: selectedProvince,
-                selectedSpecialty: selectedSpecialty ? selectedSpecialty : ''
+                selectedSpecialty: selectedSpecialty ? selectedSpecialty : '',
+                selectedClinic: selectedClinic ? selectedClinic : '',
             });
         } else {
             // reset state nếu có lỗi hoặc bác sĩ mới tinh
             this.setState({
-                description: '', contentHTML: '', contentMarkdown: '',
+                description: '', contentHTML: '',
+                contentMarkdown: '',
                 hasOldData: false,
                 addressClinic: '', nameClinic: '', note: '',
-                selectedPrice: '', selectedPayment: '', selectedProvince: '', selectedSpecialty: ''
+                selectedPrice: '', selectedPayment: '',
+                selectedProvince: '', selectedSpecialty: '',
+                selectedClinic: '',
             });
         }
     }
@@ -239,6 +251,15 @@ class ManageDoctor extends Component {
                 return result;
             }
             if (type === "SPECIALTY") {
+                dataInput.map((item, index) => {
+                    let object = {};
+                    object.label = item.name;
+                    object.value = item.id;
+                    result.push(object);
+                });
+                return result;
+            }
+            if (type === "CLINIC") {
                 dataInput.map((item, index) => {
                     let object = {};
                     object.label = item.name;

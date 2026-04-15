@@ -50,7 +50,6 @@ class HomeHeader extends Component {
                 <div className='home-header-container'>
                     <div className='home-header-content'>
                         <div className='left-content'>
-                            <img src={menu} className="menu-icon" alt="Menu" />
                             <div className='header-logo'
                                 onClick={() => this.returnToHome()}
                             ></div>
@@ -65,7 +64,9 @@ class HomeHeader extends Component {
                                 /* KHI TẮT SEARCH: Chỉ vẽ 4 khối div Menu */
                                 <React.Fragment>
                                     <div className="menu-content">
-                                        <div className='child-content'>
+                                        <div className='child-content'
+                                        // onClick={()=>{}}
+                                        >
                                             <FormattedMessage id="homeheader.MedicalSpecialty" defaultMessage="Medical Specialty" />
                                         </div>
                                         <div className='child-content'>
@@ -82,28 +83,19 @@ class HomeHeader extends Component {
                             )}
                         </div>
                         <div className="right-content">
-                            {/* Cụm Log in */}
                             <div className="login-group">
-
                                 <img src={user_login} className="icon-user" alt="User" />
                                 <span className="text-login">
-                                    {/* Chỗ này Duy nên thay bằng FormattedMessage id="header.login" để đổi tiếng Anh/Việt nhé */}
+
                                     <FormattedMessage id="header.login" defaultMessage="Log in" />
                                 </span>
                             </div>
-
-                            {/* Icon Search */}
-
                             <img src={search} className="icon-search" alt="icon-search" onClick={() => this.handleToggleSearch()} />
-                            {/* Icon UseronClick={() => this.props.toggleSearch()}
-                            <img src={user_login} className="icon-user" alt="User" /> */}
-
-                            {/* Icon Translate */}
                             <img
                                 src={translate}
                                 className="icon-translate"
                                 alt="Translate"
-                                onClick={() => this.changeLanguage()} // Khi bấm thì chạy hàm ở bước 3
+                                onClick={() => this.changeLanguage()}
                             />
                         </div>
                     </div>
@@ -111,16 +103,11 @@ class HomeHeader extends Component {
 
                 {this.props.isShowBanner === true && <div className="home-header-line">
                     <div className="clinical-trial-section">
-
                         <div className="clinical-trial-container">
-
-                            {/* Badge trên cùng */}
                             <div className="enrolling-badge">
                                 <span className="icon">👥</span>
                                 300+ studies actively enrolling
                             </div>
-
-                            {/* Tiêu đề lớn */}
                             <h1 className="main-title">
                                 Find your perfect <span>clinical trial match</span>
                             </h1>
@@ -129,23 +116,9 @@ class HomeHeader extends Component {
                             <p className="subtitle">
                                 Join 2+ million people shaping the future of healthcare.
                             </p>
-
                         </div>
                     </div>
                     <div className="welcome-container">
-
-                        {/* Khối xanh bên trái */}
-                        {/* <div className="welcome-card">
-                            <h2>Welcome To<br />Healthcarebookings.</h2>
-                            <p>
-                                An online service for booking health appointments.
-                                Simple booking process with reminder email or text message.
-                                Works on PC/Mac desktop computers or both Android/Apple phones &amp; tablets.
-                            </p>
-                            <a href="#" className="read-more-btn">Read More →</a>
-                        </div> */}
-
-                        {/* 3 Card bên phải */}
                         <div className="services-grid">
                             {[
                                 { icon: "https://img.icons8.com/color/96/doctor-male.png", title: "Search the service/<br />consultant" },
@@ -190,3 +163,5 @@ const mapDispatchToProps = dispatch => {
 
 // export default connect(mapStateToProps, mapDispatchToProps)(HomeHeader);
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(HomeHeader));
+
+{/* <img src={menu} className="menu-icon" alt="Menu" /> */ }

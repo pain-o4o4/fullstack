@@ -1,0 +1,65 @@
+.manage-specialty-container {
+    padding: 0 15px;
+
+    .ms-title {
+        text-transform: uppercase;
+        font-weight: 600;
+        font-size: 18px;
+        margin-top: 15px;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    .add-new-specialty {
+
+        // Gom nhóm phần upload ảnh cho gọn
+        .preview-img-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            .label-upload {
+                background: #eee;
+                padding: 5px 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                cursor: pointer;
+                margin-bottom: 0; // Ghi đè default của bootstrap
+
+                &:hover {
+                    background: #ddd;
+                }
+            }
+
+            .preview-image {
+                width: 120px;
+                /* Tăng lên chút cho dễ nhìn */
+                height: 60px;
+                /* Tăng lên chút */
+                border: 1px solid #ddd;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: cover;
+                /* Để cover nhìn ảnh nó đầy đặn hơn Duy nhé */
+                cursor: pointer;
+                background-color: #f8f8f8;
+            }
+        }
+
+        .btn-save-specialty {
+            border: none;
+            outline: none;
+            background: orange;
+            color: white;
+            width: 100px;
+            height: 35px;
+            margin-top: 15px;
+            border-radius: 5px;
+            float: right;
+
+            &:hover {
+                background: darkorange;
+            }
+        }
+    }
+}

@@ -96,6 +96,14 @@
         "save": "Lưu",
         "image-place": "Chọn"
     },
+    "manage-clinic": {
+        "title": "Quản lý cơ sở y tế",
+        "name": "Tên cơ sở y tế",
+        "image": "Ảnh cơ sở y tế",
+        "address": "Địa chỉ cơ sở y tế",
+        "save": "Lưu",
+        "image-place": "Chọn"
+    },
     "co_mun": {
         "comment": "Từ đây trở xuống thuộc về user, phía trên là admin",
         "like": "Thich"
