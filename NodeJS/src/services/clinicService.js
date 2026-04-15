@@ -60,7 +60,44 @@ let getAllClinicService = () => {
         }
     })
 }
+let getDetailClinicByIdService = (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!id) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing required parameters!'
+                })
+            }
+            else {
+                let data = await db.Clinic.findOne({
+                    where: { id: id },
+                    include: [
+                        {
+                            model: db.Doctor_infor, // Check lại chữ I hoa/thường ở đây
+                            as: 'doctorClinic',    // Phải khớp với as ở clinic.js
+                            attributes: ['doctorId', 'provinceId']
+                        },
+                    ],
+                    raw: false,
+                    nest: true
+                });
+                if (data && data.image) {
+                    // Sử dụng Buffer.from thay vì new Buffer (đã bị deprecated)
+                    data.image = Buffer.from(data.image, 'base64').toString('binary');
+                }
+                resolve({
+                    errCode: 0,
+                    data: data
+                });
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 export default {
     getAllClinicService,
-    postCreateNewClinicService
+    postCreateNewClinicService,
+    getDetailClinicByIdService
 }

@@ -64,7 +64,47 @@ let getAllSpecialtyService = async () => {
         }
     });
 };
+let getSpecialtyByIdService = async (inputId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!inputId) {
+                resolve({
+                    errCode: 1,
+                    errMessage: "Missing required parameters!"
+                })
+            } else {
+                let data = await db.Specialty.findOne({
+                    where: { id: inputId },
+                    // Include phải nằm ngoài where Duy nhé
+                    include: [
+                        {
+                            model: db.Doctor_infor,
+                            as: 'doctorSpecialty',
+                            attributes: ['doctorId', 'provinceId']
+                        },
+                    ],
+                    raw: false,
+                    nest: true
+                });
+
+                if (data && data.image) {
+                    // Sử dụng Buffer.from thay vì new Buffer (đã bị deprecated)
+                    data.image = Buffer.from(data.image, 'base64').toString('binary');
+                }
+                resolve({
+                    errCode: 0,
+                    errMessage: 'OK',
+                    data: data
+                });
+            }
+        } catch (error) {
+            console.log("Check error from service: ", error);
+            reject(error);
+        }
+    })
+}
 export default {
     postCreateNewSpecialtyService,
-    getAllSpecialtyService
+    getAllSpecialtyService,
+    getSpecialtyByIdService
 }

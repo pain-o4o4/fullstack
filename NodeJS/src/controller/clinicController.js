@@ -31,8 +31,23 @@ let getAllClinic = async (req, res) => {
         });
     }
 }
+let getDetailClinicById = async (req, res) => {
+    try {
+        let infor = req.query.id;
+        let response = await clinicService.getDetailClinicByIdService(infor);
+        return res.status(200).json(response);
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server',
+            errPin: JSON.stringify(error)
+        });
+    }
+}
 module.exports = {
     postCreateNewClinic: postCreateNewClinic,
     getAllClinic: getAllClinic,
+    getDetailClinicById: getDetailClinicById
 
 }

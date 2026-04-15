@@ -23,7 +23,7 @@ import CustomScrollbars from '../components/CustomScrollbars';
 import DetailDoctor from './Patient/Doctor/DetailDoctor.js';
 import VerifyEmail from '../containers/Patient/VerifyEmail.js';
 import DetailSpecialty from './Patient/Specialty/DetailSpecialty.js';
-import DetailClinic from './Patient/Clinic/DetailSpecialty.js';
+import DetailClinic from './Patient/Clinic/DetailClinic.js';
 class App extends Component {
 
     handlePersistorState = () => {

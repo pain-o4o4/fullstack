@@ -13,6 +13,10 @@ module.exports = (sequelize, DataTypes) => {
             specialty.hasMany(models.doctor_clinic_specialty, {
                 foreignKey: 'specialtyId'
             });
+            specialty.hasMany(models.Doctor_infor, {
+                foreignKey: 'specialtyId',
+                as: 'doctorSpecialty'
+            });
         }
     }
     specialty.init({

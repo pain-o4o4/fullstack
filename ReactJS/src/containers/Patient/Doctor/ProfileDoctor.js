@@ -18,7 +18,9 @@ class ProfileDoctor extends Component {
 
     async componentDidMount() {
         let data = await this.getProfileDoctor(this.props.doctorId)
-        this.props.doctorNameFromParent(data.lastName + ' ' + data.firstName)
+        if (data && this.props.doctorNameFromParent) {
+            this.props.doctorNameFromParent(data.lastName + ' ' + data.firstName);
+        }
         this.setState({
             dataProfile: data
         })
@@ -27,13 +29,20 @@ class ProfileDoctor extends Component {
         let result = {}
         if (doctorId) {
             let res = await getProfileDoctorById(doctorId)
-            this.props.doctorNameFromParent(res.lastName + ' ' + res.firstName)
-
             if (res && res.errCode === 0) {
                 result = res.data;
+                if (this.props.doctorNameFromParent) {
+                    this.props.doctorNameFromParent(res.data.lastName + ' ' + res.data.firstName);
+                }
+
                 if (result && result.image) {
-                    // Nếu result.image là Buffer, convert sang Base64
-                    result.image = new Buffer(result.image, 'base64').toString('binary');
+                    result.image = Buffer.from(result.image, 'base64').toString('binary');
+                }
+
+
+                // GỬI ẢNH LÊN CHO CHA Ở ĐÂY
+                if (this.props.doctorImageFromParent) {
+                    this.props.doctorImageFromParent(result.image);
                 }
             }
         }
@@ -53,7 +62,7 @@ class ProfileDoctor extends Component {
 
     render() {
         let { dataProfile } = this.state
-        let { language, isShowDescription, dataTimeModal } = this.props
+        let { language, isShowDescription, dataTimeModal, isShowPrice } = this.props
         let nameVi = '', nameEn = ''
         console.log('dataProfile', dataProfile)
         if (dataProfile && dataProfile.positionData) {
@@ -98,23 +107,25 @@ class ProfileDoctor extends Component {
                         </div>
                     </div>
                 </div>
-                <div className="price">
-                    {dataProfile && dataProfile.doctorinforData && dataProfile.doctorinforData.priceTypeData && (
-                        language === LANGUAGES.VI ? (
-                            <FormattedNumber
-                                value={dataProfile.doctorinforData.priceTypeData.valueVi}
-                                style="currency"
-                                currency="VND"
-                            />
-                        ) : (
-                            <FormattedNumber
-                                value={dataProfile.doctorinforData.priceTypeData.valueEn}
-                                style="currency"
-                                currency="USD"
-                            />
-                        )
-                    )}
-                </div>
+                {isShowPrice === true &&
+                    <div className="price">
+                        <FormattedMessage id="patient.booking-modal.price" />
+                        {dataProfile && dataProfile.doctorinforData && dataProfile.doctorinforData.priceTypeData && (
+                            language === LANGUAGES.VI ? (
+                                <FormattedNumber
+                                    value={dataProfile.doctorinforData.priceTypeData.valueVi}
+                                    style="currency"
+                                    currency="VND"
+                                />
+                            ) : (
+                                <FormattedNumber
+                                    value={dataProfile.doctorinforData.priceTypeData.valueEn}
+                                    style="currency"
+                                    currency="USD"
+                                />
+                            )
+                        )}
+                    </div>}
             </div>
         )
     }

@@ -292,7 +292,7 @@ class ManageDoctor extends Component {
         console.log('check state this state list All Doctors', this.state.listAllDoctors)
         console.log('this.props.allDoctors', this.props.allRequiredDoctorInfor)
         console.log('check state this state', this.state.listSpecialty)
-        console.log('check state this selectedSpecialty', this.state.selectedSpecialty)
+        console.log('check state this selectedSpecialty', this.state.selectedClinic)
 
         return (
             <React.Fragment>

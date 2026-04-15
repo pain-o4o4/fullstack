@@ -1,0 +1,303 @@
+.detail-clinic-container {
+    background-color: #f5f5f7; // Màu nền xám đặc trưng của Apple Support
+    min-height: 100vh;
+    color: #1d1d1f;
+    -webkit-font-smoothing: antialiased;
+
+    .detail-clinic-body {
+        padding: 0 20% 80px; // Giữ nguyên tỉ lệ Duy yêu cầu
+
+        .clinic-banner {
+            width: 100%;
+            height: 240px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 12px 12px 0 0;
+            overflow: hidden;
+            position: relative;
+            // margin-bottom: 16px;
+            margin-top: 20px;
+
+            .banner-overlay {
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(to bottom,
+                        rgba(0, 0, 0, 0.2),
+                        rgba(0, 0, 0, 0.6));
+                display: flex;
+                align-items: flex-end;
+                padding: 16px;
+            }
+
+            .clinic-name-inside {
+                color: #fff;
+                font-size: 22px;
+                font-weight: 600;
+                text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            }
+        }
+
+        .clinic-description {
+
+            background: #fff;
+            border-radius: 0 0 12px 12px;
+            padding: 16px 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+            .clinic-address {
+                font-size: 14px;
+                color: #666;
+                margin-bottom: 12px;
+                display: flex;
+                align-items: center;
+
+                &::before {
+                    content: "📍";
+                    margin-right: 6px;
+                }
+            }
+
+            /* style cho HTML render ra */
+            p {
+                font-size: 14px;
+                color: #444;
+                line-height: 1.6;
+                margin-bottom: 10px;
+            }
+
+            h1,
+            h2,
+            h3 {
+                font-weight: 600;
+                margin: 12px 0 8px;
+                color: #222;
+            }
+
+            ul {
+                padding-left: 18px;
+                margin-bottom: 10px;
+
+                li {
+                    margin-bottom: 6px;
+                    color: #444;
+                }
+            }
+
+            img {
+                width: 100%;
+                border-radius: 8px;
+                margin: 10px 0;
+            }
+        }
+
+        .clinic-doctor-list {
+            margin-top: 20px;
+
+            .each-doctor {
+                display: flex;
+                background-color: #ffffff;
+                margin-bottom: 20px;
+                padding: 30px;
+                border-radius: 22px;
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                border: none; // Bỏ hẳn viền
+
+                &:hover {
+                    transform: translateY(-5px); // Bay lên nhẹ khi di chuột
+                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+                }
+
+                .dt-content-left {
+                    width: 50%;
+                    padding-right: 30px;
+
+                    .profile-doctor-container {
+                        display: grid;
+                        align-items: center;
+                        height: 100%;
+
+                        .intro-doctor {
+                            display: flex;
+                            align-items: center; // Quan trọng: Căn giữa ảnh và tên theo chiều dọc
+                            gap: 20px; // Khoảng cách giữa ảnh và chữ
+
+                            .content-left {
+                                width: 100px; // Duy có thể chỉnh 80px hoặc 100px tùy ý
+                                height: 100px;
+                                border-radius: 50%; // Làm ảnh tròn xoe như trong hình ông gửi
+                                background-size: cover;
+                                background-position: center;
+                                background-repeat: no-repeat;
+                                flex-shrink: 0;
+                                // Đổ bóng cực nhẹ để tạo độ nổi
+                                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                            }
+
+                            .content-right {
+                                .up {
+                                    font-size: 24px; // Chữ to rõ
+                                    font-weight: 700; // Đậm như trong ảnh
+                                    color: #1d1d1f; // Màu đen Apple
+                                    letter-spacing: -0.015em;
+                                }
+
+                                .down {
+                                    // Nếu Duy muốn ẩn mô tả để giống hệt cái ảnh ông gửi
+                                    // display: none; 
+
+                                    // Hoặc để nhẹ nhàng phía dưới
+                                    font-size: 16px;
+                                    color: #86868b;
+                                    margin-top: 4px;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .dt-content-right {
+
+                    width: 50%;
+                    padding-left: 30px;
+
+                    .schedule-doctor {
+                        background: #fff;
+                        border-radius: 12px;
+                        padding: 16px 20px;
+                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+                        font-size: 14px;
+
+
+                        .content-up {
+                            margin-bottom: 12px;
+
+                            .text-address {
+                                font-size: 12px;
+                                color: #999;
+                                text-transform: uppercase;
+                                margin-bottom: 4px;
+                            }
+
+                            .name-clinic {
+                                font-size: 16px;
+                                font-weight: 600;
+                                color: #222;
+                                margin-bottom: 2px;
+                            }
+
+                            .detail-address {
+                                font-size: 13px;
+                                color: #555;
+                            }
+                        }
+
+                        .content-donw {
+                            border-top: 1px solid #eee;
+                            padding-top: 12px;
+
+                            .short-infor {
+                                span {
+                                    color: #0071ba;
+                                    cursor: pointer;
+                                    font-weight: 500;
+
+                                    &:hover {
+                                        text-decoration: underline;
+                                    }
+                                }
+                            }
+
+                            .title-price {
+                                font-weight: 600;
+                                margin-bottom: 8px;
+                                color: #333;
+                            }
+
+                            .detail-infor {
+                                font-size: 13px;
+                                color: #555;
+                                margin-bottom: 10px;
+                            }
+
+                            .price {
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                padding: 8px 10px;
+                                background: #f7f9fb;
+                                border-radius: 8px;
+                                margin-bottom: 8px;
+
+                                .left {
+                                    color: #666;
+                                }
+
+                                .right {
+                                    color: #0071ba;
+                                    font-weight: 600;
+                                }
+                            }
+
+                            .note {
+                                font-size: 12px;
+                                color: #888;
+                                margin-bottom: 8px;
+                                line-height: 1.4;
+                            }
+
+                            .payment {
+                                font-size: 13px;
+                                color: #444;
+                                margin-bottom: 10px;
+                            }
+
+                            .hide-price {
+                                span {
+                                    color: #0071ba;
+                                    cursor: pointer;
+                                    font-weight: 500;
+
+                                    &:hover {
+                                        text-decoration: underline;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Mobile Responsive
+@media (max-width: 1024px) {
+    .detail-clinic-container .detail-clinic-body {
+        padding: 0 10% 80px;
+    }
+}
+
+@media (max-width: 768px) {
+    .detail-clinic-container .detail-clinic-body {
+        padding: 0 20px 80px;
+
+        .each-doctor {
+            flex-direction: column;
+
+            .dt-content-left {
+                width: 100%;
+                padding-right: 0;
+                margin-bottom: 20px;
+            }
+
+            .dt-content-right {
+                width: 100%;
+                padding-left: 0;
+
+                &::before {
+                    display: none;
+                }
+            }
+        }
+    }
+}

@@ -40,10 +40,13 @@ let initWebRoutes = (app) => {
     //specialty
     router.post('/api/create-new-specialty', specialtyController.postCreateNewSpecialty);
     router.get('/api/get-all-specialty', specialtyController.getAllSpecialty);
+    router.get('/api/get-detail-specialty-by-id', specialtyController.getSpecialtyById);
 
     //clinic
     router.post('/api/create-new-clinic', clinicController.postCreateNewClinic);
     router.get('/api/get-all-clinic', clinicController.getAllClinic);
+    router.get('/api/get-detail-clinic-by-id', clinicController.getDetailClinicById);
+
 
     return app.use("/", router)
 }

@@ -4,6 +4,7 @@ require("dotenv").config();
 import _ from "lodash";
 import { Op } from 'sequelize';
 import moment from 'moment'
+import clinic from "../../models/clinic";
 // const { Op } = require('sequelize');
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE
 
@@ -66,7 +67,7 @@ let postInforDoctorService = (data) => {
 
             if (!data.doctorId || !data.contentHTML || !data.contentMarkdown || !data.action
                 || !data.selectedPrice || !data.selectedPayment || !data.selectedProvince
-                || !data.nameClinic || !data.addressClinic || !data.note || !data.specialtyId) {
+                || !data.nameClinic || !data.addressClinic || !data.note || !data.specialtyId || !data.clinicId) {
                 return resolve({
                     errCode: 1,
                     errMessage: "Missing required parameters !"
@@ -106,6 +107,7 @@ let postInforDoctorService = (data) => {
                 doctorInfor.addressClinic = data.addressClinic;
                 doctorInfor.note = data.note;
                 doctorInfor.specialtyId = data.specialtyId;
+                doctorInfor.clinicId = data.clinicId;
                 await doctorInfor.save();
             }
             else {// EDIT
@@ -117,7 +119,8 @@ let postInforDoctorService = (data) => {
                     nameClinic: data.nameClinic,
                     addressClinic: data.addressClinic,
                     note: data.note,
-                    specialtyId: data.specialtyId
+                    specialtyId: data.specialtyId,
+                    clinicId: data.selectedClinic
                 });
             }
             resolve({

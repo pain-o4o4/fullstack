@@ -28,7 +28,22 @@ let getAllSpecialty = async (req, res) => {
         });
     }
 }
+let getSpecialtyById = async (req, res) => {
+    try {
+        let infor = req.query.id;
+        let response = await specialtyService.getSpecialtyByIdService(infor);
+        return res.status(200).json(response);
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server',
+            errPin: JSON.stringify(error)
+        });
+    }
+}
 export default {
     postCreateNewSpecialty: postCreateNewSpecialty,
-    getAllSpecialty: getAllSpecialty
+    getAllSpecialty: getAllSpecialty,
+    getSpecialtyById: getSpecialtyById
 }

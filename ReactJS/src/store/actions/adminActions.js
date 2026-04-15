@@ -4,7 +4,8 @@ import {
     getAllUsers, deleteUserService, editUserService,
     getTopDoctorHomeService, getAllDoctorsService,
     postInforDoctorService, getDetailDoctorByIdService,
-    getAllSpecialtyService, getAllClinicService
+    getAllSpecialtyService, getAllClinicService,
+    getDetailClinicByIdService, getDetailSpecialtyByIdService
 } from '../../services/userService';
 import { toast } from 'react-toastify';
 export const fetchGenderStart = () => {
@@ -391,6 +392,50 @@ export const fecthAllSpecialties = () => {
             console.log('fetchSpecialty error: ', e);
             dispatch({
                 type: actionTypes.FETCH_ALL_SPECIALTY_FAIL
+            })
+        }
+    }
+}
+export const getDetailSpecialtyById = (id) => {
+    return async (dispatch, getState) => {
+        try {
+            let res = await getDetailSpecialtyByIdService(id);
+            if (res && res.errCode === 0) {
+                dispatch({
+                    type: actionTypes.FETCH_DETAIL_SPECIALTY_SUCCESS,
+                    data: res.data
+                })
+            } else {
+                dispatch({
+                    type: actionTypes.FETCH_DETAIL_SPECIALTY_FAILD,
+                })
+            }
+        } catch (e) {
+            console.log('FETCH_DETAIL_SPECIALTY_FAILD: ', e)
+            dispatch({
+                type: actionTypes.FETCH_DETAIL_SPECIALTY_FAILD,
+            })
+        }
+    }
+}
+export const getDetailClinicById = (id) => {
+    return async (dispatch, getState) => {
+        try {
+            let res = await getDetailClinicByIdService(id);
+            if (res && res.errCode === 0) {
+                dispatch({
+                    type: actionTypes.FETCH_DETAIL_CLINIC_SUCCESS,
+                    data: res.data
+                })
+            } else {
+                dispatch({
+                    type: actionTypes.FETCH_DETAIL_CLINIC_FAILD,
+                })
+            }
+        } catch (e) {
+            console.log('FETCH_DETAIL_CLINIC_FAILD: ', e)
+            dispatch({
+                type: actionTypes.FETCH_DETAIL_CLINIC_FAILD,
             })
         }
     }
