@@ -24,6 +24,9 @@ import DetailDoctor from './Patient/Doctor/DetailDoctor.js';
 import VerifyEmail from '../containers/Patient/VerifyEmail.js';
 import DetailSpecialty from './Patient/Specialty/DetailSpecialty.js';
 import DetailClinic from './Patient/Clinic/DetailClinic.js';
+import AllSpecialty from '../containers/Navigation/AllSpecialty.js';
+import AllClinic from '../containers/Navigation/AllClinics.js';
+import AllDoctor from '../containers/Navigation/AllDoctor.js';
 class App extends Component {
 
     handlePersistorState = () => {
@@ -66,17 +69,15 @@ class App extends Component {
                                     <Route path={path.DETAIL_DOCTOR} component={DetailDoctor} />
                                     <Route path={path.DETAIL_SPECIALTY} component={DetailSpecialty} />
                                     <Route path={path.DETAIL_CLINIC} component={DetailClinic} />
+
+                                    <Route path={path.ALL_SPECIALTY} component={AllSpecialty} />
+                                    <Route path={path.ALL_CLINIC} component={AllClinic} />
+                                    <Route path={path.ALL_DOCTOR} component={AllDoctor} />
+
                                     <Route path={path.VERIFY_EMAIL_BOOKING} component={VerifyEmail} />
                                 </Switch>
                             </CustomScrollbars>
                         </div>
-
-                        {/* <ToastContainer
-                            className="toast-container" toastClassName="toast-item" bodyClassName="toast-item-body"
-                            autoClose={false} hideProgressBar={true} pauseOnHover={false}
-                            pauseOnFocusLoss={true} closeOnClick={false} draggable={false}
-                            closeButton={<CustomToastCloseButton />}
-                        /> */}
                         <ToastContainer
                             position='bottom-right'
                             aotuClose={1000}

@@ -48,9 +48,35 @@ let getAllDoctorsService = () => {
             let doctors = await db.User.findAll({
                 where: { roleId: "R2" },
                 attributes: {
-                    exclude: ["password", "image"],
+                    exclude: ["password"],
                 },
+                include: [
+                    {
+                        model: db.Allcode,
+                        as: 'positionData',
+                        attributes: ['valueEn', 'valueVi']
+                    },
+                    {
+                        model: db.Allcode,
+                        as: 'genderData',
+                        attributes: ['valueEn', 'valueVi']
+                    },
+                ],
+                raw: true,
+                nest: true
             });
+
+            // CHỖ NÀY LÀ QUAN TRỌNG NHẤT:
+            if (doctors && doctors.length > 0) {
+                doctors = doctors.map(item => {
+                    if (item.image) {
+                        // Convert Buffer (từ DB) sang Binary string để Frontend hiển thị được
+                        item.image = Buffer.from(item.image, 'base64').toString('binary');
+                    }
+                    return item;
+                });
+            }
+
             resolve({
                 errCode: 0,
                 data: doctors,

@@ -396,6 +396,28 @@ export const fecthAllSpecialties = () => {
         }
     }
 }
+export const fecthAllClinics = () => {
+    return async (dispatch, getState) => {
+        try {
+            let res = await getAllClinicService();
+            if (res && res.errCode === 0) {
+                dispatch({
+                    type: actionTypes.FETCH_ALL_CLINIC_SUCCESS,
+                    data: res.data
+                })
+            } else {
+                dispatch({
+                    type: actionTypes.FETCH_ALL_CLINIC_FAIL
+                })
+            }
+        } catch (e) {
+            console.log('fetchSpecialty error: ', e);
+            dispatch({
+                type: actionTypes.FETCH_ALL_CLINIC_FAIL
+            })
+        }
+    }
+}
 export const getDetailSpecialtyById = (id) => {
     return async (dispatch, getState) => {
         try {

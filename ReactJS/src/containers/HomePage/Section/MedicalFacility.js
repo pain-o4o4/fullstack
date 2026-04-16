@@ -14,14 +14,12 @@ class MedicalFacility extends Component {
         }
     }
     componentDidMount() {
-        this.props.getRequiredDoctorInfor()
+        this.props.fecthAllClinics();
     }
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (prevProps.allRequiredDoctorInfor.resClinic !==
-            this.props.allRequiredDoctorInfor.resClinic) {
-            this.setState({
-                dataClinics: this.props.allRequiredDoctorInfor.resClinic
-            })
+
+        if (prevProps.allClinics !== this.props.allClinics) {
+            this.setState({ dataClinics: this.props.allClinics })
         }
     }
     handleViewDetailClinic = (item) => {
@@ -29,6 +27,7 @@ class MedicalFacility extends Component {
             this.props.history.push(`/detail-clinic/${item.id}`);
         }
     }
+
     render() {
         let settings = {
             dots: false,
@@ -54,7 +53,6 @@ class MedicalFacility extends Component {
                 }
             ]
         };
-
         return (
             <div className='section-medicalfacility'>
                 <div className='medical-facility-container'>
@@ -102,13 +100,17 @@ const mapStateToProps = state => {
     return {
         isLoggedIn: state.user.isLoggedIn,
         language: state.app.language,
-        allRequiredDoctorInfor: state.admin.allRequiredDoctorInfor
+        allRequiredDoctorInfor: state.admin.allRequiredDoctorInfor,
+        allClinics: state.admin.allClinics,
+        allClinicsLoaded: state.admin.allClinicsLoaded,
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        getRequiredDoctorInfor: () => dispatch(action.getRequiredDoctorInfor())
+        getRequiredDoctorInfor: () => dispatch(action.getRequiredDoctorInfor()),
+        fecthAllClinics: () => dispatch(action.fecthAllClinics())
+
     };
 };
 

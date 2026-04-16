@@ -1,17 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './HomeHeader.scss';
-import menu from '../../assets/images/menu.svg';
 import { FormattedMessage } from 'react-intl';
-import { User, MagnifyingGlass } from "@phosphor-icons/react"
+
 import search from '../../assets/images/search.svg';
 import user_login from '../../assets/images/user_login.svg';
 import translate from '../../assets/images/translate.svg';
-// Đổi h thành H ở cả 2 chỗ cho đồng bộ
+
 import ModalSearchHeader from './ModalSearchHeader.js';
-import { LANGUAGES } from '../../utils/constant';
 import { changeLanguageApp } from "../../store/actions";
-import actionTypes from '../../store/actions/actionTypes';
+import { path } from '../../utils/constant';
 import { withRouter } from 'react-router';
 class HomeHeader extends Component {
     constructor(props) {
@@ -38,10 +36,24 @@ class HomeHeader extends Component {
     }
     returnToHome = () => {
         if (this.props.history) {
-            this.props.history.push(`/home`);
+            this.props.history.push(path.HOMEPAGE);
         }
     }
+    handleViewList = (type) => {
+        const { history } = this.props;
 
+        const routeMap = {
+            SPECIALTY: path.ALL_SPECIALTY,
+            CLINIC: path.ALL_CLINIC,
+            PHYSICIAN: path.ALL_DOCTOR
+        };
+
+        if (routeMap[type]) {
+            history.push(routeMap[type]);
+        } else {
+            history.push('/home');
+        }
+    }
     render() {
         console.log(">>> check props: ", this.props.userInfo);
         return (
@@ -65,17 +77,24 @@ class HomeHeader extends Component {
                                 <React.Fragment>
                                     <div className="menu-content">
                                         <div className='child-content'
-                                        // onClick={()=>{}}
+                                            onClick={() => this.handleViewList('SPECIALTY')}
                                         >
                                             <FormattedMessage id="homeheader.MedicalSpecialty" defaultMessage="Medical Specialty" />
                                         </div>
-                                        <div className='child-content'>
+                                        <div className='child-content'
+                                            onClick={() => this.handleViewList('CLINIC')}
+                                        >
                                             <FormattedMessage id="homeheader.MedicalFacility" defaultMessage="Medical Facility" />
                                         </div>
-                                        <div className='child-content'>
+                                        <div className='child-content'
+                                            onClick={() => this.handleViewList('PHYSICIAN')}
+                                        >
                                             <FormattedMessage id="homeheader.Physician" defaultMessage="Physician" />
                                         </div>
-                                        <div className='child-content'>
+                                        <div className='child-content'
+                                            onClick={() => this.handleViewList('SERVICE')}
+
+                                        >
                                             <FormattedMessage id="homeheader.ServicePackage" defaultMessage="Service Package" />
                                         </div>
                                     </div>

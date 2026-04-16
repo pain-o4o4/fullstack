@@ -1,0 +1,70 @@
+.all-clinic-container {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+
+    .all-clinic-body {
+        padding: 30px 15%;
+
+        .title-section {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .list-clinic {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+
+            .clinic-item {
+                display: flex;
+                background: #fff;
+                padding: 15px;
+                border-radius: 8px;
+                border: 1px solid #eee;
+                cursor: pointer;
+                transition: transform 0.2s;
+
+                &:hover {
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                    transform: scale(1.01);
+                }
+
+                .clinic-image {
+                    width: 150px;
+                    height: 100px;
+                    background-size: cover;
+                    background-position: center;
+                    border-radius: 4px;
+                    flex-shrink: 0;
+                }
+
+                .clinic-info {
+                    margin-left: 20px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+
+                    .clinic-name {
+                        font-size: 18px;
+                        font-weight: 600;
+                        color: #45c3d2; // Màu chủ đạo của Duy
+                        margin-bottom: 8px;
+                    }
+
+                    .clinic-address {
+                        font-size: 14px;
+                        color: #666;
+
+                        i {
+                            margin-right: 5px;
+                            color: #45c3d2;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
