@@ -5,7 +5,7 @@ export const adminMenu = [
             { name: 'menu.admin.crud', link: '/system/user-manage' },
             { name: 'menu.admin.crud-redux', link: '/system/crud-redux' },
             { name: 'menu.admin.manage-doctor', link: '/system/manage-doctor' },
-            { name: 'menu.doctor.manage-schedule', link: '/doctor/manage-schedule' },
+            { name: 'menu.doctor.manage-schedule', link: '/system/manage-schedule' },
         ]
     },
     { // Quản lý chuyên khoa
@@ -38,7 +38,7 @@ export const doctorMenu = [
             },
             {
                 name: 'menu.admin.manage-doctor',
-                link: '/system/manage-doctor'
+                link: '/doctor/manage-doctor'
             },
         ]
     },

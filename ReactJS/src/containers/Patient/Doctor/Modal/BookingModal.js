@@ -12,6 +12,7 @@ import * as actions from '../../../../store/actions'
 import { postBookAppointment } from '../../../../services/userService'
 import Select from 'react-select';
 import { toast } from 'react-toastify';
+import { use } from 'react';
 class BookingModal extends Component {
     constructor(props) {
         super(props);
@@ -88,12 +89,13 @@ class BookingModal extends Component {
         this.setState({ selectedGender: selectedOption });
     }
     handleConfirmBooking = async () => {
-        let { dataTimeModal } = this.props
+        let { dataTimeModal, userInfo } = this.props
         let date = new Date(this.state.birthday).getTime();
         let res = await postBookAppointment({
+            patientId: userInfo && userInfo.id ? userInfo.id : null,
             fullName: this.state.fullName,
             phoneNumber: this.state.phoneNumber,
-            email: this.state.email,
+            email: userInfo && userInfo.email ? userInfo.email : this.state.email,
             address: this.state.address,
             reason: this.state.reason,
             date: date,
@@ -134,7 +136,7 @@ class BookingModal extends Component {
         let doctorId = dataTimeModal && !_.isEmpty(dataTimeModal)
             ? dataTimeModal.doctorId : '';
         console.log('dataTimeModal', this.state);
-
+        let { userInfo } = this.props
         return (
             <Modal
                 isOpen={isTheModalOpen}
@@ -169,7 +171,6 @@ class BookingModal extends Component {
                                     type="text"
                                     value={this.state.fullName}
                                     onChange={(event) => { this.handleOnChangeInput(event, 'fullName') }}
-
                                 />
                             </div>
                             <div className="col-6 form-group">
@@ -177,7 +178,7 @@ class BookingModal extends Component {
                                 <input
                                     className="form-control"
                                     type="text"
-                                    value={this.state.phoneNumber}
+                                    value={this.state.phoneNumber || userInfo?.phoneNumber || ''}
                                     onChange={(event) => { this.handleOnChangeInput(event, 'phoneNumber') }}
 
                                 />
@@ -187,10 +188,9 @@ class BookingModal extends Component {
                                 <input
                                     className="form-control"
                                     type="text"
-                                    value={this.state.email}
-                                    onChange={(event) => { this.handleOnChangeInput(event, 'email') }}
-
-
+                                    // Thêm dấu ? sau userInfo và || '' ở cuối
+                                    value={this.state.email || userInfo?.email || ''}
+                                    onChange={(event) => { this.handleOnChangeInput(event, "email") }}
                                 />
                             </div>
                             <div className="col-6 form-group">
@@ -260,7 +260,8 @@ class BookingModal extends Component {
 const mapStateToProps = state => {
     return {
         language: state.app.language,
-        // // BookingModal: state.admin.BookingModal
+        userInfo: state.user.userInfo,
+        isLoggedIn: state.user.isLoggedIn,
         genders: state.admin.genders
 
     };

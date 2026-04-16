@@ -10,11 +10,9 @@ let handleUserLogin = (email, password) => {
             let userData = {};
             let userExist = await checkUserEmail(email);
             if (userExist) {
-                // User exists, now check the password
-                // This part is not implemented in the provided code
                 let user = await db.User.findOne({
                     where: { email: email },
-                    attributes: ["email", "roleId", "password", "firstName", "lastName", "image"],
+                    attributes: ["id", "email", "roleId", "password", "firstName", "lastName", "image"],
                     raw: true
                 });
                 if (user && user.image) {

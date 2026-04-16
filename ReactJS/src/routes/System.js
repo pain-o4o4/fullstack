@@ -14,6 +14,7 @@ import {
 import Header from '../containers/Header/Header';
 import ManageSpecialty from '../containers/System/Specialty/ManageSpecialty';
 import ManageClinic from '../containers/System/Clinic/ManageClinic';
+import ManageSchedule from '../containers/System/Doctor/ManageSchedule';
 class System extends Component {
 
     render() {
@@ -33,11 +34,9 @@ class System extends Component {
                             <Route path="/system/user-manage" component={UserManage} />
                             <Route path="/system/crud-redux" component={UserRedux} />
                             <Route path="/system/manage-doctor" component={ManageDoctor} />
+                            <Route path="/system/manage-schedule" component={ManageSchedule} />
                             <Route path="/system/manage-specialty" component={ManageSpecialty} />
                             <Route path="/system/manage-clinic" component={ManageClinic} />
-
-
-
                             <Redirect from="/system" to="/system/user-manage" />
                         </Switch>
                     </div>

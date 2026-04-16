@@ -15,18 +15,17 @@ module.exports = (sequelize, DataTypes) => {
       // User.hasOne(models.Doctor_infor,{foreignKey: "doctorId", as:"doctorinforData"})
       User.hasOne(models.Markdown, { foreignKey: 'doctorId', as: 'markdownData' });
       User.hasOne(models.Doctor_infor, { foreignKey: 'doctorId', as: 'doctorinforData' });
-
-
       User.hasMany(models.Schedule, { foreignKey: 'doctorId', as: 'doctorData' });
 
+      User
 
     }
   }
   User.init({
     id: {
       type: DataTypes.INTEGER,
-      primaryKey: true,       // <--- THÊM DÒNG NÀY
-      autoIncrement: true     // Thường đi kèm để tự động tăng số id
+      primaryKey: true,
+      autoIncrement: true
     },
     email: DataTypes.STRING,
     password: DataTypes.STRING,

@@ -13,79 +13,86 @@ let buildUrlEmail = (doctorId, token) => {
     return `${process.env.URL_REACT}/verify-booking?doctorId=${doctorId}&token=${token}`;
 }
 
-let postBookAppointmentService = async (infor) => {
+let postBookAppointmentService = async (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!infor.email || !infor.doctorId || !infor.date || !infor.timeType) {
-                resolve({
+            if (!data) {
+                return resolve({
                     errCode: 1,
                     errMessage: "Missing required parameters!"
-                })
+                });
+            }
+            let token = uuidv4();
+            let finalPatientId = null;
+            await emailService.sendSimpleEmail({
+                receiverEmail: data.email,
+                patientName: data.fullName,
+                time: data.date,
+                doctorName: data.doctorName,
+                language: data.language,
+                redirectLink: buildUrlEmail(data.doctorId, token)
+            });
+
+            if (data.patientId) {
+                finalPatientId = data.patientId;
             } else {
-                let token = uuidv4();
-                // await emailService.sendSimpleEmail(infor.email)
-                await emailService.sendSimpleEmail({
-                    receiverEmail: infor.email,
-                    patientName: infor.fullName,
-                    time: infor.date,
-                    doctorName: `Dr. ${infor.doctorName}" Bác sĩ chuyên kho tâm thần"`,
-                    language: infor.language,
-                    redirectLink: buildUrlEmail(infor.doctorId, token)
-                })
-                let user = await db.User.findOrCreate({
-                    where: { email: infor.email },
+                let [user, created] = await db.User.findOrCreate({
+                    where: { email: data.email },
                     defaults: {
-                        email: infor.email,
-                        roleId: 'R3', // Kiểm tra lại roleId hay roleId trong model nhé
-                        gender: infor.gender,
-                        address: infor.address,
-                        firstName: infor.fullName
+                        email: data.email,
+                        roleId: 'R3',
+                        gender: data.gender,
+                        address: data.address,
+                        firstName: data.fullName,
+                        phonenumber: data.phoneNumber
                     }
                 });
-                if (user && user[0]) {
-                    let count = await db.Booking.count({
-                        where: {
-                            doctorId: infor.doctorId,
-                            date: infor.date,
-                            timeType: infor.timeType
-                        }
-                    });
-                    if (count < MAX_NUMBER_SCHEDULE) {
-                        // 4. Tạo lịch hẹn mới (Dùng create)
-                        await db.Booking.create({
-                            statusId: 'S1',
-                            doctorId: infor.doctorId,
-                            patientId: user[0].id,
-                            date: infor.date,
-                            timeType: infor.timeType,
-                            token: token
-                        });
-
-                        return resolve({
-                            errCode: 0,
-                            errMessage: "OK"
-                        });
-                    }
-                    else {
-                        return resolve({
-                            errCode: 2,
-                            errMessage: "Your schedule is full!"
-                        });
-                    }
-
-                }
-                resolve({
-                    errCode: 0,
-                    errMessage: "OK",
-                    user: user
-                })
+                finalPatientId = user.id;
             }
-        } catch (error) {
-            reject(error);
+
+            if (finalPatientId) {
+                let count = await db.Booking.count({
+                    where: {
+                        doctorId: data.doctorId,
+                        date: data.date,
+                        timeType: data.timeType
+                    }
+                });
+
+                if (count < MAX_NUMBER_SCHEDULE) {
+                    await db.Booking.create({
+                        statusId: 'S1',
+                        doctorId: data.doctorId,
+                        patientId: finalPatientId,
+                        date: data.date,
+                        timeType: data.timeType,
+                        token: token,
+                        // reason: data.reason 
+                    });
+
+                    resolve({
+                        errCode: 0,
+                        errMessage: "Save infor patient success!"
+                    });
+                } else {
+                    resolve({
+                        errCode: 2,
+                        errMessage: "Heathcare is full this day!"
+                    });
+                }
+            } else {
+                resolve({
+                    errCode: 3,
+                    errMessage: "Patient not found!"
+                });
+            }
+
+        } catch (e) {
+            reject(e);
         }
-    })
-}
-let postVeryfyAppointmentService = async (infor) => {
+    });
+};
+let postVerifyAppointmentService = async (infor) => {
     return new Promise(async (resolve, reject) => {
         try {
             if (!infor.doctorId || !infor.token) {
@@ -121,7 +128,27 @@ let postVeryfyAppointmentService = async (infor) => {
         }
     })
 }
+let getAllAppointmentsByIdService = async (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let data = await db.Booking.findAll({
+                where: {
+                    patientId: id,
+                    statusId: 'S2' || 'S1'
+                },
+                raw: true
+            });
+            resolve({
+                errCode: 0,
+                data: data
+            })
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
 export default {
     postBookAppointmentService,
-    postVeryfyAppointmentService,
+    postVerifyAppointmentService,
+    getAllAppointmentsByIdService,
 }

@@ -184,7 +184,6 @@ class ManageSchedule extends Component {
                                 value={this.state.currentDate}
                                 onChange={this.handleChangeDate}
                             />
-
                         </div>
 
                         <div className='col-12 pick-hour-container'>

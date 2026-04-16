@@ -164,11 +164,12 @@ class ScheduleDoctor extends Component {
                     </div>
                 </div>
                 <>
+
                     <BookingModal
                         isTheModalOpen={isTheModalOpen}
                         closeModal={this.closeModal}
-                        dataTimeModal={this.state.dataTimeModal}
-                    // doctorId={doctorId}
+                        dataTimeModal={dataTimeModal}
+                        doctorId={doctorId}
                     />
                 </>
             </React.Fragment>
@@ -179,7 +180,9 @@ class ScheduleDoctor extends Component {
 const mapStateToProps = state => {
     return {
         language: state.app.language,
-        // ScheduleDoctor: state.admin.ScheduleDoctor
+        isLoggedIn: state.user.isLoggedIn,
+        userInfo: state.user.userInfo
+
 
     };
 };

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
 
-import { postVeryfyAppointmentService } from '../../../../ReactJS/src/services/userService'
+import { postVerifyAppointmentService } from '../../../../ReactJS/src/services/userService'
 import { withRouter } from 'react-router'; // hoặc 'react-router-dom'
 import { FormattedMessage } from 'react-intl';
 import './VerifyEmail.scss'
@@ -24,7 +24,7 @@ class VerifyEmail extends Component {
             let token = urlParams.get('token');
             let doctorId = urlParams.get('doctorId');
             if (token && doctorId) {
-                let res = await postVeryfyAppointmentService({
+                let res = await postVerifyAppointmentService({
                     token: token,
                     doctorId: doctorId
                 })
