@@ -9,7 +9,8 @@ import { language } from '../utils'
 
 import {
     userIsAdmin, userIsDoctor,
-    userIsNotAuthenticated
+    userIsNotAuthenticated,
+    userIsAuthenticated
 }
     from '../hoc/authentication';
 import { path } from '../utils'
@@ -23,13 +24,19 @@ import Doctor from '../routes/Doctor'
 import { CustomToastCloseButton } from '../components/CustomToast';
 import ConfirmModal from '../components/ConfirmModal';
 import CustomScrollbars from '../components/CustomScrollbars';
-import DetailDoctor from './Patient/Doctor/DetailDoctor.js';
 import VerifyEmail from '../containers/Patient/VerifyEmail.js';
+
+import DetailDoctor from './Patient/Doctor/DetailDoctor.js';
 import DetailSpecialty from './Patient/Specialty/DetailSpecialty.js';
 import DetailClinic from './Patient/Clinic/DetailClinic.js';
+
 import AllSpecialty from '../containers/Navigation/AllSpecialty.js';
 import AllClinic from '../containers/Navigation/AllClinics.js';
 import AllDoctor from '../containers/Navigation/AllDoctor.js';
+
+import PatientSettings from './HomePage/SubMenuForUser/PatientSettings';
+import MyBooking from './HomePage/SubMenuForUser/MyBooking';
+import BookingHistory from './HomePage/SubMenuForUser/BookingHistory';
 class App extends Component {
 
     handlePersistorState = () => {
@@ -69,6 +76,12 @@ class App extends Component {
                                     <Route path={path.SYSTEM} component={userIsAdmin(System)} />
                                     <Route path={'/doctor'} component={userIsDoctor(Doctor)} />
                                     {/* <Route path={'/patient'} component={userIsPatient(PatientProfile)} /> */}
+
+
+                                    //submenudoruser
+                                    <Route path={path.SETTINGS} component={userIsAuthenticated(PatientSettings)} />
+                                    <Route path={path.MY_BOOKING} component={userIsAuthenticated(MyBooking)} />
+                                    <Route path={path.BOOKING_HISTORY} component={userIsAuthenticated(BookingHistory)} />
 
                                     //checkmail
                                     <Route path={path.VERIFY_EMAIL_BOOKING} component={VerifyEmail} />

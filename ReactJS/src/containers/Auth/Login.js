@@ -32,7 +32,7 @@ class Login extends Component {
         this.setState({ errMessage: '' });
         try {
             let res = await handleLoginApi(this.state.email, this.state.password);
-            // Data trả ra ["email", "roleId", "password", "firstName", "lastName"],
+            // Data trả ra ["email", "roleId", "password", "firstName", "lastName", "image"],
             if (res && res.errCode !== 0) {
                 this.setState({
                     errMessage: res.message
@@ -40,6 +40,7 @@ class Login extends Component {
             }
             if (res && res.errCode === 0) {
                 let user = res.userData;
+                console.log('>>> User data sau khi login:', user);
                 if (user && user.roleId) {
                     this.props.userLoginSuccess(user);
                     if (user.roleId === 'R1') {
@@ -73,6 +74,7 @@ class Login extends Component {
         }
     }
     render() {
+        // console.log(this.state.errMessage);
         return (
 
             <div className="auth-split-container">

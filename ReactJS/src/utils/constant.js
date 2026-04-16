@@ -4,6 +4,7 @@ export const path = {
     LOGIN: '/login',
     LOG_OUT: '/logout',
     SYSTEM: '/system',
+
     DETAIL_DOCTOR: '/detail-doctor/:id',
     DETAIL_SPECIALTY: '/detail-specialty/:id',
     DETAIL_CLINIC: '/detail-clinic/:id',
@@ -12,6 +13,10 @@ export const path = {
     ALL_CLINIC: '/all-clinic',
     ALL_DOCTOR: '/all-doctor',
     ALL_SPECIALTY: '/all-specialty',
+
+    SETTINGS: '/patient/settings',
+    MY_BOOKING: '/patient/my-booking',
+    BOOKING_HISTORY: '/patient/history',
 
     VERIFY_EMAIL_BOOKING: '/verify-booking',
 };

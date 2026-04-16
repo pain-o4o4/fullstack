@@ -14,9 +14,12 @@ let handleUserLogin = (email, password) => {
                 // This part is not implemented in the provided code
                 let user = await db.User.findOne({
                     where: { email: email },
-                    attributes: ["email", "roleId", "password", "firstName", "lastName"],
+                    attributes: ["email", "roleId", "password", "firstName", "lastName", "image"],
                     raw: true
                 });
+                if (user && user.image) {
+                    user.image = Buffer.from(user.image, 'base64').toString('binary');
+                }
                 if (user) {
                     let check = await bcrypt.compareSync(password, user.password);
                     if (check) {

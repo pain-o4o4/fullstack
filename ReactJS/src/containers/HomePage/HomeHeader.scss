@@ -223,13 +223,23 @@ body {
                 .welcome {
                     display: flex;
                     align-items: center;
-                    gap: 8px; // khoảng cách giữa text và icon
+                    justify-content: center;
+                    cursor: pointer;
 
-                    font-size: 14px;
-                    font-weight: 500;
-                    color: #333;
+                    .icon-user {
+                        width: 32px;
+                        height: 32px;
+                        border-radius: 50%;
+                        object-fit: cover;
 
+                        transition: all 0.25s ease;
+                        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
 
+                        &:hover {
+                            transform: scale(1.05);
+                            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+                        }
+                    }
                 }
 
                 .icon-user {

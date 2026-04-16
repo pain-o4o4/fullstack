@@ -11,12 +11,18 @@ import ModalSearchHeader from './ModalSearchHeader.js';
 import { changeLanguageApp } from "../../store/actions";
 import { path } from '../../utils/constant';
 import { withRouter } from 'react-router';
+import UserMenuPopup from '../HomePage/SubMenuForUser/UserMenuPopup';
 class HomeHeader extends Component {
     constructor(props) {
         super(props);
+        this.wrapperRef = React.createRef();
         this.state = {
-            isShowSearch: false
+            isShowSearch: false,
+            isOpenUserMenu: false,
         }
+    }
+    toggleUserMenu = () => {
+        this.setState({ isOpenUserMenu: !this.state.isOpenUserMenu });
     }
     toggleShowSearchModal = () => {
         this.setState({
@@ -34,6 +40,20 @@ class HomeHeader extends Component {
             isShowSearch: true
         });
     }
+    componentDidMount() {
+        document.addEventListener('mousedown', this.handleClickOutside);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('mousedown', this.handleClickOutside);
+    }
+
+    handleClickOutside = (event) => {
+        // Thêm check this.wrapperRef.current để chắc chắn nó đã tồn tại
+        if (this.wrapperRef && this.wrapperRef.current && !this.wrapperRef.current.contains(event.target)) {
+            this.setState({ isOpenUserMenu: false });
+        }
+    }
 
     handleViewList = (type) => {
         const { history, isLoggedIn, userInfo } = this.props;
@@ -47,18 +67,20 @@ class HomeHeader extends Component {
                 } else if (userInfo && userInfo.roleId === 'R2') {
                     history.push('/doctor/manage-schedule');
                 } else {
-                    history.push('/home'); // Bệnh nhân thì ở lại trang chủ
+                    history.push('/home');
                 }
             }
             return;
         }
-
-        // Các route khác giữ nguyên
         const routeMap = {
             SPECIALTY: path.ALL_SPECIALTY,
             CLINIC: path.ALL_CLINIC,
             PHYSICIAN: path.ALL_DOCTOR,
             HOME: path.HOMEPAGE,
+
+            SETTINGS: path.SETTINGS,
+            MY_BOOKING: path.MY_BOOKING,
+            BOOKING_HISTORY: path.BOOKING_HISTORY,
         };
 
         if (routeMap[type]) {
@@ -117,7 +139,7 @@ class HomeHeader extends Component {
                         </div>
                         <div className="right-content">
                             {!isLoggedIn ? <div className="login-group"
-                                onClick={() => this.handleViewList('LOGIN')}
+                                onClick={() => this.toggleUserMenu()}
                             >
                                 <img src={user_login} className="icon-user" alt="User" />
                                 <span className="text-login">
@@ -126,13 +148,16 @@ class HomeHeader extends Component {
                                 </span>
                             </div> :
                                 <span className='welcome'
-                                    onClick={() => this.handleViewList('LOGIN')}
+                                    onClick={() => this.toggleUserMenu()}
                                 >
-                                    <FormattedMessage id="homeheader.welcome" defaultMessage="Welcome, " />
-                                    {userInfo && userInfo.firstName ? userInfo.firstName : ''}
-                                    <img src={user_login} className="icon-user" alt="User" />
+                                    <img src={userInfo.image} className="icon-user" alt="User" />
                                 </span>
                             }
+                            {this.state.isOpenUserMenu && (
+                                <UserMenuPopup
+                                    handleViewList={this.handleViewList}
+                                />
+                            )}
                             <img src={search} className="icon-search" alt="icon-search" onClick={() => this.handleToggleSearch()} />
                             <img
                                 src={translate}
@@ -199,7 +224,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        // Tạo một cái tên hàm 'changeLanguageAppRedux' để Duy dùng trong Class
         changeLanguageAppRedux: (language) => dispatch(changeLanguageApp(language))
     };
 };
