@@ -3,8 +3,7 @@
 // https://assets.mayoclinic.org/content/dam/media/global/images/2023/07/27/about-mc-maurice-2100x900.jpg
 body {
     font-family: 'Inter', sans-serif;
-    max-height: 100vh; // ← Đây là thủ phạm chính
-    // overflow-y: auto;
+    max-height: 100vh;
 
     .home-header-container {
         height: 72px; // HealthMatch để header khá cao và thoáng
@@ -192,11 +191,7 @@ body {
                     opacity: 0.7;
 
 
-                    .icon-user {
-                        color: #000000;
-                        width: 24px;
-                        height: 24px; // Màu đen tuyền của Apple
-                    }
+
 
                     .text-login {
                         white-space: nowrap;
@@ -223,6 +218,24 @@ body {
                         opacity: 1;
                         // Hiệu ứng mờ nhẹ khi di chuột vào cụm
                     }
+                }
+
+                .welcome {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px; // khoảng cách giữa text và icon
+
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #333;
+
+
+                }
+
+                .icon-user {
+                    color: #000000;
+                    width: 24px;
+                    height: 24px; // Màu đen tuyền của Apple
                 }
 
                 .icon-translate {
@@ -254,6 +267,7 @@ body {
 
         }
     }
+
 
     .home-header-line {
         // margin-top: 5px;

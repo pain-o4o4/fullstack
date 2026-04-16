@@ -4,7 +4,13 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import UserManage from '../containers/System/UserManage';
 import UserRedux from '../containers/System/Admin/UserRedux';
 import ManageDoctor from '../containers/System/Admin/ManageDoctor';
-// import RegisterPackageGroupOrAcc from '../containers/System/RegisterPackageGroupOrAcc';
+import {
+    userIsAuthenticated,
+    userIsNotAuthenticated,
+    userIsAdmin, userIsDoctor
+}
+    from '../hoc/authentication';
+
 import Header from '../containers/Header/Header';
 import ManageSpecialty from '../containers/System/Specialty/ManageSpecialty';
 import ManageClinic from '../containers/System/Clinic/ManageClinic';

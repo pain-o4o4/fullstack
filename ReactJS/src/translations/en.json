@@ -40,7 +40,8 @@
         },
         "doctor": {
             "header": "Bác sỹ",
-            "manage-schedule": "Manage Schedule"
+            "manage-schedule": "Manage Schedule",
+            "manage-booking": "Manage Booking"
         }
     },
     "manage-user": {

@@ -31,25 +31,29 @@ class Login extends Component {
     handleLogin = async () => {
         this.setState({ errMessage: '' });
         try {
-            // 1. Phải gán kết quả trả về vào biến data
-            let data = await handleLoginApi(this.state.email, this.state.password);
-            console.log(">>> Full data from server: ", data);
-            // 2. Kiểm tra errCode từ Server (chúng mình đã thống nhất là 0 là OK)
-            if (data && data.errCode !== 0) {
+            let res = await handleLoginApi(this.state.email, this.state.password);
+            // Data trả ra ["email", "roleId", "password", "firstName", "lastName"],
+            if (res && res.errCode !== 0) {
                 this.setState({
-                    errMessage: data.message // Hiển thị lỗi từ server (ví dụ: Sai mật khẩu)
+                    errMessage: res.message
                 });
             }
-
-            if (data && data.errCode === 0) {
-                // 3. THÀNH CÔNG: Lưu vào Redux và chuyển trang
-                this.props.userLoginSuccess(data.userData);
-                console.log('Đăng nhập thành công!');
-                // Chuyển trang nếu cần: this.props.navigate('/system');
+            if (res && res.errCode === 0) {
+                let user = res.userData;
+                if (user && user.roleId) {
+                    this.props.userLoginSuccess(user);
+                    if (user.roleId === 'R1') {
+                        this.props.navigate('/system/user-manage');
+                    } else if (user.roleId === 'R2') {
+                        this.props.navigate('/doctor/manage-schedule');
+                    } else if (user.roleId === 'R3') {
+                        this.props.navigate('/home');
+                    } else {
+                        this.props.navigate('/login');
+                    }
+                }
             }
-
         } catch (error) {
-            // Lỗi này là lỗi kết nối hoặc lỗi server crash (500)
             if (error.response && error.response.data) {
                 this.setState({
                     errMessage: error.response.data.message
@@ -57,6 +61,7 @@ class Login extends Component {
             } else {
                 console.error(error);
             }
+
         }
     }
     hanhleShowHidePassword = () => {
@@ -84,10 +89,6 @@ class Login extends Component {
                             <div className="underline"></div>
                         </div>
                         <div className="inputs">
-                            {/* <div className="input">
-                                <img src={username} alt="User" />
-                                <input type="text" placeholder="Username" />
-                            </div> */}
                             <div className="input">
                                 <img className="input-icon" src={email} alt="Email" />
                                 <input type="email" placeholder="Email"
@@ -103,14 +104,11 @@ class Login extends Component {
                                     onKeyDown={(event) => this.handleKeyDown(event)}
                                 />
                                 <div className="eye-icon">
-                                    {/* <i className="fa-regular fa-eye"></i> */}
-
                                     <span
                                         onClick={this.hanhleShowHidePassword}
                                         className={this.state.isShowPassword ?
                                             "material-symbols-rounded" : "material-symbols-rounded"}
                                     >
-                                        {/* QUAN TRỌNG: Thêm tên icon vào đây */}
                                         {this.state.isShowPassword ? 'visibility' : 'visibility_off'}
                                     </span>
                                 </div>
@@ -128,7 +126,6 @@ class Login extends Component {
                                 <button className="submit" type="button" onClick={this.handleLogin}>Login</button>
                             </div>
                             <span className="social-login">
-                                {/* Don't have an account? */}
                                 <span>Or login with</span>
                                 <i className="fab fa-facebook"></i>
                                 <i className="fab fa-google"></i>

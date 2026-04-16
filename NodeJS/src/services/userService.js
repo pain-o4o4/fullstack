@@ -22,7 +22,7 @@ let handleUserLogin = (email, password) => {
                     if (check) {
                         userData.errCode = 0;
                         userData.errMessage = `OK`;
-                        delete user.password; // Remove password from the user data before sending it back
+                        delete user.password;
                         userData.user = user;
                     } else {
                         userData.errCode = 2;

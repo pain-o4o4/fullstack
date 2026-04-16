@@ -50,7 +50,8 @@
         },
         "doctor": {
             "header": "Bác sỹ",
-            "manage-schedule": "Quản lý lịch khám bệnh"
+            "manage-schedule": "Quản lý lịch khám bệnh",
+            "manage-booking": "Quản lý đặt lịch"
         }
     },
     "manage-user": {

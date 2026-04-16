@@ -7,8 +7,11 @@ import { ToastContainer } from 'react-toastify';
 import { IntlProvider } from 'react-intl';
 import { language } from '../utils'
 
-import { userIsAuthenticated, userIsNotAuthenticated } from '../hoc/authentication';
-
+import {
+    userIsAdmin, userIsDoctor,
+    userIsNotAuthenticated
+}
+    from '../hoc/authentication';
 import { path } from '../utils'
 
 import Home from '../routes/Home';
@@ -56,15 +59,21 @@ class App extends Component {
                     <div className="main-container">
                         <ConfirmModal />
                         {/* {this.props.isLoggedIn && <Header />} */}
-
                         <div className="content-container">
                             <CustomScrollbars style={{ height: '100vh', width: '100%' }}>
                                 <Switch>
                                     <Route path={path.HOME} exact component={(Home)} />
-                                    <Route path={path.LOGIN} component={userIsNotAuthenticated(Login)} />
-                                    <Route path={path.SYSTEM} component={userIsAuthenticated(System)} />
 
-                                    <Route path={path.DOCTOR} component={userIsAuthenticated(Doctor)} />
+                                    {/* //check roleId */}
+                                    <Route path={path.LOGIN} component={userIsNotAuthenticated(Login)} />
+                                    <Route path={path.SYSTEM} component={userIsAdmin(System)} />
+                                    <Route path={'/doctor'} component={userIsDoctor(Doctor)} />
+                                    {/* <Route path={'/patient'} component={userIsPatient(PatientProfile)} /> */}
+
+                                    //checkmail
+                                    <Route path={path.VERIFY_EMAIL_BOOKING} component={VerifyEmail} />
+
+                                    //user
                                     <Route path={path.HOMEPAGE} component={HomePage} />
                                     <Route path={path.DETAIL_DOCTOR} component={DetailDoctor} />
                                     <Route path={path.DETAIL_SPECIALTY} component={DetailSpecialty} />
@@ -74,7 +83,7 @@ class App extends Component {
                                     <Route path={path.ALL_CLINIC} component={AllClinic} />
                                     <Route path={path.ALL_DOCTOR} component={AllDoctor} />
 
-                                    <Route path={path.VERIFY_EMAIL_BOOKING} component={VerifyEmail} />
+
                                 </Switch>
                             </CustomScrollbars>
                         </div>

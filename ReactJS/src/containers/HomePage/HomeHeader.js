@@ -15,7 +15,7 @@ class HomeHeader extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isShowSearch: false // Mặc định là đóng search
+            isShowSearch: false
         }
     }
     toggleShowSearchModal = () => {
@@ -34,18 +34,31 @@ class HomeHeader extends Component {
             isShowSearch: true
         });
     }
-    returnToHome = () => {
-        if (this.props.history) {
-            this.props.history.push(path.HOMEPAGE);
-        }
-    }
-    handleViewList = (type) => {
-        const { history } = this.props;
 
+    handleViewList = (type) => {
+        const { history, isLoggedIn, userInfo } = this.props;
+
+        if (type === 'LOGIN') {
+            if (!isLoggedIn) {
+                history.push(path.LOGIN);
+            } else {
+                if (userInfo && userInfo.roleId === 'R1') {
+                    history.push('/system/user-manage');
+                } else if (userInfo && userInfo.roleId === 'R2') {
+                    history.push('/doctor/manage-schedule');
+                } else {
+                    history.push('/home'); // Bệnh nhân thì ở lại trang chủ
+                }
+            }
+            return;
+        }
+
+        // Các route khác giữ nguyên
         const routeMap = {
             SPECIALTY: path.ALL_SPECIALTY,
             CLINIC: path.ALL_CLINIC,
-            PHYSICIAN: path.ALL_DOCTOR
+            PHYSICIAN: path.ALL_DOCTOR,
+            HOME: path.HOMEPAGE,
         };
 
         if (routeMap[type]) {
@@ -56,6 +69,7 @@ class HomeHeader extends Component {
     }
     render() {
         console.log(">>> check props: ", this.props.userInfo);
+        let { isLoggedIn, userInfo } = this.props;
         return (
             <React.Fragment>
 
@@ -63,7 +77,7 @@ class HomeHeader extends Component {
                     <div className='home-header-content'>
                         <div className='left-content'>
                             <div className='header-logo'
-                                onClick={() => this.returnToHome()}
+                                onClick={() => this.handleViewList('HOME')}
                             ></div>
                         </div>
                         <div className='center-content'>
@@ -102,13 +116,23 @@ class HomeHeader extends Component {
                             )}
                         </div>
                         <div className="right-content">
-                            <div className="login-group">
+                            {!isLoggedIn ? <div className="login-group"
+                                onClick={() => this.handleViewList('LOGIN')}
+                            >
                                 <img src={user_login} className="icon-user" alt="User" />
                                 <span className="text-login">
 
                                     <FormattedMessage id="header.login" defaultMessage="Log in" />
                                 </span>
-                            </div>
+                            </div> :
+                                <span className='welcome'
+                                    onClick={() => this.handleViewList('LOGIN')}
+                                >
+                                    <FormattedMessage id="homeheader.welcome" defaultMessage="Welcome, " />
+                                    {userInfo && userInfo.firstName ? userInfo.firstName : ''}
+                                    <img src={user_login} className="icon-user" alt="User" />
+                                </span>
+                            }
                             <img src={search} className="icon-search" alt="icon-search" onClick={() => this.handleToggleSearch()} />
                             <img
                                 src={translate}
