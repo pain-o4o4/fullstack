@@ -12,20 +12,20 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       User.belongsTo(models.Allcode, { foreignKey: 'positionId', targetKey: 'keyMap', as: 'positionData' })
       User.belongsTo(models.Allcode, { foreignKey: 'gender', targetKey: 'keyMap', as: 'genderData' })
-      // User.hasOne(models.Doctor_infor,{foreignKey: "doctorId", as:"doctorinforData"})
+
       User.hasOne(models.Markdown, { foreignKey: 'doctorId', as: 'markdownData' });
       User.hasOne(models.Doctor_infor, { foreignKey: 'doctorId', as: 'doctorinforData' });
       User.hasMany(models.Schedule, { foreignKey: 'doctorId', as: 'doctorData' });
 
-      User
-
+      User.hasMany(models.Booking, { foreignKey: 'doctorId', as: 'doctorBookingData' });
+      User.hasMany(models.Booking, { foreignKey: 'patientId', as: 'patientBookingData' });
     }
   }
   User.init({
     id: {
       type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true
+      primaryKey: true,       // <--- THÊM DÒNG NÀY
+      autoIncrement: true     // Thường đi kèm để tự động tăng số id
     },
     email: DataTypes.STRING,
     password: DataTypes.STRING,

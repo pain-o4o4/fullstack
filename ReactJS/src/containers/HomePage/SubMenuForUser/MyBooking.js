@@ -1,51 +1,143 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
-import { getMyBookingById } from '../../../services/userService'
+import * as action from '../../../store/actions'
 import HomeHeader from '../../HomePage/HomeHeader'
-import { withRouter } from 'react-router'; // hoặc 'react-router-dom'
+import { withRouter } from 'react-router';
 import { FormattedMessage } from 'react-intl';
+import moment from 'moment';
+import { LANGUAGES } from '../../../utils';
 import './MyBooking.scss'
+import { getAllAppointmentsByIdService } from '../../../services/userService'
+
 class MyBooking extends Component {
     constructor(props) {
         super(props);
         this.state = {
-
+            listAppointments: []
         }
     }
 
-
     async componentDidMount() {
-
+        if (this.props.userInfo && this.props.userInfo.id) {
+            let id = this.props.userInfo.id;
+            let res = await getAllAppointmentsByIdService(id);
+            if (res && res.errCode === 0) {
+                this.setState({
+                    listAppointments: res.data ? res.data : []
+                });
+            }
+        }
     }
 
     async componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevProps.userInfo !== this.props.userInfo && this.props.userInfo && this.props.userInfo.id) {
+            await getAllAppointmentsByIdService(this.props.userInfo.id);
+        }
 
+        if (prevProps.detailAppointment !== this.props.detailAppointment) {
+            this.setState({
+                listAppointments: this.props.detailAppointment
+            });
+        }
     }
 
-
     render() {
+        let { listAppointments } = this.state;
+        let { language } = this.props;
+
         return (
-            <div className="my-booking">
+            <div className="my-booking-container">
                 <HomeHeader />
+                <div className="my-booking-body container">
+                    <div className="title-booking">
+                        <FormattedMessage id="patient.my-booking.title" defaultMessage="LỊCH HẸN CỦA BẠN" />
+                    </div>
+                    <div className="table-booking-content">
+                        <table className="table table-hover table-bordered mt-3">
+                            <thead className="thead-light">
+                                <tr>
+                                    <th>STT</th>
+                                    <th><FormattedMessage id="patient.my-booking.time" defaultMessage="Thời gian" /></th>
+                                    <th><FormattedMessage id="patient.my-booking.doctor" defaultMessage="Bác sĩ" /></th>
+                                    <th><FormattedMessage id="patient.my-booking.clinic" defaultMessage="Phòng khám" /></th>
+                                    <th><FormattedMessage id="patient.my-booking.status" defaultMessage="Trạng thái" /></th>
+                                    <th><FormattedMessage id="patient.my-booking.actions" defaultMessage="Thao tác" /></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {listAppointments && listAppointments.length > 0 ?
+                                    listAppointments.map((item, index) => {
+                                        // Xử lý tên bác sĩ theo ngôn ngữ
+                                        let name = language === 'vi'
+                                            ? `${item.doctorBookingData.lastName} ${item.doctorBookingData.firstName}`
+                                            : `${item.doctorBookingData.firstName} ${item.doctorBookingData.lastName}`;
+
+                                        // Xử lý thông tin phòng khám (đề phòng null)
+                                        let clinicName = item.doctorBookingData.doctorinforData
+                                            ? item.doctorBookingData.doctorinforData.nameClinic
+                                            : 'N/A';
+                                        let clinicAddress = item.doctorBookingData.doctorinforData
+                                            ? item.doctorBookingData.doctorinforData.addressClinic
+                                            : '';
+
+                                        // Format ngày (Ví dụ từ 1777482000000 -> 17/04/2026)
+                                        let formattedDate = moment(new Date(parseInt(item.date))).format('DD/MM/YYYY');
+
+                                        return (
+                                            <tr key={index}>
+                                                <td>{index + 1}</td>
+                                                <td>
+                                                    <div className="time-display">
+                                                        {language === 'vi' ? item.timeTypeDataPatient.valueVi : item.timeTypeDataPatient.valueEn}
+                                                    </div>
+                                                    <div className="date-display">{formattedDate}</div>
+                                                </td>
+                                                <td className="doctor-name">{name}</td>
+                                                <td>
+                                                    <strong>{clinicName}</strong>
+                                                    <div className="clinic-address">{clinicAddress}</div>
+                                                </td>
+                                                <td>
+                                                    <span className={`status-badge ${item.statusId}`}>
+                                                        {language === 'vi' ? item.statusData.valueVi : item.statusData.valueEn}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <button className="btn-cancel-booking" onClick={() => this.handleCancelBooking(item)}>
+                                                        <FormattedMessage id="patient.my-booking.cancel" defaultMessage="Hủy lịch" />
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        )
+                                    })
+                                    :
+                                    <tr>
+                                        <td colSpan="6" className="text-center no-data">
+                                            <FormattedMessage id="patient.my-booking.no-data" defaultMessage="Bạn chưa có lịch hẹn nào." />
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-        )
+        );
     }
 }
 
 const mapStateToProps = state => {
     return {
-        // language: state.app.language,
-        // // MyBooking: state.admin.MyBooking
-
+        language: state.app.language,
+        detailAppointment: state.admin.detailAppointment,
+        userInfo: state.user.userInfo
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-
-        // getMyBooking: (id) => dispatch(action.getMyBooking(id))
+        getAllAppointmentsById: (id) => dispatch(action.getAllAppointmentsById(id))
     };
 };
 
-// import { withRouter } from 'react-router'; // hoặc 'react-router-dom'
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(MyBooking));

@@ -32,15 +32,19 @@ let postVerifyAppointment = async (req, res) => {
 }
 let getAllAppointmentsById = async (req, res) => {
     try {
-        let idPatient = req.body.idPatient;
+        let idPatient = req.query.id
+        if (!idPatient) {
+            return res.status(200).json({
+                errCode: 1,
+                errMessage: 'Missing required parameter: id'
+            });
+        }
         let response = await patientService.getAllAppointmentsByIdService(idPatient);
         return res.status(200).json(response);
     } catch (error) {
-        console.log(error);
         return res.status(200).json({
             errCode: -1,
             errMessage: 'Error from server',
-            errPin: JSON.stringify(error)
         });
     }
 }

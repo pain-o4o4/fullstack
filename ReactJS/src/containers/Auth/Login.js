@@ -32,7 +32,7 @@ class Login extends Component {
         this.setState({ errMessage: '' });
         try {
             let res = await handleLoginApi(this.state.email, this.state.password);
-            // Data trả ra ["email", "roleId", "password", "firstName", "lastName", "image"],
+            // Data trả ra "id", "email", "roleId", "password", "firstName", "lastName", "image"
             if (res && res.errCode !== 0) {
                 this.setState({
                     errMessage: res.message

@@ -5,7 +5,8 @@ import {
     getTopDoctorHomeService, getAllDoctorsService,
     postInforDoctorService, getDetailDoctorByIdService,
     getAllSpecialtyService, getAllClinicService,
-    getDetailClinicByIdService, getDetailSpecialtyByIdService
+    getDetailClinicByIdService, getDetailSpecialtyByIdService,
+    getAllAppointmentsByIdService
 } from '../../services/userService';
 import { toast } from 'react-toastify';
 export const fetchGenderStart = () => {
@@ -458,6 +459,28 @@ export const getDetailClinicById = (id) => {
             console.log('FETCH_DETAIL_CLINIC_FAILD: ', e)
             dispatch({
                 type: actionTypes.FETCH_DETAIL_CLINIC_FAILD,
+            })
+        }
+    }
+}
+export const getAllAppointmentsById = (id) => {
+    return async (dispatch, getState) => {
+        try {
+            let res = await getAllAppointmentsByIdService(id);
+            if (res && res.errCode === 0) {
+                dispatch({
+                    type: actionTypes.GET_ALL_APPOINTMENTS_BY_ID_SUCCESS,
+                    data: res.data
+                })
+            } else {
+                dispatch({
+                    type: actionTypes.GET_ALL_APPOINTMENTS_BY_ID_FAILD,
+                })
+            }
+        } catch (e) {
+            console.log('GET_ALL_APPOINTMENTS_BY_ID_FAILD: ', e)
+            dispatch({
+                type: actionTypes.GET_ALL_APPOINTMENTS_BY_ID_FAILD,
             })
         }
     }

@@ -1,3 +1,5 @@
+import { getAllAppointmentsByIdService } from "../../services/userService";
+
 const actionTypes = Object.freeze({
     //app
     APP_START_UP_COMPLETE: 'APP_START_UP_COMPLETE',
@@ -84,6 +86,9 @@ const actionTypes = Object.freeze({
     FETCH_ALL_CLINIC_SUCCESS: 'FETCH_ALL_CLINIC_SUCCESS',
     FETCH_ALL_CLINIC_FAIL: 'FETCH_ALL_CLINIC_FAIL',
 
+    //patient lịch cho patient xem
+    GET_ALL_APPOINTMENTS_BY_ID_SUCCESS: 'GET_ALL_APPOINTMENTS_BY_ID_SUCCESS',
+    GET_ALL_APPOINTMENTS_BY_ID_FAIL: 'GET_ALL_APPOINTMENTS_BY_ID_FAIL',
 })
 
 export default actionTypes;

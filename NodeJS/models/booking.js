@@ -10,7 +10,15 @@ module.exports = (sequelize, DataTypes) => {
          * The `models/index` file will call this method automatically.
          */
         static associate(models) {
-            // define association here
+            // Sửa Alias để khớp với User.js (doctorBookingData)
+            booking.belongsTo(models.User, { foreignKey: 'doctorId', targetKey: 'id', as: 'doctorBookingData' });
+
+            // Bổ sung thêm quan hệ cho Patient để sau này làm MyBooking không bị lỗi
+            booking.belongsTo(models.User, { foreignKey: 'patientId', targetKey: 'id', as: 'patientBookingData' });
+
+            // Giữ nguyên các phần Allcode cũ của Duy
+            booking.belongsTo(models.Allcode, { foreignKey: 'timeType', targetKey: 'keyMap', as: 'timeTypeDataPatient' });
+            booking.belongsTo(models.Allcode, { foreignKey: 'statusId', targetKey: 'keyMap', as: 'statusData' });
         }
     }
     booking.init({

@@ -21,9 +21,13 @@ const editUserService = (data) => {
     console.log(`check data from service`, data)
     return axios.put('/api/edit-user', data);
 }
+
+
 const getAllCodeService = (inputType) => {
     return axios.get(`/api/allcode?type=${inputType}`);
 }
+
+
 const getTopDoctorHomeService = (limit) => {
     return axios.get(`/api/top-doctor-home?limit=${limit}`);
 }
@@ -37,6 +41,8 @@ const postInforDoctorService = (data) => {
 const getDetailDoctorByIdService = (inputId) => {
     return axios.get(`/api/get-detail-doctor-by-id?id=${inputId}`);
 }
+
+
 const bulkCreateScheduleService = (data) => {
     return axios.post(`/api/bulk-create-schedule`, data);
 }
@@ -54,12 +60,20 @@ const getExtraInforDoctorById = (doctorId) => {
 const getProfileDoctorById = (doctorId) => {
     return axios.get(`/api/get-profile-doctor-by-id?doctorId=${doctorId} `)
 }
+
+
 const postBookAppointment = (data) => {
     return axios.post(`/api/patient-book-appointment`, data)
 }
 const postVerifyAppointmentService = (data) => {
     return axios.post(`/api/verify-book-appointment`, data)
 }
+const getAllAppointmentsByIdService = (inputId) => {
+    return axios.get(`/api/get-all-appointments-by-id?id=${inputId}`);
+}
+
+
+
 const postCreateNewSpecialtyService = (data) => {
     return axios.post(`/api/create-new-specialty`, data);
 };
@@ -69,6 +83,8 @@ const getAllSpecialtyService = () => {
 const getDetailSpecialtyByIdService = (inputId) => {
     return axios.get(`/api/get-detail-specialty-by-id?id=${inputId}`);
 }
+
+
 const postCreateNewClinicService = (data) => {
     return axios.post(`/api/create-new-clinic`, data);
 };
@@ -78,6 +94,7 @@ const getAllClinicService = () => {
 const getDetailClinicByIdService = (inputId) => {
     return axios.get(`/api/get-detail-clinic-by-id?id=${inputId}`);
 }
+
 export {
     handleLoginApi,
     getAllUsers,
@@ -101,5 +118,6 @@ export {
     getAllClinicService,
     getDetailClinicByIdService,
     getDetailSpecialtyByIdService,
+    getAllAppointmentsByIdService
 
 }

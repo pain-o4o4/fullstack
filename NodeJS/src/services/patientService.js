@@ -131,22 +131,52 @@ let postVerifyAppointmentService = async (infor) => {
 let getAllAppointmentsByIdService = async (id) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await db.Booking.findAll({
-                where: {
-                    patientId: id,
-                    statusId: 'S2' || 'S1'
-                },
-                raw: true
-            });
-            resolve({
-                errCode: 0,
-                data: data
-            })
+            if (!id) {
+                resolve({ errCode: 1, errMessage: 'Missing required parameter!' });
+            } else {
+                let data = await db.Booking.findAll({
+                    where: {
+                        patientId: id,
+                        statusId: { [Op.in]: ['S1', 'S2'] }
+                    },
+                    include: [
+                        {
+                            model: db.User,
+                            as: 'doctorBookingData',
+                            attributes: ['firstName', 'lastName'],
+                            include: [
+                                {
+                                    model: db.Doctor_infor,
+                                    as: 'doctorinforData',
+                                    attributes: ['nameClinic', 'addressClinic']
+                                }
+                            ]
+                        },
+                        {
+                            model: db.Allcode,
+                            as: 'timeTypeDataPatient',
+                            attributes: ['valueVi', 'valueEn']
+                        },
+                        {
+                            model: db.Allcode,
+                            as: 'statusData',
+                            attributes: ['valueVi', 'valueEn']
+                        }
+                    ],
+                    raw: false,
+                    nest: true
+                });
+
+                resolve({
+                    errCode: 0,
+                    data: data
+                });
+            }
         } catch (error) {
             reject(error);
         }
-    })
-}
+    });
+};
 export default {
     postBookAppointmentService,
     postVerifyAppointmentService,

@@ -17,7 +17,8 @@ const initialState = {
     allClinicsLoaded: false,
     allSpecialties: [],
     detailClinic: {},
-    detailSpecialty: {}
+    detailSpecialty: {},
+    detailAppointment: []
 }
 
 const adminReducer = (state = initialState, action) => {
@@ -204,6 +205,17 @@ const adminReducer = (state = initialState, action) => {
             return {
                 ...state,
                 allClinics: []
+            }
+        case actionTypes.FETCH_DETAIL_APPOINTMENT_SUCCESS:
+            return {
+                ...state,
+                detailAppointment: action.data
+
+            }
+        case actionTypes.FETCH_DETAIL_APPOINTMENT_FAILD:
+            return {
+                ...state,
+                detailAppointment: []
             }
         default:
             return state;
