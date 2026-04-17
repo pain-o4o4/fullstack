@@ -1,7 +1,10 @@
+import { REGISTER } from "redux-persist";
+
 export const path = {
     HOME: '/',
     HOMEPAGE: '/home',
     LOGIN: '/login',
+    REGISTER: '/register',
     LOG_OUT: '/logout',
     SYSTEM: '/system',
 

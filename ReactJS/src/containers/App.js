@@ -17,7 +17,7 @@ import { path } from '../utils'
 
 import Home from '../routes/Home';
 import Login from './Auth/Login';
-// import Header from './Header/Header';
+import Register from './Auth/Register.js';
 import System from '../routes/System';
 import HomePage from './HomePage/HomePage.js'
 import Doctor from '../routes/Doctor'
@@ -73,12 +73,13 @@ class App extends Component {
 
                                     {/* //check roleId */}
                                     <Route path={path.LOGIN} component={userIsNotAuthenticated(Login)} />
+                                    <Route path={path.REGISTER} component={userIsNotAuthenticated(Register)} />
                                     <Route path={path.SYSTEM} component={userIsAdmin(System)} />
                                     <Route path={'/doctor'} component={userIsDoctor(Doctor)} />
                                     {/* <Route path={'/patient'} component={userIsPatient(PatientProfile)} /> */}
 
 
-                                    //submenudoruser
+                                    //submenuforuser
                                     <Route path={path.SETTINGS} component={userIsAuthenticated(PatientSettings)} />
                                     <Route path={path.MY_BOOKING} component={userIsAuthenticated(MyBooking)} />
                                     <Route path={path.BOOKING_HISTORY} component={userIsAuthenticated(BookingHistory)} />

@@ -77,7 +77,7 @@ class HomeHeader extends Component {
             CLINIC: path.ALL_CLINIC,
             PHYSICIAN: path.ALL_DOCTOR,
             HOME: path.HOMEPAGE,
-
+            REGISTER: path.REGISTER,
             SETTINGS: path.SETTINGS,
             MY_BOOKING: path.MY_BOOKING,
             BOOKING_HISTORY: path.BOOKING_HISTORY,

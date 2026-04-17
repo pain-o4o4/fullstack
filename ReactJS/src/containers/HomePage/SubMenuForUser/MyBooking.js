@@ -67,12 +67,12 @@ class MyBooking extends Component {
                             <tbody>
                                 {listAppointments && listAppointments.length > 0 ?
                                     listAppointments.map((item, index) => {
-                                        // Xử lý tên bác sĩ theo ngôn ngữ
+
                                         let name = language === 'vi'
                                             ? `${item.doctorBookingData.lastName} ${item.doctorBookingData.firstName}`
                                             : `${item.doctorBookingData.firstName} ${item.doctorBookingData.lastName}`;
 
-                                        // Xử lý thông tin phòng khám (đề phòng null)
+
                                         let clinicName = item.doctorBookingData.doctorinforData
                                             ? item.doctorBookingData.doctorinforData.nameClinic
                                             : 'N/A';
@@ -80,7 +80,7 @@ class MyBooking extends Component {
                                             ? item.doctorBookingData.doctorinforData.addressClinic
                                             : '';
 
-                                        // Format ngày (Ví dụ từ 1777482000000 -> 17/04/2026)
+
                                         let formattedDate = moment(new Date(parseInt(item.date))).format('DD/MM/YYYY');
 
                                         return (

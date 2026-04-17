@@ -4,6 +4,41 @@ import db from "../../models/index"
 import bcrypt from "bcryptjs";
 const salt = bcrypt.genSaltSync(10);
 
+let createRegisterService = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let check = await checkUserEmail(data.email);
+            if (check === true) {
+                resolve({
+                    errCode: 1,
+                    errMessage: "The email is already in use. Please try another email!"
+                });
+            }
+            else {
+                let hashPasswordFromBcrypt = await hashUserPassword(data.password);
+                await db.User.create({
+                    email: data.email,
+                    password: hashPasswordFromBcrypt,
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    address: data.address,
+                    phonenumber: data.phonenumber,
+                    gender: data.gender,
+                    image: data.avatar,
+                    roleId: 'R3',
+                    positionId: null,
+                })
+                resolve({
+                    errCode: 0,
+                    errMessage: "Create new user successfully!"
+                });
+            }
+        } catch (error) {
+            reject(error)
+        }
+
+    })
+}
 let handleUserLogin = (email, password) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -228,6 +263,7 @@ let getAllCodeService = (type) => {
 };
 
 export default {
+    createRegisterService: createRegisterService,
     handleUserLogin: handleUserLogin,
     checkUserEmail: checkUserEmail,
     getAllUsers: getAllUsers,

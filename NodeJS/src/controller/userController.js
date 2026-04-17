@@ -34,6 +34,30 @@ let handleLogin = async (req, res) => {
         });
     }
 }
+let createRegister = async (req, res) => {
+    try {
+        if (!req.body.email || !req.body.password ||
+            !req.body.firstName || !req.body.lastName ||
+            !req.body.address || !req.body.phonenumber ||
+            !req.body.gender) {
+            return res.status(400).json({
+                errCode: 1,
+                message: 'Missing required parameters!'
+            });
+        }
+        else {
+            let message = await userService.createNewUser(req.body);
+            return res.status(200).json(message);
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server',
+            errPin: JSON.stringify(error)
+        });
+    }
+}
 let handleGetAllUsers = async (req, res) => {
     let id = req.query.id; // Lấy type từ query params
     let users = await userService.getAllUsers(id);
@@ -93,6 +117,7 @@ let getAllCode = async (req, res) => {
     }
 }
 export default {
+    createRegister: createRegister,
     handleLogin: handleLogin,
     handleGetAllUsers: handleGetAllUsers,
     handleCreateNewUser: handleCreateNewUser,

@@ -73,6 +73,9 @@ class Login extends Component {
             this.handleLogin();
         }
     }
+    handleSignUp = () => {
+        this.props.navigate('/register');
+    }
     render() {
         // console.log(this.state.errMessage);
         return (
@@ -84,7 +87,7 @@ class Login extends Component {
                         <p>You can sign in to access with your existing account.</p>
                     </div>
                 </div>
-                <div className="form-right">
+                <div className="form-right-login">
                     <div className="container">
                         <div className="header">
                             <div className="text">Login</div>
@@ -124,8 +127,16 @@ class Login extends Component {
                                 </div>
                             </div>
                             <div className="submit-container">
-                                <button className="submit" type="submit">Sign Up</button>
-                                <button className="submit" type="button" onClick={this.handleLogin}>Login</button>
+                                <button
+                                    className="submit"
+                                    type="submit"
+                                    onClick={this.handleSignUp}
+                                >Sign Up</button>
+                                <button
+                                    className="submit"
+                                    type="button"
+                                    onClick={this.handleLogin}
+                                >Login</button>
                             </div>
                             <span className="social-login">
                                 <span>Or login with</span>

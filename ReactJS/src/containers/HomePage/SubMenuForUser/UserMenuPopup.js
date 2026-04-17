@@ -63,7 +63,7 @@ class UserMenuPopup extends Component {
                             <i className="fas fa-sign-in-alt"></i>
                             <span>Đăng nhập (Log In)</span>
                         </div>
-                        <div className="menu-item" onClick={() => handleViewList('SIGNUP')}>
+                        <div className="menu-item" onClick={() => handleViewList('REGISTER')}>
                             <i className="fas fa-user-plus"></i>
                             <span>Đăng ký (Sign Up)</span>
                         </div>
