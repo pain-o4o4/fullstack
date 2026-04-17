@@ -20,6 +20,9 @@ module.exports = {
             doctorId: {
                 type: Sequelize.INTEGER
             },
+            paymentId: {
+                type: Sequelize.STRING
+            },
             patientId: {
                 type: Sequelize.INTEGER
             },

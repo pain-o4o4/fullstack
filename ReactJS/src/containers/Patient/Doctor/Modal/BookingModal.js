@@ -12,7 +12,7 @@ import * as actions from '../../../../store/actions'
 import { postBookAppointment } from '../../../../services/userService'
 import Select from 'react-select';
 import { toast } from 'react-toastify';
-import { use } from 'react';
+import { path } from '../../../../utils/constant'
 class BookingModal extends Component {
     constructor(props) {
         super(props);
@@ -27,24 +27,129 @@ class BookingModal extends Component {
             timeType: '',
             selectedGender: '',
             genders: '',
-            doctorName: ''
+            doctorName: '',
+
+            selectedPayment: '',
+            listPayment: [],
+            // priceId: '',
+            priceData: '',
+            // provinceId: '',
+            provinceData: '',
+            currentDoctorId: -1
         }
     }
 
-
     async componentDidMount() {
         this.props.fetchGenderStart();
-    }
+        if (this.props.match && this.props.match.params.id) {
+            let id = this.props.match.params.id;
+            this.setState({
+                currentDoctorId: id // Thêm dòng này
+            });
 
+        }
+    }
+    buildDataInput = (dataInput, type) => {
+        let result = [];
+        let { language } = this.props;
+
+        if (dataInput && dataInput.length > 0) {
+            if (type === "USER") {
+                dataInput.map((item, index) => {
+                    let object = {};
+                    let labelVi = `${item.lastName} ${item.firstName}`;
+                    let labelEn = `${item.firstName} ${item.lastName}`;
+                    object.label = language === LANGUAGES.VI ? labelVi : labelEn;
+                    object.value = item.id;
+                    result.push(object);
+                });
+                return result;
+            }
+            if (type === "PAYMENT" || type === "PROVINCE") {
+                dataInput.map((item, index) => {
+                    let object = {};
+                    let labelVi = `${item.valueVi}`;
+                    let labelEn = `${item.valueEn}`;
+                    object.label = language === LANGUAGES.VI ? labelVi : labelEn;
+                    object.value = item.keyMap;
+                    result.push(object);
+                });
+                return result;
+            }
+            if (type === "PRICE") {
+                dataInput.map((item, index) => {
+                    let object = {};
+                    let labelVi = `${item.valueVi}` + 'VNđ';
+                    let labelEn = `${item.valueEn}` + 'USD$';
+                    object.label = language === LANGUAGES.VI ? labelVi : labelEn;
+                    object.value = item.keyMap;
+                    result.push(object);
+                });
+                return result;
+            }
+            if (type === "SPECIALTY") {
+                dataInput.map((item, index) => {
+                    let object = {};
+                    object.label = item.name;
+                    object.value = item.id;
+                    result.push(object);
+                });
+                return result;
+            }
+            if (type === "CLINIC") {
+                dataInput.map((item, index) => {
+                    let object = {};
+                    object.label = item.name;
+                    object.value = item.id;
+                    result.push(object);
+                });
+                return result;
+            }
+            if (type === "GENDER") {
+                dataInput.map((item) => {
+                    let object = {};
+                    object.label = language === 'vi' ? item.valueVi : item.valueEn;
+                    object.value = item.keyMap;
+                    result.push(object);
+                    return item;
+                });
+            }
+
+        }
+
+        return result;
+    }
     async componentDidUpdate(prevProps, prevState, snapshot) {
-        // Gộp điều kiện: Nếu danh sách gender thay đổi HOẶC ngôn ngữ thay đổi
-        if (prevProps.genders !== this.props.genders || prevProps.language !== this.props.language) {
+
+        if (prevProps.userInfo !== this.props.userInfo) {
+            let { userInfo } = this.props;
+            if (userInfo) {
+                this.setState({
+                    fullName: userInfo.firstName && userInfo.lastName ? `${userInfo.lastName} ${userInfo.firstName}` : this.state.fullName,
+                    email: userInfo.email || this.state.email,
+                    phoneNumber: userInfo.phoneNumber || this.state.phoneNumber,
+                    address: userInfo.address || this.state.address
+                });
+            }
+        }
+        if (prevProps.genders !== this.props.genders ||
+            prevProps.language !== this.props.language ||
+            prevProps.detailDoctor !== this.props.detailDoctor) {
             if (this.props.genders && this.props.genders.length > 0) {
-                let data = this.buildDataGender(this.props.genders);
+                let data = this.buildDataInput(this.props.genders, 'GENDER');
                 console.log('data', data)
                 this.setState({
                     genders: data
                 });
+            }
+            if (this.props.detailDoctor && this.props.detailDoctor.doctorinforData) {
+                let paymentData = this.props.detailDoctor.doctorinforData.paymentTypeData;
+                let listPaymentConvert = this.buildDataInput([paymentData], 'PAYMENT');
+                this.setState({
+                    listPayment: listPaymentConvert,
+                    selectedPayment: this.props.detailDoctor.doctorinforData.paymentId
+
+                })
             }
         }
         if (prevProps.dataTimeModal !== this.props.dataTimeModal) {
@@ -56,23 +161,18 @@ class BookingModal extends Component {
                 })
             }
         }
+        if (prevProps.match.params.id !== this.props.match.params.id) {
+            let id = this.props.match.params.id;
+
+            this.setState({
+                currentDoctorId: id
+            });
+
+            this.props.getDetailDoctor(id);
+        }
     }
 
-    buildDataGender = (data) => {
-        let result = [];
-        let { language } = this.props; // Dùng destructuring cho gọn
-        if (data && data.length > 0) {
-            data.map((item) => {
-                let object = {};
-                // Nên dùng LANGUAGES.VI thay vì 'vi' nếu bạn đã định nghĩa constant
-                object.label = language === 'vi' ? item.valueVi : item.valueEn;
-                object.value = item.keyMap;
-                result.push(object);
-                return item;
-            });
-        }
-        return result;
-    }
+
     handleOnChangeInput = (event, type) => {
         let copyState = { ...this.state }
         copyState[type] = event.target.value
@@ -85,46 +185,71 @@ class BookingModal extends Component {
             birthday: date[0]
         })
     }
-    handleChangeSelect = (selectedOption) => {
-        this.setState({ selectedGender: selectedOption });
+    handleChangeSelect = (selectedOption, actionMeta) => {
+        this.setState({
+            [actionMeta.name]: selectedOption
+        });
     }
     handleConfirmBooking = async () => {
-        let { dataTimeModal, userInfo } = this.props
-        let date = new Date(this.state.birthday).getTime();
-        let res = await postBookAppointment({
-            patientId: userInfo && userInfo.id ? userInfo.id : null,
-            fullName: this.state.fullName,
-            phoneNumber: this.state.phoneNumber,
-            email: userInfo && userInfo.email ? userInfo.email : this.state.email,
-            address: this.state.address,
-            reason: this.state.reason,
-            date: date,
-            birthday: this.state.birthday,
-            gender: this.state.selectedGender.value,
+        let { dataTimeModal, userInfo } = this.props;
+        let {
+            selectedPayment, fullName,
+            email, address, birthday,
+            phoneNumber, selectedGender
+        } = this.state;
+        if (!fullName || !email || !address ||
+            !phoneNumber || !selectedGender ||
+            !selectedPayment) {
+            toast.error("Missing required information!");
+            return;
+        }
+        let timestamp = new Date(birthday).getTime();
+        if (selectedPayment === 'PAY1') {
+            toast.warning(`
+            Currently, the system only supports QR code payments. 
+            Please choose another payment method!`
+            );
+        } else {
+            this.handleOnlinePayment();
+        }
+    }
+    handleOnlinePayment = async () => {
+        let { dataTimeModal, userInfo, detailDoctor, language } = this.props;
+        let { fullName, phoneNumber, email, address, reason, birthday, selectedGender } = this.state;
+
+        let date = new Date(birthday).getTime();
+        let doctorInfor = detailDoctor?.doctorinforData || {};
+
+        let bookingData = {
+            patientId: userInfo?.id || null,
+            fullName: fullName,
+            phoneNumber: phoneNumber,
+            email: email,
+            address: address,
+            reason: reason,
+            date: dataTimeModal.date,
+            birthday: date,
+            gender: selectedGender.value,
             doctorId: dataTimeModal.doctorId,
             timeType: dataTimeModal.timeType,
-            language: this.props.language,
-            doctorName: this.state.doctorName
-        })
-        if (res && res.errCode === 0) {
-            toast.success(res.errMessage)
-            this.props.closeModal()
+            language: language,
+            doctorName: this.state.doctorName,
 
-            this.setState({
-                fullName: '',
-                phoneNumber: '',
-                email: '',
-                address: '',
-                reason: '',
-                birthday: '',
-                selectedGender: '',
-                doctorId: '',
-                // timeType: '',
-            })
-        } else {
-            toast.error(res.errMessage)
-        }
+            // Data cho PayOS và hiển thị Payment
+            paymentId: doctorInfor.paymentId,
+            price: doctorInfor.priceTypeData?.valueVi || 0,
+            priceId: language === 'vi' ? doctorInfor.priceTypeData?.valueVi + ' VNĐ' : doctorInfor.priceTypeData?.valueEn + ' USD',
 
+            // Data bổ sung cho trang Payment
+            clinicName: doctorInfor.nameClinic,
+            addressClinic: doctorInfor.addressClinic,
+            specialtyName: detailDoctor?.specialtyData?.name || ''
+        };
+
+        this.props.history.push({
+            pathname: path.PAYMENT,
+            state: { bookingData: bookingData }
+        });
     }
     doctorNameFromChild = (name) => {
         this.setState({
@@ -135,7 +260,8 @@ class BookingModal extends Component {
         let { language, isTheModalOpen, closeModal, dataTimeModal } = this.props
         let doctorId = dataTimeModal && !_.isEmpty(dataTimeModal)
             ? dataTimeModal.doctorId : '';
-        console.log('dataTimeModal', this.state);
+        console.log('dataTimeModal', dataTimeModal);
+        console.log('doctorId', this.state);
         let { userInfo } = this.props
         return (
             <Modal
@@ -146,7 +272,10 @@ class BookingModal extends Component {
             >
                 <div className="booking-modal-content">
                     <div className="booking-modal-header">
-                        <h5 className="modal-title"><FormattedMessage id="schedule-doctor.title" /></h5>
+                        <h5 className="modal-title">
+                            <FormattedMessage id="schedule-doctor.title"
+                            />
+                        </h5>
                         <button type="button" className="close">
                             <span
                                 onClick={closeModal}
@@ -178,7 +307,7 @@ class BookingModal extends Component {
                                 <input
                                     className="form-control"
                                     type="text"
-                                    value={this.state.phoneNumber || userInfo?.phoneNumber || ''}
+                                    value={this.state.phoneNumber}
                                     onChange={(event) => { this.handleOnChangeInput(event, 'phoneNumber') }}
 
                                 />
@@ -189,7 +318,7 @@ class BookingModal extends Component {
                                     className="form-control"
                                     type="text"
                                     // Thêm dấu ? sau userInfo và || '' ở cuối
-                                    value={this.state.email || userInfo?.email || ''}
+                                    value={this.state.email}
                                     onChange={(event) => { this.handleOnChangeInput(event, "email") }}
                                 />
                             </div>
@@ -225,9 +354,22 @@ class BookingModal extends Component {
                                 <Select
                                     value={this.state.selectedGender}
                                     onChange={this.handleChangeSelect}
+                                    name='selectedGender'
                                     options={this.state.genders}
                                     className="react-select-container" // Class bọc ngoài
                                     classNamePrefix="react-select"     // Tiền tố cho các class con
+                                />
+                            </div>
+                            <div className="col-6 form-group">
+                                <label><FormattedMessage id="schedule-doctor.payment" /></label>
+                                <Select
+                                    value={this.state.selectedPayment}
+                                    onChange={this.handleChangeSelect}
+                                    name='selectedPayment'
+                                    options={this.state.listPayment}
+                                    // placeholder="Chọn phương thức thanh toán"
+                                    className="react-select-container"
+                                    classNamePrefix="react-select"
                                 />
                             </div>
                         </div>
@@ -262,15 +404,18 @@ const mapStateToProps = state => {
         language: state.app.language,
         userInfo: state.user.userInfo,
         isLoggedIn: state.user.isLoggedIn,
-        genders: state.admin.genders
-
+        allRequiredDoctorInfor: state.admin.allRequiredDoctorInfor,
+        genders: state.admin.genders,
+        detailDoctor: state.admin.detailDoctor
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
         fetchGenderStart: () => dispatch(actions.fetchGenderStart()),
-        // getBookingModal: (id) => dispatch(action.getBookingModal(id))
+        getRequiredDoctorInfor: (id) => dispatch(actions.getRequiredDoctorInfor(id)),
+        getDetailDoctor: (id) => dispatch(actions.getDetailDoctor(id)),
+        saveBookingData: (data) => dispatch(actions.saveBookingData(data))
     };
 };
 

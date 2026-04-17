@@ -36,13 +36,9 @@ class DetailDoctor extends Component {
         }
         if (prevProps.match.params.id !== this.props.match.params.id) {
             let id = this.props.match.params.id;
-
-            // Cập nhật currentDoctorId vào state
             this.setState({
                 currentDoctorId: id
             });
-
-            // Gọi API lấy chi tiết bác sĩ
             this.props.getDetailDoctor(id);
         }
     }

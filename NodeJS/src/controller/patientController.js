@@ -10,7 +10,7 @@ let postBookAppointment = async (req, res) => {
         console.log(error);
         return res.status(200).json({
             errCode: -1,
-            errMessage: 'Error from server',
+            errMessage: 'Error from server controller',
             errPin: JSON.stringify(error)
         });
     }
@@ -25,7 +25,7 @@ let postVerifyAppointment = async (req, res) => {
         console.log(error);
         return res.status(200).json({
             errCode: -1,
-            errMessage: 'Error from server',
+            errMessage: 'Error from server ',
             errPin: JSON.stringify(error)
         });
     }
@@ -48,8 +48,24 @@ let getAllAppointmentsById = async (req, res) => {
         });
     }
 }
+// src/controllers/patientController.js
+
+let handlePayOSWebhook = async (req, res) => {
+    try {
+        let response = await patientService.processPayOSWebhook(req.body);
+        return res.status(200).json(response);
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({
+            errCode: -1,
+            errMessage: 'Error from server'
+        });
+    }
+}
+
 export default {
     postBookAppointment,
     postVerifyAppointment,
     getAllAppointmentsById,
+    handlePayOSWebhook
 }

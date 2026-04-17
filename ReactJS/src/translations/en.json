@@ -111,7 +111,8 @@
         "address": "Address",
         "gender": "Gender",
         "reason": "Reason",
-        "birthday": "Birthday"
+        "birthday": "Birthday",
+        "payment": "Payment"
     },
     "verify-email": {
         "loading": "Verifying data...",

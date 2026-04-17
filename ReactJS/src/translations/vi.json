@@ -125,7 +125,8 @@
         "address": "Địa chỉ",
         "gender": "Giới tính",
         "reason": "Lý do",
-        "birthday": "Ngay sinh"
+        "birthday": "Ngày sinh",
+        "payment": "Phương thức thanh toán"
     },
     "verify-email": {
         "loading": "Đang xác thực dữ liệu...",

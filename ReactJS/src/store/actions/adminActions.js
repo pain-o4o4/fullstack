@@ -485,3 +485,19 @@ export const getAllAppointmentsById = (id) => {
         }
     }
 }
+// adminAction.js
+// adminAction.js
+export const saveBookingData = (data, callback) => {
+    return (dispatch) => {
+        try {
+            dispatch({
+                type: actionTypes.SAVE_BOOKING_DATA_SUCCESS,
+                data: data
+            });
+            // Nếu có hàm callback truyền vào thì chạy nó
+            if (callback) callback();
+        } catch (e) {
+            dispatch({ type: actionTypes.SAVE_BOOKING_DATA_FAILD });
+        }
+    }
+}

@@ -24,35 +24,49 @@ let sendSimpleEmail = async (dataSend) => {
 
 let getBodyHTMLEmail = (dataSend) => {
     let result = '';
-    // Sử dụng if...else để đảm bảo luôn có nội dung trả về
     if (dataSend.language === 'vi') {
         result = `
-                <h3>Xin chào ${dataSend.patientName}!</h3>
-                <p>Bạn nhận được email này vì đã đặt lịch khám bệnh online trên hệ thống BookingCare.</p>
-                <p>Thông tin đặt lịch:</p>
-                <div><b>Thời gian: ${dataSend.time}</b></div>
-                <div><b>Bác sĩ: ${dataSend.doctorName}</b></div>
-
-                <p>Vui lòng click vào đường link bên dưới để xác nhận và hoàn tất thủ tục đặt lịch khám bệnh.</p>
-                <div>
-                    <a href="${dataSend.redirectLink}" target="_blank">Click vào đây để xác nhận</a>
+            <div style="font-family: Arial, sans-serif; color: #333;">
+                <h3 style="color: #1c246d;">XÁC NHẬN THANH TOÁN THÀNH CÔNG! 🏥</h3>
+                <p>Xin chào <b>${dataSend.patientName}</b>,</p>
+                <p>Hệ thống BookingCare đã nhận được thanh toán cho lịch hẹn của bạn.</p>
+                
+                <div style="background-color: #f7f7f7; padding: 15px; border-radius: 10px; border: 1px solid #eee;">
+                    <p style="margin: 5px 0;"><b>Bác sĩ:</b> ${dataSend.doctorName}</p>
+                    <p style="margin: 5px 0;"><b>Thời gian:</b> ${dataSend.time}</p>
+                    <p style="margin: 5px 0;"><b>Phòng khám:</b> ${dataSend.clinicName}</p>
+                    <p style="margin: 5px 0;"><b>Địa chỉ:</b> ${dataSend.addressClinic}</p>
                 </div>
-                <div>Xin chân thành cảm ơn!</div>
-            `;
-    } else { // Mặc định là tiếng Anh nếu language không phải 'vi'
+
+                <p style="color: #27ae60; font-weight: bold;">Trạng thái: Đã xác nhận & Thanh toán thành công.</p>
+                <p>Bạn không cần phải thực hiện thêm bất kỳ thao tác nào khác. Vui lòng đến phòng khám đúng giờ hẹn.</p>
+                
+                <p>Cảm ơn bạn đã tin tưởng dịch vụ của chúng tôi!</p>
+                <div style="margin-top: 20px; font-size: 0.8rem; color: #888;">
+                    Đây là email tự động, vui lòng không phản hồi email này.
+                </div>
+            </div>
+        `;
+    } else {
         result = `
-                <h3>Dear ${dataSend.patientName}!</h3>
-                <p>You received this email because you booked an online medical appointment on BookingCare.</p>
-                <p>Information to schedule an appointment:</p>
-                <div><b>Time: ${dataSend.time}</b></div>
-                <div><b>Doctor: ${dataSend.doctorName}</b></div>
-
-                <p>Please click on the link below to confirm and complete the medical appointment booking procedure.</p>
-                <div>
-                    <a href="${dataSend.redirectLink}" target="_blank">Click here to confirm</a>
+            <div style="font-family: Arial, sans-serif; color: #333;">
+                <h3 style="color: #1c246d;">PAYMENT CONFIRMED SUCCESSFULLY! 🏥</h3>
+                <p>Dear <b>${dataSend.patientName}</b>,</p>
+                <p>BookingCare system has received payment for your appointment.</p>
+                
+                <div style="background-color: #f7f7f7; padding: 15px; border-radius: 10px; border: 1px solid #eee;">
+                    <p style="margin: 5px 0;"><b>Doctor:</b> ${dataSend.doctorName}</p>
+                    <p style="margin: 5px 0;"><b>Time:</b> ${dataSend.time}</p>
+                    <p style="margin: 5px 0;"><b>Clinic:</b> ${dataSend.clinicName}</p>
+                    <p style="margin: 5px 0;"><b>Address:</b> ${dataSend.addressClinic}</p>
                 </div>
-                <div>Sincerely thank!</div>
-            `;
+
+                <p style="color: #27ae60; font-weight: bold;">Status: Confirmed & Paid.</p>
+                <p>You do not need to take any further action. Please arrive at the clinic on time.</p>
+                
+                <p>Thank you for choosing us!</p>
+            </div>
+        `;
     }
     return result;
 }

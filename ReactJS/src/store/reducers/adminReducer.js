@@ -18,7 +18,8 @@ const initialState = {
     allSpecialties: [],
     detailClinic: {},
     detailSpecialty: {},
-    detailAppointment: []
+    detailAppointment: [],
+    bookingData: {}
 }
 
 const adminReducer = (state = initialState, action) => {
@@ -34,24 +35,21 @@ const adminReducer = (state = initialState, action) => {
         case actionTypes.FETCH_GENDER_SUCCESS:
             {
                 // let state = { ...state };
-                state.genders = action.data;
-                state.isLoadingGender = false;
                 console.log('fetch gender success: ', state)
                 return {
                     ...state,
+                    genders: action.data,
+                    isLoadingGender: false
                 }
                 // started: true
             }
         case actionTypes.FETCH_GENDER_FAIL:
             {
-                // let state = { ...state };
-                state.isLoadingGender = false;
-                state.genders = [];
                 console.log('fetch gender fail: ', action)
                 return {
                     ...state,
-
-                    // started: true
+                    isLoadingGender: false,
+                    genders: []
                 }
             }
         case actionTypes.FETCH_POSITION_START:
@@ -216,6 +214,16 @@ const adminReducer = (state = initialState, action) => {
             return {
                 ...state,
                 detailAppointment: []
+            }
+        case actionTypes.SAVE_BOOKING_DATA_SUCCESS:
+            return {
+                ...state,
+                bookingData: action.data
+            }
+        case actionTypes.SAVE_BOOKING_DATA_FAILD:
+            return {
+                ...state,
+                bookingData: {}
             }
         default:
             return state;

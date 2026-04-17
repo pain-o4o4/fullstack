@@ -5,15 +5,16 @@ import _ from "lodash";
 import { Op, where } from 'sequelize';
 import moment from 'moment'
 import emailService from "./emailService";
+const payOS = require('../config/payos');
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE
+const URL_REACT = process.env.URL_REACT
 import { v4 as uuidv4 } from 'uuid';
-
 let buildUrlEmail = (doctorId, token) => {
     // Không tạo uuid ở đây nữa, mà nhận từ tham số truyền vào
     return `${process.env.URL_REACT}/verify-booking?doctorId=${doctorId}&token=${token}`;
 }
 
-let postBookAppointmentService = async (data) => {
+let postBookAppointment = async (data) => {
     return new Promise(async (resolve, reject) => {
         try {
             if (!data) {
@@ -91,7 +92,77 @@ let postBookAppointmentService = async (data) => {
             reject(e);
         }
     });
-};
+};//bỏ
+let postBookAppointmentService = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data) {
+                return resolve({
+                    errCode: 1,
+                    errMessage: "Missing required parameters!"
+                });
+            }
+
+            let token = uuidv4();
+            let appointment = await db.Booking.create({
+                statusId: 'S1',
+                doctorId: data.doctorId,
+                patientId: data.patientId,
+                paymentId: data.paymentId,
+                date: data.date,
+                timeType: data.timeType,
+                token: token
+            });
+
+            // 2. Tạo đơn hàng payOS
+            const orderCode = Number(String(Date.now()).slice(-6));
+
+            // Ép kiểu amount từ price gửi lên
+            let finalAmount = Number(data.price);
+            if (isNaN(finalAmount) || finalAmount < 2000) {
+                finalAmount = 5000;
+            }
+
+            const body = {
+                orderCode: orderCode,
+                amount: finalAmount,
+                description: `Booking for ${data.fullName || 'BN'}`.slice(0, 25),
+                returnUrl: `${URL_REACT}/payment-success`,
+                cancelUrl: `${URL_REACT}/payment-cancel`,
+                items: [
+                    {
+                        name: "Appointment booking",
+                        quantity: 1,
+                        price: finalAmount
+                    }
+                ]
+            };
+
+            // GỌI PAYOS
+            try {
+                const paymentLinkRes = await payOS.createPaymentLink(body);
+
+                if (paymentLinkRes && paymentLinkRes.checkoutUrl) {
+                    return resolve({
+                        errCode: 0,
+                        data: paymentLinkRes.checkoutUrl // Trả về link để FE redirect
+                    });
+                }
+            } catch (payosError) {
+                console.log('>>> PAYOS ERROR:', payosError.message);
+                return resolve({
+                    errCode: -1,
+                    errMessage: "PayOS Error: " + payosError.message
+                });
+            }
+
+        } catch (e) {
+            console.log('>>> SYSTEM ERROR:', e);
+            reject(e);
+        }
+    });
+}
+
 let postVerifyAppointmentService = async (infor) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -177,8 +248,60 @@ let getAllAppointmentsByIdService = async (id) => {
         }
     });
 };
+let processPayOSWebhook = (webhookData) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            // 1. Kiem tra du lieu tu PayOS
+            const verifiedData = payOS.verifyPaymentWebhookData(webhookData);
+
+            // 2. payOS quy định "00" là thành công
+            if (verifiedData.code === "00") {
+                let bookingId = verifiedData.orderCode;
+
+                // 3. Tìm booking và cập nhật trạng thái
+                let booking = await db.Booking.findOne({
+                    where: { id: bookingId, statusId: 'S1' },
+                    include: [
+                        { model: db.User, as: 'doctorData', attributes: ['firstName', 'lastName'] },
+                        { model: db.Allcode, as: 'timeData', attributes: ['valueVi', 'valueEn'] }
+                    ],
+                    raw: false
+                });
+
+                if (booking) {
+                    // Update trạng thái sang S2 (Đã thanh toán)
+                    booking.statusId = 'S2';
+                    await booking.save();
+
+                    // 4. Gửi email thông báo
+                    await emailService.sendSimpleEmail({
+                        receiverEmail: booking.email,
+                        patientName: booking.fullName,
+                        doctorName: `${booking.doctorData.lastName} ${booking.doctorData.firstName}`,
+                        time: booking.timeData.valueVi,
+                        clinicName: "chua gan relationship voi clinic",
+                        addressClinic: "chua gan relationship voi clinic",
+                        language: booking.language
+                    });
+
+                    console.log(`>>> Booking ID ${bookingId} updated to S2 and Email sent!`);
+                }
+            }
+
+            resolve({
+                errCode: 0,
+                errMessage: 'Webhook processed successfully'
+            });
+
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
 export default {
     postBookAppointmentService,
     postVerifyAppointmentService,
     getAllAppointmentsByIdService,
+    postBookAppointment,
+    processPayOSWebhook
 }

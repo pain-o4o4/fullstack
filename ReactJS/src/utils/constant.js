@@ -20,7 +20,7 @@ export const path = {
     SETTINGS: '/patient/settings',
     MY_BOOKING: '/patient/my-booking',
     BOOKING_HISTORY: '/patient/history',
-
+    PAYMENT: '/patient/payment',
     VERIFY_EMAIL_BOOKING: '/verify-booking',
 };
 

@@ -42,7 +42,7 @@ let initWebRoutes = (app) => {
     router.post('/api/patient-book-appointment', patientController.postBookAppointment);
     router.post('/api/verify-book-appointment', patientController.postVerifyAppointment);
     router.get('/api/get-all-appointments-by-id', patientController.getAllAppointmentsById);
-
+    router.post('/api/payos-webhook', patientController.handlePayOSWebhook);
 
     return app.use("/", router)
 }

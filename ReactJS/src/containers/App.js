@@ -37,6 +37,7 @@ import AllDoctor from '../containers/Navigation/AllDoctor.js';
 import PatientSettings from './HomePage/SubMenuForUser/PatientSettings';
 import MyBooking from './HomePage/SubMenuForUser/MyBooking';
 import BookingHistory from './HomePage/SubMenuForUser/BookingHistory';
+import Payment from '../containers/Patient/Doctor/Modal/Payment';
 class App extends Component {
 
     handlePersistorState = () => {
@@ -78,7 +79,6 @@ class App extends Component {
                                     <Route path={'/doctor'} component={userIsDoctor(Doctor)} />
                                     {/* <Route path={'/patient'} component={userIsPatient(PatientProfile)} /> */}
 
-
                                     //submenuforuser
                                     <Route path={path.SETTINGS} component={userIsAuthenticated(PatientSettings)} />
                                     <Route path={path.MY_BOOKING} component={userIsAuthenticated(MyBooking)} />
@@ -86,7 +86,7 @@ class App extends Component {
 
                                     //checkmail
                                     <Route path={path.VERIFY_EMAIL_BOOKING} component={VerifyEmail} />
-
+                                    <Route path={path.PAYMENT} component={Payment} />
                                     //user
                                     <Route path={path.HOMEPAGE} component={HomePage} />
                                     <Route path={path.DETAIL_DOCTOR} component={DetailDoctor} />

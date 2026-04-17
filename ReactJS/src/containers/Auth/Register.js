@@ -4,7 +4,9 @@ import { push } from "connected-react-router";
 import { createRegister } from '../../services/userService';
 import './Login.scss'; // Dùng chung scss cho đồng bộ
 import { toast } from 'react-toastify';
+import Select from 'react-select';
 import gender_icon from '../../assets/images/gender_icon.svg';
+import * as action from "../../store/actions";
 class Register extends Component {
     constructor(props) {
         super(props);
@@ -19,7 +21,9 @@ class Register extends Component {
             errMessage: ''
         }
     }
-
+    componentDidMount() {
+        this.props.fetchGenderStart()
+    }
     handleOnChangeInput = (event, id) => {
         let copyState = { ...this.state };
         copyState[id] = event.target.value;
@@ -51,8 +55,17 @@ class Register extends Component {
             console.log(e);
         }
     }
-
+    handleSelectGender = () => {
+        let { genders, language } = this.props;
+        let options = genders && genders.length > 0 ? genders.map(item => ({
+            value: item.keyMap,
+            label: language === 'vi' ? item.valueVi : item.valueEn
+        })) : [];
+        return options
+    }
     render() {
+        let { genders, language } = this.props;
+
         console.log('>>> check state:', this.state);
         return (
             <div className="auth-split-container">
@@ -99,13 +112,27 @@ class Register extends Component {
                                     onChange={(event) => this.handleOnChangeInput(event, 'password')} />
                             </div>
 
-                            {/* Phone Number */}
-                            <div className="input">
-                                <input placeholder="Phone Number"
-                                    value={this.state.phonenumber}
-                                    onChange={(event) => this.handleOnChangeInput(event, 'phonenumber')} />
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                {/* Phone Number */}
+                                <div className="input"
+                                    style={{ width: '50%' }}>
+                                    <input placeholder="Phone Number"
+                                        value={this.state.phonenumber}
+                                        onChange={(event) => this.handleOnChangeInput(event, 'phonenumber')} />
+                                </div>
+                                {/* Gender */}
+                                <div className="input-gender"
+                                    style={{ width: '50%' }}>
+                                    {/* <img src={gender_icon} alt="Gender" /> */}
+                                    <Select
+                                        className="react-select-container"
+                                        classNamePrefix="apple-select"
+                                        options={this.handleSelectGender()}
+                                        placeholder={language === 'vi' ? "Chọn giới tính" : "Select Gender"}
+                                        onChange={(selected) => this.handleOnChangeInput({ target: { value: selected.value } }, 'gender')}
+                                    />
+                                </div>
                             </div>
-
                             {/* Address */}
                             <div className="input">
                                 <input placeholder="Address"
@@ -113,20 +140,7 @@ class Register extends Component {
                                     onChange={(event) => this.handleOnChangeInput(event, 'address')} />
                             </div>
 
-                            {/* Gender */}
-                            <div className="input-gender">
-                                <img src={gender_icon} alt="Gender" />
-                                <select
-                                    value={this.state.gender}
-                                    onChange={(event) => this.handleOnChangeInput(event, 'gender')}
-                                    className="select-gender"
-                                >
-                                    <option value="" disabled>Select Gender</option>
-                                    <option value="M">Male</option>
-                                    <option value="F">Female</option>
-                                    <option value="O">Other</option>
-                                </select>
-                            </div>
+
 
                             <div className="error-message">{this.state.errMessage}</div>
 
@@ -141,9 +155,16 @@ class Register extends Component {
         )
     }
 }
-
+const mapStateToProps = state => {
+    return {
+        language: state.app.language,
+        genders: state.admin.genders
+    };
+};
 const mapDispatchToProps = dispatch => ({
     navigate: (path) => dispatch(push(path)),
+    fetchGenderStart: () => dispatch(action.fetchGenderStart()),
+
 });
 
-export default connect(null, mapDispatchToProps)(Register);
+export default connect(mapStateToProps, mapDispatchToProps)(Register);

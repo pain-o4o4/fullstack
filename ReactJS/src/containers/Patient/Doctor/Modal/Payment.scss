@@ -1,0 +1,154 @@
+.payment-page {
+    background-color: #f5f7fa;
+    min-height: 100vh;
+    padding: 40px 0;
+
+    .payment-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        padding: 30px;
+
+        .payment-header {
+            text-align: center;
+            border-bottom: 2px dashed #eee;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+
+            h2 {
+                color: #1c246d;
+                font-weight: 700;
+                margin-bottom: 10px;
+            }
+
+            .timer-box {
+                color: #ff4d4f;
+                font-weight: 600;
+                background: #fff1f0;
+                display: inline-block;
+                padding: 5px 15px;
+                border-radius: 20px;
+
+                i {
+                    margin-right: 8px;
+                }
+            }
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+
+            @media (max-width: 768px) {
+                grid-template-columns: 1fr;
+            }
+
+            .info-card {
+                background: #fcfcfd;
+                border: 1px solid #edf2f7;
+                border-radius: 10px;
+                padding: 20px;
+
+                .card-title {
+                    font-weight: 700;
+                    color: #45c3d2;
+                    margin-bottom: 15px;
+                    border-bottom: 1px solid #f1f1f1;
+                    padding-bottom: 8px;
+
+                    i {
+                        margin-right: 8px;
+                    }
+                }
+
+                .card-content {
+                    p {
+                        display: flex;
+                        justify-content: space-between;
+                        margin-bottom: 10px;
+                        font-size: 0.95rem;
+
+                        .label {
+                            color: #718096;
+                        }
+
+                        .address {
+                            max-width: 60%;
+                            text-align: right;
+                            font-size: 0.85rem;
+                        }
+                    }
+                }
+            }
+        }
+
+        .total-section {
+            background: #1c246d;
+            color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+
+            .total-label {
+                font-size: 1.1rem;
+            }
+
+            .total-amount {
+                font-size: 1.8rem;
+                font-weight: 700;
+                color: #ffd700;
+            }
+        }
+
+        .payment-note {
+            font-size: 0.85rem;
+            color: #718096;
+            text-align: center;
+            background: #f7fafc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .payment-footer {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+
+            .btn-confirm {
+                background: #27ae60;
+                color: white;
+                border: none;
+                padding: 15px;
+                border-radius: 8px;
+                font-weight: 700;
+                font-size: 1.1rem;
+                transition: 0.3s;
+
+                &:hover {
+                    background: #219150;
+                    transform: translateY(-2px);
+                }
+            }
+
+            .btn-cancel {
+                background: transparent;
+                color: #718096;
+                border: 1px solid #cbd5e0;
+                padding: 10px;
+                border-radius: 8px;
+
+                &:hover {
+                    background: #f7fafc;
+                }
+            }
+        }
+    }
+}
