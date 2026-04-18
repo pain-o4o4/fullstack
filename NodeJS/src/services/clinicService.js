@@ -45,7 +45,7 @@ let getAllClinicService = () => {
             if (data && data.length > 0) {
                 data = data.map((item) => {
                     if (item.image) {
-                        // Sử dụng Buffer.from thay vì new Buffer (đã bị deprecated)
+
                         item.image = Buffer.from(item.image, 'base64').toString('binary');
                     }
                     return item;
@@ -83,7 +83,6 @@ let getDetailClinicByIdService = (id) => {
                     nest: true
                 });
                 if (data && data.image) {
-                    // Sử dụng Buffer.from thay vì new Buffer (đã bị deprecated)
                     data.image = Buffer.from(data.image, 'base64').toString('binary');
                 }
                 resolve({

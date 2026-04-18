@@ -42,12 +42,13 @@ export const userIsDoctor = connectedRouterRedirect({
     allowRedirectBack: false
 });
 
-// Khóa 5: CHỈ BỆNH NHÂN (R3) - Nếu sau này Duy làm trang cá nhân cho Patient
-export const userIsPatient = connectedRouterRedirect({
+// Khóa 5: CHỈ BỆNH NHÂN (R3) 
+export const userIsPatientOrAdmin = connectedRouterRedirect({
     authenticatedSelector:
         state => state.user.isLoggedIn &&
             state.user.userInfo &&
-            state.user.userInfo.roleId === 'R3',
+            (state.user.userInfo.roleId === 'R3' ||
+                state.user.userInfo.roleId === 'R1'),
     wrapperDisplayName: 'UserIsPatient',
     redirectPath: '/home',
     allowRedirectBack: false

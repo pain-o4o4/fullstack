@@ -97,7 +97,9 @@ const getAllClinicService = () => {
 const getDetailClinicByIdService = (inputId) => {
     return axios.get(`/api/get-detail-clinic-by-id?id=${inputId}`);
 }
-
+const postUpdatePatientService = (data) => {
+    return axios.post(`/api/update-patient`, data);
+}
 export {
     handleLoginApi,
     createRegister,
@@ -122,6 +124,7 @@ export {
     getAllClinicService,
     getDetailClinicByIdService,
     getDetailSpecialtyByIdService,
-    getAllAppointmentsByIdService
+    getAllAppointmentsByIdService,
+    postUpdatePatientService
 
 }

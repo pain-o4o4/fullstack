@@ -7,7 +7,8 @@ import moment from 'moment'
 import emailService from "./emailService";
 import { v4 as uuidv4 } from 'uuid';
 import payOS from '../config/payos';
-
+import bcrypt from "bcryptjs";
+import { hashUserPassword } from './userService'
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE
 const URL_REACT = process.env.URL_REACT
 
@@ -253,10 +254,73 @@ let processPayOSWebhook = (webhookBody) => {
         }
     });
 };
+let postUpdatePatientService = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.email || !data.id || !data.roleId) {
+                return resolve({
+                    errCode: 1,
+                    errMessage: 'Missing required parameters!'
+                });
+            }
 
+            let user = await db.User.findOne({
+                where: {
+                    email: data.email,
+                    id: Number(data.id),
+                    roleId: data.roleId
+                },
+                raw: false
+            });
+
+            if (user) {
+                const fields = [
+                    'firstName', 'lastName', 'address',
+                    'phonenumber'
+                ];
+                const updateData = {};
+
+                fields.forEach(field => {
+                    if (data[field] !== undefined) {
+                        updateData[field] = data[field];
+                    }
+                });
+
+                if (data.image !== undefined) {
+                    updateData.image = data.image;
+                }
+                // if (data.password !== undefined) {
+                //     let hashPasswordFromBcrypt = await hashUserPassword(data.password);
+                //     updateData.password = hashPasswordFromBcrypt;
+                // }
+                if (data.password) {
+                    const salt = bcrypt.genSaltSync(10);
+                    updateData.password = bcrypt.hashSync(data.password, salt);
+                    console.log(">>> updateData.password: ", updateData.password, data.password);
+                }
+                Object.assign(user, updateData);
+
+                await user.save();
+
+                resolve({
+                    errCode: 0,
+                    message: 'Update user success!'
+                });
+            } else {
+                resolve({
+                    errCode: 2,
+                    errMessage: 'User not found!'
+                });
+            }
+        } catch (e) {
+            reject(e);
+        }
+    });
+}
 export default {
     postBookAppointmentService,
     postVerifyAppointmentService,
     getAllAppointmentsByIdService,
-    processPayOSWebhook
+    processPayOSWebhook,
+    postUpdatePatientService
 }

@@ -39,14 +39,12 @@ let getAllSpecialtyService = async () => {
     return new Promise(async (resolve, reject) => {
         try {
             let data = await db.Specialty.findAll({
-                // Thêm 'id' vào để Frontend có key khi render list (quan trọng)
                 attributes: ['id', 'name', 'image', 'descriptionHTML', 'descriptionMarkdown']
             });
 
             if (data && data.length > 0) {
                 data = data.map((item) => {
                     if (item.image) {
-                        // Sử dụng Buffer.from thay vì new Buffer (đã bị deprecated)
                         item.image = Buffer.from(item.image, 'base64').toString('binary');
                     }
                     return item;
@@ -88,7 +86,6 @@ let getSpecialtyByIdService = async (inputId) => {
                 });
 
                 if (data && data.image) {
-                    // Sử dụng Buffer.from thay vì new Buffer (đã bị deprecated)
                     data.image = Buffer.from(data.image, 'base64').toString('binary');
                 }
                 resolve({

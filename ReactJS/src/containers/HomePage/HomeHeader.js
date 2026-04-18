@@ -186,7 +186,7 @@ class HomeHeader extends Component {
                             </p>
                         </div>
                     </div>
-                    <div className="welcome-container">
+                    {this.props.isShowBanner === false && <div className="welcome-container">
                         <div className="services-grid">
                             {[
                                 { icon: "https://img.icons8.com/color/96/doctor-male.png", title: "Search the service/<br />consultant" },
@@ -205,7 +205,7 @@ class HomeHeader extends Component {
                             ))}
                         </div>
 
-                    </div>
+                    </div>}
                 </div>}
 
             </React.Fragment>

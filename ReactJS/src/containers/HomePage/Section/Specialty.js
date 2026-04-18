@@ -47,12 +47,23 @@ class Specialty extends Component {
                                     <div
                                         className='section-customize'
                                         key={index}
-                                        onClick={() => this.handleViewDetailSpecialty(item)} >
-                                        <div
-                                            className='bg-image'
-                                            style={{ backgroundImage: `url(${item.image})` }}
-                                        ></div>
-                                        <div className='section-name'><span>{item.name}</span></div>
+                                        onClick={() => this.handleViewDetailSpecialty(item)}
+                                    >
+                                        <div className='customize-border'>
+
+                                            <div className='outer-bg'>
+                                                <div
+                                                    className='bg-image'
+                                                    style={{ backgroundImage: `url(${item.image})` }}
+                                                />
+                                            </div>
+
+                                            <div className='position'>
+                                                <div className='section-name'>{item.name}</div>
+                                                <div className='section-desc'>Chuyên khoa</div>
+                                            </div>
+
+                                        </div>
                                     </div>
                                 )
                             })

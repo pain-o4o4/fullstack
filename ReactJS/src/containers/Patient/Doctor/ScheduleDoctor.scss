@@ -1,92 +1,142 @@
 .schedule-doctor-container {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-    padding: 10px;
+    padding: 20px 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
-    /* Thanh chọn ngày - Custom Select kiểu Apple */
     .all-schedule {
         margin-bottom: 20px;
 
         select {
             border: none;
-            outline: none;
-            background: transparent;
+            border-bottom: 2px solid #0071e3; // Thanh nhấn màu xanh Apple
+            padding: 8px 0;
             font-size: 16px;
             font-weight: 600;
-            color: #0071e3; // Apple Blue
+            color: #1d1d1f;
+            background: transparent;
             cursor: pointer;
-            padding: 5px 0;
-            border-bottom: 2px solid transparent;
-            transition: all 0.3s;
+            outline: none;
+            text-transform: capitalize;
 
             &:hover {
-                color: #0077ed;
-                border-bottom: 2px solid #0071e3;
-            }
-
-            option {
-                color: #1d1d1f;
-                background: #ffffff;
+                color: #0071e3;
             }
         }
     }
 
-    /* Tiêu đề Lịch khám */
     .text-calendar {
         display: flex;
         align-items: center;
+        gap: 8px;
         margin-bottom: 15px;
         text-transform: uppercase;
         font-size: 14px;
-        font-weight: 600;
-        color: #1d1d1f;
+        font-weight: 700;
+        color: #86868b; // Màu xám phụ của Apple
 
-        span {
+        img {
+            width: 16px;
+            height: 16px;
+            filter: grayscale(1); // Làm icon tối giản hơn
+            opacity: 0.7;
+        }
+    }
+
+    .time-content {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin-top: 15px;
+
+        .time-content-btn {
+            // --- 1. HIỆU ỨNG NHÁM MỜ (GLASSMORPHISM) ---
+            background: rgba(255, 255, 255, 0.7); // Trắng trong suốt
+            backdrop-filter: blur(10px); // Làm mờ hậu cảnh
+            -webkit-backdrop-filter: blur(10px);
+
+            // --- 2. BÓNG NỔI SIÊU MỊN (SOFT DEPTH) ---
+            // Kết hợp một lớp bóng đổ nhẹ và một lớp viền mảnh để tạo khối
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow:
+                0 4px 6px rgba(0, 0, 0, 0.02),
+                0 1px 3px rgba(0, 0, 0, 0.05);
+
+            border-radius: 12px;
+            padding: 14px 10px;
+            color: #1d1d1f;
+            font-size: 15px;
+            font-weight: 500;
+            white-space: nowrap;
+            cursor: pointer;
+
+            // Chuyển động mượt mà đặc trưng của iOS
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
 
-            img {
-                width: 16px;
-                height: 16px;
-                filter: grayscale(1); // Làm icon xám lại cho tối giản
+            // --- 3. HIỆU ỨNG KHI DI CHUỘT (HOVER - BÓNG NỔI RÕ HƠN) ---
+            &:hover {
+                background: rgba(255, 255, 255, 0.9);
+                transform: translateY(-3px) scale(1.02); // Nổi hẳn lên khỏi mặt phẳng
+                box-shadow:
+                    0 10px 20px rgba(0, 0, 0, 0.06),
+                    0 4px 8px rgba(0, 0, 0, 0.04);
+                color: #0071e3;
+            }
+
+            // --- 4. HIỆU ỨNG KHI NHẤN (ACTIVE - LÚN XUỐNG) ---
+            &:active {
+                transform: scale(0.94) translateY(0);
+                background: rgba(242, 242, 247, 0.8);
+                box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05); // Bóng đổ ngược vào trong
+                transition: all 0.1s;
+            }
+
+            // --- 5. TRẠNG THÁI ACTIVE (MÀU XANH APPLE MỜ) ---
+            &.active {
+                background: rgba(0, 113, 227, 0.9);
+                backdrop-filter: blur(5px);
+                color: #ffffff;
+                font-weight: 600;
+                border: 1px solid rgba(0, 113, 227, 0.2);
+                box-shadow: 0 8px 16px rgba(0, 113, 227, 0.3);
+
+                &:hover {
+                    background: #0071e3;
+                    box-shadow: 0 10px 20px rgba(0, 113, 227, 0.4);
+                }
             }
         }
     }
 
-    /* Danh sách nút chọn giờ */
-    .time-content {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
+    /* --- Responsive cho các thiết bị --- */
 
-        .time-content-btn {
-            background-color: #f5f5f7; // Nền xám nhẹ Apple
-            border: none;
-            outline: none;
-            padding: 10px 20px;
-            border-radius: 12px; // Bo góc kiểu iOS 17
-            font-size: 15px;
-            font-weight: 500;
-            color: #1d1d1f;
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            min-width: 100px;
+    // Khi màn hình nhỏ hơn (Tablet/Mobile ngang)
+    @media (max-width: 1024px) {
+        .time-content {
+            // Vẫn giữ 3 cột nhưng giảm gap để tiết kiệm diện tích
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+    }
 
-            &:hover {
-                background-color: #e8e8ed;
-                transform: scale(1.05);
-            }
+    // Khi ở Mobile (Dưới 768px)
+    @media (max-width: 768px) {
+        .time-content {
+            // Chuyển về 2 cột để chữ AM/PM không bị ép quá mức
+            grid-template-columns: repeat(2, 1fr) !important;
 
-            &:active {
-                background-color: #d2d2d7;
-                transform: scale(0.95); // Hiệu ứng nhấn nút vật lý
-            }
-
-            /* Nếu bạn muốn có trạng thái được chọn */
-            &.selected {
-                background-color: #0071e3;
-                color: #ffffff;
+            .time-content-btn {
+                font-size: 14px; // Giảm nhẹ font ở mobile
+                padding: 12px 5px;
             }
         }
+    }
+
+    // Hiển thị khi không có lịch
+    .no-schedule {
+        font-style: italic;
+        color: #86868b;
+        font-size: 14px;
     }
 }

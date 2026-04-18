@@ -26,7 +26,7 @@ let createRegisterService = (data) => {
                     gender: data.gender,
                     image: data.avatar,
                     roleId: 'R3',
-                    positionId: null,
+                    positionId: 'P0',
                 })
                 resolve({
                     errCode: 0,
@@ -47,7 +47,11 @@ let handleUserLogin = (email, password) => {
             if (userExist) {
                 let user = await db.User.findOne({
                     where: { email: email },
-                    attributes: ["id", "email", "roleId", "password", "firstName", "lastName", "image"],
+                    attributes: [
+                        "id", "email", "roleId", "password",
+                        "firstName", "lastName", "address",
+                        "image", "phonenumber"
+                    ],
                     raw: true
                 });
                 if (user && user.image) {
@@ -128,7 +132,7 @@ let getAllUsers = (userId) => {
 let hashUserPassword = (password) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const salt = bcrypt.genSaltSync(10); // Tạo salt chuẩn ($2a$10$...)
+            const salt = bcrypt.genSaltSync(10);
             const hashPassword = bcrypt.hashSync(password, salt);
             resolve(hashPassword);
         } catch (error) {
@@ -271,5 +275,6 @@ export default {
     deleteUserById: deleteUserById,
     updateUserData: updateUserData,
     getAllCodeService: getAllCodeService,
+    hashUserPassword: hashUserPassword
     // postInforDoctorService: postInforDoctorService
 };

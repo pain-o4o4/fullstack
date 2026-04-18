@@ -31,12 +31,18 @@ class HandBook extends Component {
                             {HandBookData.map((item, index) => {
                                 return (
                                     <div className='section-customize' key={index}>
-                                        <div className='bg-image' style={{ backgroundImage: `url(${item.img})` }}> </div>
-                                        <div className='section-name'>{item.name}</div>
-                                        <div className='section-desc'>{item.address}</div>
-                                        <div className='section-action'>
-                                            <button className='btn-learn-more'>Information</button>
-                                            {/* <a href='#' className='link-buy'>Mua ></a> */}
+                                        <div
+                                            className='bg-image'
+                                            style={{ backgroundImage: `url(${item.img})` }}
+                                        >
+                                            <div className='content-overlay'>
+                                                <div className='section-name'>{item.name}</div>
+                                                <div className='section-desc'>{item.address}</div>
+
+                                                <div className='section-action'>
+                                                    <button className='btn-learn-more'>Information</button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 

@@ -1,171 +1,164 @@
 .section-specialty {
-    background-color: #f5f5f7;
-        padding: 0 20% 80px;
+    background-color: #f5f5f7; // Nền xám nhạt nhẹ nhàng của Apple
+    padding: 0 20% 80px;
 
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
 
     .section-header {
         max-width: 1200px;
         margin: 0 auto 40px;
-        padding: 0 24px;
+        padding: 0 20px;
         display: flex;
         justify-content: space-between;
-        align-items: flex-end;
+        align-items: center;
 
         .title-section {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 700;
-            color: #1d1d1f; // Apple Black
-            letter-spacing: -0.022em;
+            color: #1d1d1f;
+            letter-spacing: -0.5px;
         }
 
         .btn-section {
-            background: transparent;
+            background: #e8e8ed;
             border: none;
-            color: #0071e3; // Apple Blue
-            font-size: 16px;
+            color: #0071e3;
+            padding: 8px 16px;
+            border-radius: 980px; // Nút kiểu kẹo dẻo
+            font-size: 14px;
             font-weight: 500;
             cursor: pointer;
-            padding: 0;
-            transition: opacity 0.2s;
+            transition: all 0.2s;
 
             &:hover {
-                opacity: 0.7;
-                text-decoration: underline;
+                background: #d2d2d7;
             }
         }
     }
 
     .section-body {
-        padding: 20px 0;
-
         .section-customize {
-            background: #f5f5f7;
-            
-            
-            margin: 0 15px; 
-            padding: 30px;
-            border-radius: 28px; // Bo góc lớn kiểu iPhone
-            text-align: center;
+            padding: 15px;
             outline: none;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(0,0,0,0.02);
+            cursor: pointer;
 
-            &:hover {
-                transform: scale(1.03);
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-            }
-
-            .bg-image {
-                width: 100%;
-                height: 200px;
-                background-position: center;
-                background-repeat: no-repeat;
-                background-size: cover;
-                border-radius: 18px;
-                margin-bottom: 25px;
-            }
-
-           .section-name {
-    font-size: 21px;
-    font-weight: 600;
-    color: #1d1d1f;
-    margin-bottom: 8px;
-    letter-spacing: -0.011em;
-    
-    /* Cấu hình khung chứa */
-    width: 100%;             /* Hoặc một con số cố định như 200px */
-    overflow: hidden;        /* Ẩn phần thừa */
-    white-space: nowrap;     /* Không cho xuống dòng */
-    position: relative;
-}
-
-/* Hiệu ứng lướt chậm khi hover vào hoặc tự động */
-.section-name:hover span {
-    display: inline-block;
-    padding-left: 30%;       /* Khoảng nghỉ đầu */
-    animation: marquee 5s linear infinite; /* 15s là rất chậm, Duy muốn chậm nữa thì tăng lên 20s */
-}
-
-/* Định nghĩa chuyển động */
-@keyframes marquee {
-    0%   { transform: translateX(0); }
-    100% { transform: translateX(-100%); }
-}
-
-            .section-desc {
-                font-size: 15px;
-                color: #86868b; // Apple Gray
-                margin-bottom: 25px;
-                line-height: 1.47;
-                height: 44px; // Giữ chiều cao cố định cho mô tả
-                overflow: hidden;
-            }
-
-            .section-action {
+            .customize-border {
+                position: relative;
+                background: #ffffff;
+                padding: 0; // bỏ padding để ảnh tràn full
+                height: 320px !important;
+                border-radius: 28px;
+                overflow: hidden; // QUAN TRỌNG để ảnh không tràn ra ngoài
                 display: flex;
                 flex-direction: column;
-                align-items: center;
-                gap: 12px;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                border: 1px solid rgba(0, 0, 0, 0.02);
 
-                .btn-learn-more {
-                    background-color: #0071e3;
-                    color: #ffffff;
-                    border: none;
-                    padding: 10px 24px;
-                    border-radius: 980px; // Pill shape chuẩn Apple
-                    font-size: 14px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    transition: all 0.3s;
+                &:hover {
+                    transform: translateY(-10px);
+                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+                }
 
-                    &:hover {
-                        background-color: #0077ed;
-                        transform: scale(1.05);
+                /* 👇 IMAGE FULL CARD */
+                .outer-bg {
+                    flex: 1; // chiếm hết phần trên
+                    width: 100%;
+                    position: relative;
+
+                    .bg-image {
+                        width: 100%;
+                        height: 100%;
+                        background-position: center;
+                        background-repeat: no-repeat;
+                        background-size: cover;
+                    }
+
+                    /* overlay gradient cho text nổi hơn */
+                    &::after {
+                        content: "";
+                        position: absolute;
+                        inset: 0;
+                        background: linear-gradient(to top,
+                                rgba(0, 0, 0, 0.4),
+                                rgba(0, 0, 0, 0));
                     }
                 }
 
-                .link-buy {
-                    color: #0071e3;
-                    text-decoration: none;
-                    font-size: 16px;
-                    font-weight: 500;
-                    transition: opacity 0.2s;
+                /* 👇 TEXT ĐÈ LÊN ẢNH (xịn hơn) */
+                .position {
+                    position: absolute;
+                    bottom: 20px;
+                    left: 20px;
+                    right: 20px;
+                    z-index: 2;
+                    text-align: left;
 
-                    &:hover {
-                        opacity: 0.8;
-                        text-decoration: underline;
+                    .section-name {
+                        font-size: 18px;
+                        font-weight: 600;
+                        color: #fff;
+                        margin-bottom: 4px;
+                    }
+
+                    .section-desc {
+                        font-size: 14px;
+                        color: rgba(255, 255, 255, 0.8);
                     }
                 }
             }
         }
     }
-}
 
-/* Tinh chỉnh các nút điều hướng (Arrows) của Slick */
-.slick-prev, .slick-next {
-    width: 44px !important;
-    height: 44px !important;
-    z-index: 10;
-    background-color: rgba(245, 245, 247, 0.8) !important; // Nền xám trong suốt nhẹ
-    border-radius: 50% !important;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s !important;
+    .slick-prev,
+    .slick-next {
+        top: auto;
+        bottom: -50px;
+        transform: none;
+        width: 36px;
+        height: 36px;
+        background: #ececf0 !important;
+        border-radius: 50%;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
 
-    &:before {
-        color: #1d1d1f !important;
-        font-size: 24px !important;
-        opacity: 0.6 !important;
+        &::before {
+            color: #1d1d1f !important;
+            font-size: 16px;
+            opacity: 0.6;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+        }
+
+        &:hover {
+            background: #e8e8ed !important;
+
+            &::before {
+                opacity: 1;
+            }
+        }
+
+        &.slick-disabled {
+            opacity: 0.2;
+            cursor: default;
+        }
     }
 
-    &:hover {
-        background-color: rgba(210, 210, 217, 1) !important;
-        &:before { opacity: 1 !important; }
+    .slick-prev {
+        left: auto;
+        right: 190px;
+
+        &::before {
+            content: "❮" !important;
+        }
+    }
+
+    .slick-next {
+        right: 130px;
+
+        &::before {
+            content: "❯" !important;
+        }
     }
 }
-
-.slick-prev { left: 10px !important; }
-.slick-next { right: 10px !important; }
-@media screen and (max-width: 800px) {
-    .section-specialty{width: 100% !important;}
-                    }

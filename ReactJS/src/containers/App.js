@@ -10,7 +10,8 @@ import { language } from '../utils'
 import {
     userIsAdmin, userIsDoctor,
     userIsNotAuthenticated,
-    userIsAuthenticated
+    userIsAuthenticated,
+    userIsPatientOrAdmin
 }
     from '../hoc/authentication';
 import { path } from '../utils'
@@ -19,6 +20,7 @@ import Home from '../routes/Home';
 import Login from './Auth/Login';
 import Register from './Auth/Register.js';
 import System from '../routes/System';
+import Admin from '../routes/Admin';
 import HomePage from './HomePage/HomePage.js'
 import Doctor from '../routes/Doctor'
 import { CustomToastCloseButton } from '../components/CustomToast';
@@ -60,6 +62,7 @@ class App extends Component {
 
     render() {
         let { language } = this.props;
+
         return (
             <Fragment>
 
@@ -75,18 +78,19 @@ class App extends Component {
                                     {/* //check roleId */}
                                     <Route path={path.LOGIN} component={userIsNotAuthenticated(Login)} />
                                     <Route path={path.REGISTER} component={userIsNotAuthenticated(Register)} />
-                                    <Route path={path.SYSTEM} component={userIsAdmin(System)} />
-                                    <Route path={'/doctor'} component={userIsDoctor(Doctor)} />
+                                    <Route exact path={path.SYSTEM} component={userIsAdmin(System)} />
+                                    <Route path={path.DOCTOR} component={userIsDoctor(Doctor)} />
+                                    <Route path={path.ADMIN} component={userIsAdmin(Admin)} />
                                     {/* <Route path={'/patient'} component={userIsPatient(PatientProfile)} /> */}
 
                                     //submenuforuser
                                     <Route path={path.SETTINGS} component={userIsAuthenticated(PatientSettings)} />
-                                    <Route path={path.MY_BOOKING} component={userIsAuthenticated(MyBooking)} />
-                                    <Route path={path.BOOKING_HISTORY} component={userIsAuthenticated(BookingHistory)} />
+                                    <Route path={path.MY_BOOKING} component={userIsPatientOrAdmin(MyBooking)} />
+                                    <Route path={path.BOOKING_HISTORY} component={userIsPatientOrAdmin(BookingHistory)} />
 
                                     //checkmail
                                     <Route path={path.VERIFY_EMAIL_BOOKING} component={VerifyEmail} />
-                                    <Route path={path.PAYMENT} component={Payment} />
+                                    <Route path={path.PAYMENT} component={userIsPatientOrAdmin(Payment)} />
                                     //user
                                     <Route path={path.HOMEPAGE} component={HomePage} />
                                     <Route path={path.DETAIL_DOCTOR} component={DetailDoctor} />

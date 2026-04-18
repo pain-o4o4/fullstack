@@ -40,14 +40,16 @@ class UserMenuPopup extends Component {
                                 <i className="fas fa-user-edit"></i>
                                 <span>Chỉnh sửa thông tin</span>
                             </div>
-                            <div className="menu-item" onClick={() => handleViewList('MY_BOOKING')}>
-                                <i className="fas fa-calendar-check"></i>
-                                <span>Theo dõi trạng thái lịch khám</span>
-                            </div>
-                            <div className="menu-item" onClick={() => handleViewList('BOOKING_HISTORY')}>
-                                <i className="fas fa-history"></i>
-                                <span>Lịch sử đặt lịch</span>
-                            </div>
+                            {userInfo && userInfo.roleId !== 'R2' &&
+                                <div className="menu-item" onClick={() => handleViewList('MY_BOOKING')}>
+                                    <i className="fas fa-calendar-check"></i>
+                                    <span>Theo dõi trạng thái lịch khám</span>
+                                </div>}
+                            {userInfo && userInfo.roleId !== 'R2' &&
+                                <div className="menu-item" onClick={() => handleViewList('BOOKING_HISTORY')}>
+                                    <i className="fas fa-history"></i>
+                                    <span>Lịch sử đặt lịch</span>
+                                </div>}
 
                             <div className="divider"></div>
 

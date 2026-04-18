@@ -46,7 +46,7 @@ let createRegister = async (req, res) => {
             });
         }
         else {
-            let message = await userService.createNewUser(req.body);
+            let message = await userService.createRegisterService(req.body);
             return res.status(200).json(message);
         }
     } catch (error) {
