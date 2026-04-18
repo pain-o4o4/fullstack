@@ -48,20 +48,16 @@ let getAllAppointmentsById = async (req, res) => {
         });
     }
 }
-// src/controllers/patientController.js
-
 let handlePayOSWebhook = async (req, res) => {
     try {
-        let response = await patientService.processPayOSWebhook(req.body);
-        return res.status(200).json(response);
+        console.log(">>> PAYOS WEBHOOK JUST CALLED! Body:", JSON.stringify(req.body)); // <--- THÊM DÒNG NÀY
+        const result = await patientService.processPayOSWebhook(req.body);
+        return res.status(200).json({ success: true });
     } catch (e) {
-        console.log(e);
-        return res.status(500).json({
-            errCode: -1,
-            errMessage: 'Error from server'
-        });
+        console.error(">>> BUG IN CONTROLLER:", e);
+        return res.status(200).json({ success: true });
     }
-}
+};
 
 export default {
     postBookAppointment,

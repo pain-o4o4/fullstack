@@ -26,6 +26,12 @@ module.exports = {
             patientId: {
                 type: Sequelize.INTEGER
             },
+            orderCode: {
+                type: Sequelize.STRING
+            },
+            reason: {
+                type: Sequelize.STRING
+            },
             date: {
                 type: Sequelize.STRING
             },

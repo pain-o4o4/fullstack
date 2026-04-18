@@ -53,8 +53,8 @@ class Payment extends Component {
             try {
                 let res = await postBookAppointment(bookingData);
                 if (res && res.errCode === 0 && res.data) {
-                    toast.success(res.errMessage || "Thanh toán thanh cong!");
-                    // window.location.href = res.data;
+                    // toast.success(res.errMessage || "Thanh toán thanh cong!");
+                    window.location.href = res.data;
                 } else {
                     toast.error(res.errMessage || "Lỗi khởi tạo thanh toán!");
                 }

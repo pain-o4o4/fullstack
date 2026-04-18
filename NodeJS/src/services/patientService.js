@@ -5,94 +5,18 @@ import _ from "lodash";
 import { Op, where } from 'sequelize';
 import moment from 'moment'
 import emailService from "./emailService";
-const payOS = require('../config/payos');
+import { v4 as uuidv4 } from 'uuid';
+import payOS from '../config/payos';
+
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE
 const URL_REACT = process.env.URL_REACT
-import { v4 as uuidv4 } from 'uuid';
+
+
 let buildUrlEmail = (doctorId, token) => {
-    // Không tạo uuid ở đây nữa, mà nhận từ tham số truyền vào
     return `${process.env.URL_REACT}/verify-booking?doctorId=${doctorId}&token=${token}`;
 }
 
-let postBookAppointment = async (data) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            if (!data) {
-                return resolve({
-                    errCode: 1,
-                    errMessage: "Missing required parameters!"
-                });
-            }
-            let token = uuidv4();
-            let finalPatientId = null;
-            await emailService.sendSimpleEmail({
-                receiverEmail: data.email,
-                patientName: data.fullName,
-                time: data.date,
-                doctorName: data.doctorName,
-                language: data.language,
-                redirectLink: buildUrlEmail(data.doctorId, token)
-            });
 
-            if (data.patientId) {
-                finalPatientId = data.patientId;
-            } else {
-                let [user, created] = await db.User.findOrCreate({
-                    where: { email: data.email },
-                    defaults: {
-                        email: data.email,
-                        roleId: 'R3',
-                        gender: data.gender,
-                        address: data.address,
-                        firstName: data.fullName,
-                        phonenumber: data.phoneNumber
-                    }
-                });
-                finalPatientId = user.id;
-            }
-
-            if (finalPatientId) {
-                let count = await db.Booking.count({
-                    where: {
-                        doctorId: data.doctorId,
-                        date: data.date,
-                        timeType: data.timeType
-                    }
-                });
-
-                if (count < MAX_NUMBER_SCHEDULE) {
-                    await db.Booking.create({
-                        statusId: 'S1',
-                        doctorId: data.doctorId,
-                        patientId: finalPatientId,
-                        date: data.date,
-                        timeType: data.timeType,
-                        token: token,
-                        // reason: data.reason 
-                    });
-
-                    resolve({
-                        errCode: 0,
-                        errMessage: "Save infor patient success!"
-                    });
-                } else {
-                    resolve({
-                        errCode: 2,
-                        errMessage: "Heathcare is full this day!"
-                    });
-                }
-            } else {
-                resolve({
-                    errCode: 3,
-                    errMessage: "Patient not found!"
-                });
-            }
-
-        } catch (e) {
-            reject(e);
-        }
-    });
-};//bỏ
 let postBookAppointmentService = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -102,6 +26,7 @@ let postBookAppointmentService = (data) => {
                     errMessage: "Missing required parameters!"
                 });
             }
+            const orderCode = Number(String(Date.now()).slice(-6));
 
             let token = uuidv4();
             let appointment = await db.Booking.create({
@@ -110,25 +35,23 @@ let postBookAppointmentService = (data) => {
                 patientId: data.patientId,
                 paymentId: data.paymentId,
                 date: data.date,
+                orderCode: orderCode,
                 timeType: data.timeType,
                 token: token
             });
 
-            // 2. Tạo đơn hàng payOS
-            const orderCode = Number(String(Date.now()).slice(-6));
 
-            // Ép kiểu amount từ price gửi lên
-            let finalAmount = Number(data.price);
-            if (isNaN(finalAmount) || finalAmount < 2000) {
-                finalAmount = 5000;
-            }
+            let finalAmount = Number("2000");
+            // if (isNaN(finalAmount) || finalAmount < 2000) {
+            //     finalAmount = 5000;
+            // }
 
             const body = {
                 orderCode: orderCode,
                 amount: finalAmount,
                 description: `Booking for ${data.fullName || 'BN'}`.slice(0, 25),
-                returnUrl: `${URL_REACT}/payment-success`,
-                cancelUrl: `${URL_REACT}/payment-cancel`,
+                returnUrl: `${process.env.URL_REACT}/patient/my-booking`,
+                cancelUrl: `${process.env.URL_REACT}/verify-booking?token=${token}`, //lay trang nay huy
                 items: [
                     {
                         name: "Appointment booking",
@@ -137,23 +60,20 @@ let postBookAppointmentService = (data) => {
                     }
                 ]
             };
+            const payosInstance = payOS?.default || payOS;
+            if (!payosInstance || typeof payosInstance.paymentRequests?.create !== 'function') {
+                throw new Error("Unable to call paymentRequests.create. Check @payos/node again!");
+            }
 
-            // GỌI PAYOS
-            try {
-                const paymentLinkRes = await payOS.createPaymentLink(body);
+            const paymentLinkRes = await payosInstance.paymentRequests.create(body);
 
-                if (paymentLinkRes && paymentLinkRes.checkoutUrl) {
-                    return resolve({
-                        errCode: 0,
-                        data: paymentLinkRes.checkoutUrl // Trả về link để FE redirect
-                    });
-                }
-            } catch (payosError) {
-                console.log('>>> PAYOS ERROR:', payosError.message);
+            if (paymentLinkRes && paymentLinkRes.checkoutUrl) {
                 return resolve({
-                    errCode: -1,
-                    errMessage: "PayOS Error: " + payosError.message
+                    errCode: 0,
+                    data: paymentLinkRes.checkoutUrl
                 });
+            } else {
+                throw new Error("PayOS does not return the checkout URL.");
             }
 
         } catch (e) {
@@ -248,60 +168,95 @@ let getAllAppointmentsByIdService = async (id) => {
         }
     });
 };
-let processPayOSWebhook = (webhookData) => {
+
+let processPayOSWebhook = (webhookBody) => {
     return new Promise(async (resolve, reject) => {
         try {
-            // 1. Kiem tra du lieu tu PayOS
-            const verifiedData = payOS.verifyPaymentWebhookData(webhookData);
+            console.log(">>> PAYOS WEBHOOK JUST CALLED!");
 
-            // 2. payOS quy định "00" là thành công
-            if (verifiedData.code === "00") {
-                let bookingId = verifiedData.orderCode;
+            // ====================== VERIFY WEBHOOK (ASYNC) ======================
+            let verifiedData;
+            try {
+                // Phải await vì hàm này trả về Promise
+                verifiedData = await payOS.webhooks.verify(webhookBody);
+            } catch (verifyError) {
+                console.error('>>> Webhook signature không hợp lệ:', verifyError.message);
+                return resolve({ errCode: 0 });
+            }
 
-                // 3. Tìm booking và cập nhật trạng thái
+            console.log(">>> Webhook verified successfully:", JSON.stringify(verifiedData, null, 2));
+
+            // Lấy orderCode từ cấu trúc đúng
+            const orderCode = verifiedData.data?.orderCode || verifiedData.orderCode;
+
+            if (!orderCode) {
+                console.log(">>> Webhook thiếu orderCode trong data");
+                return resolve({ errCode: 0 });
+            }
+
+            console.log(">>> Đang xử lý thanh toán cho orderCode:", orderCode);
+
+            if (webhookBody.code === "00" || verifiedData.code === "00") {
+
                 let booking = await db.Booking.findOne({
-                    where: { id: bookingId, statusId: 'S1' },
+                    where: {
+                        orderCode: String(orderCode), // Ép kiểu string cho chắc chắn khớp DB
+                        statusId: 'S1'
+                    },
                     include: [
-                        { model: db.User, as: 'doctorData', attributes: ['firstName', 'lastName'] },
-                        { model: db.Allcode, as: 'timeData', attributes: ['valueVi', 'valueEn'] }
+                        { model: db.User, as: 'patientBookingData', attributes: ['email', 'firstName', 'lastName'] },
+                        { model: db.User, as: 'doctorBookingData', attributes: ['firstName', 'lastName'] },
+                        { model: db.Allcode, as: 'timeTypeDataPatient', attributes: ['valueVi'] }
                     ],
                     raw: false
                 });
 
                 if (booking) {
-                    // Update trạng thái sang S2 (Đã thanh toán)
+                    console.log(`>>> Đã tìm thấy Booking ID: ${booking.id}. Đang cập nhật trạng thái...`);
+
                     booking.statusId = 'S2';
                     await booking.save();
 
-                    // 4. Gửi email thông báo
-                    await emailService.sendSimpleEmail({
-                        receiverEmail: booking.email,
-                        patientName: booking.fullName,
-                        doctorName: `${booking.doctorData.lastName} ${booking.doctorData.firstName}`,
-                        time: booking.timeData.valueVi,
-                        clinicName: "chua gan relationship voi clinic",
-                        addressClinic: "chua gan relationship voi clinic",
-                        language: booking.language
-                    });
+                    // Lấy email từ patientBookingData (vì bảng Booking thường không có cột email)
+                    const receiverEmail = booking.patientBookingData?.email;
 
-                    console.log(`>>> Booking ID ${bookingId} updated to S2 and Email sent!`);
+                    if (receiverEmail) {
+                        console.log(">>> Đang tiến hành gửi email tới:", receiverEmail);
+
+                        await emailService.sendSimpleEmail({
+                            receiverEmail: receiverEmail,
+                            patientName: `${booking.patientBookingData?.lastName || ''} ${booking.patientBookingData?.firstName || ''}`.trim() || "Bệnh nhân",
+                            doctorName: `${booking.doctorBookingData?.lastName || ''} ${booking.doctorBookingData?.firstName || ''}`.trim(),
+                            time: booking.timeTypeDataPatient?.valueVi || "",
+                            clinicName: "BookingCare 🏥",
+                            addressClinic: "Hà Nội, Việt Nam",
+                            language: booking.language || 'vi'
+                        });
+
+                        console.log(">>> [SUCCESS] EMAIL ĐÃ GỬI THÀNH CÔNG!");
+                    } else {
+                        console.log(">>> [WARNING] Tìm thấy booking nhưng Patient email bị trống!");
+                    }
+                } else {
+                    console.log(`>>> [ERROR] Không tìm thấy booking với orderCode = ${orderCode} trong DB.`);
                 }
+            } else {
+                // Sửa log này để ông không bị nhầm
+                console.log(`>>> Trạng thái PayOS báo về không phải thành công. Code: ${webhookBody.code}`);
             }
 
-            resolve({
-                errCode: 0,
-                errMessage: 'Webhook processed successfully'
-            });
+            resolve({ errCode: 0 });
 
         } catch (e) {
-            reject(e);
+            console.error('>>> WEBHOOK SYSTEM ERROR:', e.message || e);
+            resolve({ errCode: 0 });   // Luôn trả OK
         }
     });
 };
+
 export default {
     postBookAppointmentService,
     postVerifyAppointmentService,
     getAllAppointmentsByIdService,
-    postBookAppointment,
     processPayOSWebhook
 }
