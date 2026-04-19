@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { Routes, Route, Navigate } from 'react-router-dom';
-import UserManage from '../containers/System/UserManage';
-import UserRedux from '../containers/System/Admin/UserRedux';
 import ManageSchedule from '../containers/System/Doctor/ManageSchedule';
 import ManageDoctor from '../containers/System/Admin/ManageDoctor';
-import Header from '../containers/Header/Header';
+import SystemLayout from '../containers/System/SystemLayout';
 class Doctor extends Component {
     render() {
         // {this.props.isLoggedIn && <Header />}
@@ -13,17 +11,17 @@ class Doctor extends Component {
         const { SystemMenuPath, isLoggedIn } = this.props;
         return (
             <React.Fragment>
-                {isLoggedIn && <Header />}
-                <div className="System-container">
-                    <div className="System-list">
-
+                {isLoggedIn ? (
+                    <SystemLayout>
                         <Routes>
                             <Route path="manage-schedule" element={<ManageSchedule />} />
                             <Route path="manage-doctor" element={<ManageDoctor />} />
                             <Route path="*" element={<Navigate to="manage-schedule" replace />} />
                         </Routes>
-                    </div>
-                </div>
+                    </SystemLayout>
+                ) : (
+                    <Navigate to="/login" replace />
+                )}
             </React.Fragment>
         );
     }

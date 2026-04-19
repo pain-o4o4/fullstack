@@ -1,224 +1,401 @@
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
+import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { CommonUtils } from '../../utils';
+import { 
+    getAllUsers, 
+    createNewUsersService, 
+    deleteUserService, 
+    editUserService,
+    getAllCodeService
+} from '../../services/userService';
 import './UserManage.scss';
-import { getAllUsers, createNewUsersService, deleteUserService, editUserService } from '../../services/userService';
-import addUser from '../../assets/images/addUser.png';
-import deleteUser from '../../assets/images/deleteUser.png';
-import editUser from '../../assets/images/editUser.png';
-import closeXwhite from '../../assets/images/close-x-white.png';
-// import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';close-x-white.png
-import ModalCreateUser from "./ModalCreateUser"
-import ModalEditUser from "./ModalEditUser"
+
+// Utility helper to decode DB buffer without requiring Webpack Buffer polyfills
+const decodeBase64Buffer = (imgObj) => {
+    if (imgObj && imgObj.data) {
+        let bytes = new Uint8Array(imgObj.data);
+        let binary = '';
+        for (let i = 0; i < bytes.byteLength; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return binary;
+    } else if (typeof imgObj === 'string') {
+        return imgObj;
+    }
+    return '';
+};
+
 class UserManage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            arrUsers: [],// Bước 1: Khởi tạo mảng rỗng,
-            editUser: {},
-            isOpenModalCreate: false,
-            isOpenModalEdit: false
-        }
+            arrUsers: [],
+            isModalOpen: false,
+            action: 'CREATE', // 'CREATE' or 'EDIT'
+            
+            // Dropdown Data
+            genderArr: [],
+            roleArr: [],
+            positionArr: [],
+            
+            // Form state
+            id: '',
+            email: '',
+            password: '',
+            firstName: '',
+            lastName: '',
+            address: '',
+            phonenumber: '',
+            gender: '',
+            roleId: '',
+            positionId: '',
+            avatar: '',
+            previewImgURL: ''
+        };
     }
 
     async componentDidMount() {
-        // let response = await getAllUsers('ALL');
-        // if (response && response.errCode === 0) {
-        //     // Bước 2: Cập nhật state khi có dữ liệu
-        //     console.log('Get all users from Node.js: ', response);
-        //     this.setState({
-        //         arrUsers: response.users
-        //     });
-        // }
-        await this.getAllUsersFromReact()
+        await this.fetchAllData();
     }
-    getAllUsersFromReact = async () => {
-        let response = await getAllUsers('ALL');
-        if (response && response.errCode === 0) {
-            // Bước 2: Cập nhật state khi có dữ liệu
-            console.log('Get all users from Node.js: ', response);
+
+    fetchAllData = async () => {
+        try {
+            let [usersRes, genderRes, roleRes, positionRes] = await Promise.all([
+                getAllUsers('ALL'),
+                getAllCodeService('GENDER'),
+                getAllCodeService('ROLE'),
+                getAllCodeService('POSITION')
+            ]);
+            
+            let stateUpdate = {};
+            
+            if (usersRes && usersRes.errCode === 0) {
+                stateUpdate.arrUsers = usersRes.users;
+            }
+            if (genderRes && genderRes.errCode === 0) {
+                stateUpdate.genderArr = genderRes.data;
+                if(genderRes.data && genderRes.data.length > 0) stateUpdate.gender = genderRes.data[0].keyMap;
+            }
+            if (roleRes && roleRes.errCode === 0) {
+                stateUpdate.roleArr = roleRes.data;
+                if(roleRes.data && roleRes.data.length > 0) stateUpdate.roleId = roleRes.data[0].keyMap;
+            }
+            if (positionRes && positionRes.errCode === 0) {
+                stateUpdate.positionArr = positionRes.data;
+                if(positionRes.data && positionRes.data.length > 0) stateUpdate.positionId = positionRes.data[0].keyMap;
+            }
+
+            this.setState(stateUpdate);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    }
+
+    handleOnChangeInput = (event, id) => {
+        let copyState = { ...this.state };
+        copyState[id] = event.target.value;
+        this.setState({ ...copyState });
+    }
+
+    handleOnChangeImage = async (event) => {
+        let data = event.target.files;
+        let file = data[0];
+        if (file) {
+            let base64 = await CommonUtils.getBase64(file);
+            let objectUrl = URL.createObjectURL(file);
             this.setState({
-                arrUsers: response.users
+                previewImgURL: objectUrl,
+                avatar: base64
             });
         }
     }
-    toggleUserCreateModal = () => {
+
+    resetFormState = () => {
+        let { genderArr, roleArr, positionArr } = this.state;
         this.setState({
-            isOpenModalCreate: !this.state.isOpenModalCreate,
-        })
-    }
-    toggleUserEditModal = () => {
-        this.setState({
-            isOpenModalEdit: !this.state.isOpenModalEdit,
-        })
+            isModalOpen: false,
+            action: 'CREATE',
+            id: '',
+            email: '',
+            password: '',
+            firstName: '',
+            lastName: '',
+            address: '',
+            phonenumber: '',
+            gender: genderArr && genderArr.length > 0 ? genderArr[0].keyMap : '',
+            roleId: roleArr && roleArr.length > 0 ? roleArr[0].keyMap : '',
+            positionId: positionArr && positionArr.length > 0 ? positionArr[0].keyMap : '',
+            avatar: '',
+            previewImgURL: ''
+        });
     }
 
-    // handleAddNewUser = async () => { // Chuyển thành arrow function để không lỗi 'this'
-    //     try {
-    //         // let response = await createNewUserService(data);
-    //         let response = "await createNewUserService(data);"
-    //         if (response && response.errCode !== 0) {
-    //             alert(response.errMessage);
-    //         } else {
-    //             // Thành công: Load lại bảng và đóng modal
-    //             await this.getAllUsersFromReact();
-    //             this.setState({
-    //                 isOpenModalCreate: false
-    //             })
-    //         }
-    //     } catch (e) {
-    //         console.log(e);
-    //     }
-    // }
-    createNewUser = async (data) => {
-        try {
-            let response = await createNewUsersService(data)
-            if (response && response.errCode === 0) {
-                // alert(response.errMessage)
-                await this.getAllUsersFromReact()
-                this.toggleUserCreateModal()
-            } else {
-                alert(response.errMessage)
-
-
-            }
-        } catch (error) {
-            console.log(error)
-        }
-        // console.log("check data: ", data)
-    }
     handleAddNewUser = () => {
+        this.resetFormState();
+        this.setState({ isModalOpen: true, action: 'CREATE' });
+    }
+
+    handleEditUser = (user) => {
+        let imageBase64 = decodeBase64Buffer(user.image);
 
         this.setState({
-            isOpenModalCreate: true
-        })
+            isModalOpen: true,
+            action: 'EDIT',
+            id: user.id,
+            email: user.email,
+            password: 'HIDDEN_PASSWORD',
+            firstName: user.firstName,
+            lastName: user.lastName,
+            address: user.address,
+            phonenumber: user.phonenumber,
+            gender: user.gender,
+            roleId: user.roleId,
+            positionId: user.positionId,
+            avatar: imageBase64,
+            previewImgURL: imageBase64
+        });
     }
-    handleDeleteUsers = async (user) => {
-        try {
-            let response = await deleteUserService(user.id)
-            if (response && response.errCode === 0) {
-                await this.getAllUsersFromReact()
 
-                console.log(response)
+    handleSaveUser = async () => {
+        let { action, id, email, password, firstName, lastName, address, phonenumber, gender, roleId, positionId, avatar } = this.state;
 
-            }
-            else
-                alert(response.errMessage)
-        } catch (error) {
-            console.log(error)
-
+        // Basic validation
+        if (!email || !firstName || !lastName || !address || !phonenumber) {
+            alert('Vui lòng điền đủ các trường bắt buộc!');
+            return;
         }
 
-    }
-    handleEditUser = async (user) => {
-        this.setState({
-            isOpenModalEdit: true,
-            editUser: user
-        })
-    }
-    handleSaveEditUser = async (user) => {
-        console.log("handleDoEditUser: ", user)
+        let userData = {
+            id, email, password, firstName, lastName, address, phonenumber, gender, roleId, positionId, avatar
+        };
+
         try {
-            let response = await editUserService(user)
-            if (response && response.errCode === 0) {
-                this.setState({
-                    isOpenModalEdit: false
-                })
-                await this.getAllUsersFromReact()
-                console.log("handleSaveEditUser ", response)
-
+            let res;
+            if (action === 'CREATE') {
+                res = await createNewUsersService(userData);
+            } else {
+                res = await editUserService(userData);
             }
-            else {
-                alert(response.errMessage)
 
+            if (res && res.errCode === 0) {
+                this.resetFormState();
+                await this.fetchAllData();
+            } else {
+                alert(res.errMessage);
             }
         } catch (error) {
-            console.log(error)
+            console.log("Save error:", error);
         }
-
     }
+
+    handleDeleteUser = async (user) => {
+        try {
+            if (window.confirm(`Are you sure to delete user: ${user.email}?`)) {
+                let res = await deleteUserService(user.id);
+                if (res && res.errCode === 0) {
+                    await this.fetchAllData();
+                } else {
+                    alert(res.errMessage);
+                }
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     render() {
+        let { arrUsers, isModalOpen, action, genderArr, roleArr, positionArr } = this.state;
+        let { language } = this.props;
+
         return (
             <div className="users-container">
-                <ModalCreateUser
-                    isOpen={this.state.isOpenModalCreate}
-                    toggleFromParent={this.toggleUserCreateModal}
-                    createNewUser={this.createNewUser} // Truyền hàm lưu xuống cho Con
-
-                />
-                {
-                    this.state.isOpenModalEdit && <ModalEditUser
-                        isOpen={this.state.isOpenModalEdit}
-                        toggleFromParent={this.toggleUserEditModal}
-                        editUser={this.state.editUser} // Truyền hàm lưu xuống cho Con
-                        handleEditUser={this.handleSaveEditUser}
-
-                    />
-                }
-
-                <div className="title text-center">
-                    <h1 className="header-title">Manage User</h1>
-                </div>
-                <div className="mb-3">
-                    <button
-                        className="btn btn-primary px-3"
-                        onClick={() => this.handleAddNewUser()}
-                    >
-                        <img className="addUser" src={addUser} alt="addUser" />
+                <div className="header-section">
+                    <h1 className="page-title"><FormattedMessage id="menu.admin.crud" defaultMessage="Quản lý người dùng" /></h1>
+                    <button className="btn-add-user" onClick={this.handleAddNewUser}>
+                        <i className="fas fa-plus"></i>
+                        Thêm tài khoản
                     </button>
                 </div>
-                <table id="customers" className="table-manage-user">
-                    <thead>
-                        <tr>
-                            <th className="th-email">Email</th>
-                            <th className="th-firstname">First Name</th>
-                            <th className="th-lastname">Last Name</th>
-                            <th className="th-address">Address</th>
-                            <th className="th-actions">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {this.state.arrUsers && this.state.arrUsers.length > 0 ? (
-                            this.state.arrUsers.map((item, index) => {
-                                return (
-                                    <tr key={index} className="row-user">
-                                        <td>{item.email}</td>
-                                        <td>{item.firstName}</td>
-                                        <td>{item.lastName}</td>
-                                        <td>{item.address}</td>
-                                        <td className="actions-cell">
-                                            <button className="btn-edit" onClick={() => { this.handleEditUser(item) }} title="Edit">
-                                                <i className="fas fa-pencil-alt"></i>
-                                            </button>
-                                            <button className="btn-delete" onClick={() => { this.handleDeleteUsers(item) }} title="Delete">
-                                                <i className="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                );
-                            })
-                        ) : (
+
+                <div className="table-container">
+                    <table>
+                        <thead>
                             <tr>
-                                <td colSpan="5" className="text-center">No data found</td>
+                                <th>Email</th>
+                                <th>Quyền/Vai trò</th>
+                                <th>Địa chỉ</th>
+                                <th>Thao tác</th>
                             </tr>
-                        )}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {arrUsers && arrUsers.length > 0 ? (
+                                arrUsers.map((item, index) => {
+                                    let imageBase64 = decodeBase64Buffer(item.image);
+                                    
+                                    return (
+                                        <tr key={index}>
+                                            <td>
+                                                <div className="user-info-cell">
+                                                    <div className="avatar-mini">
+                                                        <img src={imageBase64 || 'https://static.vecteezy.com/system/resources/previews/026/625/600/non_2x/person-icon-symbol-design-illustration-vector.jpg'} alt="avatar"/>
+                                                    </div>
+                                                    <div className="user-name-block">
+                                                        <span className="name">{item.lastName} {item.firstName}</span>
+                                                        <span className="email">{item.email}</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>{item.roleId}</td>
+                                            <td>{item.address}</td>
+                                            <td>
+                                                <div className="actions-cell">
+                                                    <button className="btn-edit" onClick={() => this.handleEditUser(item)} title="Edit">
+                                                        <i className="fas fa-pencil-alt"></i>
+                                                    </button>
+                                                    <button className="btn-delete" onClick={() => this.handleDeleteUser(item)} title="Delete">
+                                                        <i className="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    );
+                                })
+                            ) : (
+                                <tr>
+                                    <td colSpan="4" style={{ textAlign: 'center', padding: '20px', color: '#86868b' }}>
+                                        Không có dữ liệu
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* MODAL CẬP NHẬT/THÊM NGƯỜI DÙNG */}
+                <Modal isOpen={isModalOpen} toggle={this.resetFormState} className="user-modal" size="lg" centered>
+                    <div className="modal-header">
+                        <span className="modal-title">
+                            {action === 'CREATE' ? 'Thêm mới người dùng' : 'Cập nhật người dùng'}
+                        </span>
+                        <button className="close" onClick={this.resetFormState}>
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div className="modal-body">
+                        <div className="user-form-grid">
+                            
+                            <div className="input-group-apple">
+                                <label>Email <span className="text-danger">*</span></label>
+                                <input type="email" value={this.state.email} 
+                                       onChange={(e) => this.handleOnChangeInput(e, 'email')} 
+                                       disabled={action === 'EDIT'} />
+                            </div>
+
+                            <div className="input-group-apple">
+                                <label>Password <span className="text-danger">*</span></label>
+                                <input type="password" value={this.state.password} 
+                                       onChange={(e) => this.handleOnChangeInput(e, 'password')}
+                                       disabled={action === 'EDIT'} />
+                            </div>
+
+                            <div className="input-group-apple">
+                                <label>First Name <span className="text-danger">*</span></label>
+                                <input type="text" value={this.state.firstName} 
+                                       onChange={(e) => this.handleOnChangeInput(e, 'firstName')} />
+                            </div>
+
+                            <div className="input-group-apple">
+                                <label>Last Name <span className="text-danger">*</span></label>
+                                <input type="text" value={this.state.lastName} 
+                                       onChange={(e) => this.handleOnChangeInput(e, 'lastName')} />
+                            </div>
+
+                            <div className="input-group-apple">
+                                <label>Số điện thoại <span className="text-danger">*</span></label>
+                                <input type="tel" value={this.state.phonenumber} 
+                                       onChange={(e) => this.handleOnChangeInput(e, 'phonenumber')} />
+                            </div>
+
+                            <div className="input-group-apple full-width">
+                                <label>Địa chỉ <span className="text-danger">*</span></label>
+                                <input type="text" value={this.state.address} 
+                                       onChange={(e) => this.handleOnChangeInput(e, 'address')} />
+                            </div>
+
+                            <div className="input-group-apple">
+                                <label>Giới tính</label>
+                                <select value={this.state.gender} onChange={(e) => this.handleOnChangeInput(e, 'gender')}>
+                                    {genderArr && genderArr.length > 0 && genderArr.map((item, index) => {
+                                        return (
+                                            <option key={index} value={item.keyMap}>
+                                                {language === 'vi' ? item.valueVi : item.valueEn}
+                                            </option>
+                                        )
+                                    })}
+                                </select>
+                            </div>
+
+                            <div className="input-group-apple">
+                                <label>Chức danh</label>
+                                <select value={this.state.positionId} onChange={(e) => this.handleOnChangeInput(e, 'positionId')}>
+                                    {positionArr && positionArr.length > 0 && positionArr.map((item, index) => {
+                                        return (
+                                            <option key={index} value={item.keyMap}>
+                                                {language === 'vi' ? item.valueVi : item.valueEn}
+                                            </option>
+                                        )
+                                    })}
+                                </select>
+                            </div>
+
+                            <div className="input-group-apple">
+                                <label>Vai trò (Role)</label>
+                                <select value={this.state.roleId} onChange={(e) => this.handleOnChangeInput(e, 'roleId')}>
+                                    {roleArr && roleArr.length > 0 && roleArr.map((item, index) => {
+                                        return (
+                                            <option key={index} value={item.keyMap}>
+                                                {language === 'vi' ? item.valueVi : item.valueEn}
+                                            </option>
+                                        )
+                                    })}
+                                </select>
+                            </div>
+
+                            <div className="input-group-apple">
+                                <label>Ảnh đại diện (Avatar)</label>
+                                <div className="avatar-upload-area">
+                                    <div className="avatar-preview">
+                                        <img src={this.state.previewImgURL || 'https://static.vecteezy.com/system/resources/previews/026/625/600/non_2x/person-icon-symbol-design-illustration-vector.jpg'} alt="Preview" />
+                                    </div>
+                                    <input type="file" id="uploadAvatar" hidden onChange={this.handleOnChangeImage} />
+                                    <label htmlFor="uploadAvatar" className="upload-btn-label">Tải ảnh lên</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="modal-footer">
+                        <button className="btn-cancel" onClick={this.resetFormState}>Hủy</button>
+                        <button className="btn-save" onClick={this.handleSaveUser}>
+                            {action === 'CREATE' ? 'Lưu mới' : 'Cập nhật'}
+                        </button>
+                    </div>
+                </Modal>
 
             </div>
         );
     }
-
 }
 
 const mapStateToProps = state => {
     return {
+        language: state.app.language,
     };
 };
 
 const mapDispatchToProps = dispatch => {
-    return {
-    };
+    return {};
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserManage);

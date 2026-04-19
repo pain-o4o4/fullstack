@@ -124,11 +124,11 @@ class Login extends Component {
                             </div>
 
                             <div className="submit-container">
-                                <button onClick={this.handleSignUp}>
-                                    Sign Up
-                                </button>
-                                <button onClick={this.handleLogin}>
+                                <button className="submit" onClick={this.handleLogin}>
                                     Login
+                                </button>
+                                <button className="submit gray" onClick={this.handleSignUp}>
+                                    Sign Up
                                 </button>
                             </div>
                         </div>

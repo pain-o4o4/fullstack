@@ -3,8 +3,8 @@ import { connect } from "react-redux";
 import { withRouter } from '../components/Navigator';
 import { toast } from "react-toastify";
 import { first } from 'lodash';
-import Header from '../containers/Header/Header'
-class PatientSettings extends Component {
+import SystemLayout from '../containers/System/SystemLayout';
+class AdminSettings extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -29,13 +29,14 @@ class PatientSettings extends Component {
 
         return (
             <React.Fragment>
-                <Header />
-                <div className="system-container">
-                    <div className="system-list">
-                        <h1>TRANG QUẢN TRỊ ADMIN</h1>
-                        <p>Chào mừng ông đã vào được đây!</p>
+                <SystemLayout>
+                    <div className="system-container" style={{ padding: '20px' }}>
+                        <div className="system-list">
+                            <h1>TRANG QUẢN TRỊ ADMIN</h1>
+                            <p>Chào mừng ông đã vào được đây!</p>
+                        </div>
                     </div>
-                </div>
+                </SystemLayout>
             </React.Fragment>
         )
     }
@@ -57,4 +58,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 // import { withRouter } from 'react-router'; // hoặc 'react-router-dom'
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(PatientSettings));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AdminSettings));
