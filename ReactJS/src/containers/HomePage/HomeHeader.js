@@ -98,9 +98,9 @@ class HomeHeader extends Component {
                 <div className='home-header-container'>
                     <div className='home-header-content'>
                         <div className='left-content'>
-                            <div className='header-logo'
+                            <span className='brand-name'
                                 onClick={() => this.handleViewList('HOME')}
-                            ></div>
+                            >BookingCare</span>
                         </div>
                         <div className='center-content'>
                             {this.state.isShowSearch ? (
@@ -141,15 +141,17 @@ class HomeHeader extends Component {
                             {!isLoggedIn ? <div className="login-group"
                                 onClick={() => this.toggleUserMenu()}
                             >
-                                <img src={user_login} className="icon-user" alt="User" />
                                 <span className="text-login">
-
                                     <FormattedMessage id="header.login" defaultMessage="Log in" />
                                 </span>
                             </div> :
                                 <span className='welcome'
                                     onClick={() => this.toggleUserMenu()}
                                 >
+                                    <span className="welcome-text">
+                                        <FormattedMessage id="homeheader.welcome" defaultMessage="Welcome, " />
+                                        {userInfo && userInfo.firstName ? userInfo.firstName : ''}
+                                    </span>
                                     <img src={userInfo.image} className="icon-user" alt="User" />
                                 </span>
                             }
@@ -158,13 +160,12 @@ class HomeHeader extends Component {
                                     handleViewList={this.handleViewList}
                                 />
                             )}
-                            <img src={search} className="icon-search" alt="icon-search" onClick={() => this.handleToggleSearch()} />
-                            <img
-                                src={translate}
-                                className="icon-translate"
-                                alt="Translate"
-                                onClick={() => this.changeLanguage()}
-                            />
+                            <div className="icon-btn" onClick={() => this.handleToggleSearch()}>
+                                <img src={search} className="icon-search" alt="icon-search" />
+                            </div>
+                            <div className="translate-wrapper" onClick={() => this.changeLanguage()}>
+                                <img src={translate} className="icon-translate" alt="Translate" />
+                            </div>
                         </div>
                     </div>
                 </div>
