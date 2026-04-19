@@ -7,7 +7,7 @@ export const path = {
     REGISTER: '/register',
     LOG_OUT: '/logout',
     SYSTEM: '/system',
-    ADMIN: '/admin',
+    // ADMIN: '/admin',
 
     DETAIL_DOCTOR: '/detail-doctor/:id',
     DETAIL_SPECIALTY: '/detail-specialty/:id',
@@ -18,7 +18,7 @@ export const path = {
     ALL_DOCTOR: '/all-doctor',
     ALL_SPECIALTY: '/all-specialty',
 
-    SETTINGS: '/patient/settings',
+    SETTINGS: '/system/patient-profile',
     MY_BOOKING: '/patient/my-booking',
     BOOKING_HISTORY: '/patient/history',
     PAYMENT: '/patient/payment',

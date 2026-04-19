@@ -39,13 +39,12 @@
             "user": "Người dùng",
             "manage-doctor": "Quản lý bác sỹ",
             "manage-admin": "Quản lý admin",
-            "crud": "CRUD người dùng",
-            "crud-redux": "CRUD Redux",
+            "crud": "Quản lý người dùng",
+            "crud-redux": "Chỉnh sửa người dùng ",
             "clinic": "Cơ sở y tế",
             "specialty": "Chuyên khoa",
             "manage-specialty": "Quản lý chuyên khoa",
-            "handbook": "Tin tức",
-            "manage-handbook": "Quan lý tin tức",
+            "manage-infor": "Quản lý thông tin",
             "manage-clinic": "Quản lý cơ sở y tế"
         },
         "doctor": {

@@ -29,13 +29,12 @@
             "user": "User",
             "manage-doctor": "Manage doctor",
             "manage-admin": "Manage admin",
-            "crud": "CRUD user",
-            "crud-redux": "CRUD Redux",
+            "crud": "Manage user",
+            "crud-redux": "Edit user",
             "clinic": "Clinic",
             "specialty": "Specialty",
             "manage-specialty": "Manage specialty",
-            "handbook": "Handbook",
-            "manage-handbook": "Manage handbook",
+            "manage-infor": "Manage information",
             "manage-clinic": "Manage clinic"
         },
         "doctor": {

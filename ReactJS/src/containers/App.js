@@ -17,7 +17,6 @@ import Home from '../routes/Home';
 import Login from './Auth/Login';
 import Register from './Auth/Register.js';
 import System from '../routes/System';
-import Admin from '../routes/Admin';
 import HomePage from './HomePage/HomePage.js'
 import Doctor from '../routes/Doctor'
 import { CustomToastCloseButton } from '../components/CustomToast';
@@ -33,7 +32,7 @@ import AllSpecialty from '../containers/Navigation/AllSpecialty.js';
 import AllClinic from '../containers/Navigation/AllClinics.js';
 import AllDoctor from '../containers/Navigation/AllDoctor.js';
 
-import PatientSettings from './HomePage/SubMenuForUser/PatientSettings';
+// import PatientSettings from './HomePage/SubMenuForUser/PatientSettings';
 import MyBooking from './HomePage/SubMenuForUser/MyBooking';
 import BookingHistory from './HomePage/SubMenuForUser/BookingHistory';
 import Payment from '../containers/Patient/Doctor/Modal/Payment';
@@ -95,12 +94,11 @@ class App extends Component {
                                     {/* //check roleId */}
                                     <Route path={path.LOGIN} element={<UserIsNotAuthenticated><Login /></UserIsNotAuthenticated>} />
                                     <Route path={path.REGISTER} element={<UserIsNotAuthenticated><Register /></UserIsNotAuthenticated>} />
-                                    <Route path={path.SYSTEM + '/*'} element={<UserIsAdmin><System /></UserIsAdmin>} />
+                                    <Route path={path.SYSTEM + '/*'} element={<UserIsAuthenticated><System /></UserIsAuthenticated>} />
                                     <Route path={path.DOCTOR + '/*'} element={<UserIsDoctor><Doctor /></UserIsDoctor>} />
-                                    <Route path={path.ADMIN + '/*'} element={<UserIsAdmin><Admin /></UserIsAdmin>} />
 
                                     {/* submenuforuser */}
-                                    <Route path={path.SETTINGS} element={<UserIsAuthenticated><PatientSettings /></UserIsAuthenticated>} />
+                                    {/* <Route path={path.SETTINGS} element={<UserIsAuthenticated><PatientSettings /></UserIsAuthenticated>} /> */}
                                     <Route path={path.MY_BOOKING} element={<UserIsPatientOrAdmin><MyBooking /></UserIsPatientOrAdmin>} />
                                     <Route path={path.BOOKING_HISTORY} element={<UserIsPatientOrAdmin><BookingHistory /></UserIsPatientOrAdmin>} />
 

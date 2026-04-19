@@ -22,7 +22,7 @@ export const adminMenu = [
     { // Quản lý cẩm nang
         name: 'menu.admin.handbook',
         menus: [
-            { name: 'menu.admin.manage-handbook', link: '/system/manage-handbook' }
+            { name: 'menu.admin.manage-infor', link: '/system/manage-handbook' }
         ]
     },
 ];
@@ -44,5 +44,17 @@ export const doctorMenu = [
     {
         name: 'menu.doctor.manage-booking',
         link: '/doctor/manage-booking'
+    }
+];
+
+export const patientMenu = [
+    {
+        name: 'menu.admin.user',
+        menus: [
+            {
+                name: 'Chỉnh sửa thông tin',
+                link: '/system/patient-profile'
+            }
+        ]
     }
 ];

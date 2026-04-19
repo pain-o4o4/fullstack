@@ -1,19 +1,22 @@
 .apple-account-page {
     background-color: #ffffff;
-    height: 100vh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    height: 100vh;
 
     .apple-sub-header {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
         flex-shrink: 0;
         border-bottom: 1px solid #d2d2d7;
-        padding: 12px 15px;
+        padding: 8px 8px;
         background: #fdfdfd;
 
         .sub-header-content {
-            max-width: 1400px;
+            max-width: 1000px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
@@ -83,9 +86,10 @@
     }
 
     .apple-settings-container {
+
         flex: 1;
         width: 100%;
-        max-width: 1400px;
+        max-width: 1000px;
         margin: 0 auto;
         padding: 0px 15px 0 15px;
         display: flex;
@@ -99,6 +103,7 @@
         }
 
         .apple-sidebar {
+            margin-top: 45px !important;
             width: 260px;
             flex-shrink: 0;
             height: 100%;
@@ -122,8 +127,8 @@
                 border-bottom: 1px solid #e5e5ea;
 
                 .avatar-circle {
-                    width: 70px;
-                    height: 70px;
+                    width: 80px;
+                    height: 80px;
                     border-radius: 50%;
                     overflow: hidden;
                     margin-bottom: 15px;
@@ -198,6 +203,24 @@
             overflow-y: auto;
             padding-bottom: 60px;
             padding-right: 15px;
+
+            &::-webkit-scrollbar {
+                width: 0px;
+            }
+
+            &::-webkit-scrollbar-track {
+                background: none;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background: none;
+                border-radius: 0px;
+            }
+
+            &::-webkit-scrollbar-thumb:hover {
+                background: none;
+            }
         }
+
     }
 }

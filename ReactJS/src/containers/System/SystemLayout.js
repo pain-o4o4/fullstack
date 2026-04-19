@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import * as actions from "../../store/actions";
 import { USER_ROLE } from '../../utils';
-import { adminMenu, doctorMenu } from '../Header/menuApp';
+import { adminMenu, doctorMenu, patientMenu } from '../Header/menuApp';
 import translate from '../../assets/images/translate.svg';
 import './SystemLayout.scss';
 
@@ -35,6 +35,8 @@ class SystemLayout extends Component {
                 menu = adminMenu;
             } else if (role === USER_ROLE.DOCTOR) {
                 menu = doctorMenu;
+            } else if (role === USER_ROLE.PATIENT) {
+                menu = patientMenu;
             }
         }
         this.setState({ menuApp: menu });
@@ -55,12 +57,14 @@ class SystemLayout extends Component {
                 {/* Top Header */}
                 <div className="apple-sub-header">
                     <div className="sub-header-content">
-                        <span className="brand-name">BookingCare</span>
+                        <span className="brand-name"
+                            onClick={() => window.location.href = '/home'}
+                        >BookingCare</span>
                         <div className="right-controls">
-                            <span className="welcome">
+                            {/* <span className="welcome">
                                 <FormattedMessage id="homeheader.welcome" defaultMessage="Welcome, " />
                                 {userInfo?.firstName || ''}
-                            </span>
+                            </span> */}
                             <div className="translate-wrapper" onClick={this.changeLanguage} title="Change Language">
                                 <img src={translate} className="icon-translate" alt="Translate" />
                             </div>
@@ -99,7 +103,7 @@ class SystemLayout extends Component {
                                                     className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}
                                                     key={itemIndex}
                                                 >
-                                                    <FormattedMessage id={item.name} />
+                                                    {item.name.includes('.') ? <FormattedMessage id={item.name} /> : item.name}
                                                 </NavLink>
                                             ))
                                         ) : (
@@ -109,7 +113,7 @@ class SystemLayout extends Component {
                                                     to={group.link}
                                                     className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}
                                                 >
-                                                    <FormattedMessage id={group.name} />
+                                                    {group.name.includes('.') ? <FormattedMessage id={group.name} /> : group.name}
                                                 </NavLink>
                                             )
                                         )}

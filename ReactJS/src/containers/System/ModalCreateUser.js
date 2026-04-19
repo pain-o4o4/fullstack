@@ -27,19 +27,13 @@ class ModalCreateUser extends Component {
         this.props.toggleFromParent();
     }
     handleOnChangeInput = (event, id) => {
-        // 1. Lấy giá trị người dùng vừa gõ
         let value = event.target.value;
 
-        // 2. Cập nhật state theo kiểu "computed property name"
-        // Cách này không cần tạo biến copyState trung gian, React sẽ tự hiểu
         this.setState({
             [id]: value
         }, () => {
-            // (Tùy chọn) In ra để kiểm tra xem state đã cập nhật đúng chưa
-            // console.log('check state: ', this.state);
         });
     }
-    // Kiểm tra dữ liệu trước khi gửi cho Cha
     checkValidateInput = () => {
         let isValid = true;
         let arrInput = ['email', 'password', 'phonenumber', 'firstName', 'lastName', 'address'];
@@ -56,11 +50,9 @@ class ModalCreateUser extends Component {
     handleAddNewUser = () => {
         let isValid = this.checkValidateInput();
         if (isValid === true) {
-            // // Gửi dữ liệu sang Cha (UserManage.js) thông qua props
             console.log('This is PROPS: ', this.props)
             this.props.createNewUser(this.state);
 
-            // // Sau khi gửi xong, xóa sạch dữ liệu trong ô input để lần sau nhập mới
             // this.setState({
             //     email: '', password: '', phonenumber: '', firstName: '', lastName: '', address: ''
             // });
@@ -73,12 +65,11 @@ class ModalCreateUser extends Component {
             <Modal
                 isOpen={this.props.isOpen}
                 toggle={() => this.toggle()}
-                size="lg"                    // hoặc "md" nếu muốn nhỏ hơn, giống Apple hơn
+                size="lg"
                 centered
-                backdrop="static"            // optional: ngăn click ngoài đóng (giống Apple alert)
+                backdrop="static"
                 className="modal-add-new-user"
                 fade={true}
-            // Nếu vẫn lệch, thử thêm: modalClassName="custom-modal-fix"
             >
                 <ModalHeader toggle={() => this.toggle()}>
                     Create A New User
@@ -89,7 +80,7 @@ class ModalCreateUser extends Component {
                         <div className="input-container">
                             <label>Email</label>
                             <input
-                                type="email"  // sửa type cho đúng
+                                type="email"
                                 onChange={(e) => this.handleOnChangeInput(e, "email")}
                                 value={this.state.email}
                                 placeholder="example@domain.com"
@@ -98,7 +89,7 @@ class ModalCreateUser extends Component {
                         <div className="input-container">
                             <label>Password</label>
                             <input
-                                type="password"  // sửa type cho đúng
+                                type="password"
                                 onChange={(e) => this.handleOnChangeInput(e, "password")}
                                 value={this.state.password}
                             />
@@ -131,7 +122,7 @@ class ModalCreateUser extends Component {
                         <div className="input-container">
                             <label>Phone Number</label>
                             <input
-                                type="tel"    // sửa từ password → tel cho phone
+                                type="tel"
                                 onChange={(e) => this.handleOnChangeInput(e, "phonenumber")}
                                 value={this.state.phonenumber}
                                 placeholder="+84 ..."

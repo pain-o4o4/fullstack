@@ -3,16 +3,15 @@ import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { CommonUtils } from '../../utils';
-import { 
-    getAllUsers, 
-    createNewUsersService, 
-    deleteUserService, 
+import {
+    getAllUsers,
+    createNewUsersService,
+    deleteUserService,
     editUserService,
     getAllCodeService
 } from '../../services/userService';
 import './UserManage.scss';
 
-// Utility helper to decode DB buffer without requiring Webpack Buffer polyfills
 const decodeBase64Buffer = (imgObj) => {
     if (imgObj && imgObj.data) {
         let bytes = new Uint8Array(imgObj.data);
@@ -33,14 +32,13 @@ class UserManage extends Component {
         this.state = {
             arrUsers: [],
             isModalOpen: false,
-            action: 'CREATE', // 'CREATE' or 'EDIT'
-            
-            // Dropdown Data
+            action: 'CREATE',
+
             genderArr: [],
             roleArr: [],
             positionArr: [],
-            
-            // Form state
+
+
             id: '',
             email: '',
             password: '',
@@ -68,23 +66,23 @@ class UserManage extends Component {
                 getAllCodeService('ROLE'),
                 getAllCodeService('POSITION')
             ]);
-            
+
             let stateUpdate = {};
-            
+
             if (usersRes && usersRes.errCode === 0) {
                 stateUpdate.arrUsers = usersRes.users;
             }
             if (genderRes && genderRes.errCode === 0) {
                 stateUpdate.genderArr = genderRes.data;
-                if(genderRes.data && genderRes.data.length > 0) stateUpdate.gender = genderRes.data[0].keyMap;
+                if (genderRes.data && genderRes.data.length > 0) stateUpdate.gender = genderRes.data[0].keyMap;
             }
             if (roleRes && roleRes.errCode === 0) {
                 stateUpdate.roleArr = roleRes.data;
-                if(roleRes.data && roleRes.data.length > 0) stateUpdate.roleId = roleRes.data[0].keyMap;
+                if (roleRes.data && roleRes.data.length > 0) stateUpdate.roleId = roleRes.data[0].keyMap;
             }
             if (positionRes && positionRes.errCode === 0) {
                 stateUpdate.positionArr = positionRes.data;
-                if(positionRes.data && positionRes.data.length > 0) stateUpdate.positionId = positionRes.data[0].keyMap;
+                if (positionRes.data && positionRes.data.length > 0) stateUpdate.positionId = positionRes.data[0].keyMap;
             }
 
             this.setState(stateUpdate);
@@ -233,13 +231,13 @@ class UserManage extends Component {
                             {arrUsers && arrUsers.length > 0 ? (
                                 arrUsers.map((item, index) => {
                                     let imageBase64 = decodeBase64Buffer(item.image);
-                                    
+
                                     return (
                                         <tr key={index}>
                                             <td>
                                                 <div className="user-info-cell">
                                                     <div className="avatar-mini">
-                                                        <img src={imageBase64 || 'https://static.vecteezy.com/system/resources/previews/026/625/600/non_2x/person-icon-symbol-design-illustration-vector.jpg'} alt="avatar"/>
+                                                        <img src={imageBase64 || 'https://static.vecteezy.com/system/resources/previews/026/625/600/non_2x/person-icon-symbol-design-illustration-vector.jpg'} alt="avatar" />
                                                     </div>
                                                     <div className="user-name-block">
                                                         <span className="name">{item.lastName} {item.firstName}</span>
@@ -285,43 +283,43 @@ class UserManage extends Component {
                     </div>
                     <div className="modal-body">
                         <div className="user-form-grid">
-                            
+
                             <div className="input-group-apple">
                                 <label>Email <span className="text-danger">*</span></label>
-                                <input type="email" value={this.state.email} 
-                                       onChange={(e) => this.handleOnChangeInput(e, 'email')} 
-                                       disabled={action === 'EDIT'} />
+                                <input type="email" value={this.state.email}
+                                    onChange={(e) => this.handleOnChangeInput(e, 'email')}
+                                    disabled={action === 'EDIT'} />
                             </div>
 
                             <div className="input-group-apple">
                                 <label>Password <span className="text-danger">*</span></label>
-                                <input type="password" value={this.state.password} 
-                                       onChange={(e) => this.handleOnChangeInput(e, 'password')}
-                                       disabled={action === 'EDIT'} />
+                                <input type="password" value={this.state.password}
+                                    onChange={(e) => this.handleOnChangeInput(e, 'password')}
+                                    disabled={action === 'EDIT'} />
                             </div>
 
                             <div className="input-group-apple">
                                 <label>First Name <span className="text-danger">*</span></label>
-                                <input type="text" value={this.state.firstName} 
-                                       onChange={(e) => this.handleOnChangeInput(e, 'firstName')} />
+                                <input type="text" value={this.state.firstName}
+                                    onChange={(e) => this.handleOnChangeInput(e, 'firstName')} />
                             </div>
 
                             <div className="input-group-apple">
                                 <label>Last Name <span className="text-danger">*</span></label>
-                                <input type="text" value={this.state.lastName} 
-                                       onChange={(e) => this.handleOnChangeInput(e, 'lastName')} />
+                                <input type="text" value={this.state.lastName}
+                                    onChange={(e) => this.handleOnChangeInput(e, 'lastName')} />
                             </div>
 
                             <div className="input-group-apple">
                                 <label>Số điện thoại <span className="text-danger">*</span></label>
-                                <input type="tel" value={this.state.phonenumber} 
-                                       onChange={(e) => this.handleOnChangeInput(e, 'phonenumber')} />
+                                <input type="tel" value={this.state.phonenumber}
+                                    onChange={(e) => this.handleOnChangeInput(e, 'phonenumber')} />
                             </div>
 
                             <div className="input-group-apple full-width">
                                 <label>Địa chỉ <span className="text-danger">*</span></label>
-                                <input type="text" value={this.state.address} 
-                                       onChange={(e) => this.handleOnChangeInput(e, 'address')} />
+                                <input type="text" value={this.state.address}
+                                    onChange={(e) => this.handleOnChangeInput(e, 'address')} />
                             </div>
 
                             <div className="input-group-apple">
