@@ -1,4 +1,4 @@
-@import "../styles/common.scss";
+@use "../styles/common" as *;
 
 .toast-container {
   .toast-item {
@@ -25,7 +25,7 @@
     .toast-close {
       position: absolute;
       right: 10px;
-      top:10px;
+      top: 10px;
       color: $common-text-color;
       font-size: $base-size;
       padding: 0;
@@ -50,6 +50,7 @@
         .fixed-scroll-bar {
           height: 50px;
         }
+
         .date {
           float: right;
           font-size: $base-size - 2px;

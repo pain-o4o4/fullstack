@@ -1,4 +1,4 @@
-@import "../styles/common";
+// @import "../styles/common";
 
 .confirm-modal {
   &.modal-dialog {
@@ -9,21 +9,23 @@
 
   hr {
     border: none;
-    border-bottom: 1px solid $border;;
+    // border-bottom: 1px solid $border;;
     width: 100%;
     margin: 10px 15px 5px 15px;
   }
 
   .btn-container {
     margin-top: 10px;
+
     .btn {
       width: 100px;
+
       &:first-child {
         margin-right: 10px;
       }
     }
   }
-  
+
   .custom-form-group {
     margin: 5px 0;
 
@@ -33,4 +35,3 @@
     }
   }
 }
-
