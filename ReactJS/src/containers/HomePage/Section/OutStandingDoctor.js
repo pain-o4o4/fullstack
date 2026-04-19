@@ -47,17 +47,22 @@ class OutStandingDoctor extends Component {
                 <div className='section-OutStandingDoctor'>
                     <div className='section-header'>
                         <span className='title-section'>Bác sĩ nổi bật tuần qua</span>
-                        <button className='btn-section'>Xem thêm</button>
+                        <button className='btn-section'
+                            onClick={() => this.props.navigate && this.props.navigate('/all-doctors')}
+                        >Xem thêm</button>
                     </div>
                     <div className='section-body'>
                         <Slider {...this.props.settings}>
                             {arrDoctors && arrDoctors.length > 0 &&
                                 arrDoctors.map((item, index) => {
-                                    // Xử lý ảnh
-                                    let imageBase64 = '';
+                                    // Xử lý ảnh — check if already data URL or needs prefix
+                                    let imageUrl = '';
                                     if (item.image) {
-                                        // Use base64 data URL for image rendering in browser
-                                        imageBase64 = `data:image/jpeg;base64,${item.image}`;
+                                        if (typeof item.image === 'string' && item.image.startsWith('data:')) {
+                                            imageUrl = item.image;
+                                        } else {
+                                            imageUrl = `data:image/jpeg;base64,${item.image}`;
+                                        }
                                     }
 
                                     // Hiển thị chức danh + tên
@@ -69,9 +74,8 @@ class OutStandingDoctor extends Component {
                                             onClick={() => this.handleViewDetailDoctor(item)}>
                                             <div className='customize-border'>
                                                 <div className='outer-bg'>
-                                                    {/* Kiểm tra nếu có ảnh thì hiển thị, không thì để ảnh mặc định */}
                                                     <div className='bg-image'
-                                                        style={{ backgroundImage: `url(${imageBase64})` }}>
+                                                        style={{ backgroundImage: `url(${imageUrl})` }}>
                                                     </div>
                                                 </div>
                                                 <div className='position text-center'>

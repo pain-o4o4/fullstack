@@ -138,28 +138,30 @@ class HomeHeader extends Component {
                             )}
                         </div>
                         <div className="right-content">
-                            {!isLoggedIn ? <div className="login-group"
-                                onClick={() => this.toggleUserMenu()}
-                            >
-                                <span className="text-login">
-                                    <FormattedMessage id="header.login" defaultMessage="Log in" />
-                                </span>
-                            </div> :
-                                <span className='welcome'
+                            <div className="user-menu-wrapper" ref={this.wrapperRef}>
+                                {!isLoggedIn ? <div className="login-group"
                                     onClick={() => this.toggleUserMenu()}
                                 >
-                                    <span className="welcome-text">
-                                        <FormattedMessage id="homeheader.welcome" defaultMessage="Welcome, " />
-                                        {userInfo && userInfo.firstName ? userInfo.firstName : ''}
+                                    <span className="text-login">
+                                        <FormattedMessage id="header.login" defaultMessage="Log in" />
                                     </span>
-                                    <img src={userInfo.image} className="icon-user" alt="User" />
-                                </span>
-                            }
-                            {this.state.isOpenUserMenu && (
-                                <UserMenuPopup
-                                    handleViewList={this.handleViewList}
-                                />
-                            )}
+                                </div> :
+                                    <span className='welcome'
+                                        onClick={() => this.toggleUserMenu()}
+                                    >
+                                        <span className="welcome-text">
+                                            <FormattedMessage id="homeheader.welcome" defaultMessage="Welcome, " />
+                                            {userInfo && userInfo.firstName ? userInfo.firstName : ''}
+                                        </span>
+                                        <img src={userInfo.image} className="icon-user" alt="User" />
+                                    </span>
+                                }
+                                {this.state.isOpenUserMenu && (
+                                    <UserMenuPopup
+                                        handleViewList={this.handleViewList}
+                                    />
+                                )}
+                            </div>
                             <div className="icon-btn" onClick={() => this.handleToggleSearch()}>
                                 <img src={search} className="icon-search" alt="icon-search" />
                             </div>

@@ -1,18 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
-
-
 .section-medicalfacility {
     background: #f5f5f7;
     padding: 0 20% 80px;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
 
     .medical-facility-container {
         display: flex;
         width: 100%;
         justify-content: center;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
         margin: 0 auto;
-        border-radius: 10px;
+        border-radius: 20px;
         gap: 30px;
     }
 
@@ -22,28 +18,33 @@
         margin-top: 10px;
 
         .title-section {
-            font-size: 38px;
-            font-weight: bold;
+            font-size: 36px;
+            font-weight: 700;
+            color: #1d1d1f;
+            letter-spacing: -0.5px;
             margin-bottom: 20px;
         }
 
         .desc-section {
-            font-size: 16px;
+            font-size: 15px;
             margin-bottom: 30px;
-            line-height: 1.5;
+            line-height: 1.6;
+            color: #515154;
         }
 
         .btn-explore {
-            padding: 10px 25px;
-            border: 2px solid #0066cc;
-            color: #0066cc;
+            padding: 10px 24px;
+            border: 1.5px solid #0071e3;
+            color: #0071e3;
             background: #fff;
-            border-radius: 25px;
+            border-radius: 18px;
             font-weight: 500;
+            font-size: 14px;
             cursor: pointer;
+            transition: all 0.2s;
 
             &:hover {
-                background: #0066cc;
+                background: #0071e3;
                 color: #fff;
             }
         }
@@ -63,21 +64,16 @@
                 height: 250px;
                 background-size: cover;
                 background-position: center;
-                border-radius: 18px; // Apple hay bo tròn hơn chút
+                border-radius: 20px;
                 position: relative;
                 overflow: hidden;
-
-                transition:
-                    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-                    box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-
-                will-change: transform; // tối ưu mượt hơn
+                border: 1px solid #d2d2d7;
+                transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 
                 &:hover {
-                    transform: scale(1.02); // giảm lại, Apple không zoom nhiều
-                    box-shadow:
-                        0 10px 30px rgba(0, 0, 0, 0.08),
-                        0 20px 60px rgba(0, 0, 0, 0.06); // shadow layer nhẹ
+                    transform: scale(1.02);
+                    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+                    border-color: #0071e3;
                 }
 
                 &::after {
@@ -87,15 +83,12 @@
                     left: 0;
                     width: 100%;
                     height: 65%;
-                    background: linear-gradient(to top,
-                            rgba(0, 0, 0, 0.75) 0%,
-                            rgba(0, 0, 0, 0.25) 40%,
-                            transparent 100%);
-                    transition: opacity 0.4s ease;
+                    background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.2) 40%, transparent 100%);
+                    transition: opacity 0.3s ease;
                 }
 
                 &:hover::after {
-                    opacity: 0.9; // hover tối nhẹ hơn, tạo chiều sâu
+                    opacity: 0.9;
                 }
 
                 .content-overlay {
@@ -104,15 +97,13 @@
                     left: 20px;
                     z-index: 2;
                     text-align: left;
-
                     transform: translateY(4px);
-                    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+                    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 
                     .section-name {
                         color: #fff;
-                        font-size: 18px;
+                        font-size: 17px;
                         font-weight: 600;
-                        margin: 0;
                     }
 
                     .section-desc {
@@ -123,12 +114,11 @@
                 }
 
                 &:hover .content-overlay {
-                    transform: translateY(0); // chữ nổi lên nhẹ
+                    transform: translateY(0);
                 }
             }
         }
 
-        /* Nút slider giữ nguyên như cũ */
         .slick-prev,
         .slick-next {
             top: auto;
@@ -136,19 +126,19 @@
             transform: none;
             width: 36px;
             height: 36px;
-            background: #ececf0 !important;
+            background: #f5f5f7 !important;
             border-radius: 50%;
             display: flex !important;
             align-items: center;
             justify-content: center;
             z-index: 10;
-            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            transition: background 0.2s;
 
             &::before {
                 color: #1d1d1f !important;
                 font-size: 16px;
                 opacity: 0.6;
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+                font-family: inherit !important;
             }
 
             &:hover {
@@ -183,18 +173,17 @@
         }
     }
 
-    /* =============== CHỈ THAY ĐỔI KHI LÀ ĐIỆN THOẠI =============== */
     @media (max-width: 1024px) {
-        padding: 40px 20px 60px; // giảm padding cho vừa màn hình mobile
+        padding: 40px 20px 60px;
 
         .medical-facility-container {
-            flex-direction: column; // header và body xếp dọc
+            flex-direction: column;
             gap: 35px;
             padding: 0 15px;
         }
 
         .medical-facility-header {
-            flex: none; // full width
+            flex: none;
             text-align: center;
         }
 
@@ -203,17 +192,16 @@
             width: 100%;
 
             .section-customize {
-                padding: 8px 0; // giảm padding ngang trên mobile
+                padding: 8px 0;
             }
 
-            /* Nút slider trên mobile - dịch xuống dưới và căn giữa hoặc sát phải */
             .slick-prev,
             .slick-next {
                 bottom: -40px;
             }
 
             .slick-prev {
-                right: 90px; // điều chỉnh vị trí cho gọn trên mobile
+                right: 90px;
             }
 
             .slick-next {
@@ -225,24 +213,15 @@
 
 
 .section-about {
-    background: rgb(245, 245, 247);
+    background: #f5f5f7;
     padding: 0 20% 80px;
-    ;
-
-    .left-content iframe {
-        transition: box-shadow 0.3s ease;
-    }
-
-    .left-content iframe:hover {
-        box-shadow:
-            0 8px 30px rgba(0, 0, 0, 0.08),
-            0 20px 60px rgba(0, 0, 0, 0.06);
-    }
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
 
     .section-header {
-        font-size: 32px;
-        font-weight: 600;
+        font-size: 28px;
+        font-weight: 700;
         color: #1d1d1f;
+        letter-spacing: -0.5px;
         text-align: center;
         margin-bottom: 50px;
     }
@@ -252,7 +231,6 @@
         gap: 50px;
         align-items: center;
 
-        // responsive
         @media (max-width: 992px) {
             flex-direction: column;
         }
@@ -264,12 +242,13 @@
                 width: 100%;
                 height: 320px;
                 border-radius: 20px;
-                border: none;
+                border: 1px solid #d2d2d7;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+                transition: box-shadow 0.3s ease;
 
-                // Apple shadow nhẹ
-                box-shadow:
-                    0 4px 20px rgba(0, 0, 0, 0.06),
-                    0 10px 40px rgba(0, 0, 0, 0.05);
+                &:hover {
+                    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+                }
             }
         }
 
@@ -277,7 +256,7 @@
             flex: 1;
 
             h2 {
-                font-size: 24px;
+                font-size: 22px;
                 font-weight: 600;
                 color: #1d1d1f;
                 margin-bottom: 15px;
@@ -297,24 +276,20 @@
                     display: flex;
                     align-items: center;
                     gap: 10px;
-
                     font-size: 14px;
                     color: #1d1d1f;
                     margin-bottom: 10px;
 
                     .feature-icon {
-                        width: 20px;
-                        height: 20px;
+                        width: 22px;
+                        height: 22px;
                         border-radius: 50%;
-
                         display: flex;
                         align-items: center;
                         justify-content: center;
-
-                        font-size: 12px;
+                        font-size: 11px;
                         font-weight: 600;
-
-                        background: #e8f3ff;
+                        background: #e8e8ed;
                         color: #0071e3;
                     }
                 }
@@ -323,10 +298,9 @@
     }
 }
 
-// Responsive cho Mobile/Tablet
 @media (max-width: 992px) {
     .section-body {
-        flex-direction: column !important; // Chuyển thành hàng dọc
+        flex-direction: column !important;
 
         .left-content,
         .right-content {
@@ -342,41 +316,40 @@
 
 .section-homefooter {
     width: 100%;
-    background-color: #ffffff;
-    border-top: 1px solid #e5e7eb; // Đường kẻ cực mảnh
+    background-color: #fdfdfd;
+    border-top: 1px solid #d2d2d7;
     padding: 10px 0;
     margin-top: 50px;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
 
     .footer-content {
         max-width: 1200px;
         margin: 0 auto;
         display: flex;
-        justify-content: space-between; // Đẩy text sang trái, icon sang phải
+        justify-content: space-between;
         align-items: center;
         padding: 0 20px;
 
         p {
             margin: 0;
-            color: #000207; // Màu xám nhạt tinh tế
+            color: #515154;
             font-size: 0.85rem;
             font-weight: 400;
 
             a {
-                color: #2785c3;
+                color: #0071e3;
                 text-decoration: none;
                 margin: 0 5px;
 
                 &:hover {
                     text-decoration: underline;
-                    color: #1c246d;
                 }
             }
         }
 
-        // --- PHẦN SCSS CHO ICON ĐÂY ---
         .social-links {
             display: flex;
-            gap: 20px; // Khoảng cách giữa các icon
+            gap: 20px;
             align-items: center;
 
             a {
@@ -386,35 +359,31 @@
                 justify-content: center;
                 transition: transform 0.2s ease;
 
-                // Hiệu ứng nhích nhẹ lên khi di chuột vào
                 &:hover {
-                    transform: translateY(-3px);
+                    transform: translateY(-2px);
                 }
 
                 i {
-                    font-size: 1.4rem; // Kích thước icon vừa vặn
-                    color: #000000; // Màu xám đậm (không dùng đen tuyền nhìn sẽ thô)
+                    font-size: 1.4rem;
+                    color: #86868b;
                     transition: color 0.2s;
 
-                    // Màu riêng khi hover vào từng loại icon
                     &.fa-facebook-square:hover {
-                        color: #1877f2; // Màu xanh Facebook
+                        color: #1877f2;
                     }
 
                     &.fa-youtube:hover {
-                        color: #ff0000; // Màu đỏ Youtube
+                        color: #ff0000;
                     }
 
-                    // Nếu dùng icon chung chung thì để màu xanh thương hiệu
                     &:hover {
-                        color: #1c246d;
+                        color: #0071e3;
                     }
                 }
             }
         }
     }
 
-    // Responsive cho iPhone (Xếp chồng dọc)
     @media (max-width: 768px) {
         .footer-content {
             flex-direction: column;
@@ -422,11 +391,11 @@
             text-align: center;
 
             p {
-                order: 2; // Cho chữ xuống dưới
+                order: 2;
             }
 
             .social-links {
-                order: 1; // Cho icon lên trên nhìn app-like hơn
+                order: 1;
             }
         }
     }
