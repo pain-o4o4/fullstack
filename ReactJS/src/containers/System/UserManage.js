@@ -159,10 +159,11 @@ class UserManage extends Component {
 
     handleSaveUser = async () => {
         let { action, id, email, password, firstName, lastName, address, phonenumber, gender, roleId, positionId, avatar } = this.state;
+        let { language } = this.props;
 
         // Basic validation
         if (!email || !firstName || !lastName || !address || !phonenumber) {
-            alert('Vui lòng điền đủ các trường bắt buộc!');
+            alert(language === 'vi' ? 'Vui lòng điền đủ các trường bắt buộc!' : 'Please fill in all required fields!');
             return;
         }
 
@@ -190,8 +191,13 @@ class UserManage extends Component {
     }
 
     handleDeleteUser = async (user) => {
+        let { language } = this.props;
         try {
-            if (window.confirm(`Are you sure to delete user: ${user.email}?`)) {
+            let confirmMsg = language === 'vi' 
+                ? `Bạn có chắc chắn muốn xóa người dùng: ${user.email}?` 
+                : `Are you sure to delete user: ${user.email}?`;
+            
+            if (window.confirm(confirmMsg)) {
                 let res = await deleteUserService(user.id);
                 if (res && res.errCode === 0) {
                     await this.fetchAllData();
@@ -211,10 +217,10 @@ class UserManage extends Component {
         return (
             <div className="users-container">
                 <div className="header-section">
-                    <h1 className="page-title"><FormattedMessage id="menu.admin.crud" defaultMessage="Quản lý người dùng" /></h1>
+                    <h1 className="page-title"><FormattedMessage id="manage-user.title" defaultMessage="Quản lý người dùng" /></h1>
                     <button className="btn-add-user" onClick={this.handleAddNewUser}>
                         <i className="fas fa-plus"></i>
-                        Thêm tài khoản
+                        <FormattedMessage id="manage-user.add-user" defaultMessage="Thêm tài khoản" />
                     </button>
                 </div>
 
@@ -222,10 +228,10 @@ class UserManage extends Component {
                     <table>
                         <thead>
                             <tr>
-                                <th>Email</th>
-                                <th>Quyền/Vai trò</th>
-                                <th>Địa chỉ</th>
-                                <th>Thao tác</th>
+                                <th><FormattedMessage id="manage-user.table-email" defaultMessage="Email" /></th>
+                                <th><FormattedMessage id="manage-user.table-role" defaultMessage="Quyền/Vai trò" /></th>
+                                <th><FormattedMessage id="manage-user.table-address" defaultMessage="Địa chỉ" /></th>
+                                <th><FormattedMessage id="manage-user.table-actions" defaultMessage="Thao tác" /></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -264,7 +270,7 @@ class UserManage extends Component {
                             ) : (
                                 <tr>
                                     <td colSpan="4" style={{ textAlign: 'center', padding: '20px', color: '#86868b' }}>
-                                        Không có dữ liệu
+                                        <FormattedMessage id="manage-user.no-data" defaultMessage="Không có dữ liệu" />
                                     </td>
                                 </tr>
                             )}
@@ -276,7 +282,10 @@ class UserManage extends Component {
                 <Modal isOpen={isModalOpen} toggle={this.resetFormState} className="user-modal" size="lg" centered>
                     <div className="modal-header">
                         <span className="modal-title">
-                            {action === 'CREATE' ? 'Thêm mới người dùng' : 'Cập nhật người dùng'}
+                            {action === 'CREATE' 
+                                ? <FormattedMessage id="manage-user.modal-create" defaultMessage="Thêm mới người dùng" /> 
+                                : <FormattedMessage id="manage-user.modal-update" defaultMessage="Cập nhật người dùng" />
+                            }
                         </span>
                         <button className="close" onClick={this.resetFormState}>
                             <span>&times;</span>
@@ -312,19 +321,19 @@ class UserManage extends Component {
                             </div>
 
                             <div className="input-group-apple">
-                                <label>Số điện thoại <span className="text-danger">*</span></label>
+                                <label><FormattedMessage id="manage-user.phone-number" defaultMessage="Số điện thoại" /> <span className="text-danger">*</span></label>
                                 <input type="tel" value={this.state.phonenumber}
                                     onChange={(e) => this.handleOnChangeInput(e, 'phonenumber')} />
                             </div>
 
                             <div className="input-group-apple full-width">
-                                <label>Địa chỉ <span className="text-danger">*</span></label>
+                                <label><FormattedMessage id="manage-user.address" defaultMessage="Địa chỉ" /> <span className="text-danger">*</span></label>
                                 <input type="text" value={this.state.address}
                                     onChange={(e) => this.handleOnChangeInput(e, 'address')} />
                             </div>
 
                             <div className="input-group-apple">
-                                <label>Giới tính</label>
+                                <label><FormattedMessage id="manage-user.gender" defaultMessage="Giới tính" /></label>
                                 <select value={this.state.gender} onChange={(e) => this.handleOnChangeInput(e, 'gender')}>
                                     {genderArr && genderArr.length > 0 && genderArr.map((item, index) => {
                                         return (
@@ -337,7 +346,7 @@ class UserManage extends Component {
                             </div>
 
                             <div className="input-group-apple">
-                                <label>Chức danh</label>
+                                <label><FormattedMessage id="manage-user.position" defaultMessage="Chức danh" /></label>
                                 <select value={this.state.positionId} onChange={(e) => this.handleOnChangeInput(e, 'positionId')}>
                                     {positionArr && positionArr.length > 0 && positionArr.map((item, index) => {
                                         return (
@@ -350,7 +359,7 @@ class UserManage extends Component {
                             </div>
 
                             <div className="input-group-apple">
-                                <label>Vai trò (Role)</label>
+                                <label><FormattedMessage id="manage-user.role" defaultMessage="Vai trò (Role)" /></label>
                                 <select value={this.state.roleId} onChange={(e) => this.handleOnChangeInput(e, 'roleId')}>
                                     {roleArr && roleArr.length > 0 && roleArr.map((item, index) => {
                                         return (
@@ -363,21 +372,28 @@ class UserManage extends Component {
                             </div>
 
                             <div className="input-group-apple">
-                                <label>Ảnh đại diện (Avatar)</label>
+                                <label><FormattedMessage id="manage-user.image" defaultMessage="Ảnh đại diện (Avatar)" /></label>
                                 <div className="avatar-upload-area">
                                     <div className="avatar-preview">
                                         <img src={this.state.previewImgURL || 'https://static.vecteezy.com/system/resources/previews/026/625/600/non_2x/person-icon-symbol-design-illustration-vector.jpg'} alt="Preview" />
                                     </div>
                                     <input type="file" id="uploadAvatar" hidden onChange={this.handleOnChangeImage} />
-                                    <label htmlFor="uploadAvatar" className="upload-btn-label">Tải ảnh lên</label>
+                                    <label htmlFor="uploadAvatar" className="upload-btn-label">
+                                        <FormattedMessage id="manage-user.upload-avatar" defaultMessage="Tải ảnh lên" />
+                                    </label>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div className="modal-footer">
-                        <button className="btn-cancel" onClick={this.resetFormState}>Hủy</button>
+                        <button className="btn-cancel" onClick={this.resetFormState}>
+                            <FormattedMessage id="manage-user.btn-cancel" defaultMessage="Hủy" />
+                        </button>
                         <button className="btn-save" onClick={this.handleSaveUser}>
-                            {action === 'CREATE' ? 'Lưu mới' : 'Cập nhật'}
+                            {action === 'CREATE' 
+                                ? <FormattedMessage id="manage-user.btn-save" defaultMessage="Lưu mới" /> 
+                                : <FormattedMessage id="manage-user.btn-update" defaultMessage="Cập nhật" />
+                            }
                         </button>
                     </div>
                 </Modal>

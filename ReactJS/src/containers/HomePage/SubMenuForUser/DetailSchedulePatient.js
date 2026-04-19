@@ -81,39 +81,39 @@ class DetailSchedulePatient extends Component {
             <div className="detail-schedule-container my-booking-container container">
                 <div className="header-detail">
                     <button className="btn-back pointer" onClick={this.handleGoBack}>
-                        <i className="fas fa-arrow-left"></i> Trở về
+                        <i className="fas fa-arrow-left"></i> <FormattedMessage id="patient-detail.btn-back" />
                     </button>
-                    <h2 className="title-booking font-weight-bold ml-3 mb-0">Chi tiết Lịch Khám</h2>
+                    <h2 className="title-booking font-weight-bold ml-3 mb-0"><FormattedMessage id="patient-detail.title" /></h2>
                 </div>
 
                 <div className="card-detail mt-4">
                     <div className="card-body">
                         <div className="status-banner mb-4">
                             <span className={`status-badge ${statusBadge}`}>{statusStr}</span>
-                            <span className="ml-3 text-muted">ID Lịch hẹn: {detailBooking.token ? detailBooking.token.substring(0, 8) : 'N/A'}</span>
+                            <span className="ml-3 text-muted"><FormattedMessage id="patient-detail.appointment-id" />: {detailBooking.token ? detailBooking.token.substring(0, 8) : 'N/A'}</span>
                         </div>
 
                         <div className="row">
                             <div className="col-md-6 mb-4">
-                                <h5 className="section-title">Nơi Khám</h5>
+                                <h5 className="section-title"><FormattedMessage id="patient-detail.clinic-info" /></h5>
                                 <div className="info-box">
                                     <div className="info-item">
                                         <i className="fas fa-hospital text-primary"></i>
-                                        <span className="font-weight-bold ml-2">{clinicName || 'Đang cập nhật'}</span>
+                                        <span className="font-weight-bold ml-2">{clinicName || <FormattedMessage id="patient-detail.not-found" />}</span>
                                     </div>
                                     <div className="info-item mt-2">
                                         <i className="fas fa-map-marker-alt text-danger"></i>
-                                        <span className="ml-2">{clinicAddress || 'Đang cập nhật'}</span>
+                                        <span className="ml-2">{clinicAddress || <FormattedMessage id="patient-detail.not-found" />}</span>
                                     </div>
                                 </div>
                             </div>
                             
                             <div className="col-md-6 mb-4">
-                                <h5 className="section-title">Bác sĩ phụ trách</h5>
+                                <h5 className="section-title"><FormattedMessage id="patient-detail.doctor-info" /></h5>
                                 <div className="info-box">
                                     <div className="info-item">
                                         <i className="fas fa-user-md text-success"></i>
-                                        <span className="font-weight-bold ml-2">{doctorName || 'Đang cập nhật'}</span>
+                                        <span className="font-weight-bold ml-2">{doctorName || <FormattedMessage id="patient-detail.not-found" />}</span>
                                     </div>
                                     <div className="info-item mt-2">
                                         <i className="fas fa-calendar-alt text-warning"></i>
@@ -125,15 +125,15 @@ class DetailSchedulePatient extends Component {
 
                         <div className="row">
                             <div className="col-12">
-                                <h5 className="section-title">Thông tin Thanh Toán</h5>
+                                <h5 className="section-title"><FormattedMessage id="patient-detail.payment-info" /></h5>
                                 <div className="info-box payment-box">
                                     <div className="d-flex justify-content-between mb-2">
-                                        <span className="text-muted">Chi phí khám bệnh:</span>
-                                        <span className="font-weight-bold text-success" style={{fontSize: '1.2rem'}}>{price || 'Đang cập nhật'}</span>
+                                        <span className="text-muted"><FormattedMessage id="patient-detail.price" />:</span>
+                                        <span className="font-weight-bold text-success" style={{fontSize: '1.2rem'}}>{price || <FormattedMessage id="patient-detail.not-found" />}</span>
                                     </div>
                                     <div className="d-flex justify-content-between border-top pt-2">
-                                        <span className="text-muted">Hình thức thanh toán:</span>
-                                        <span className="font-weight-bold">{payment || 'Đang cập nhật'}</span>
+                                        <span className="text-muted"><FormattedMessage id="patient-detail.payment-method" />:</span>
+                                        <span className="font-weight-bold">{payment || <FormattedMessage id="patient-detail.not-found" />}</span>
                                     </div>
                                 </div>
                             </div>

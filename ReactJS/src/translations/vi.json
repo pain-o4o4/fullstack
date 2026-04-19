@@ -51,9 +51,25 @@
             "header": "Bác sỹ",
             "manage-schedule": "Quản lý lịch khám bệnh",
             "manage-booking": "Quản lý đặt lịch"
+        },
+        "patient": {
+            "edit-profile": "Chỉnh sửa thông tin"
         }
     },
     "manage-user": {
+        "title": "Quản lý người dùng",
+        "add-user": "Thêm tài khoản",
+        "no-data": "Không có dữ liệu",
+        "table-email": "Email",
+        "table-role": "Quyền/Vai trò",
+        "table-address": "Địa chỉ",
+        "table-actions": "Thao tác",
+        "modal-create": "Thêm mới người dùng",
+        "modal-update": "Cập nhật người dùng",
+        "btn-cancel": "Hủy",
+        "btn-save": "Lưu mới",
+        "btn-update": "Cập nhật",
+        "upload-avatar": "Tải ảnh lên",
         "add": "Thêm mới người dùng",
         "edit": "Chỉnh sửa người dùng",
         "email": "Email",
@@ -87,22 +103,18 @@
         "address": "Địa chỉ phòng khám",
         "note": "Ghi chú",
         "choose-specialty": "Chọn chuyên khoa",
-        "choose-clinic": "Chọn cơ sở y tế"
-    },
-    "manage-specialty": {
-        "title": "Quản lý chuyên khoa",
-        "name": "Tên chuyên khoa",
-        "image": "Ảnh chuyên khoa",
-        "save": "Lưu",
-        "image-place": "Chọn"
+        "choose-clinic": "Chọn cơ sở y tế",
+        "basic-info": "Thông Tin Cơ Bản",
+        "detail-desc": "Mô Tả Chi Tiết (Markdown)"
     },
     "manage-clinic": {
-        "title": "Quản lý cơ sở y tế",
-        "name": "Tên cơ sở y tế",
-        "image": "Ảnh cơ sở y tế",
-        "address": "Địa chỉ cơ sở y tế",
         "save": "Lưu",
-        "image-place": "Chọn"
+        "image-place": "Chọn",
+        "modal-create": "Thêm mới Cơ Sở Y Tế",
+        "modal-edit": "Chỉnh sửa Cơ Sở Y Tế",
+        "upload-img": "Tải ảnh lên",
+        "content-detail": "Nội dung giới thiệu chi tiết",
+        "btn-cancel": "Hủy bỏ"
     },
     "co_mun": {
         "comment": "Từ đây trở xuống thuộc về user, phía trên là admin",
@@ -134,5 +146,57 @@
         "failed-title": "Xác nhận thất bại",
         "failed-desc": "Liên kết không hợp lệ hoặc đã hết hạn. Vui lòng kiểm tra lại email.",
         "back-home": "Quay lại trang chủ"
+    },
+    "system-layout": {
+        "sign-out": "Đăng xuất",
+        "change-lang": "Đổi ngôn ngữ",
+        "welcome": "Xin chào"
+    },
+    "manage-patient": {
+        "title": "Quản lý bệnh nhân khám",
+        "choose-date": "Chọn ngày",
+        "stt": "STT",
+        "time": "Thời gian",
+        "name": "Bệnh nhân",
+        "gender": "Giới tính",
+        "reason": "Lý do",
+        "actions": "Hành động",
+        "btn-confirm": "Xác nhận kết thúc",
+        "no-data": "Không có lịch khám nào trong ngày"
+    },
+    "patient-detail": {
+        "title": "Chi tiết Lịch Khám",
+        "btn-back": "Trở về",
+        "appointment-id": "ID Lịch hẹn",
+        "clinic-info": "Nơi Khám",
+        "doctor-info": "Bác sĩ phụ trách",
+        "payment-info": "Thông tin Thanh Toán",
+        "price": "Chi phí khám bệnh",
+        "payment-method": "Hình thức thanh toán",
+        "not-found": "Đang cập nhật"
+    },
+    "manage-specialty": {
+        "no-data": "Chưa có dữ liệu chuyên khoa!",
+        "status-ok": "Trạng thái Tốt",
+        "name": "Tên chuyên khoa",
+        "image": "Ảnh chuyên khoa",
+        "btn-cancel": "Hủy bỏ"
+    },
+    "patient-profile": {
+        "title": "Thông tin Cá nhân & Bảo mật",
+        "subtitle": "Quản lý các cài đặt liên quan đến tài khoản của bạn, bảo mật, và cách khôi phục dữ liệu khi cần thiết.",
+        "name-label": "Họ và Tên",
+        "contact-label": "Email & Số điện thoại",
+        "password-label": "Mật khẩu",
+        "address-label": "Địa chỉ liên hệ",
+        "btn-save": "Lưu Thay Đổi",
+        "first-name-place": "Tên",
+        "last-name-place": "Họ",
+        "phone-place": "Số điện thoại",
+        "pass-place": "Đổi mật khẩu mới...",
+        "address-place": "Nhập địa chỉ nhà...",
+        "error-name": "Vui lòng nhập đầy đủ Họ và Tên!",
+        "success-update": "Cập nhật thông tin thành công!",
+        "failed-update": "Cập nhật thông tin thất bại!"
     }
 }

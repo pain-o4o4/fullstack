@@ -52,7 +52,7 @@ export const patientMenu = [
         name: 'menu.admin.user',
         menus: [
             {
-                name: 'Chỉnh sửa thông tin',
+                name: 'menu.patient.edit-profile',
                 link: '/system/patient-profile'
             }
         ]

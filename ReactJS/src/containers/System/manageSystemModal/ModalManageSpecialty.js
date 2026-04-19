@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { FormattedMessage } from 'react-intl';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import CommonUtils from '../../../utils/CommonUtils';
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
+import { toast } from 'react-toastify';
 import './ModalManageSpecialty.scss';
 
 const mdParser = new MarkdownIt();
@@ -62,29 +65,38 @@ class ModalManageSpecialty extends Component {
     }
 
     handleSave = () => {
+        let { language } = this.props;
+        if (!this.state.name || !this.state.imageBase64 || !this.state.descriptionMarkdown) {
+            toast.error(language === 'vi' ? "Vui lòng nhập đầy đủ thông tin!" : "Missing required parameters!");
+            return;
+        }
         this.props.saveSpecialty(this.state);
     }
 
     render() {
         let { isOpen, toggleFromParent, action } = this.props;
+        let { language } = this.props;
         return (
             <Modal isOpen={isOpen} toggle={() => toggleFromParent()} size="xl" centered className="modal-add-new-user modal-manage-specialty" backdrop="static">
                 <ModalHeader toggle={() => toggleFromParent()}>
-                    {action === 'CREATE' ? "Thêm mới Chuyên Khoa" : "Chỉnh sửa Chuyên Khoa"}
+                    {action === 'CREATE' 
+                        ? <FormattedMessage id="manage-specialty.modal-create" /> 
+                        : <FormattedMessage id="manage-specialty.modal-edit" />
+                    }
                 </ModalHeader>
                 <ModalBody>
                     <div className="user-form-grid">
                         <div className="input-group-apple full-width">
-                            <label>Tên chuyên khoa <span className="text-danger">*</span></label>
+                            <label><FormattedMessage id="manage-specialty.name" /> <span className="text-danger">*</span></label>
                             <input type="text" value={this.state.name} onChange={(e) => this.handleOnChangeInput(e, 'name')} />
                         </div>
                         
                         <div className="input-group-apple full-width">
-                            <label>Ảnh đại diện Chuyên khoa <span className="text-danger">*</span></label>
+                            <label><FormattedMessage id="manage-specialty.image" /> <span className="text-danger">*</span></label>
                             <div className="preview-img-container">
                                 <input id="previewImg" type="file" hidden onChange={(event) => this.handleOnChangeImage(event)} accept="image/*" />
                                 <label htmlFor="previewImg" className="btn-upload-apple">
-                                    <i className="fas fa-upload"></i> Tải ảnh lên
+                                    <i className="fas fa-upload"></i> <FormattedMessage id="manage-specialty.upload-img" />
                                 </label>
                                 {this.state.previewImgURL && (
                                     <div className="preview-image" style={{
@@ -95,7 +107,7 @@ class ModalManageSpecialty extends Component {
                         </div>
 
                         <div className="input-group-apple full-width editor-container">
-                            <label>Nội dung chi tiết <span className="text-danger">*</span></label>
+                            <label><FormattedMessage id="manage-specialty.content-detail" /> <span className="text-danger">*</span></label>
                             <MdEditor
                                 renderHTML={text => mdParser.render(text)}
                                 onChange={this.handleEditorChange}
@@ -105,9 +117,14 @@ class ModalManageSpecialty extends Component {
                     </div>
                 </ModalBody>
                 <ModalFooter>
-                    <button className="btn-action apple-btn btn-cancel" onClick={() => toggleFromParent()}>Hủy bỏ</button>
+                    <button className="btn-action apple-btn btn-cancel" onClick={() => toggleFromParent()}>
+                        <FormattedMessage id="manage-specialty.btn-cancel" />
+                    </button>
                     <button className="btn-action apple-btn btn-save" onClick={() => this.handleSave()}>
-                        {action === 'CREATE' ? "Lưu" : "Cập nhật"}
+                        {action === 'CREATE' 
+                            ? <FormattedMessage id="manage-specialty.save" /> 
+                            : <FormattedMessage id="manage-user.btn-update" />
+                        }
                     </button>
                 </ModalFooter>
             </Modal>
@@ -115,4 +132,10 @@ class ModalManageSpecialty extends Component {
     }
 }
 
-export default ModalManageSpecialty;
+const mapStateToProps = state => {
+    return {
+        language: state.app.language
+    };
+};
+
+export default connect(mapStateToProps, null)(ModalManageSpecialty);

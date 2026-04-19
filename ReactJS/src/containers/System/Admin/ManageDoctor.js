@@ -114,6 +114,7 @@ class ManageDoctor extends Component {
     }
 
     handleSaveContent = () => {
+        let { language } = this.props;
         let { hasOldData, selectedDoctor,
             selectedPrice, selectedPayment, selectedProvince,
             selectedSpecialty, selectedClinic,
@@ -249,7 +250,8 @@ class ManageDoctor extends Component {
     };
 
     render() {
-        let { userInfo } = this.props;
+        let { selectedDoctor, listDoctors, hasOldData } = this.state;
+        let { userInfo, language } = this.props;
         let isDoctorRole = userInfo && userInfo.roleId === 'R2';
 
         return (
@@ -261,7 +263,9 @@ class ManageDoctor extends Component {
                 </div>
 
                 <div className="apple-card">
-                    <div className="card-header-title">Thông Tin Cơ Bản</div>
+                    <div className="card-header-title">
+                        <FormattedMessage id="manage-doctor.basic-info" defaultMessage="Thông Tin Cơ Bản" />
+                    </div>
                     
                     <div className="form-grid">
                         <div className="input-group-apple outline-group">
@@ -272,7 +276,7 @@ class ManageDoctor extends Component {
                                 onChange={this.handleChange}
                                 options={this.state.listAllDoctors}
                                 isDisabled={isDoctorRole}
-                                placeholder="Tìm kiếm bác sĩ..."
+                                placeholder={language === LANGUAGES.VI ? 'Tìm kiếm bác sĩ...' : 'Search doctor...'}
                             />
                         </div>
 
@@ -283,7 +287,7 @@ class ManageDoctor extends Component {
                                 value={this.state.selectedPrice}
                                 onChange={this.handleChangeSelectDoctorInfor}
                                 options={this.state.listPrice}
-                                placeholder="Chọn giá..."
+                                placeholder={language === LANGUAGES.VI ? 'Chọn giá...' : 'Choose price...'}
                                 name="selectedPrice"
                             />
                         </div>
@@ -295,7 +299,7 @@ class ManageDoctor extends Component {
                                 value={this.state.selectedPayment}
                                 onChange={this.handleChangeSelectDoctorInfor}
                                 options={this.state.listPayment}
-                                placeholder="Chọn phương thức..."
+                                placeholder={language === LANGUAGES.VI ? 'Chọn phương thức...' : 'Choose payment...'}
                                 name="selectedPayment"
                             />
                         </div>
@@ -307,7 +311,7 @@ class ManageDoctor extends Component {
                                 value={this.state.selectedProvince}
                                 onChange={this.handleChangeSelectDoctorInfor}
                                 options={this.state.listProvince}
-                                placeholder="Chọn tỉnh thành..."
+                                placeholder={language === LANGUAGES.VI ? 'Chọn tỉnh thành...' : 'Choose province...'}
                                 name="selectedProvince"
                             />
                         </div>
@@ -319,7 +323,7 @@ class ManageDoctor extends Component {
                                 value={this.state.selectedSpecialty}
                                 onChange={this.handleChangeSelectDoctorInfor}
                                 options={this.state.listSpecialty}
-                                placeholder="Chọn chuyên khoa..."
+                                placeholder={language === LANGUAGES.VI ? 'Chọn chuyên khoa...' : 'Choose specialty...'}
                                 name="selectedSpecialty"
                             />
                         </div>
@@ -331,7 +335,7 @@ class ManageDoctor extends Component {
                                 value={this.state.selectedClinic}
                                 onChange={this.handleChangeSelectDoctorInfor}
                                 options={this.state.listClinic}
-                                placeholder="Chọn phòng khám..."
+                                placeholder={language === LANGUAGES.VI ? 'Chọn phòng khám...' : 'Choose clinic...'}
                                 name="selectedClinic"
                             />
                         </div>
@@ -343,7 +347,7 @@ class ManageDoctor extends Component {
                                 className="apple-input"
                                 value={this.state.nameClinic}
                                 onChange={(e) => this.handleChangeText(e, "nameClinic")}
-                                placeholder="Nhập tên phòng khám"
+                                placeholder={language === LANGUAGES.VI ? 'Nhập tên phòng khám' : 'Enter clinic name'}
                             />
                         </div>
 
@@ -354,7 +358,7 @@ class ManageDoctor extends Component {
                                 className="apple-input"
                                 value={this.state.addressClinic}
                                 onChange={(e) => this.handleChangeText(e, "addressClinic")}
-                                placeholder="Nhập địa chỉ"
+                                placeholder={language === LANGUAGES.VI ? 'Nhập địa chỉ' : 'Enter address'}
                             />
                         </div>
                     </div>
@@ -366,7 +370,7 @@ class ManageDoctor extends Component {
                             className="apple-input"
                             value={this.state.note}
                             onChange={(e) => this.handleChangeText(e, "note")}
-                            placeholder="Ghi chú thêm nếu có..."
+                            placeholder={language === LANGUAGES.VI ? 'Ghi chú thêm nếu có...' : 'Add more notes if any...'}
                         />
                     </div>
 
@@ -376,14 +380,16 @@ class ManageDoctor extends Component {
                             className="apple-textarea"
                             value={this.state.description}
                             onChange={(e) => this.handleChangeText(e, "description")}
-                            placeholder="Mô tả kỹ năng, chức danh..."
+                            placeholder={language === LANGUAGES.VI ? 'Mô tả kỹ năng, chức danh...' : 'Describe skills, titles...'}
                             rows={3}
                         />
                     </div>
                 </div>
 
                 <div className="apple-card markdown-editor-card">
-                    <div className="card-header-title">Mô Tả Chi Tiết (Markdown)</div>
+                    <div className="card-header-title">
+                        <FormattedMessage id="manage-doctor.detail-desc" defaultMessage="Mô Tả Chi Tiết (Markdown)" />
+                    </div>
                     <MdEditor
                         className="apple-md-editor"
                         renderHTML={text => mdParser.render(text)}
@@ -395,7 +401,10 @@ class ManageDoctor extends Component {
                 <div className="action-footer">
                     <button className="btn-save-apple" onClick={() => this.handleSaveContent()}>
                         <i className={`fas ${this.state.hasOldData ? 'fa-pen' : 'fa-save'}`}></i>
-                        {this.state.hasOldData ? " Cập Nhật Thông Tin" : " Lưu Mới Thông Tin"}
+                        {this.state.hasOldData 
+                            ? (language === LANGUAGES.VI ? " Cập Nhật Thông Tin" : " Update Information")
+                            : (language === LANGUAGES.VI ? " Lưu Mới Thông Tin" : " Save New Information")
+                        }
                     </button>
                 </div>
             </div>

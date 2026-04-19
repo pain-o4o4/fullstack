@@ -229,7 +229,7 @@ class ManageSchedule extends Component {
                                     isDisabled={isDoctorRole}
                                     className="react-select-container"
                                     classNamePrefix="react-select"
-                                    placeholder="Tìm kiếm bác sĩ..."
+                                    placeholder={language === LANGUAGES.VI ? 'Tìm kiếm bác sĩ...' : 'Search doctor...'}
                                 />
                             </div>
                             <div className="input-group-apple full-width">
@@ -239,13 +239,15 @@ class ManageSchedule extends Component {
                                     value={this.state.currentDate}
                                     onChange={this.handleChangeDate}
                                     minDate={new Date()}
-                                    placeholder="Ấn để chọn ngày khám"
+                                    placeholder={language === LANGUAGES.VI ? 'Ấn để chọn ngày khám' : 'Tap to select date'}
                                 />
                             </div>
                         </div>
 
                         <div className="schedule-hours-section">
-                            <label className="section-label">Khung giờ có sẵn (Chọn để kích hoạt lịch trống)</label>
+                            <label className="section-label">
+                                <FormattedMessage id="manage-schedule.available-hours" defaultMessage="Khung giờ có sẵn (Chọn để kích hoạt lịch trống)" />
+                            </label>
                             <div className="pick-hour-container">
                                 {listAllScheduleTime && listAllScheduleTime.length > 0 &&
                                     listAllScheduleTime.map((item, index) => {

@@ -51,6 +51,7 @@ class ManageSpecialty extends Component {
     }
 
     saveSpecialty = async (data) => {
+        let { language } = this.props;
         try {
             let res;
             if (this.state.action === 'CREATE') {
@@ -60,17 +61,21 @@ class ManageSpecialty extends Component {
             }
 
             if (res && res.errCode === 0) {
-                toast.success(this.state.action === 'CREATE' ? "Thêm chuyên khoa thành công!" : "Cập nhật chuyên khoa thành công!");
+                let successMsg = this.state.action === 'CREATE' 
+                    ? (language === 'vi' ? "Thêm chuyên khoa thành công!" : "Specialty added successfully!")
+                    : (language === 'vi' ? "Cập nhật chuyên khoa thành công!" : "Specialty updated successfully!");
+                toast.success(successMsg);
                 this.setState({
                     isModalOpen: false
                 });
                 await this.getAllSpecialties();
             } else {
-                toast.error(res?.errMessage || "Lỗi hệ thống!");
+                toast.error(res?.errMessage || (language === 'vi' ? "Lỗi hệ thống!" : "System error!"));
             }
         } catch (e) {
             console.log(e);
-            toast.error("Lỗi kêt nối Server!");
+            let errorMsg = language === 'vi' ? "Lỗi kết nối Server!" : "Server connection error!";
+            toast.error(errorMsg);
         }
     }
 
@@ -83,24 +88,30 @@ class ManageSpecialty extends Component {
     }
 
     handleDeleteSpecialty = async (specialty) => {
-        if(window.confirm(`Bạn có chắc chắn muốn xóa chuyên khoa: ${specialty.name}?`)) {
+        let { language } = this.props;
+        let confirmMsg = language === 'vi' 
+            ? `Bạn có chắc chắn muốn xóa chuyên khoa: ${specialty.name}?`
+            : `Are you sure you want to delete specialty: ${specialty.name}?`;
+
+        if(window.confirm(confirmMsg)) {
             try {
                 let res = await deleteSpecialtyService(specialty.id);
                 if (res && res.errCode === 0) {
-                    toast.success("Xóa chuyên khoa thành công!");
+                    toast.success(language === 'vi' ? "Xóa chuyên khoa thành công!" : "Specialty deleted successfully!");
                     await this.getAllSpecialties();
                 } else {
-                    toast.error(res?.errMessage || "Xóa thất bại!");
+                    toast.error(res?.errMessage || (language === 'vi' ? "Xóa thất bại!" : "Delete failed!"));
                 }
             } catch (e) {
                 console.log(e);
-                toast.error("Lỗi từ server!");
+                toast.error(language === 'vi' ? "Lỗi từ server!" : "Server error!");
             }
         }
     }
 
     render() {
-        let arrSpecialties = this.state.arrSpecialties;
+        let { arrSpecialties, isModalOpen, action, specialtyEdit } = this.state;
+        let { language } = this.props;
         return (
             <div className="users-container">
                 {this.state.isModalOpen && (
@@ -118,7 +129,7 @@ class ManageSpecialty extends Component {
                         <FormattedMessage id="manage-specialty.title" defaultMessage="Quản lý Chuyên khoa" />
                     </h2>
                     <button className="btn-add-new" onClick={() => this.handleAddNewSpecialty()}>
-                        <i className="fas fa-plus"></i> Thêm chuyên khoa
+                        <i className="fas fa-plus"></i> <FormattedMessage id="manage-specialty.add" />
                     </button>
                 </div>
 
@@ -127,9 +138,9 @@ class ManageSpecialty extends Component {
                         <table className="apple-table">
                             <thead>
                                 <tr>
-                                    <th>Chuyên khoa</th>
-                                    <th>Mô tả tóm tắt</th>
-                                    <th className="text-right">Hành động</th>
+                                    <th><FormattedMessage id="manage-specialty.table-name" /></th>
+                                    <th><FormattedMessage id="manage-specialty.table-desc" /></th>
+                                    <th className="text-right"><FormattedMessage id="manage-specialty.table-actions" /></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -148,7 +159,9 @@ class ManageSpecialty extends Component {
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <span className="role-badge green">Trạng thái Tốt</span>
+                                                    <span className="role-badge green">
+                                                        <FormattedMessage id="manage-specialty.status-ok" />
+                                                    </span>
                                                 </td>
                                                 <td className="text-right">
                                                     <div className="actions-cell">
@@ -165,7 +178,9 @@ class ManageSpecialty extends Component {
                                     })
                                 ) : (
                                     <tr>
-                                        <td colSpan="3" className="text-center py-4">Chưa có dữ liệu chuyên khoa!</td>
+                                        <td colSpan="3" className="text-center py-4">
+                                            <FormattedMessage id="manage-specialty.no-data" />
+                                        </td>
                                     </tr>
                                 )}
                             </tbody>
@@ -177,4 +192,10 @@ class ManageSpecialty extends Component {
     }
 }
 
-export default withRouter(connect(null, null)(ManageSpecialty));
+const mapStateToProps = state => {
+    return {
+        language: state.app.language
+    };
+};
+
+export default withRouter(connect(mapStateToProps, null)(ManageSpecialty));

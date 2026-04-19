@@ -49,8 +49,10 @@ class SystemLayout extends Component {
     };
 
     render() {
-        const { processLogout, userInfo, children } = this.props;
+        const { processLogout, userInfo, children, language } = this.props;
         const { menuApp } = this.state;
+
+        const lang = language || 'vi'; // Fallback to avoid undefined
 
         return (
             <div className="apple-account-page">
@@ -61,15 +63,11 @@ class SystemLayout extends Component {
                             onClick={() => window.location.href = '/home'}
                         >BookingCare</span>
                         <div className="right-controls">
-                            {/* <span className="welcome">
-                                <FormattedMessage id="homeheader.welcome" defaultMessage="Welcome, " />
-                                {userInfo?.firstName || ''}
-                            </span> */}
-                            <div className="translate-wrapper" onClick={this.changeLanguage} title="Change Language">
+                            <div className="translate-wrapper" onClick={this.changeLanguage} title={lang === 'vi' ? 'Đổi ngôn ngữ' : 'Change Language'}>
                                 <img src={translate} className="icon-translate" alt="Translate" />
                             </div>
-                            <button className="btn-signout" onClick={processLogout} title="Log out">
-                                Sign Out
+                            <button className="btn-signout" onClick={processLogout} title={lang === 'vi' ? 'Đăng xuất' : 'Logout'}>
+                                <FormattedMessage id="system-layout.sign-out" defaultMessage="Sign Out" />
                             </button>
                         </div>
                     </div>
@@ -85,7 +83,9 @@ class SystemLayout extends Component {
                                 <div className="avatar-circle">
                                     <img src={userInfo?.image || 'https://static.vecteezy.com/system/resources/previews/026/625/600/non_2x/person-icon-symbol-design-illustration-vector.jpg'} alt="avatar" />
                                 </div>
-                                <h2 className="user-name">{userInfo?.lastName} {userInfo?.firstName}</h2>
+                                <h2 className="user-name">
+                                    <FormattedMessage id="system-layout.welcome" />, {userInfo?.lastName} {userInfo?.firstName}
+                                </h2>
                                 <p className="user-email">{userInfo?.email || 'admin@bookingcare.vn'}</p>
                             </div>
 

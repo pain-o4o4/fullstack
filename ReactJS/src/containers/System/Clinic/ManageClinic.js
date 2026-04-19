@@ -51,6 +51,7 @@ class ManageClinic extends Component {
     }
 
     saveClinic = async (data) => {
+        let { language } = this.props;
         try {
             let res;
             if (this.state.action === 'CREATE') {
@@ -60,17 +61,21 @@ class ManageClinic extends Component {
             }
 
             if (res && res.errCode === 0) {
-                toast.success(this.state.action === 'CREATE' ? "Thêm cơ sở y tế thành công!" : "Cập nhật thông tin thành công!");
+                let successMsg = this.state.action === 'CREATE' 
+                    ? (language === 'vi' ? "Thêm cơ sở y tế thành công!" : "Clinic added successfully!")
+                    : (language === 'vi' ? "Cập nhật thông tin thành công!" : "Clinic updated successfully!");
+                toast.success(successMsg);
                 this.setState({
                     isModalOpen: false
                 });
                 await this.getAllClinics();
             } else {
-                toast.error(res?.errMessage || "Lỗi hệ thống!");
+                toast.error(res?.errMessage || (language === 'vi' ? "Lỗi hệ thống!" : "System error!"));
             }
         } catch (e) {
             console.log(e);
-            toast.error("Lỗi kêt nối Server!");
+            let errorMsg = language === 'vi' ? "Lỗi kết nối Server!" : "Server connection error!";
+            toast.error(errorMsg);
         }
     }
 
@@ -83,29 +88,35 @@ class ManageClinic extends Component {
     }
 
     handleDeleteClinic = async (clinic) => {
-        if(window.confirm(`Bạn có chắc chắn muốn xóa hệ thống y tế: ${clinic.name}?`)) {
+        let { language } = this.props;
+        let confirmMsg = language === 'vi' 
+            ? `Bạn có chắc chắn muốn xóa hệ thống y tế: ${clinic.name}?`
+            : `Are you sure you want to delete clinic: ${clinic.name}?`;
+
+        if(window.confirm(confirmMsg)) {
             try {
                 let res = await deleteClinicService(clinic.id);
                 if (res && res.errCode === 0) {
-                    toast.success("Xóa hệ thống y tế thành công!");
+                    toast.success(language === 'vi' ? "Xóa hệ thống y tế thành công!" : "Clinic deleted successfully!");
                     await this.getAllClinics();
                 } else {
-                    toast.error(res?.errMessage || "Xóa thất bại!");
+                    toast.error(res?.errMessage || (language === 'vi' ? "Xóa thất bại!" : "Delete failed!"));
                 }
             } catch (e) {
                 console.log(e);
-                toast.error("Lỗi từ server!");
+                toast.error(language === 'vi' ? "Lỗi từ server!" : "Server error!");
             }
         }
     }
 
     render() {
-        let arrClinics = this.state.arrClinics;
+        let { arrClinics, isModalOpen, action, clinicEdit } = this.state;
+        let { language } = this.props;
         return (
             <div className="users-container">
-                {this.state.isModalOpen && (
+                {isModalOpen && (
                     <ModalManageClinic
-                        isOpen={this.state.isModalOpen}
+                        isOpen={isModalOpen}
                         toggleFromParent={this.toggleModal}
                         saveClinic={this.saveClinic}
                         action={this.state.action}
@@ -118,7 +129,7 @@ class ManageClinic extends Component {
                         <FormattedMessage id="manage-clinic.title" defaultMessage="Quản lý Cơ Sở Y Tế" />
                     </h2>
                     <button className="btn-add-new" onClick={() => this.handleAddNewClinic()}>
-                        <i className="fas fa-plus"></i> Thêm Cơ Sở Mới
+                        <i className="fas fa-plus"></i> <FormattedMessage id="manage-clinic.add" />
                     </button>
                 </div>
 
@@ -127,9 +138,9 @@ class ManageClinic extends Component {
                         <table className="apple-table">
                             <thead>
                                 <tr>
-                                    <th>Cơ Sở Y Tế</th>
-                                    <th>Khu Vực Phủ Giao Dịch</th>
-                                    <th className="text-right">Hành động</th>
+                                    <th><FormattedMessage id="manage-clinic.table-name" /></th>
+                                    <th><FormattedMessage id="manage-clinic.table-address" /></th>
+                                    <th className="text-right"><FormattedMessage id="manage-clinic.table-actions" /></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -149,7 +160,9 @@ class ManageClinic extends Component {
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <span className="role-badge green">Đang Mở Cửa</span>
+                                                    <span className="role-badge green">
+                                                        <FormattedMessage id="manage-clinic.status-ok" />
+                                                    </span>
                                                 </td>
                                                 <td className="text-right">
                                                     <div className="actions-cell">
@@ -166,7 +179,9 @@ class ManageClinic extends Component {
                                     })
                                 ) : (
                                     <tr>
-                                        <td colSpan="3" className="text-center py-4">Chưa có dữ liệu cơ sở y tế!</td>
+                                        <td colSpan="3" className="text-center py-4">
+                                            <FormattedMessage id="manage-clinic.no-data" />
+                                        </td>
                                     </tr>
                                 )}
                             </tbody>
@@ -178,4 +193,10 @@ class ManageClinic extends Component {
     }
 }
 
-export default withRouter(connect(null, null)(ManageClinic));
+const mapStateToProps = state => {
+    return {
+        language: state.app.language
+    };
+};
+
+export default withRouter(connect(mapStateToProps, null)(ManageClinic));

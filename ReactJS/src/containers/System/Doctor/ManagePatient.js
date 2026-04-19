@@ -49,9 +49,16 @@ class ManagePatient extends Component {
         });
     }
 
+
+
     handleOnChangeStatus = async (event, item) => {
+        let { language } = this.props;
         let newStatus = event.target.value;
-        if(window.confirm(`Bạn có chắc chắn chuyển trạng thái đặt khám của bệnh nhân ${item.patientBookingData.lastName} ${item.patientBookingData.firstName} sang ${newStatus}?`)) {
+        let confirmMsg = language === 'vi' 
+            ? `Bạn có chắc chắn chuyển trạng thái đặt khám của bệnh nhân ${item.patientBookingData.lastName} ${item.patientBookingData.firstName} sang ${newStatus}?`
+            : `Are you sure you want to change the status for patient ${item.patientBookingData.firstName} ${item.patientBookingData.lastName} to ${newStatus}?`;
+
+        if(window.confirm(confirmMsg)) {
             let res = await updateBookingStatus({
                 doctorId: item.doctorId,
                 patientId: item.patientId,
@@ -60,32 +67,34 @@ class ManagePatient extends Component {
                 statusId: newStatus,
                 email: item.patientBookingData.email,
                 patientName: `${item.patientBookingData.lastName} ${item.patientBookingData.firstName}`,
-                time: item.timeTypeDataPatient.valueVi, // Vietnamese map
-                doctorName: `${this.props.userInfo.lastName} ${this.props.userInfo.firstName}`,
-                language: 'vi' // Assuming vietnamese for now
+                time: language === 'vi' ? item.timeTypeDataPatient.valueVi : item.timeTypeDataPatient.valueEn, 
+                doctorName: language === 'vi' 
+                    ? `${this.props.userInfo.lastName} ${this.props.userInfo.firstName}`
+                    : `${this.props.userInfo.firstName} ${this.props.userInfo.lastName}`,
+                language: language
             });
             if (res && res.errCode === 0) {
-                toast.success('Cập nhật trạng thái thành công!');
-                // Wait for DB and reload
+                toast.success(language === 'vi' ? 'Cập nhật trạng thái thành công!' : 'Status updated successfully!');
                 await this.getDataPatient();
             } else {
-                toast.error('Lỗi cập nhật trạng thái');
+                toast.error(language === 'vi' ? 'Lỗi cập nhật trạng thái' : 'Error updating status');
             }
         }
     }
 
     render() {
         let { dataPatient, currentDate } = this.state;
+        let { language } = this.props;
         return (
             <div className="manage-patient-container users-container">
                 <div className="header-section">
-                    <h2 className="title">Quản Lý Bệnh Nhân Đăng Ký Khám</h2>
+                    <h2 className="title"><FormattedMessage id="manage-patient.title" /></h2>
                 </div>
 
                 <div className="apple-card filters-card">
                     <div className="form-grid">
                         <div className="input-group-apple outline-group">
-                            <label>Chọn Ngày Xem Lịch</label>
+                            <label><FormattedMessage id="manage-patient.choose-date" /></label>
                             <DatePicker
                                 onChange={this.handleOnChangeDatePicker}
                                 className="apple-input form-control"
@@ -100,9 +109,9 @@ class ManagePatient extends Component {
                         <table className="apple-table">
                             <thead>
                                 <tr>
-                                    <th>Thời gian</th>
-                                    <th>Thông tin Hàng chờ</th>
-                                    <th>Xác nhận Trạng Thái</th>
+                                    <th><FormattedMessage id="manage-patient.time" /></th>
+                                    <th><FormattedMessage id="manage-patient.name" /></th>
+                                    <th><FormattedMessage id="manage-patient.actions" /></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -113,7 +122,7 @@ class ManagePatient extends Component {
                                             <tr key={index}>
                                                 <td>
                                                     <span className={`role-badge ${labelColor}`}>
-                                                        {item.timeTypeDataPatient.valueVi}
+                                                        {language === 'vi' ? item.timeTypeDataPatient.valueVi : item.timeTypeDataPatient.valueEn}
                                                     </span>
                                                 </td>
                                                 <td>
@@ -122,7 +131,11 @@ class ManagePatient extends Component {
                                                             <span>{item.patientBookingData.firstName ? item.patientBookingData.firstName.charAt(0) : 'BN'}</span>
                                                         </div>
                                                         <div className="user-name-block">
-                                                            <span className="name">{item.patientBookingData.lastName} {item.patientBookingData.firstName}</span>
+                                                            <span className="name">
+                                                                {language === 'vi' 
+                                                                    ? `${item.patientBookingData.lastName} ${item.patientBookingData.firstName}`
+                                                                    : `${item.patientBookingData.firstName} ${item.patientBookingData.lastName}`}
+                                                            </span>
                                                             <span className="email">{item.patientBookingData.email} - {item.patientBookingData.phonenumber}</span>
                                                         </div>
                                                     </div>
@@ -143,7 +156,9 @@ class ManagePatient extends Component {
                                     })
                                 ) : (
                                     <tr>
-                                        <td colSpan="3" className="text-center py-4">Chưa có lịch hẹn cho ngày này!</td>
+                                        <td colSpan="3" className="text-center py-4">
+                                            <FormattedMessage id="manage-patient.no-data" />
+                                        </td>
                                     </tr>
                                 )}
                             </tbody>

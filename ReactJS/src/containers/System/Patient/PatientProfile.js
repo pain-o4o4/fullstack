@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
+import { FormattedMessage } from 'react-intl';
 import { toast } from "react-toastify";
 import * as action from '../../../store/actions';
 import { postUpdatePatientService } from '../../../services/userService';
@@ -54,60 +55,65 @@ class PatientProfile extends Component {
     }
 
     handleSaveSettings = async () => {
+        let { language } = this.props;
         if (!this.state.firstName || !this.state.lastName) {
-            toast.error("Vui lòng nhập đầy đủ Họ và Tên!");
+            toast.error(language === 'vi' ? "Vui lòng nhập đầy đủ Họ và Tên!" : "Please enter both First and Last Name!");
             return;
         }
 
         let res = await postUpdatePatientService(this.state);
         if (res && res.errCode === 0) {
-            toast.success("Cập nhật thông tin thành công!");
+            toast.success(language === 'vi' ? "Cập nhật thông tin thành công!" : "Information updated successfully!");
             this.setState({ password: '' });
             this.props.updateUserSuccess(this.state);
         } else {
-            toast.error("Cập nhật thông tin thất bại!");
+            toast.error(language === 'vi' ? "Cập nhật thông tin thất bại!" : "Failed to update information!");
         }
     }
 
     render() {
+        let { language } = this.props;
         return (
             <div className="patient-profile-section">
-                <h1 className="main-title">Thông tin Cá nhân & Bảo mật</h1>
+                <h1 className="main-title">
+                    <FormattedMessage id="patient-profile.title" />
+                </h1>
                 <p className="main-subtitle">
-                    Quản lý các cài đặt liên quan đến tài khoản của bạn, bảo mật, và cách khôi phục dữ liệu khi cần thiết.
+                    <FormattedMessage id="patient-profile.subtitle" />
                 </p>
 
                 <div className="settings-grid">
                     <div className="info-card">
                         <div className="card-header">
-                            <span className="card-title">Họ và Tên</span>
+                            <span className="card-title"><FormattedMessage id="patient-profile.name-label" /></span>
+                            <i class="fas fa-user" ></i>
                         </div>
                         <div className="card-body form-group-row">
-                            <input className="apple-inline-input" value={this.state.lastName || ''} onChange={(e) => this.handleOnChangeInput(e, 'lastName')} placeholder="Họ" />
-                            <input className="apple-inline-input" value={this.state.firstName || ''} onChange={(e) => this.handleOnChangeInput(e, 'firstName')} placeholder="Tên" />
+                            <input className="apple-inline-input" value={this.state.lastName || ''} onChange={(e) => this.handleOnChangeInput(e, 'lastName')} placeholder={language === 'vi' ? "Họ" : "Last name"} />
+                            <input className="apple-inline-input" value={this.state.firstName || ''} onChange={(e) => this.handleOnChangeInput(e, 'firstName')} placeholder={language === 'vi' ? "Tên" : "First name"} />
                         </div>
                     </div>
 
                     <div className="info-card">
                         <div className="card-header">
-                            <span className="card-title">Email & Số điện thoại</span>
-                            <i className="fab fa-apple card-icon blue"></i>
+                            <span className="card-title"><FormattedMessage id="patient-profile.contact-label" /></span>
+                            <i className="fas fa-envelope"></i>
                         </div>
                         <div className="card-body">
                             <p className="readonly-text">{this.state.email}</p>
-                            <input className="apple-inline-input" value={this.state.phonenumber || ''} onChange={(e) => this.handleOnChangeInput(e, 'phonenumber')} placeholder="Số điện thoại" />
+                            <input className="apple-inline-input" value={this.state.phonenumber || ''} onChange={(e) => this.handleOnChangeInput(e, 'phonenumber')} placeholder={language === 'vi' ? "Số điện thoại" : "Phone number"} />
                         </div>
                     </div>
 
                     <div className="info-card">
                         <div className="card-header">
-                            <span className="card-title">Mật khẩu</span>
+                            <span className="card-title"><FormattedMessage id="patient-profile.password-label" /></span>
                             <i className="fas fa-shield-alt card-icon blue"></i>
                         </div>
                         <div className="card-body">
                             <input type="password"
                                 className="apple-inline-input"
-                                placeholder="Đổi mật khẩu mới..."
+                                placeholder={language === 'vi' ? "Đổi mật khẩu mới..." : "Change new password..."}
                                 value={this.state.password || ''}
                                 onChange={(e) => this.handleOnChangeInput(e, 'password')}
                                 autoComplete="new-password"
@@ -117,14 +123,14 @@ class PatientProfile extends Component {
 
                     <div className="info-card">
                         <div className="card-header">
-                            <span className="card-title">Địa chỉ liên hệ</span>
+                            <span className="card-title"><FormattedMessage id="patient-profile.address-label" /></span>
                             <i className="fas fa-map-marker-alt card-icon blue"></i>
                         </div>
                         <div className="card-body">
                             <input className="apple-inline-input"
                                 value={this.state.address || ''}
                                 onChange={(e) => this.handleOnChangeInput(e, 'address')}
-                                placeholder="Nhập địa chỉ nhà..."
+                                placeholder={language === 'vi' ? "Nhập địa chỉ nhà..." : "Enter your home address..."}
                             />
                         </div>
                     </div>
@@ -132,7 +138,7 @@ class PatientProfile extends Component {
 
                 <div className="apple-footer-action">
                     <button className="apple-save-btn" onClick={() => this.handleSaveSettings()}>
-                        Lưu Thay Đổi
+                        <FormattedMessage id="patient-profile.btn-save" />
                     </button>
                 </div>
             </div>

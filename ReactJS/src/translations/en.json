@@ -38,12 +38,28 @@
             "manage-clinic": "Manage clinic"
         },
         "doctor": {
-            "header": "Bác sỹ",
+            "header": "Doctor",
             "manage-schedule": "Manage Schedule",
             "manage-booking": "Manage Booking"
+        },
+        "patient": {
+            "edit-profile": "Edit Profile"
         }
     },
     "manage-user": {
+        "title": "User Management",
+        "add-user": "Add User",
+        "no-data": "No data available",
+        "table-email": "Email",
+        "table-role": "Role",
+        "table-address": "Address",
+        "table-actions": "Actions",
+        "modal-create": "Create New User",
+        "modal-update": "Update User",
+        "btn-cancel": "Cancel",
+        "btn-save": "Save New",
+        "btn-update": "Update",
+        "upload-avatar": "Upload Image",
         "add": "Add a new user",
         "edit": "Edit a new user",
         "email": "Email",
@@ -77,22 +93,18 @@
         "address": "The address of the clinic",
         "note": "Note",
         "choose-specialty": "Chooose Specialty",
-        "choose-clinic": "Chooose Clinic"
-    },
-    "manage-specialty": {
-        "title": "Manage Specialty",
-        "name": "Name Specialty",
-        "image": "Image Specialty",
-        "save": "Save",
-        "image-place": "Selector"
+        "choose-clinic": "Chooose Clinic",
+        "basic-info": "Basic Information",
+        "detail-desc": "Detailed Description (Markdown)"
     },
     "manage-clinic": {
-        "title": "Manage Clinic",
-        "name": "Name Clinic",
-        "image": "Image Clinic",
-        "address": "Address Clinic",
         "save": "Save",
-        "image-place": "Selector"
+        "image-place": "Select",
+        "modal-create": "Add New Medical Facility",
+        "modal-edit": "Edit Medical Facility",
+        "upload-img": "Upload Image",
+        "content-detail": "Detailed Introduction",
+        "btn-cancel": "Cancel"
     },
     "schedule-doctor": {
         "calendar": "Calendar",
@@ -120,5 +132,57 @@
         "failed-title": "Verification Failed",
         "failed-desc": "The link is invalid or has expired. Please check your email again.",
         "back-home": "Back to Home"
+    },
+    "system-layout": {
+        "sign-out": "Sign Out",
+        "change-lang": "Change Language",
+        "welcome": "Welcome"
+    },
+    "manage-patient": {
+        "title": "Patient Booking Management",
+        "choose-date": "Select Date",
+        "stt": "STT",
+        "time": "Time",
+        "name": "Patient Name",
+        "gender": "Gender",
+        "reason": "Reason",
+        "actions": "Actions",
+        "btn-confirm": "Confirm Done",
+        "no-data": "No patients scheduled for this date"
+    },
+    "patient-detail": {
+        "title": "Booking Details",
+        "btn-back": "Go Back",
+        "appointment-id": "Appointment ID",
+        "clinic-info": "Facility Information",
+        "doctor-info": "Assigned Doctor",
+        "payment-info": "Payment Details",
+        "price": "Medical Fee",
+        "payment-method": "Payment Method",
+        "not-found": "Updating..."
+    },
+    "manage-specialty": {
+        "no-data": "No specialty data available!",
+        "status-ok": "Status: Good",
+        "name": "Specialty Name",
+        "image": "Specialty Image",
+        "btn-cancel": "Cancel"
+    },
+    "patient-profile": {
+        "title": "Personal Information & Security",
+        "subtitle": "Manage settings related to your account, security, and data recovery methods when needed.",
+        "name-label": "Full Name",
+        "contact-label": "Email & Phone Number",
+        "password-label": "Password",
+        "address-label": "Contact Address",
+        "btn-save": "Save Changes",
+        "first-name-place": "First name",
+        "last-name-place": "Last name",
+        "phone-place": "Phone number",
+        "pass-place": "New password...",
+        "address-place": "Enter your home address...",
+        "error-name": "Please enter both First and Last Name!",
+        "success-update": "Information updated successfully!",
+        "failed-update": "Failed to update information!"
     }
 }
