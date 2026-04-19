@@ -1,17 +1,14 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { Route, Switch } from 'react-router-dom';
-import { ConnectedRouter as Router } from 'connected-react-router';
-import { history } from '../redux'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { IntlProvider } from 'react-intl';
-import { language } from '../utils'
 
 import {
-    userIsAdmin, userIsDoctor,
-    userIsNotAuthenticated,
-    userIsAuthenticated,
-    userIsPatientOrAdmin
+    UserIsAdmin, UserIsDoctor,
+    UserIsNotAuthenticated,
+    UserIsAuthenticated,
+    UserIsPatientOrAdmin
 }
     from '../hoc/authentication';
 import { path } from '../utils'
@@ -40,11 +37,11 @@ import PatientSettings from './HomePage/SubMenuForUser/PatientSettings';
 import MyBooking from './HomePage/SubMenuForUser/MyBooking';
 import BookingHistory from './HomePage/SubMenuForUser/BookingHistory';
 import Payment from '../containers/Patient/Doctor/Modal/Payment';
+
 class App extends Component {
     state = {
         bootstrapped: false
     };
-
 
     handlePersistorState = () => {
         const { persistor } = this.props;
@@ -87,43 +84,42 @@ class App extends Component {
         return (
             <Fragment>
 
-                <Router history={history}>
+                <BrowserRouter>
                     <div className="main-container">
                         <ConfirmModal />
-                        {/* {this.props.isLoggedIn && <Header />} */}
                         <div className="content-container">
                             <CustomScrollbars style={{ height: '100vh', width: '100%' }}>
-                                <Switch>
-                                    <Route path={path.HOME} exact component={(Home)} />
+                                <Routes>
+                                    <Route path={path.HOME} element={<Home />} />
 
                                     {/* //check roleId */}
-                                    <Route path={path.LOGIN} component={userIsNotAuthenticated(Login)} />
-                                    <Route path={path.REGISTER} component={userIsNotAuthenticated(Register)} />
-                                    <Route path={path.SYSTEM} component={userIsAdmin(System)} />
-                                    <Route path={path.DOCTOR} component={userIsDoctor(Doctor)} />
-                                    <Route path={path.ADMIN} component={userIsAdmin(Admin)} />
-                                    {/* <Route path={'/patient'} component={userIsPatient(PatientProfile)} /> */}
+                                    <Route path={path.LOGIN} element={<UserIsNotAuthenticated><Login /></UserIsNotAuthenticated>} />
+                                    <Route path={path.REGISTER} element={<UserIsNotAuthenticated><Register /></UserIsNotAuthenticated>} />
+                                    <Route path={path.SYSTEM + '/*'} element={<UserIsAdmin><System /></UserIsAdmin>} />
+                                    <Route path={path.DOCTOR + '/*'} element={<UserIsDoctor><Doctor /></UserIsDoctor>} />
+                                    <Route path={path.ADMIN + '/*'} element={<UserIsAdmin><Admin /></UserIsAdmin>} />
 
-                                    //submenuforuser
-                                    <Route path={path.SETTINGS} component={userIsAuthenticated(PatientSettings)} />
-                                    <Route path={path.MY_BOOKING} component={userIsPatientOrAdmin(MyBooking)} />
-                                    <Route path={path.BOOKING_HISTORY} component={userIsPatientOrAdmin(BookingHistory)} />
+                                    {/* submenuforuser */}
+                                    <Route path={path.SETTINGS} element={<UserIsAuthenticated><PatientSettings /></UserIsAuthenticated>} />
+                                    <Route path={path.MY_BOOKING} element={<UserIsPatientOrAdmin><MyBooking /></UserIsPatientOrAdmin>} />
+                                    <Route path={path.BOOKING_HISTORY} element={<UserIsPatientOrAdmin><BookingHistory /></UserIsPatientOrAdmin>} />
 
-                                    //checkmail
-                                    <Route path={path.VERIFY_EMAIL_BOOKING} component={VerifyEmail} />
-                                    <Route path={path.PAYMENT} component={userIsPatientOrAdmin(Payment)} />
-                                    //user
-                                    <Route path={path.HOMEPAGE} component={HomePage} />
-                                    <Route path={path.DETAIL_DOCTOR} component={DetailDoctor} />
-                                    <Route path={path.DETAIL_SPECIALTY} component={DetailSpecialty} />
-                                    <Route path={path.DETAIL_CLINIC} component={DetailClinic} />
+                                    {/* checkmail */}
+                                    <Route path={path.VERIFY_EMAIL_BOOKING} element={<VerifyEmail />} />
+                                    <Route path={path.PAYMENT} element={<UserIsPatientOrAdmin><Payment /></UserIsPatientOrAdmin>} />
 
-                                    <Route path={path.ALL_SPECIALTY} component={AllSpecialty} />
-                                    <Route path={path.ALL_CLINIC} component={AllClinic} />
-                                    <Route path={path.ALL_DOCTOR} component={AllDoctor} />
+                                    {/* user */}
+                                    <Route path={path.HOMEPAGE} element={<HomePage />} />
+                                    <Route path={path.DETAIL_DOCTOR} element={<DetailDoctor />} />
+                                    <Route path={path.DETAIL_SPECIALTY} element={<DetailSpecialty />} />
+                                    <Route path={path.DETAIL_CLINIC} element={<DetailClinic />} />
+
+                                    <Route path={path.ALL_SPECIALTY} element={<AllSpecialty />} />
+                                    <Route path={path.ALL_CLINIC} element={<AllClinic />} />
+                                    <Route path={path.ALL_DOCTOR} element={<AllDoctor />} />
 
 
-                                </Switch>
+                                </Routes>
                             </CustomScrollbars>
                         </div>
                         <ToastContainer
@@ -138,7 +134,7 @@ class App extends Component {
                             pauseOnHover
                         />
                     </div>
-                </Router>
+                </BrowserRouter>
             </Fragment>
         )
     }

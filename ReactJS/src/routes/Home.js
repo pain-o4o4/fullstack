@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { USER_ROLE } from '../utils'; // Import cái bảng role của ông vào
 
@@ -20,7 +20,7 @@ class Home extends Component {
         }
 
         return (
-            <Redirect to={linkToRedirect} />
+            <Navigate to={linkToRedirect} replace />
         );
     }
 }

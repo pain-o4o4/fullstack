@@ -1,55 +1,38 @@
-import locationHelperBuilder from "redux-auth-wrapper/history4/locationHelper";
-import { connectedRouterRedirect } from "redux-auth-wrapper/history4/redirect";
+import React from "react";
+import { useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
 
-const locationHelper = locationHelperBuilder({});
+export const UserIsAuthenticated = ({ children }) => {
+    const isLoggedIn = useSelector(state => state.user.isLoggedIn);
+    return isLoggedIn ? children : <Navigate to="/login" replace />;
+};
 
-// Khóa 1: Chỉ cần đã đăng nhập (Dùng chung cho những trang cần định danh)
-export const userIsAuthenticated = connectedRouterRedirect({
-    authenticatedSelector: state => state.user.isLoggedIn,
-    wrapperDisplayName: 'UserIsAuthenticated',
-    redirectPath: '/login'
-});
+export const UserIsNotAuthenticated = ({ children }) => {
+    const isLoggedIn = useSelector(state => state.user.isLoggedIn);
+    return !isLoggedIn ? children : <Navigate to="/" replace />;
+};
 
-// Khóa 2: Chỉ dành cho người CHƯA đăng nhập (Trang Login)
-export const userIsNotAuthenticated = connectedRouterRedirect({
-    authenticatedSelector: state => !state.user.isLoggedIn,
-    wrapperDisplayName: 'UserIsNotAuthenticated',
-    redirectPath: (state, ownProps) =>
-        locationHelper.getRedirectQueryParam(ownProps)
-        || '/' || '/login' || '/register',
-    allowRedirectBack: false
-});
+export const UserIsAdmin = ({ children }) => {
+    const isLoggedIn = useSelector(state => state.user.isLoggedIn);
+    const userInfo = useSelector(state => state.user.userInfo);
+    return (isLoggedIn && userInfo?.roleId === "R1") ? children : <Navigate to="/home" replace />;
+};
 
-// Khóa 3: CHỈ ADMIN (R1)
-export const userIsAdmin = connectedRouterRedirect({
-    authenticatedSelector:
-        state => state.user.isLoggedIn &&
-            state.user.userInfo &&
-            state.user.userInfo.roleId === 'R1',
-    wrapperDisplayName: 'UserIsAdmin',
-    redirectPath: '/home',
-    allowRedirectBack: false
-});
+export const UserIsDoctor = ({ children }) => {
+    const isLoggedIn = useSelector(state => state.user.isLoggedIn);
+    const userInfo = useSelector(state => state.user.userInfo);
+    return (isLoggedIn && userInfo?.roleId === "R2") ? children : <Navigate to="/home" replace />;
+};
 
-// Khóa 4: CHỈ BÁC SĨ (R2)
-export const userIsDoctor = connectedRouterRedirect({
-    authenticatedSelector:
-        state => state.user.isLoggedIn &&
-            state.user.userInfo &&
-            state.user.userInfo.roleId === 'R2',
-    wrapperDisplayName: 'UserIsDoctor',
-    redirectPath: '/home',
-    allowRedirectBack: false
-});
+export const UserIsPatientOrAdmin = ({ children }) => {
+    const isLoggedIn = useSelector(state => state.user.isLoggedIn);
+    const userInfo = useSelector(state => state.user.userInfo);
+    const isPatientOrAdmin = userInfo?.roleId === "R3" || userInfo?.roleId === "R1";
+    return (isLoggedIn && isPatientOrAdmin) ? children : <Navigate to="/home" replace />;
+};
 
-// Khóa 5: CHỈ BỆNH NHÂN (R3) 
-export const userIsPatientOrAdmin = connectedRouterRedirect({
-    authenticatedSelector:
-        state => state.user.isLoggedIn &&
-            state.user.userInfo &&
-            (state.user.userInfo.roleId === 'R3' ||
-                state.user.userInfo.roleId === 'R1'),
-    wrapperDisplayName: 'UserIsPatient',
-    redirectPath: '/home',
-    allowRedirectBack: false
-});
+export const userIsAuthenticated = (Component) => (props) => <UserIsAuthenticated><Component {...props} /></UserIsAuthenticated>;
+export const userIsNotAuthenticated = (Component) => (props) => <UserIsNotAuthenticated><Component {...props} /></UserIsNotAuthenticated>;
+export const userIsAdmin = (Component) => (props) => <UserIsAdmin><Component {...props} /></UserIsAdmin>;
+export const userIsDoctor = (Component) => (props) => <UserIsDoctor><Component {...props} /></UserIsDoctor>;
+export const userIsPatientOrAdmin = (Component) => (props) => <UserIsPatientOrAdmin><Component {...props} /></UserIsPatientOrAdmin>;

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { getProfileDoctorById } from '../../../services/userService'
 import { LANGUAGES } from '../../../utils/constant'
-import { withRouter } from 'react-router'; // hoặc 'react-router-dom'
+import { withRouter } from '../../../components/Navigator'; // hoặc 'react-router-dom'
 import { FormattedMessage } from 'react-intl';
 import './ProfileDoctor.scss'
 import { FormattedNumber } from 'react-intl';
@@ -36,7 +36,8 @@ class ProfileDoctor extends Component {
                 }
 
                 if (result && result.image) {
-                    result.image = Buffer.from(result.image, 'base64').toString('binary');
+                    // Convert image base64 string to data URL for browser rendering
+                    result.image = `data:image/jpeg;base64,${result.image}`;
                 }
 
 

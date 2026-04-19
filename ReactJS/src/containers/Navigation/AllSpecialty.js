@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter } from '../../components/Navigator';
+
 import * as action from '../../store/actions';
 import HomeHeader from '../HomePage/HomeHeader';
 import './AllSpecialty.scss';
@@ -14,7 +15,7 @@ class AllSpecialty extends Component {
     }
 
     handleViewDetail = (id) => {
-        this.props.history.push(`/detail-specialty/${id}`);
+        this.props.navigate(`/detail-specialty/${id}`);
     }
 
     render() {

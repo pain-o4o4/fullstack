@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
 
-import { postVerifyAppointmentService } from '../../../../ReactJS/src/services/userService'
-import { withRouter } from 'react-router'; // hoặc 'react-router-dom'
+import { postVerifyAppointmentService } from '../../services/userService'
+import { withRouter } from '../../components/Navigator';
 import { FormattedMessage } from 'react-intl';
 import './VerifyEmail.scss'
 import HomeHeader from '../HomePage/HomeHeader';
@@ -85,7 +85,7 @@ class VerifyEmail extends Component {
                                         <p className="apple-desc">
                                             <FormattedMessage id="verify-email.success-desc" defaultMessage="Your appointment has been recorded. Thank you for choosing us." />
                                         </p>
-                                        <button className="btn-apple-pill" onClick={() => this.props.history.push('/home')}>
+                                        <button className="btn-apple-pill" onClick={() => this.props.navigate('/home')}>
                                             <FormattedMessage id="verify-email.back-home" defaultMessage="Back to Home" />
                                         </button>
                                     </div>
@@ -101,7 +101,7 @@ class VerifyEmail extends Component {
                                         <p className="apple-desc">
                                             <FormattedMessage id="verify-email.failed-desc" defaultMessage="The link is invalid or has expired. Please check your email again." />
                                         </p>
-                                        <button className="btn-apple-pill secondary" onClick={() => this.props.history.push('/home')}>
+                                        <button className="btn-apple-pill secondary" onClick={() => this.props.navigate('/home')}>
                                             <FormattedMessage id="verify-email.back-home" defaultMessage="Back to Home" />
                                         </button>
                                     </div>

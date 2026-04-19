@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import UserManage from '../containers/System/UserManage';
 import UserRedux from '../containers/System/Admin/UserRedux';
 import ManageSchedule from '../containers/System/Doctor/ManageSchedule';
@@ -17,12 +17,11 @@ class Doctor extends Component {
                 <div className="System-container">
                     <div className="System-list">
 
-                        <Switch>
-                            <Route path="/doctor/manage-schedule" component={ManageSchedule} />
-                            <Route path="/doctor/manage-doctor" component={ManageDoctor} />
-
-                            <Redirect from="/doctor" to="/doctor/manage-schedule" />
-                        </Switch>
+                        <Routes>
+                            <Route path="manage-schedule" element={<ManageSchedule />} />
+                            <Route path="manage-doctor" element={<ManageDoctor />} />
+                            <Route path="*" element={<Navigate to="manage-schedule" replace />} />
+                        </Routes>
                     </div>
                 </div>
             </React.Fragment>

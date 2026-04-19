@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import 'react-toastify/dist/ReactToastify.css';
 import './styles/styles.scss';
 
@@ -12,13 +12,14 @@ import { Provider } from 'react-redux';
 import reduxStore, { persistor } from './redux';
 
 const renderApp = () => {
-    ReactDOM.render(
+    const container = document.getElementById('root');
+    const root = createRoot(container);
+    root.render(
         <Provider store={reduxStore}>
             <IntlProviderWrapper>
                 <App persistor={persistor}/>
             </IntlProviderWrapper>
-        </Provider>,
-        document.getElementById('root')
+        </Provider>
     );
 };
 

@@ -1,4 +1,4 @@
-import { REGISTER } from "redux-persist";
+
 
 export const path = {
     HOME: '/',

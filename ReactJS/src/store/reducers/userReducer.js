@@ -7,7 +7,7 @@ const initialState = {
 }
 
 // Đổi tên từ appReducer thành userReducer ở đây
-const userReducer = (state = initialState, action) => {
+const userReducer = (state = initialState, action = {}) => {
     switch (action.type) {
         case actionTypes.USER_LOGIN_SUCCESS:
             console.log(">>> check action trong Reducer: ", action);

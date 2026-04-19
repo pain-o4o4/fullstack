@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { push } from "connected-react-router";
 import { createRegister } from '../../services/userService';
 import './Login.scss'; // Dùng chung scss cho đồng bộ
 import { toast } from 'react-toastify';
 import Select from 'react-select';
 import gender_icon from '../../assets/images/gender_icon.svg';
 import * as action from "../../store/actions";
+import { withRouter } from '../../components/Navigator';
 class Register extends Component {
     constructor(props) {
         super(props);
@@ -32,6 +32,7 @@ class Register extends Component {
 
     handleRegister = async () => {
         this.setState({ errMessage: '' });
+
         try {
             let res = await createRegister({
                 email: this.state.email,
@@ -48,7 +49,8 @@ class Register extends Component {
                 toast.error(res.errMessage);
                 this.setState({ errMessage: res.errMessage });
             } else {
-                toast.success("Register succeed! Please login with your account.");
+                toast.success("Register succeed!");
+                // After successful registration, navigate to login
                 this.props.navigate('/login');
             }
         } catch (e) {
@@ -146,7 +148,12 @@ class Register extends Component {
 
                             <div className="submit-container">
                                 <button className="submit" onClick={this.handleRegister}>Register</button>
-                                <button className="submit gray" onClick={() => this.props.navigate('/login')}>Back to Login</button>
+                                <button
+                                    className="submit gray"
+                                    onClick={() => this.props.navigate('/login')}
+                                >
+                                    Back to Login
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -162,9 +169,7 @@ const mapStateToProps = state => {
     };
 };
 const mapDispatchToProps = dispatch => ({
-    navigate: (path) => dispatch(push(path)),
     fetchGenderStart: () => dispatch(action.fetchGenderStart()),
-
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Register);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Register));

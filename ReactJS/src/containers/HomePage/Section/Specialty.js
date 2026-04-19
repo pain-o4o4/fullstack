@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import './Specialty.scss';
 // import { FormattedMessage } from 'react-intl';
 import Slider from 'react-slick';
-import { withRouter } from 'react-router-dom';
+import { withRouter } from '../../../components/Navigator';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import * as action from '../../../store/actions'
@@ -26,8 +26,8 @@ class Specialty extends Component {
         }
     }
     handleViewDetailSpecialty = (item) => {
-        if (this.props.history) {
-            this.props.history.push(`/detail-specialty/${item.id}`);
+        if (this.props.navigate) {
+            this.props.navigate(`/detail-specialty/${item.id}`);
         }
     }
     render() {

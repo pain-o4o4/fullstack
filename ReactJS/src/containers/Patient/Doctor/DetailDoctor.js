@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
-import { useHistory } from 'react-router-dom'
+
+import { withRouter } from '../../../components/Navigator';
 import { FormattedMessage } from 'react-intl';
 import { LANGUAGES } from '../../../utils/constant'
 import './DetailDoctor.scss'
@@ -13,15 +14,15 @@ class DetailDoctor extends Component {
         super(props);
         this.state = {
             detailDoctor: {},
-            currentDoctorId: this.props.match.params.id ? this.props.match.params.id : -1,
+            currentDoctorId: this.props.params && this.props.params.id ? this.props.params.id : -1,
 
         }
     }
 
     componentDidMount() {
 
-        if (this.props.match && this.props.match.params.id) {
-            let id = this.props.match.params.id;
+        if (this.props.params && this.props.params.id) {
+            let id = this.props.params.id;
             this.setState({
                 currentDoctorId: id // Thêm dòng này
             });
@@ -34,8 +35,8 @@ class DetailDoctor extends Component {
                 detailDoctor: this.props.detailDoctor
             })
         }
-        if (prevProps.match.params.id !== this.props.match.params.id) {
-            let id = this.props.match.params.id;
+        if (prevProps.params && this.props.params && prevProps.params.id !== this.props.params.id) {
+            let id = this.props.params.id;
             this.setState({
                 currentDoctorId: id
             });
@@ -52,7 +53,7 @@ class DetailDoctor extends Component {
             nameEn = `${detailDoctor.positionData.valueEn}, ${detailDoctor.firstName} ${detailDoctor.lastName}`;
         }
 
-        console.log(this.props.match.params.id)
+        console.log(this.props.params && this.props.params.id)
         return (
             <React.Fragment>
                 <HomeHeader isShowBanner={false} />
@@ -60,7 +61,7 @@ class DetailDoctor extends Component {
                     <div className="breadcrumb">
                         <span
                             className="home-link"
-                            onClick={() => this.props.history.push('/home')}
+                            onClick={() => this.props.navigate('/home')}
                         >
                             Home
                         </span>
@@ -125,4 +126,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(DetailDoctor);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DetailDoctor));

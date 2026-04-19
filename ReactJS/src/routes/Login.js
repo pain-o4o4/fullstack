@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { push } from "connected-react-router";
 
 import * as actions from "../store/actions";
 import { KeyCodeUtils, LanguageUtils } from "../utils";
@@ -11,6 +10,7 @@ import './Login.scss';
 import { FormattedMessage } from 'react-intl';
 
 import adminService from '../services/adminService';
+import { withRouter } from '../components/Navigator'; // 👈 nhớ import
 
 class Login extends Component {
     constructor(props) {
@@ -29,9 +29,7 @@ class Login extends Component {
     };
 
     refresh = () => {
-        this.setState({
-            ...this.initialState
-        })
+        this.setState({ ...this.initialState })
     }
 
     onUsernameChange = (e) => {
@@ -43,36 +41,31 @@ class Login extends Component {
     }
 
     redirectToSystemPage = () => {
-        const { navigate } = this.props;
-        const redirectPath = '/system/user-manage';
-        navigate(`${redirectPath}`);
+        this.props.navigate('/system/user-manage');
     }
 
     processLogin = () => {
-        const { username, password } = this.state;
+        const { adminLoginSuccess } = this.props;
 
-        const { adminLoginSuccess, adminLoginFail } = this.props;
-        let loginBody = {
-            username: 'admin',
-            password: '123456'
-        }
-        //sucess
         let adminInfo = {
-            "tlid": "0",
-            "tlfullname": "Administrator",
-            "custype": "A",
-            "accessToken": "eyJhbGciOiJIU"
-        }
+            tlid: "0",
+            tlfullname: "Administrator",
+            custype: "A",
+            accessToken: "fake-token"
+        };
 
         adminLoginSuccess(adminInfo);
         this.refresh();
         this.redirectToSystemPage();
-        try {
-            adminService.login(loginBody)
-        } catch (e) {
-            console.log('error login : ', e)
-        }
 
+        try {
+            adminService.login({
+                username: 'admin',
+                password: '123456'
+            });
+        } catch (e) {
+            console.log('error login : ', e);
+        }
     }
 
     handlerKeyDown = (event) => {
@@ -90,10 +83,7 @@ class Login extends Component {
 
     componentWillUnmount() {
         document.removeEventListener('keydown', this.handlerKeyDown);
-        // fix Warning: Can't perform a React state update on an unmounted component
-        this.setState = (state, callback) => {
-            return;
-        };
+        this.setState = () => { };
     }
 
     render() {
@@ -107,12 +97,11 @@ class Login extends Component {
                         <h2 className="title">
                             <FormattedMessage id="login.login" />
                         </h2>
+
                         <div className="form-group icon-true">
-                            <img className="icon" src={userIcon} alt="this" />
+                            <img className="icon" src={userIcon} alt="" />
                             <input
                                 placeholder={LanguageUtils.getMessageByKey("login.username", lang)}
-                                id="username"
-                                name="username"
                                 type="text"
                                 className="form-control"
                                 value={username}
@@ -120,12 +109,10 @@ class Login extends Component {
                             />
                         </div>
 
-                        <div id="phone-input-container" className="form-group icon-true">
-                            <img className="icon" src={passIcon} alt="this" />
+                        <div className="form-group icon-true">
+                            <img className="icon" src={passIcon} alt="" />
                             <input
                                 placeholder={LanguageUtils.getMessageByKey("login.password", lang)}
-                                id="password"
-                                name="password"
                                 type="password"
                                 className="form-control"
                                 value={password}
@@ -133,16 +120,15 @@ class Login extends Component {
                             />
                         </div>
 
-                        {loginError !== '' && (
+                        {loginError && (
                             <div className='login-error'>
-                                <span className='login-error-message'>{loginError}</span>
+                                <span>{loginError}</span>
                             </div>
                         )}
 
                         <div className="form-group login">
                             <input
                                 ref={this.btnLogin}
-                                id="btnLogin"
                                 type="submit"
                                 className="btn"
                                 value={LanguageUtils.getMessageByKey("login.login", lang)}
@@ -152,22 +138,17 @@ class Login extends Component {
                     </div>
                 </div>
             </div>
-        )
+        );
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        lang: state.app.language
-    };
-};
+const mapStateToProps = state => ({
+    lang: state.app.language
+});
 
-const mapDispatchToProps = dispatch => {
-    return {
-        navigate: (path) => dispatch(push(path)),
-        adminLoginSuccess: (adminInfo) => dispatch(actions.adminLoginSuccess(adminInfo)),
-        adminLoginFail: () => dispatch(actions.adminLoginFail()),
-    };
-};
+const mapDispatchToProps = dispatch => ({
+    adminLoginSuccess: (adminInfo) => dispatch(actions.adminLoginSuccess(adminInfo)),
+    adminLoginFail: () => dispatch(actions.adminLoginFail()),
+});
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Login));

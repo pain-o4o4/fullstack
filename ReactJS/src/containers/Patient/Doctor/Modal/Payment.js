@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
-import { withRouter } from 'react-router';
+import { withRouter } from '../../../../components/Navigator';
 import HomeHeader from '../../../HomePage/HomeHeader';
 import { postBookAppointment } from '../../../../services/userService';
 import { toast } from 'react-toastify';
@@ -26,7 +26,7 @@ class Payment extends Component {
         } else {
             // Trường hợp user F5 hoặc vào trực tiếp link mà không có data
             toast.error("Không tìm thấy thông tin đơn hàng!");
-            this.props.history.push('/home');
+            this.props.navigate('/home');
         }
     }
 
@@ -40,7 +40,7 @@ class Payment extends Component {
                 if (prevState.timeLeft <= 1) {
                     clearInterval(this.timer);
                     toast.error("Hết thời gian thanh toán!");
-                    this.props.history.push('/home');
+                    this.props.navigate('/home');
                 }
                 return { timeLeft: prevState.timeLeft - 1 };
             });
@@ -128,7 +128,7 @@ class Payment extends Component {
                             <button className="btn-confirm" onClick={this.handleConfirmPaid}>
                                 <i className="fas fa-credit-card"></i> THANH TOÁN NGAY
                             </button>
-                            <button className="btn-cancel" onClick={() => this.props.history.goBack()}>
+                            <button className="btn-cancel" onClick={() => this.props.navigate(-1)}>
                                 QUAY LẠI
                             </button>
                         </div>

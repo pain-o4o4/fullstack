@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter } from '../../components/Navigator';
 import * as action from '../../store/actions';
 import HomeHeader from '../HomePage/HomeHeader';
 import './AllClinics.scss';
@@ -14,8 +14,8 @@ class AllClinic extends Component {
     }
 
     handleViewDetailClinic = (item) => {
-        if (this.props.history) {
-            this.props.history.push(`/detail-clinic/${item.id}`);
+        if (this.props.navigate) {
+            this.props.navigate(`/detail-clinic/${item.id}`);
         }
     }
 

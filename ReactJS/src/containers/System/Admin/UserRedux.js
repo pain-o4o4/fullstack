@@ -6,8 +6,8 @@ import { LANGUAGES, CRUD_ACTION, CommonUtils } from '../../../utils';
 import * as action from '../../../store/actions';
 import { add, first, get, last } from 'lodash';
 import { injectIntl } from 'react-intl';
-import Lightbox from 'react-image-lightbox';
-import 'react-image-lightbox/style.css'; // CỰC KỲ QUAN TRỌNG
+
+
 import TableManager from './TableManager';
 import { Table } from 'reactstrap';
 class UserRedux extends Component {
@@ -394,12 +394,12 @@ class UserRedux extends Component {
                                         <label className="label-upload" htmlFor="previewImg">
                                             Tải ảnh <i className="fas fa-upload"></i>
                                         </label>
-                                        {this.state.isOpen === true && (
-                                            <Lightbox
-                                                mainSrc={this.state.previewImgURL}
-                                                onCloseRequest={() => this.setState({ isOpen: false })}
-                                            />
-                                        )}
+                                        
+
+
+
+
+
                                         {/* Ô hiển thị ảnh xem trước (Preview) */}
                                         <div className="preview-image"
                                             style={{ backgroundImage: `url(${this.state.previewImgURL})` }}

@@ -4,7 +4,7 @@ import { getScheduleByDate } from '../../../services/userService'
 import { LANGUAGES } from '../../../utils/constant'
 import './ScheduleDoctor.scss'
 import moment from 'moment'
-import { withRouter } from 'react-router'; // hoặc 'react-router-dom'
+import { withRouter } from '../../../components/Navigator';
 import 'moment/locale/vi';
 import calendar_icon from '../../../assets/images/calendar_icon.svg'
 import { FormattedMessage } from 'react-intl';
@@ -48,8 +48,8 @@ class ScheduleDoctor extends Component {
         this.setState({
             allDay: allDay
         });
-        if (this.props.match && this.props.match.params.id) {
-            let doctorId = this.props.match.params.id;
+        if (this.props.params && this.props.params.id) {
+            let doctorId = this.props.params.id;
             let today = allDay[0].value;
 
             let res = await getScheduleByDate(doctorId, today);
@@ -68,8 +68,8 @@ class ScheduleDoctor extends Component {
                 allDay: allDay
             });
         }
-        if (this.props.match.params.id !== prevProps.match.params.id) {
-            let doctorId = this.props.match.params.id;
+        if (this.props.params && prevProps.params && this.props.params.id !== prevProps.params.id) {
+            let doctorId = this.props.params.id;
             let today = this.state.allDay[0].value;
             let res = await getScheduleByDate(doctorId, today);
             if (res && res.errCode === 0) {
@@ -80,8 +80,8 @@ class ScheduleDoctor extends Component {
         }
     }
     handleChangeSelect = async (e) => {
-        if (this.props.match && this.props.match.params.id) {
-            let doctorId = this.props.match.params.id;
+        if (this.props.params && this.props.params.id) {
+            let doctorId = this.props.params.id;
             let date = e.target.value;
             let res = await getScheduleByDate(doctorId, date);
             // if (res && res.errCode === 0) {
@@ -110,7 +110,7 @@ class ScheduleDoctor extends Component {
         let { allDay, allAvalabelTime, isTheModalOpen, dataTimeModal } = this.state
         let { language } = this.props
         // console.log('check state', this.state.allAvalabelTime);
-        let doctorId = this.props.match && this.props.match.params ? this.props.match.params.id : '';
+        let doctorId = this.props.params ? this.props.params.id : '';
         console.log('check doctorId', this.state);
         return (
             <React.Fragment>

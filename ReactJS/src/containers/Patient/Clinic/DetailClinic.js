@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { LANGUAGES } from '../../../utils/constant';
-import { withRouter } from 'react-router';
+import { withRouter } from '../../../components/Navigator';
 import { FormattedMessage } from 'react-intl';
 import './DetailClinic.scss';
 import HomeHeader from '../../HomePage/HomeHeader';
@@ -23,8 +23,8 @@ class DetailClinic extends Component {
 
     async componentDidMount() {
         // Lấy id từ params của URL: /detail-clinic/:id
-        if (this.props.match && this.props.match.params.id) {
-            let id = this.props.match.params.id;
+        if (this.props.params && this.props.params.id) {
+            let id = this.props.params.id;
             this.props.getDetailClinicById(id);
         }
     }
@@ -52,8 +52,8 @@ class DetailClinic extends Component {
         }
     }
     handleViewDetailDoctor = (doctorId) => {
-        if (this.props.history) {
-            this.props.history.push(`/detail-doctor/${doctorId}`)
+        if (this.props.navigate) {
+            this.props.navigate(`/detail-doctor/${doctorId}`);
         }
     }
     render() {

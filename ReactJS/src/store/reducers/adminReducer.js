@@ -1,4 +1,3 @@
-import { editUser } from '../actions';
 import actionTypes from '../actions/actionTypes';
 
 const initialState = {
@@ -22,41 +21,28 @@ const initialState = {
     bookingData: {}
 }
 
-const adminReducer = (state = initialState, action) => {
+const adminReducer = (state = initialState, action = {}) => {
     switch (action.type) {
         case actionTypes.FETCH_GENDER_START:
-            {
-                // let state = { ...state };
-                state.isLoadingGender = true;
-                return {
-                    ...state
-                }
+            return {
+                ...state,
+                isLoadingGender: true
             }
         case actionTypes.FETCH_GENDER_SUCCESS:
-            {
-                // let state = { ...state };
-                console.log('fetch gender success: ', state)
-                return {
-                    ...state,
-                    genders: action.data,
-                    isLoadingGender: false
-                }
-                // started: true
+            return {
+                ...state,
+                genders: action.data,
+                isLoadingGender: false
             }
         case actionTypes.FETCH_GENDER_FAIL:
-            {
-                console.log('fetch gender fail: ', action)
-                return {
-                    ...state,
-                    isLoadingGender: false,
-                    genders: []
-                }
-            }
-        case actionTypes.FETCH_POSITION_START:
             return {
-                ...state
-
+                ...state,
+                isLoadingGender: false,
+                genders: []
             }
+
+        case actionTypes.FETCH_POSITION_START:
+            return { ...state }
         case actionTypes.FETCH_POSITION_SUCCESS:
             return {
                 ...state,
@@ -67,10 +53,9 @@ const adminReducer = (state = initialState, action) => {
                 ...state,
                 positions: []
             }
+
         case actionTypes.FETCH_ROLE_START:
-            return {
-                ...state
-            }
+            return { ...state }
         case actionTypes.FETCH_ROLE_SUCCESS:
             return {
                 ...state,
@@ -81,38 +66,35 @@ const adminReducer = (state = initialState, action) => {
                 ...state,
                 roles: []
             }
-        case actionTypes.CREATE_USER_SUCCESS:
-            state.users = action.users;
-            return {
-                ...state,
 
-            }
-        case actionTypes.CREATE_USER_FAIL:
-            state.users = [];
-            return {
-                ...state
-            }
-        case actionTypes.FETCH_ALL_USERS_SUCCESS:
-            return {
-                ...state,
-                users: action.users
-            }
-        case actionTypes.FETCH_ALL_USERS_FAILED:
-            // state.users = [];
-            return {
-                ...state,
-                users: []
-            }
+        // BUG FIX: removed duplicate CREATE_USER_SUCCESS/FAIL blocks.
+        // Previously the second block (lines 106-115) for editUser was dead
+        // code because JS switch already matched the first CREATE_USER_SUCCESS.
         case actionTypes.CREATE_USER_SUCCESS:
             return {
                 ...state,
-                editUser: action.data
+                editUser: action.data || []
             }
         case actionTypes.CREATE_USER_FAIL:
             return {
                 ...state,
                 editUser: []
             }
+
+        // BUG FIX: action dispatches FETCH_ALL_USERS_FAIL but reducer was
+        // listening for FETCH_ALL_USERS_FAILED (typo), so failure case never fired.
+        case actionTypes.FETCH_ALL_USERS_SUCCESS:
+            return {
+                ...state,
+                users: action.users
+            }
+        case actionTypes.FETCH_ALL_USERS_FAIL:
+        case actionTypes.FETCH_ALL_USERS_FAILED:
+            return {
+                ...state,
+                users: []
+            }
+
         case actionTypes.FETCH_TOP_DOCTOR_SUCCESS:
             return {
                 ...state,
@@ -123,6 +105,7 @@ const adminReducer = (state = initialState, action) => {
                 ...state,
                 topDoctors: []
             }
+
         case actionTypes.FETCH_ALL_DOCTORS_SUCCESS:
             return {
                 ...state,
@@ -133,6 +116,7 @@ const adminReducer = (state = initialState, action) => {
                 ...state,
                 allDoctors: []
             }
+
         case actionTypes.GET_DETAIL_DOCTOR_SUCCESS:
             return {
                 ...state,
@@ -143,6 +127,7 @@ const adminReducer = (state = initialState, action) => {
                 ...state,
                 detailDoctor: {}
             }
+
         case actionTypes.FETCH_ALLCODE_SCHEDULE_TIME_SUCCESS:
             return {
                 ...state,
@@ -153,6 +138,7 @@ const adminReducer = (state = initialState, action) => {
                 ...state,
                 allScheduleTime: []
             }
+
         case actionTypes.FETCH_REQUIRED_DOCTOR_INFOR_SUCCESS:
             return {
                 ...state,
@@ -163,6 +149,7 @@ const adminReducer = (state = initialState, action) => {
                 ...state,
                 allRequiredDoctorInfor: []
             }
+
         case actionTypes.FETCH_ALL_SPECIALTY_SUCCESS:
             return {
                 ...state,
@@ -173,26 +160,32 @@ const adminReducer = (state = initialState, action) => {
                 ...state,
                 allSpecialties: []
             }
+
+        // BUG FIX: was directly mutating state (state.detailClinic = action.data)
+        // so React saw the same object reference and didn't re-render.
         case actionTypes.FETCH_DETAIL_CLINIC_SUCCESS:
-            state.detailClinic = action.data;
             return {
-                ...state
+                ...state,
+                detailClinic: action.data
             }
         case actionTypes.FETCH_DETAIL_CLINIC_FAILD:
-            state.detailClinic = {};
             return {
-                ...state
+                ...state,
+                detailClinic: {}
             }
+
+        // BUG FIX: same direct mutation bug for detailSpecialty
         case actionTypes.FETCH_DETAIL_SPECIALTY_SUCCESS:
-            state.detailSpecialty = action.data;
             return {
-                ...state
+                ...state,
+                detailSpecialty: action.data
             }
         case actionTypes.FETCH_DETAIL_SPECIALTY_FAILD:
-            state.detailSpecialty = {};
             return {
-                ...state
+                ...state,
+                detailSpecialty: {}
             }
+
         case actionTypes.FETCH_ALL_CLINIC_SUCCESS:
             return {
                 ...state,
@@ -204,17 +197,18 @@ const adminReducer = (state = initialState, action) => {
                 ...state,
                 allClinics: []
             }
+
         case actionTypes.FETCH_DETAIL_APPOINTMENT_SUCCESS:
             return {
                 ...state,
                 detailAppointment: action.data
-
             }
         case actionTypes.FETCH_DETAIL_APPOINTMENT_FAILD:
             return {
                 ...state,
                 detailAppointment: []
             }
+
         case actionTypes.SAVE_BOOKING_DATA_SUCCESS:
             return {
                 ...state,
@@ -225,6 +219,7 @@ const adminReducer = (state = initialState, action) => {
                 ...state,
                 bookingData: {}
             }
+
         default:
             return state;
     }

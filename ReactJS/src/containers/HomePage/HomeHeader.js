@@ -10,7 +10,7 @@ import translate from '../../assets/images/translate.svg';
 import ModalSearchHeader from './ModalSearchHeader.js';
 import { changeLanguageApp } from "../../store/actions";
 import { path } from '../../utils/constant';
-import { withRouter } from 'react-router';
+import { withRouter } from '../../components/Navigator';
 import UserMenuPopup from '../HomePage/SubMenuForUser/UserMenuPopup';
 class HomeHeader extends Component {
     constructor(props) {
@@ -56,18 +56,18 @@ class HomeHeader extends Component {
     }
 
     handleViewList = (type) => {
-        const { history, isLoggedIn, userInfo } = this.props;
+        const { navigate, isLoggedIn, userInfo } = this.props;
 
         if (type === 'LOGIN') {
             if (!isLoggedIn) {
-                history.push(path.LOGIN);
+                this.props.navigate(path.LOGIN);
             } else {
                 if (userInfo && userInfo.roleId === 'R1') {
-                    history.push('/system/user-manage');
+                    navigate('/system/user-manage');
                 } else if (userInfo && userInfo.roleId === 'R2') {
-                    history.push('/doctor/manage-schedule');
+                    navigate('/doctor/manage-schedule');
                 } else {
-                    history.push('/home');
+                    navigate('/home');
                 }
             }
             return;
@@ -84,9 +84,9 @@ class HomeHeader extends Component {
         };
 
         if (routeMap[type]) {
-            history.push(routeMap[type]);
+            navigate(routeMap[type]);
         } else {
-            history.push('/home');
+            this.props.navigate('/home');
         }
     }
     render() {

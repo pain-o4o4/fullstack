@@ -8,7 +8,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import * as actions from '../../../store/actions'
 import { LANGUAGES } from '../../../utils/constant'
-import { withRouter } from 'react-router'
+import { withRouter } from '../../../components/Navigator';
 class OutStandingDoctor extends Component {
     constructor(props) {
         super(props);
@@ -34,8 +34,8 @@ class OutStandingDoctor extends Component {
         }
     }
     handleViewDetailDoctor = (doctor) => {
-        if (this.props.history) {
-            this.props.history.push(`/detail-doctor/${doctor.id}`)
+        if (this.props.navigate) {
+            this.props.navigate(`/detail-doctor/${doctor.id}`);
         }
     }
     render() {
@@ -56,7 +56,8 @@ class OutStandingDoctor extends Component {
                                     // Xử lý ảnh
                                     let imageBase64 = '';
                                     if (item.image) {
-                                        imageBase64 = Buffer.from(item.image, 'base64').toString('binary');
+                                        // Use base64 data URL for image rendering in browser
+                                        imageBase64 = `data:image/jpeg;base64,${item.image}`;
                                     }
 
                                     // Hiển thị chức danh + tên

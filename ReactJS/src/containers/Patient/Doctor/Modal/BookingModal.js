@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { LANGUAGES } from '../../../../utils/constant'
-import { withRouter } from 'react-router'; // hoặc 'react-router-dom'
+import { withRouter } from '../../../../components/Navigator'; // hoặc 'react-router-dom'
 import { FormattedMessage } from 'react-intl';
 import './BookingModal.scss'
 import ProfileDoctor from '../ProfileDoctor'
@@ -41,8 +41,8 @@ class BookingModal extends Component {
 
     async componentDidMount() {
         this.props.fetchGenderStart();
-        if (this.props.match && this.props.match.params.id) {
-            let id = this.props.match.params.id;
+        if (this.props.params && this.props.params.id) {
+            let id = this.props.params.id;
             this.setState({
                 currentDoctorId: id // Thêm dòng này
             });
@@ -161,8 +161,8 @@ class BookingModal extends Component {
                 })
             }
         }
-        if (prevProps.match.params.id !== this.props.match.params.id) {
-            let id = this.props.match.params.id;
+        if (prevProps.params && this.props.params && prevProps.params.id !== this.props.params.id) {
+            let id = this.props.params.id;
 
             this.setState({
                 currentDoctorId: id
@@ -246,8 +246,7 @@ class BookingModal extends Component {
             specialtyName: detailDoctor?.specialtyData?.name || ''
         };
 
-        this.props.history.push({
-            pathname: path.PAYMENT,
+        this.props.navigate(path.PAYMENT, {
             state: { bookingData: bookingData }
         });
     }

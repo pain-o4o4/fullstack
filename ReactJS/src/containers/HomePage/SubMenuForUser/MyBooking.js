@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import * as action from '../../../store/actions'
 import HomeHeader from '../../HomePage/HomeHeader'
-import { withRouter } from 'react-router';
+import { withRouter } from '../../../components/Navigator';
 import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
 import { LANGUAGES } from '../../../utils';

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as action from '../../../store/actions'
 // import { FormattedMessage } from 'react-intl';
-import { withRouter } from 'react-router-dom';
+import { withRouter } from '../../../components/Navigator';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -23,8 +23,8 @@ class MedicalFacility extends Component {
         }
     }
     handleViewDetailClinic = (item) => {
-        if (this.props.history) {
-            this.props.history.push(`/detail-clinic/${item.id}`);
+        if (this.props.navigate) {
+            this.props.navigate(`/detail-clinic/${item.id}`);
         }
     }
 

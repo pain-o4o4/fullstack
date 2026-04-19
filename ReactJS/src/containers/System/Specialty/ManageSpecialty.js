@@ -2,14 +2,14 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { getManageSpecialtyById } from '../../../services/userService';
 import { LANGUAGES } from '../../../utils/constant';
-import { withRouter } from 'react-router';
+import { withRouter } from '../../../components/Navigator';
 import { FormattedMessage } from 'react-intl';
 import './ManageSpecialty.scss';
 import MarkdownIt from 'markdown-it/index.js';
 import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
-import Lightbox from 'react-image-lightbox';
-import 'react-image-lightbox/style.css';
+
+
 import CommonUtils from '../../../utils/CommonUtils';
 import { postCreateNewSpecialtyService } from '../../../services/userService'
 import { toast } from 'react-toastify'
@@ -142,12 +142,8 @@ class ManageSpecialty extends Component {
                     </div>
                 </div>
 
-                {this.state.isOpen === true &&
-                    <Lightbox
-                        mainSrc={this.state.previewImgURL}
-                        onCloseRequest={() => this.setState({ isOpen: false })}
-                    />
-                }
+
+
             </div>
         )
     }

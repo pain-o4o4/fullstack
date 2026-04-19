@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import * as action from '../../../store/actions'
 import { LANGUAGES } from '../../../utils/constant'
-import { withRouter } from 'react-router'; // hoặc 'react-router-dom'
+import { withRouter } from '../../../components/Navigator'; // hoặc 'react-router-dom'
 import { FormattedMessage } from 'react-intl';
 import './DetailSpecialty.scss'
 import HomeHeader from '../../HomePage/HomeHeader';
@@ -21,8 +21,8 @@ class DetailSpecialty extends Component {
 
 
     async componentDidMount() {
-        if (this.props.match && this.props.match.params && this.props.match.params.id) {
-            let id = this.props.match.params.id;
+        if (this.props.params && this.props.params.id) {
+            let id = this.props.params.id;
             await this.props.getDetailSpecialtyById(id);
         }
     }
@@ -40,8 +40,8 @@ class DetailSpecialty extends Component {
         }
     }
     handleViewDetailDoctor = (doctorId) => {
-        if (this.props.history) {
-            this.props.history.push(`/detail-doctor/${doctorId}`)
+        if (this.props.navigate) {
+            this.props.navigate(`/detail-doctor/${doctorId}`)
         }
     }
 

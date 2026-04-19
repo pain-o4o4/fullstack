@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
 import HomeHeader from '../../HomePage/HomeHeader'
-import { withRouter } from 'react-router';
+import { withRouter } from '../../../components/Navigator';
+
 import './PatientSettings.scss'
 import { postUpdatePatientService } from '../../../services/userService'; // Import hàm update của ông
 import { toast } from "react-toastify";

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
-import { withRouter } from 'react-router';
+import { withRouter } from '../components/Navigator';
 import { toast } from "react-toastify";
 import { first } from 'lodash';
 import Header from '../containers/Header/Header'

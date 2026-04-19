@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { getBookingHistoryById } from '../../../services/userService'
 import HomeHeader from '../../HomePage/HomeHeader'
-import { withRouter } from 'react-router'; // hoặc 'react-router-dom'
+import { withRouter } from '../../../components/Navigator';
 import { FormattedMessage } from 'react-intl';
 import './BookingHistory.scss'
 class BookingHistory extends Component {
