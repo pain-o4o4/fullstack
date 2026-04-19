@@ -41,6 +41,10 @@ import MyBooking from './HomePage/SubMenuForUser/MyBooking';
 import BookingHistory from './HomePage/SubMenuForUser/BookingHistory';
 import Payment from '../containers/Patient/Doctor/Modal/Payment';
 class App extends Component {
+    state = {
+        bootstrapped: false
+    };
+
 
     handlePersistorState = () => {
         const { persistor } = this.props;
@@ -53,6 +57,20 @@ class App extends Component {
             } else {
                 this.setState({ bootstrapped: true });
             }
+        } else {
+            const unsubscribe = persistor.subscribe(() => {
+                let { bootstrapped } = persistor.getState();
+                if (bootstrapped) {
+                    unsubscribe();
+                    if (this.props.onBeforeLift) {
+                        Promise.resolve(this.props.onBeforeLift())
+                            .then(() => this.setState({ bootstrapped: true }))
+                            .catch(() => this.setState({ bootstrapped: true }));
+                    } else {
+                        this.setState({ bootstrapped: true });
+                    }
+                }
+            });
         }
     };
 
@@ -62,6 +80,9 @@ class App extends Component {
 
     render() {
         let { language } = this.props;
+        if (!this.state.bootstrapped) {
+            return null;
+        }
 
         return (
             <Fragment>
@@ -78,7 +99,7 @@ class App extends Component {
                                     {/* //check roleId */}
                                     <Route path={path.LOGIN} component={userIsNotAuthenticated(Login)} />
                                     <Route path={path.REGISTER} component={userIsNotAuthenticated(Register)} />
-                                    <Route exact path={path.SYSTEM} component={userIsAdmin(System)} />
+                                    <Route path={path.SYSTEM} component={userIsAdmin(System)} />
                                     <Route path={path.DOCTOR} component={userIsDoctor(Doctor)} />
                                     <Route path={path.ADMIN} component={userIsAdmin(Admin)} />
                                     {/* <Route path={'/patient'} component={userIsPatient(PatientProfile)} /> */}
