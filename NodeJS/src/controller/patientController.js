@@ -73,10 +73,25 @@ let postUpdatePatient = async (req, res) => {
         });
     }
 }
+
+let getDetailSchedulePatient = async (req, res) => {
+    try {
+        let infor = await patientService.getDetailSchedulePatient(req.query.bookingId);
+        return res.status(200).json(infor);
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server'
+        });
+    }
+}
+
 export default {
     postBookAppointment,
     postVerifyAppointment,
-    getAllAppointmentsById,
+    getAllAppointmentsById: getAllAppointmentsById,
     handlePayOSWebhook,
-    postUpdatePatient
+    postUpdatePatient: postUpdatePatient,
+    getDetailSchedulePatient: getDetailSchedulePatient
 }

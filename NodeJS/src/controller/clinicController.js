@@ -45,9 +45,42 @@ let getDetailClinicById = async (req, res) => {
         });
     }
 }
+let handleDeleteClinic = async (req, res) => {
+    try {
+        if (!req.body.id) {
+            return res.status(200).json({
+                errCode: 1,
+                errMessage: "Missing required parameters!"
+            })
+        }
+        let response = await clinicService.deleteClinicService(req.body.id);
+        return res.status(200).json(response);
+    } catch (e) {
+        console.log(e);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server'
+        })
+    }
+}
+
+let handleEditClinic = async (req, res) => {
+    try {
+        let response = await clinicService.editClinicService(req.body);
+        return res.status(200).json(response);
+    } catch (e) {
+        console.log(e);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server'
+        })
+    }
+}
+
 module.exports = {
     postCreateNewClinic: postCreateNewClinic,
     getAllClinic: getAllClinic,
-    getDetailClinicById: getDetailClinicById
-
+    getDetailClinicById: getDetailClinicById,
+    handleDeleteClinic: handleDeleteClinic,
+    handleEditClinic: handleEditClinic
 }

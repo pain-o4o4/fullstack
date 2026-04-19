@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ManageSchedule from '../containers/System/Doctor/ManageSchedule';
 import ManageDoctor from '../containers/System/Admin/ManageDoctor';
+import ManagePatient from '../containers/System/Doctor/ManagePatient';
 import SystemLayout from '../containers/System/SystemLayout';
 class Doctor extends Component {
     render() {
@@ -16,6 +17,7 @@ class Doctor extends Component {
                         <Routes>
                             <Route path="manage-schedule" element={<ManageSchedule />} />
                             <Route path="manage-doctor" element={<ManageDoctor />} />
+                            <Route path="manage-booking" element={<ManagePatient />} />
                             <Route path="*" element={<Navigate to="manage-schedule" replace />} />
                         </Routes>
                     </SystemLayout>

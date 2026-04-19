@@ -95,8 +95,78 @@ let getDetailClinicByIdService = (id) => {
         }
     })
 }
+let deleteClinicService = (clinicId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let clinic = await db.Clinic.findOne({
+                where: { id: clinicId }
+            });
+            if (!clinic) {
+                resolve({
+                    errCode: 2,
+                    errMessage: "The clinic doesn't exist"
+                })
+            } else {
+                await db.Clinic.destroy({
+                    where: { id: clinicId }
+                });
+                resolve({
+                    errCode: 0,
+                    errMessage: 'The clinic is deleted'
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+let editClinicService = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.id || !data.name || !data.address || !data.descriptionHTML || !data.descriptionMarkdown) {
+                resolve({
+                    errCode: 1,
+                    errMessage: "Missing required parameters!"
+                })
+            } else {
+                let clinic = await db.Clinic.findOne({
+                    where: { id: data.id },
+                    raw: false
+                });
+
+                if (clinic) {
+                    clinic.name = data.name;
+                    clinic.address = data.address;
+                    clinic.descriptionHTML = data.descriptionHTML;
+                    clinic.descriptionMarkdown = data.descriptionMarkdown;
+
+                    if (data.imageBase64) {
+                        clinic.image = data.imageBase64;
+                    }
+
+                    await clinic.save();
+                    resolve({
+                        errCode: 0,
+                        errMessage: "Update the clinic succeeds!"
+                    });
+                } else {
+                    resolve({
+                        errCode: 1,
+                        errMessage: "Clinic not found!"
+                    });
+                }
+            }
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
 export default {
     getAllClinicService,
     postCreateNewClinicService,
-    getDetailClinicByIdService
+    getDetailClinicByIdService,
+    deleteClinicService,
+    editClinicService
 }

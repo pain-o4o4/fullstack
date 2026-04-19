@@ -1,0 +1,69 @@
+.manage-patient-container {
+    .filters-card {
+        margin-bottom: 25px;
+        padding: 20px 30px;
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 250px auto; // small datepicker width
+        }
+
+        .apple-input {
+            width: 100%;
+            height: 48px; // Make flatpickr tall
+        }
+    }
+
+    .circle-avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #0071e3;
+        color: white;
+        border-radius: 50% !important;
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .apple-status-select {
+        border-radius: 12px;
+        border: 1px solid #d2d2d7;
+        font-size: 14px;
+        padding: 8px 16px;
+        font-weight: 600;
+        outline: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        -webkit-appearance: none; // Safari support
+        appearance: none;
+        background-color: transparent;
+
+        &:focus {
+            border-color: #0071e3;
+            box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
+        }
+
+        &.S1 {
+            color: #d93025;
+            background-color: rgba(217, 48, 37, 0.1);
+            border-color: transparent;
+        }
+
+        &.S2 {
+            color: #1e8e3e;
+            background-color: rgba(30, 142, 62, 0.1);
+            border-color: transparent;
+        }
+
+        &.S3 {
+            color: #5f6368;
+            background-color: rgba(95, 99, 104, 0.1);
+            border-color: transparent;
+        }
+    }
+
+    .role-badge.gray {
+        background-color: rgba(95, 99, 104, 0.1);
+        color: #5f6368;
+    }
+}

@@ -32,9 +32,9 @@ import AllSpecialty from '../containers/Navigation/AllSpecialty.js';
 import AllClinic from '../containers/Navigation/AllClinics.js';
 import AllDoctor from '../containers/Navigation/AllDoctor.js';
 
-// import PatientSettings from './HomePage/SubMenuForUser/PatientSettings';
 import MyBooking from './HomePage/SubMenuForUser/MyBooking';
 import BookingHistory from './HomePage/SubMenuForUser/BookingHistory';
+import DetailSchedulePatient from './HomePage/SubMenuForUser/DetailSchedulePatient';
 import Payment from '../containers/Patient/Doctor/Modal/Payment';
 
 class App extends Component {
@@ -100,6 +100,7 @@ class App extends Component {
                                     {/* submenuforuser */}
                                     {/* <Route path={path.SETTINGS} element={<UserIsAuthenticated><PatientSettings /></UserIsAuthenticated>} /> */}
                                     <Route path={path.MY_BOOKING} element={<UserIsPatientOrAdmin><MyBooking /></UserIsPatientOrAdmin>} />
+                                    <Route path={path.DETAIL_SCHEDULE_PATIENT} element={<UserIsPatientOrAdmin><DetailSchedulePatient /></UserIsPatientOrAdmin>} />
                                     <Route path={path.BOOKING_HISTORY} element={<UserIsPatientOrAdmin><BookingHistory /></UserIsPatientOrAdmin>} />
 
                                     {/* checkmail */}

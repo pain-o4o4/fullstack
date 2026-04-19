@@ -20,6 +20,7 @@ export const path = {
 
     SETTINGS: '/system/patient-profile',
     MY_BOOKING: '/patient/my-booking',
+    DETAIL_SCHEDULE_PATIENT: '/patient/detail-schedule/:bookingId',
     BOOKING_HISTORY: '/patient/history',
     PAYMENT: '/patient/payment',
     VERIFY_EMAIL_BOOKING: '/verify-booking',

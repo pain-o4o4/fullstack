@@ -1,118 +1,19 @@
-.manage-specialty-container {
-    padding: 40px 20px;
-    background-color: #f5f5f7; // Nền chuẩn Apple
-    min-height: 100vh;
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+// Reuse the elegant styling from UserManage
+@import '../UserManage.scss';
 
-    .manage-specialty-title {
-        font-size: 28px;
-        font-weight: 700;
-        color: #1d1d1f;
-        margin-bottom: 30px;
-        text-align: center;
-        letter-spacing: -0.5px;
-    }
-
-    .add-new-specialty {
-        background: #ffffff;
-        padding: 30px;
-        border-radius: 20px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-        max-width: 1000px;
-        margin: 0 auto; // Căn giữa khối quản lý
-
-        .form-group {
-            margin-bottom: 20px;
-
-            label {
-                font-size: 14px;
-                font-weight: 600;
-                color: #86868b;
-                margin-bottom: 8px;
-                display: block;
-            }
-
-            .form-control {
-                background-color: #f5f5f7;
-                border: 2px solid transparent;
-                border-radius: 10px;
-                padding: 10px 15px;
-                transition: all 0.2s;
-
-                &:focus {
-                    background-color: #fff;
-                    border-color: #0071e3;
-                    box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
+.users-container {
+    .user-info-cell {
+        .avatar-mini {
+            &.rounded {
+                border-radius: 12px; // slightly square for specialty instead of full circle
+                background: #fdfdfd;
+                border: 1px solid #e5e5ea;
+                img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: contain;
+                    border-radius: 12px;
                 }
-            }
-        }
-
-        // Tùy chỉnh khu vực Upload ảnh
-        .preview-img-container {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-
-            .label-upload {
-                background-color: #e8e8ed;
-                color: #1d1d1f;
-                padding: 8px 16px;
-                border-radius: 8px;
-                cursor: pointer;
-                font-weight: 500;
-                font-size: 14px;
-                transition: background 0.2s;
-
-                &:hover {
-                    background-color: #d2d2d7;
-                }
-
-                i { margin-left: 8px; }
-            }
-
-            .preview-image {
-                width: 100px;
-                height: 60px;
-                border-radius: 8px;
-                border: 1px solid #d2d2d7;
-                background-position: center;
-                background-size: cover;
-                background-repeat: no-repeat;
-                cursor: zoom-in;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            }
-        }
-
-        // Tùy chỉnh Markdown Editor
-        .rc-md-editor {
-            border: 1px solid #d2d2d7 !important;
-            border-radius: 12px !important;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-
-        // Nút Save kiểu Apple
-        .btn-save-specialty {
-            width: 150px;
-            background-color: #0071e3;
-            color: #fff;
-            border: none;
-            padding: 12px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 15px;
-            margin-top: 30px;
-            float: right; // Đẩy nút sang phải
-            transition: all 0.3s;
-
-            &:hover {
-                background-color: #0077ed;
-                transform: translateY(-2px);
-                box-shadow: 0 4px 15px rgba(0, 113, 227, 0.3);
-            }
-
-            &:active {
-                transform: translateY(0);
             }
         }
     }

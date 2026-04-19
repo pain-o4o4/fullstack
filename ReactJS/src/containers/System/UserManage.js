@@ -10,6 +10,7 @@ import {
     editUserService,
     getAllCodeService
 } from '../../services/userService';
+import ModalCreateUser from './manageSystemModal/ModalCreateUser';
 import './UserManage.scss';
 
 const decodeBase64Buffer = (imgObj) => {

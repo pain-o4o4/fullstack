@@ -84,7 +84,7 @@ class MyBooking extends Component {
                                         let formattedDate = moment(new Date(parseInt(item.date))).format('DD/MM/YYYY');
 
                                         return (
-                                            <tr key={index}>
+                                            <tr key={index} className="pointer-row" onClick={() => this.props.navigate('/patient/detail-schedule/' + item.id)}>
                                                 <td>{index + 1}</td>
                                                 <td>
                                                     <div className="time-display">
@@ -103,9 +103,7 @@ class MyBooking extends Component {
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <button className="btn-cancel-booking" onClick={() => this.handleCancelBooking(item)}>
-                                                        <FormattedMessage id="patient.my-booking.cancel" defaultMessage="Hủy lịch" />
-                                                    </button>
+                                                    <span className="text-primary" style={{cursor: 'pointer'}}>Xem chi tiết &rarr;</span>
                                                 </td>
                                             </tr>
                                         )

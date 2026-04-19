@@ -1,313 +1,151 @@
-$apple-blue: #0071e3;
-$apple-bg: #f5f5f7;
-$apple-black: #1d1d1f;
-$apple-gray: #86868b;
-.manage-doctor{
-    background: $apple-bg;
-    padding: 40px 15% 80px; // Đưa padding ra ngoài cùng để căn giữa toàn bộ trang
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-    .more_info, 
-    .more_info_extra, 
-    .manage-doctor-editor {
+.manage-doctor-wrapper {
+    background-color: #fdfdfd;
+    min-height: 100vh;
+    padding-bottom: 50px;
+
+    .header-section {
+        margin-bottom: 25px;
+        .title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1d1d1f;
+        }
+    }
+
+    .apple-card {
         background: #ffffff;
+        border-radius: 18px;
         padding: 30px;
-        border-radius: 24px; // Thống nhất bo góc lớn
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-        margin-bottom: 24px;
-        border: 1px solid rgba(0, 0, 0, 0.05);
-    }
-    .manage-doctor-container {
-    .manage-doctor-title {
-        font-size: 28px;
-        font-weight: 700;
-        color: $apple-black;
-        margin-bottom: 32px;
-        letter-spacing: -0.5px;
-        text-align: center;
-    }
+        border: 1px solid #f2f2f7;
+        margin-bottom: 25px;
 
-    
-
-    .more_info {
-        display: flex;
-        gap: 24px;
-        .content-left { flex: 2; }
-        .content-right { flex: 1; }
-        textarea.form-control { height: 100px; resize: none; }
-    }
-
-    /* Định dạng Label & Input */
-    label {
-        font-size: 13px;
-        font-weight: 600;
-        color: $apple-gray;
-        margin-bottom: 8px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        display: block;
-    }
-
-    .form-control {
-        height: 42px !important;
-        background-color: $apple-bg !important;
-        border: 2px solid transparent !important;
-        border-radius: 12px !important;
-        padding: 0 15px !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-
-        &:focus {
-            background-color: #ffffff !important;
-            border-color: $apple-blue !important;
-            box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1) !important;
-        }
-    }
-
-    /* === Tùy chỉnh React Select đồng bộ === */
-    .apple-select__control {
-        background-color: $apple-bg !important;
-        border: 2px solid transparent !important;
-        border-radius: 12px !important;
-        min-height: 42px !important;
-        height: 42px !important;
-        box-shadow: none !important;
-
-        &--is-focused {
-            background-color: #fff !important;
-            border-color: $apple-blue !important;
-            box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1) !important;
-        }
-    }
-
-    .apple-select__indicator-separator { display: none; }
-    .apple-select__menu {
-        border-radius: 12px !important;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
-    }
-
-    /* Nút Save/Edit kiểu Pill chuẩn Apple */
-    .save-content {
-        display: flex;
-        justify-content: center;
-        padding-top: 10px;
-
-        .btn-save {
-            min-width: 120px;
-            height: 44px;
-            background: $apple-blue;
-            color: #fff;
-            border: none;
-            border-radius: 999px;
+        .card-header-title {
+            font-size: 18px;
             font-weight: 600;
-            font-size: 15px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-
-            &:hover {
-                background: #005bb5;
-                transform: scale(1.02);
-            }
-
-            &:active {
-                transform: scale(0.96);
-            }
-        }
-    }
-}
-.more_info_extra {
-    .form-group {
-        margin-bottom: 20px;
-
-        label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #86868b;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-            display: block;
+            color: #1d1d1f;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e5e5ea;
+            padding-bottom: 15px;
         }
 
-        // Tùy chỉnh input text (Clinic, Address, Note)
-        .form-control {
-            height: 42px !important; // Khớp độ cao với Select
-            background-color: #f5f5f7 !important;
-            border: 2px solid transparent !important;
-            border-radius: 12px !important;
-            padding: 0 15px !important;
-            font-size: 15px !important;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
 
-            &:focus {
-                background-color: #ffffff !important;
-                border-color: #0071e3 !important;
-                box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1) !important;
-                outline: none !important;
+            @media (max-width: 900px) {
+                grid-template-columns: 1fr;
             }
         }
-    }
 
-    /* Tùy chỉnh các thanh Select (Price, Payment, Province) */
-    .apple-select__control {
-        background-color: #f5f5f7 !important;
-        border: 2px solid transparent !important;
-        border-radius: 12px !important;
-        min-height: 42px !important;
-        height: 42px !important;
-        box-shadow: none !important;
-        cursor: pointer;
-        transition: all 0.3s ease !important;
+        .input-group-apple {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
 
-        &--is-focused {
-            background-color: #ffffff !important;
-            border-color: #0071e3 !important;
-            box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1) !important;
-        }
-    }
+            label {
+                font-size: 14px;
+                font-weight: 600;
+                color: #515154;
+                margin-bottom: 0;
+            }
 
-    .apple-select__placeholder {
-        color: #86868b !important;
-        font-size: 15px;
-    }
+            .react-select__control {
+                border-radius: 12px;
+                border: 1px solid #d2d2d7;
+                padding: 4px;
+                box-shadow: none;
+                transition: all 0.2s ease;
 
-    .apple-select__single-value {
-        color: #1d1d1f !important;
-        font-size: 15px;
-    }
-
-    .apple-select__indicator-separator {
-        display: none; // Bỏ gạch dọc cho tinh tế
-    }
-
-    .apple-select__menu {
-        border-radius: 12px !important;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
-        border: 1px solid rgba(0,0,0,0.05);
-    }
-}
-
-.manage-doctor-editor {
-    background: #ffffff;
-    border-radius: 24px; // Bo góc lớn đồng bộ với các khối trên
-    overflow: hidden; // Quan trọng: Để Editor không đè lên góc bo của khối cha
-    border: 1px solid rgba(0, 0, 0, 0.05); // Viền siêu mảnh
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-    margin-top: 24px;
-    margin-bottom: 32px;
-
-    /* Tùy chỉnh trực tiếp vào class của thư viện MdEditor */
-    .rc-md-editor {
-        border: none !important; // Bỏ viền mặc định thô cứng
-        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-
-        // Tùy chỉnh thanh công cụ (Toolbar)
-        .rc-md-navigation {
-            background-color: #f5f5f7 !important; // Màu xám nhạt Apple
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
-            padding: 8px 0;
-            
-            .button {
-                color: #424245 !important;
                 &:hover {
-                    color: #0071e3 !important; // Hover hiện màu xanh Apple
+                    border-color: #86868b;
+                }
+                &.react-select__control--is-focused {
+                    border-color: #0071e3;
+                    box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
+                }
+            }
+
+            .apple-input {
+                padding: 12px 14px;
+                border-radius: 12px;
+                border: 1px solid #d2d2d7;
+                font-size: 15px;
+                color: #1d1d1f;
+                outline: none;
+                transition: all 0.2s ease;
+
+                &:focus {
+                    border-color: #0071e3;
+                    box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
+                }
+            }
+
+            .apple-textarea {
+                padding: 12px 14px;
+                border-radius: 12px;
+                border: 1px solid #d2d2d7;
+                font-size: 15px;
+                color: #1d1d1f;
+                font-family: inherit;
+                outline: none;
+                transition: all 0.2s ease;
+                resize: vertical;
+
+                &:focus {
+                    border-color: #0071e3;
+                    box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
                 }
             }
         }
+    }
 
-        // Tùy chỉnh vùng nhập liệu và preview
-        .editor-container {
-            .section {
-                background-color: #ffffff;
+    .markdown-editor-card {
+        .apple-md-editor {
+            height: 500px;
+            border-radius: 12px;
+            border: 1px solid #d2d2d7;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
+            
+            .rc-md-navigation {
+                background: #f5f5f7;
+                border-bottom: 1px solid #e5e5ea;
             }
         }
-
-        // Thanh trạng thái dưới cùng (nếu có)
-        .section-footer {
-            background-color: #f5f5f7 !important;
-            color: #86868b;
-        }
-    }
-}
-
-.save-content {
-    display: flex;
-    justify-content: center;
-    padding-bottom: 30px;
-
-    button {
-        border-radius: 999px;
-        padding: 10px 28px;
-        font-weight: 500;
-        border: none;
-        height: 37px;
-        width: 88px;
-        padding: 0;
-        border-radius: 999px; // pill button
-        font-size: 14px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s ease;
-
-        &:hover {
-            opacity: 0.8;
-            background: #005bb5;
-        }
-
-        &:active {
-            transform: scale(0.96);
-        }
-    }
-}
-}
-.apple-select {
-    &__control {
-        border-radius: 12px !important;
-        border: 1px solid #e5e5e7 !important;
-        min-height: 44px;
-        box-shadow: none !important;
-
-        &:hover {
-            border-color: #0071e3 !important;
-        }
     }
 
-    &__control--is-focused {
-        border-color: #0071e3 !important;
-        box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15) !important;
-    }
-
-    &__value-container {
+    .action-footer {
+        display: flex;
+        justify-content: flex-end;
         padding: 0 10px;
-        font-size: 14px;
-    }
 
-    &__placeholder {
-        color: #6e6e73;
-    }
-
-    &__indicator-separator {
-        display: none;
-    }
-
-    &__menu {
-        border-radius: 12px;
-        overflow: hidden;
-        border: 1px solid #e5e5e7;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-    }
-
-    &__option {
-        padding: 10px 12px;
-        border-radius: 8px;
-
-        &--is-focused {
-            background: #f5f5f7;
-        }
-
-        &--is-selected {
+        .btn-save-apple {
+            padding: 14px 40px;
             background: #0071e3;
-            color: #fff;
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 113, 227, 0.2);
+
+            i {
+                margin-right: 8px;
+            }
+
+            &:hover {
+                background: #0077ED;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(0, 113, 227, 0.4);
+            }
+
+            &:active {
+                transform: translateY(1px);
+            }
         }
     }
 }

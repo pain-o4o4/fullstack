@@ -100,8 +100,77 @@ let getSpecialtyByIdService = async (inputId) => {
         }
     })
 }
+
+let deleteSpecialtyService = (specialtyId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let specialty = await db.Specialty.findOne({
+                where: { id: specialtyId }
+            });
+            if (!specialty) {
+                resolve({
+                    errCode: 2,
+                    errMessage: "The specialty isn't exist"
+                })
+            } else {
+                await db.Specialty.destroy({
+                    where: { id: specialtyId }
+                });
+                resolve({
+                    errCode: 0,
+                    errMessage: 'The specialty is deleted'
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+let editSpecialtyService = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.id || !data.name || !data.descriptionHTML || !data.descriptionMarkdown) {
+                resolve({
+                    errCode: 1,
+                    errMessage: "Missing required parameters!"
+                })
+            } else {
+                let specialty = await db.Specialty.findOne({
+                    where: { id: data.id },
+                    raw: false
+                });
+
+                if (specialty) {
+                    specialty.name = data.name;
+                    specialty.descriptionHTML = data.descriptionHTML;
+                    specialty.descriptionMarkdown = data.descriptionMarkdown;
+
+                    if (data.imageBase64) {
+                        specialty.image = data.imageBase64;
+                    }
+
+                    await specialty.save();
+                    resolve({
+                        errCode: 0,
+                        errMessage: "Update the specialty succeeds!"
+                    });
+                } else {
+                    resolve({
+                        errCode: 1,
+                        errMessage: "Specialty not found!"
+                    });
+                }
+            }
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
 export default {
     postCreateNewSpecialtyService,
     getAllSpecialtyService,
-    getSpecialtyByIdService
+    getSpecialtyByIdService,
+    deleteSpecialtyService,
+    editSpecialtyService
 }

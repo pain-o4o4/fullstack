@@ -129,7 +129,7 @@ let getAllAppointmentsByIdService = async (id) => {
                 let data = await db.Booking.findAll({
                     where: {
                         patientId: id,
-                        statusId: { [Op.in]: ['S1', 'S2'] }
+                        statusId: { [Op.in]: ['S1', 'S2', 'S3'] }
                     },
                     include: [
                         {
@@ -169,6 +169,55 @@ let getAllAppointmentsByIdService = async (id) => {
         }
     });
 };
+
+let getDetailSchedulePatient = async (bookingId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!bookingId) {
+                resolve({ errCode: 1, errMessage: 'Missing ID!' });
+            } else {
+                let data = await db.Booking.findOne({
+                    where: { id: bookingId },
+                    include: [
+                        {
+                            model: db.User,
+                            as: 'doctorBookingData',
+                            attributes: ['firstName', 'lastName'],
+                            include: [
+                                { model: db.Doctor_infor, as: 'doctorinforData', attributes: ['nameClinic', 'addressClinic', 'priceId', 'paymentId'] },
+                                { model: db.Markdown, as: 'Markdown', attributes: ['description'] }
+                            ]
+                        },
+                        { model: db.Allcode, as: 'timeTypeDataPatient', attributes: ['valueVi', 'valueEn'] },
+                        { model: db.Allcode, as: 'statusData', attributes: ['valueVi', 'valueEn'] }
+                    ],
+                    raw: false,
+                    nest: true
+                });
+                
+                // Fetch AllCode values for price and payment if needed
+                if(data && data.doctorBookingData && data.doctorBookingData.doctorinforData) {
+                    let info = data.doctorBookingData.doctorinforData;
+                    if(info.priceId) {
+                        let priceData = await db.Allcode.findOne({where: {keyMap: info.priceId}, raw: true});
+                        if(priceData) info.priceTypeData = priceData;
+                    }
+                    if(info.paymentId) {
+                        let paymentData = await db.Allcode.findOne({where: {keyMap: info.paymentId}, raw: true});
+                        if(paymentData) info.paymentTypeData = paymentData;
+                    }
+                }
+
+                resolve({
+                    errCode: 0,
+                    data: data
+                });
+            }
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
 
 let processPayOSWebhook = (webhookBody) => {
     return new Promise(async (resolve, reject) => {
@@ -322,5 +371,6 @@ export default {
     postVerifyAppointmentService,
     getAllAppointmentsByIdService,
     processPayOSWebhook,
-    postUpdatePatientService
+    postUpdatePatientService,
+    getDetailSchedulePatient
 }

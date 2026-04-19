@@ -71,6 +71,66 @@ let getBodyHTMLEmail = (dataSend) => {
     return result;
 }
 
+let sendRemedyEmail = async (dataSend) => {
+    let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        auth: {
+            user: process.env.EMAIL_APP,
+            pass: process.env.EMAIL_APP_PASSWORD,
+        },
+    });
+
+    let info = await transporter.sendMail({
+        from: '"BookingCare 🏥" <64anhsden@gmail.com>',
+        to: dataSend.receiverEmail,
+        subject: dataSend.language === 'vi' ? "Kết quả khám bệnh & Cảm ơn" : "Medical examination results & Thank you",
+        html: getBodyHTMLEmailRemedy(dataSend),
+    });
+}
+
+let getBodyHTMLEmailRemedy = (dataSend) => {
+    let result = '';
+    if (dataSend.language === 'vi') {
+        result = `
+            <div style="font-family: Arial, sans-serif; color: #333;">
+                <h3 style="color: #1c246d;">HOÀN TẤT KHÁM BỆNH! 🏥</h3>
+                <p>Xin chào <b>${dataSend.patientName}</b>,</p>
+                <p>Bạn đã hoàn tất buổi khám bệnh trên hệ thống BookingCare.</p>
+                
+                <div style="background-color: #f0f8ff; padding: 15px; border-radius: 10px; border: 1px solid #4a90e2;">
+                    <p style="margin: 5px 0;"><b>Bác sĩ khám:</b> ${dataSend.doctorName}</p>
+                    <p style="margin: 5px 0;"><b>Thời gian:</b> ${dataSend.time}</p>
+                    <p style="margin: 5px 0;"><b>Phòng khám:</b> ${dataSend.clinicName}</p>
+                </div>
+
+                <p style="color: #27ae60; font-weight: bold;">Trạng thái: Đã hoàn thành (Done).</p>
+                <p>Cảm ơn bạn đã tin tưởng dịch vụ của chúng tôi. Kính chúc bạn nhiều sức khỏe và bình an!</p>
+            </div>
+        `;
+    } else {
+        result = `
+            <div style="font-family: Arial, sans-serif; color: #333;">
+                <h3 style="color: #1c246d;">MEDICAL EXAMINATION COMPLETED! 🏥</h3>
+                <p>Dear <b>${dataSend.patientName}</b>,</p>
+                <p>You have successfully completed your medical examination via the BookingCare system.</p>
+                
+                <div style="background-color: #f0f8ff; padding: 15px; border-radius: 10px; border: 1px solid #4a90e2;">
+                    <p style="margin: 5px 0;"><b>Doctor:</b> ${dataSend.doctorName}</p>
+                    <p style="margin: 5px 0;"><b>Time:</b> ${dataSend.time}</p>
+                    <p style="margin: 5px 0;"><b>Clinic:</b> ${dataSend.clinicName}</p>
+                </div>
+
+                <p style="color: #27ae60; font-weight: bold;">Status: Completed.</p>
+                <p>Thank you for choosing us. We wish you good health and a peaceful life!</p>
+            </div>
+        `;
+    }
+    return result;
+}
+
 export default {
-    sendSimpleEmail: sendSimpleEmail
+    sendSimpleEmail: sendSimpleEmail,
+    sendRemedyEmail: sendRemedyEmail
 }

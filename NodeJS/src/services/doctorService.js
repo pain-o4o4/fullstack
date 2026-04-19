@@ -402,6 +402,126 @@ let getProfileDoctorById = (doctorId) => {
         }
     })
 }
+let getListPatientForDoctor = (doctorId, date) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!doctorId || !date) {
+                return resolve({
+                    errCode: 1,
+                    errMessage: "Missing required parameters!"
+                });
+            }
+
+            // 1. Auto cleanup for missed appointments (date < today, status = 'S2') => turn to 'S1'
+            let todayMillis = moment().startOf('day').valueOf();
+            let allS2 = await db.Booking.findAll({
+                where: { doctorId: doctorId, statusId: 'S2' },
+                raw: false
+            });
+            for(let booking of allS2) {
+                if(Number(booking.date) < todayMillis) {
+                    booking.statusId = 'S1';
+                    await booking.save();
+                }
+            }
+
+            // 2. Fetch all for the specified date
+            let data = await db.Booking.findAll({
+                where: { doctorId: doctorId, date: date },
+                include: [
+                    {
+                        model: db.User,
+                        as: 'patientBookingData',
+                        attributes: ['email', 'firstName', 'lastName', 'address', 'gender', 'phonenumber'],
+                        include: [
+                            { model: db.Allcode, as: 'genderData', attributes: ['valueEn', 'valueVi'] }
+                        ]
+                    },
+                    { model: db.Allcode, as: 'timeTypeDataPatient', attributes: ['valueEn', 'valueVi'] }
+                ],
+                raw: false,
+                nest: true
+            });
+
+            // 3. Custom Sort: S2 (priority 1) > S3 (priority 2) > S1 (priority 3)
+            if(data && data.length > 0) {
+               data.sort((a,b) => {
+                   let pA = a.statusId === 'S2' ? 1 : (a.statusId === 'S3' ? 2 : 3);
+                   let pB = b.statusId === 'S2' ? 1 : (b.statusId === 'S3' ? 2 : 3);
+                   return pA - pB;
+               });
+            }
+
+            resolve({
+                errCode: 0,
+                data: data
+            })
+        } catch (error) {
+            console.log(error);
+            reject(error);
+        }
+    })
+}
+
+let updateBookingStatus = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.doctorId || !data.patientId || !data.timeType || !data.date || !data.statusId) {
+                return resolve({
+                    errCode: 1,
+                    errMessage: "Missing required parameters!"
+                })
+            }
+            let appointment = await db.Booking.findOne({
+                where: {
+                    doctorId: data.doctorId,
+                    patientId: data.patientId,
+                    timeType: data.timeType,
+                    date: data.date
+                },
+                raw: false
+            })
+
+            if (appointment) {
+                let oldStatus = appointment.statusId;
+                appointment.statusId = data.statusId;
+                await appointment.save();
+
+                // If shifting to S3, send complete email
+                if(data.statusId === 'S3' && oldStatus !== 'S3') {
+                    if (data.email) {
+                        try {
+                            await emailService.sendRemedyEmail({
+                                receiverEmail: data.email,
+                                patientName: data.patientName || '',
+                                time: data.time || '',
+                                doctorName: data.doctorName || '',
+                                clinicName: data.clinicName || 'BookingCare',
+                                language: data.language || 'vi'
+                            });
+                        } catch(e) {
+                            console.log("Email failed to send but booking updated: ", e);
+                        }
+                    }
+                }
+
+                resolve({
+                    errCode: 0,
+                    errMessage: "Update booking status successful!"
+                })
+            } else {
+                resolve({
+                    errCode: 2,
+                    errMessage: "Appointment not found!"
+                })
+            }
+        } catch (error) {
+            console.log(error);
+            reject(error);
+        }
+    })
+}
+
 export default {
     getTopDoctorHomeService: getTopDoctorHomeService,
     getAllDoctorsService: getAllDoctorsService,
@@ -411,4 +531,6 @@ export default {
     getScheduleByDateService: getScheduleByDateService,
     getExtraDoctorById: getExtraDoctorById,
     getProfileDoctorById: getProfileDoctorById,
+    getListPatientForDoctor: getListPatientForDoctor,
+    updateBookingStatus: updateBookingStatus
 };

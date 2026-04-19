@@ -86,7 +86,16 @@ const getAllSpecialtyService = () => {
 const getDetailSpecialtyByIdService = (inputId) => {
     return axios.get(`/api/get-detail-specialty-by-id?id=${inputId}`);
 }
-
+const deleteSpecialtyService = (specialtyId) => {
+    return axios.delete('/api/delete-specialty', {
+        data: {
+            id: specialtyId
+        }
+    });
+}
+const editSpecialtyService = (data) => {
+    return axios.put('/api/edit-specialty', data);
+}
 
 const postCreateNewClinicService = (data) => {
     return axios.post(`/api/create-new-clinic`, data);
@@ -97,6 +106,29 @@ const getAllClinicService = () => {
 const getDetailClinicByIdService = (inputId) => {
     return axios.get(`/api/get-detail-clinic-by-id?id=${inputId}`);
 }
+const deleteClinicService = (clinicId) => {
+    return axios.delete('/api/delete-clinic', {
+        data: {
+            id: clinicId
+        }
+    });
+}
+const editClinicService = (data) => {
+    return axios.put('/api/edit-clinic', data);
+}
+
+const getListPatientForDoctor = (data) => {
+    return axios.get(`/api/get-list-patient-for-doctor?doctorId=${data.doctorId}&date=${data.date}`);
+}
+
+const getDetailSchedulePatient = (bookingId) => {
+    return axios.get(`/api/get-detail-schedule-patient?bookingId=${bookingId}`);
+}
+
+const updateBookingStatus = (data) => {
+    return axios.put('/api/update-booking-status', data);
+}
+
 const postUpdatePatientService = (data) => {
     return axios.post(`/api/update-patient`, data);
 }
@@ -125,6 +157,12 @@ export {
     getDetailClinicByIdService,
     getDetailSpecialtyByIdService,
     getAllAppointmentsByIdService,
-    postUpdatePatientService
-
+    postUpdatePatientService,
+    deleteSpecialtyService,
+    editSpecialtyService,
+    deleteClinicService,
+    editClinicService,
+    getListPatientForDoctor,
+    updateBookingStatus,
+    getDetailSchedulePatient
 }
