@@ -7,7 +7,7 @@ import { USER_ROLE } from '../../utils';
 import { adminMenu, doctorMenu, patientMenu } from '../Header/menuApp';
 import translate from '../../assets/images/translate.svg';
 import './SystemLayout.scss';
-
+import icon_icons from '../../assets/images/icon_icons.svg';
 class SystemLayout extends Component {
     constructor(props) {
         super(props);
@@ -73,15 +73,17 @@ class SystemLayout extends Component {
                     </div>
                 </div>
 
-                {/* Main Dashboard Area */}
+
                 <div className="apple-settings-container">
                     <div className="container-flex">
 
                         {/* Sidebar */}
                         <aside className="apple-sidebar">
                             <div className="user-profile-summary">
-                                <div className="avatar-circle">
-                                    <img src={userInfo?.image || 'https://static.vecteezy.com/system/resources/previews/026/625/600/non_2x/person-icon-symbol-design-illustration-vector.jpg'} alt="avatar" />
+                                <div className="avatar-circle"
+                                    onClick={() => this.handleViewList('SETTINGS')}
+                                >
+                                    <img src={userInfo?.image || icon_icons} alt="avatar" />
                                 </div>
                                 <h2 className="user-name">
                                     <FormattedMessage id="system-layout.welcome" />, {userInfo?.lastName} {userInfo?.firstName}

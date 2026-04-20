@@ -44,7 +44,8 @@
             "clinic": "Cơ sở y tế",
             "specialty": "Chuyên khoa",
             "manage-specialty": "Quản lý chuyên khoa",
-            "manage-infor": "Quản lý thông tin",
+            "information": "Thông tin",
+            "security": "Bảo mật",
             "manage-clinic": "Quản lý cơ sở y tế"
         },
         "doctor": {
@@ -90,7 +91,10 @@
         "title": "Quản lý lịch khám của bác sĩ",
         "choose-doctor": "Chọn bác sỹ",
         "choose-day": "Chọn ngày",
-        "save": "Lưu lịch khám"
+        "save": "Lưu lịch khám",
+        "planning": "Thông Tin Lên Lịch",
+        "available-hours": "Các Khung Giờ Có Sẵn",
+        "no-time": "Vui lòng chọn bác sĩ để xem khung giờ"
     },
     "manage-doctor": {
         "title": "Quản lý bác sỹ",
@@ -108,13 +112,23 @@
         "detail-desc": "Mô Tả Chi Tiết (Markdown)"
     },
     "manage-clinic": {
+        "title": "Quản lý Cơ Sở Y Tế",
+        "add": "Thêm Cơ Sở Y Tế",
+        "table-name": "Tên Cơ Sở",
+        "table-address": "Địa Chỉ",
+        "table-actions": "Hành Động",
+        "status-ok": "Đang Hoạt Động",
+        "no-data": "Chưa có dữ liệu cơ sở y tế!",
         "save": "Lưu",
         "image-place": "Chọn",
         "modal-create": "Thêm mới Cơ Sở Y Tế",
         "modal-edit": "Chỉnh sửa Cơ Sở Y Tế",
         "upload-img": "Tải ảnh lên",
         "content-detail": "Nội dung giới thiệu chi tiết",
-        "btn-cancel": "Hủy bỏ"
+        "btn-cancel": "Hủy bỏ",
+        "name": "Tên cơ sở",
+        "address": "Địa chỉ",
+        "image": "Ảnh cơ sở y tế"
     },
     "co_mun": {
         "comment": "Từ đây trở xuống thuộc về user, phía trên là admin",
@@ -176,11 +190,21 @@
         "not-found": "Đang cập nhật"
     },
     "manage-specialty": {
+        "title": "Quản lý Chuyên Khoa",
+        "add": "Thêm Chuyên Khoa",
+        "table-name": "Tên Chuyên Khoa",
+        "table-desc": "Mô Tả",
+        "table-actions": "Hành Động",
         "no-data": "Chưa có dữ liệu chuyên khoa!",
         "status-ok": "Trạng thái Tốt",
         "name": "Tên chuyên khoa",
         "image": "Ảnh chuyên khoa",
-        "btn-cancel": "Hủy bỏ"
+        "btn-cancel": "Hủy bỏ",
+        "modal-create": "Thêm mới Chuyên khoa",
+        "modal-edit": "Chỉnh sửa Chuyên khoa",
+        "upload-img": "Tải ảnh lên",
+        "content-detail": "Nội dung giới thiệu chi tiết",
+        "save": "Lưu thông tin"
     },
     "patient-profile": {
         "title": "Thông tin Cá nhân & Bảo mật",

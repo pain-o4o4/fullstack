@@ -205,72 +205,84 @@ class ManageSchedule extends Component {
     render() {
         let { language, userInfo } = this.props;
         let { listAllScheduleTime } = this.state;
-        
-        // Disable doctor select if the user is a doctor (R2)
         let isDoctorRole = userInfo && userInfo.roleId === 'R2';
 
         return (
             <div className="manage-schedule-container">
                 <div className="header-section">
                     <h2 className="title">
-                        <FormattedMessage id='manage-schedule.title' defaultMessage="Quản lý Lịch Khám Bệnh" />
+                        <FormattedMessage id='manage-schedule.title' defaultMessage="Quản Lý Lịch Khám Bệnh" />
                     </h2>
                 </div>
 
-                <div className="schedule-card-wrapper">
-                    <div className="apple-schedule-card">
-                        <div className="form-grid">
-                            <div className="input-group-apple full-width">
-                                <label><FormattedMessage id='manage-schedule.choose-doctor' defaultMessage="Chọn Bác Sĩ" /> <span className="text-danger">*</span></label>
+                <div className="settings-grid">
+                    {/* Card 1: Planning Details */}
+                    <div className="info-card">
+                        <div className="card-header">
+                            <span className="card-title">
+                                <FormattedMessage id="manage-schedule.planning" defaultMessage="Thông Tin Lên Lịch" />
+                            </span>
+                            <i className="fas fa-calendar-alt card-icon"></i>
+                        </div>
+                        <div className="card-body">
+                            <div className="input-group-apple">
+                                <label><FormattedMessage id='manage-schedule.choose-doctor' defaultMessage="Chọn Bác Sĩ" /></label>
                                 <Select
                                     value={this.state.selectedOption}
                                     onChange={this.handleChange}
                                     options={this.state.listAllDoctors}
                                     isDisabled={isDoctorRole}
-                                    className="react-select-container"
                                     classNamePrefix="react-select"
                                     placeholder={language === LANGUAGES.VI ? 'Tìm kiếm bác sĩ...' : 'Search doctor...'}
                                 />
                             </div>
-                            <div className="input-group-apple full-width">
-                                <label><FormattedMessage id='manage-schedule.choose-day' defaultMessage="Chọn Ngày Khám" /> <span className="text-danger">*</span></label>
+                            <div className="input-group-apple">
+                                <label><FormattedMessage id='manage-schedule.choose-day' defaultMessage="Chọn Ngày Khám" /></label>
                                 <DatePicker
                                     className="apple-date-picker"
                                     value={this.state.currentDate}
                                     onChange={this.handleChangeDate}
                                     minDate={new Date()}
-                                    placeholder={language === LANGUAGES.VI ? 'Ấn để chọn ngày khám' : 'Tap to select date'}
+                                    placeholder={language === LANGUAGES.VI ? 'Chọn ngày...' : 'Select date...'}
                                 />
                             </div>
                         </div>
-
-                        <div className="schedule-hours-section">
-                            <label className="section-label">
-                                <FormattedMessage id="manage-schedule.available-hours" defaultMessage="Khung giờ có sẵn (Chọn để kích hoạt lịch trống)" />
-                            </label>
-                            <div className="pick-hour-container">
-                                {listAllScheduleTime && listAllScheduleTime.length > 0 &&
-                                    listAllScheduleTime.map((item, index) => {
-                                        return (
-                                            <button
-                                                key={index}
-                                                className={`apple-pill-btn ${item.isSelected ? 'active' : ''}`}
-                                                onClick={() => this.handleClickBtnTime(item)}
-                                            >
-                                                {item.label}
-                                            </button>
-                                        )
-                                    })
-                                }
-                            </div>
-                        </div>
-
-                        <div className="action-footer">
-                            <button className="btn-save-apple" onClick={() => this.handleSaveSchedule()}>
-                                <i className="fas fa-save"></i> <FormattedMessage id='manage-schedule.save' defaultMessage="Lưu Lịch Khám" />
-                            </button>
-                        </div>
                     </div>
+                </div>
+
+                <div className="time-selection-section">
+                    <div className="card-header">
+                        <span className="card-title">
+                            <FormattedMessage id="manage-schedule.available-hours" defaultMessage="Các Khung Giờ Có Sẵn" />
+                        </span>
+                        <i className="fas fa-clock card-icon"></i>
+                    </div>
+                    <div className="pick-hour-container">
+                        {listAllScheduleTime && listAllScheduleTime.length > 0 ? (
+                            listAllScheduleTime.map((item, index) => {
+                                return (
+                                    <button
+                                        key={index}
+                                        className={`apple-pill-btn ${item.isSelected ? 'active' : ''}`}
+                                        onClick={() => this.handleClickBtnTime(item)}
+                                    >
+                                        {item.label}
+                                    </button>
+                                )
+                            })
+                        ) : (
+                            <div style={{ color: '#86868b' }}>
+                                <FormattedMessage id="manage-schedule.no-time" defaultMessage="Vui lòng chọn bác sĩ để xem khung giờ" />
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <div className="action-footer">
+                    <button className="btn-save-apple" onClick={() => this.handleSaveSchedule()}>
+                        <i className="fas fa-save"></i>
+                        <FormattedMessage id='manage-schedule.save' defaultMessage="Lưu Lịch Khám" />
+                    </button>
                 </div>
             </div>
         );

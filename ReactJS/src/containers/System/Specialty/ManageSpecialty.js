@@ -18,7 +18,7 @@ class ManageSpecialty extends Component {
         this.state = {
             arrSpecialties: [],
             isModalOpen: false,
-            action: 'CREATE', 
+            action: 'CREATE',
             specialtyEdit: {}
         };
     }
@@ -61,7 +61,7 @@ class ManageSpecialty extends Component {
             }
 
             if (res && res.errCode === 0) {
-                let successMsg = this.state.action === 'CREATE' 
+                let successMsg = this.state.action === 'CREATE'
                     ? (language === 'vi' ? "Thêm chuyên khoa thành công!" : "Specialty added successfully!")
                     : (language === 'vi' ? "Cập nhật chuyên khoa thành công!" : "Specialty updated successfully!");
                 toast.success(successMsg);
@@ -89,11 +89,11 @@ class ManageSpecialty extends Component {
 
     handleDeleteSpecialty = async (specialty) => {
         let { language } = this.props;
-        let confirmMsg = language === 'vi' 
+        let confirmMsg = language === 'vi'
             ? `Bạn có chắc chắn muốn xóa chuyên khoa: ${specialty.name}?`
             : `Are you sure you want to delete specialty: ${specialty.name}?`;
 
-        if(window.confirm(confirmMsg)) {
+        if (window.confirm(confirmMsg)) {
             try {
                 let res = await deleteSpecialtyService(specialty.id);
                 if (res && res.errCode === 0) {
@@ -113,7 +113,7 @@ class ManageSpecialty extends Component {
         let { arrSpecialties, isModalOpen, action, specialtyEdit } = this.state;
         let { language } = this.props;
         return (
-            <div className="users-container">
+            <div className="specialty-management-container">
                 {this.state.isModalOpen && (
                     <ModalManageSpecialty
                         isOpen={this.state.isModalOpen}
@@ -123,69 +123,64 @@ class ManageSpecialty extends Component {
                         currentSpecialty={this.state.specialtyEdit}
                     />
                 )}
-                
+
                 <div className="header-section">
                     <h2 className="title">
                         <FormattedMessage id="manage-specialty.title" defaultMessage="Quản lý Chuyên khoa" />
                     </h2>
                     <button className="btn-add-new" onClick={() => this.handleAddNewSpecialty()}>
-                        <i className="fas fa-plus"></i> <FormattedMessage id="manage-specialty.add" />
+                        <i className="fas fa-plus"></i> <FormattedMessage id="manage-specialty.add" defaultMessage="Thêm Chuyên khoa" />
                     </button>
                 </div>
 
                 <div className="table-wrapper">
-                    <div className="table-card">
-                        <table className="apple-table">
-                            <thead>
+                    <table className="apple-table">
+                        <thead>
+                            <tr>
+                                <th><FormattedMessage id="manage-specialty.table-name" /></th>
+                                <th className="text-right"><FormattedMessage id="manage-specialty.table-actions" /></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {arrSpecialties && arrSpecialties.length > 0 ? (
+                                arrSpecialties.map((item, index) => {
+                                    return (
+                                        <tr key={index}>
+                                            <td>
+                                                <div className="specialty-cell-info">
+                                                    <div className="specialty-img-wrapper">
+                                                        <img src={item.image || 'https://static.vecteezy.com/system/resources/previews/026/625/600/non_2x/person-icon-symbol-design-illustration-vector.jpg'} alt="specialty" />
+                                                    </div>
+                                                    <div className="specialty-text">
+                                                        <span className="specialty-name">{item.name}</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="text-right">
+                                                <div className="actions-cell">
+                                                    <button className="btn-action btn-edit" onClick={() => this.handleEditSpecialty(item)} title="Chỉnh sửa">
+                                                        <i className="fas fa-pen"></i>
+                                                    </button>
+                                                    <button className="btn-action btn-delete" onClick={() => this.handleDeleteSpecialty(item)} title="Xóa">
+                                                        <i className="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )
+                                })
+                            ) : (
                                 <tr>
-                                    <th><FormattedMessage id="manage-specialty.table-name" /></th>
-                                    <th><FormattedMessage id="manage-specialty.table-desc" /></th>
-                                    <th className="text-right"><FormattedMessage id="manage-specialty.table-actions" /></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {arrSpecialties && arrSpecialties.length > 0 ? (
-                                    arrSpecialties.map((item, index) => {
-                                        return (
-                                            <tr key={index}>
-                                                <td>
-                                                    <div className="user-info-cell">
-                                                        <div className="avatar-mini rounded">
-                                                            <img src={item.image || 'https://static.vecteezy.com/system/resources/previews/026/625/600/non_2x/person-icon-symbol-design-illustration-vector.jpg'} alt="specialty" />
-                                                        </div>
-                                                        <div className="user-name-block">
-                                                            <span className="name">{item.name}</span>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <span className="role-badge green">
-                                                        <FormattedMessage id="manage-specialty.status-ok" />
-                                                    </span>
-                                                </td>
-                                                <td className="text-right">
-                                                    <div className="actions-cell">
-                                                        <button className="btn-action btn-edit" onClick={() => this.handleEditSpecialty(item)} title="Chỉnh sửa">
-                                                            <i className="fas fa-pen"></i>
-                                                        </button>
-                                                        <button className="btn-action btn-delete" onClick={() => this.handleDeleteSpecialty(item)} title="Xóa">
-                                                            <i className="fas fa-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        )
-                                    })
-                                ) : (
-                                    <tr>
-                                        <td colSpan="3" className="text-center py-4">
+                                    <td colSpan="2" className="text-center py-5">
+                                        <div style={{ color: '#86868b', fontSize: '15px' }}>
+                                            <i className="fas fa-folder-open" style={{ display: 'block', fontSize: '24px', marginBottom: '10px' }}></i>
                                             <FormattedMessage id="manage-specialty.no-data" />
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         );

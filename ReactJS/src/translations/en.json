@@ -34,12 +34,13 @@
             "clinic": "Clinic",
             "specialty": "Specialty",
             "manage-specialty": "Manage specialty",
-            "manage-infor": "Manage information",
+            "information": "Information",
+            "security": "Security",
             "manage-clinic": "Manage clinic"
         },
         "doctor": {
             "header": "Doctor",
-            "manage-schedule": "Manage Schedule",
+            "manage-schedule": "Manage schedule",
             "manage-booking": "Manage Booking"
         },
         "patient": {
@@ -80,7 +81,10 @@
         "title": "Manage Schedule of Doctor",
         "choose-doctor": "Choose Doctor",
         "choose-day": "Choose Day",
-        "save": "Save Schedule"
+        "save": "Save Schedule",
+        "planning": "Planning Details",
+        "available-hours": "Available Time Slots",
+        "no-time": "Please select a doctor to see hours"
     },
     "manage-doctor": {
         "title": "Manage doctor",
@@ -98,13 +102,23 @@
         "detail-desc": "Detailed Description (Markdown)"
     },
     "manage-clinic": {
+        "title": "Manage Medical Facility",
+        "add": "Add Medical Facility",
+        "table-name": "Facility Name",
+        "table-address": "Address",
+        "table-actions": "Actions",
+        "status-ok": "Active",
+        "no-data": "No clinic data available!",
         "save": "Save",
         "image-place": "Select",
         "modal-create": "Add New Medical Facility",
         "modal-edit": "Edit Medical Facility",
         "upload-img": "Upload Image",
         "content-detail": "Detailed Introduction",
-        "btn-cancel": "Cancel"
+        "btn-cancel": "Cancel",
+        "name": "Clinic Name",
+        "address": "Address",
+        "image": "Clinic Image"
     },
     "schedule-doctor": {
         "calendar": "Calendar",
@@ -162,11 +176,21 @@
         "not-found": "Updating..."
     },
     "manage-specialty": {
+        "title": "Manage Medical Specialty",
+        "add": "Add Medical Specialty",
+        "table-name": "Specialty Name",
+        "table-desc": "Status",
+        "table-actions": "Actions",
         "no-data": "No specialty data available!",
         "status-ok": "Status: Good",
         "name": "Specialty Name",
         "image": "Specialty Image",
-        "btn-cancel": "Cancel"
+        "btn-cancel": "Cancel",
+        "modal-create": "Add New Specialty",
+        "modal-edit": "Edit Specialty",
+        "upload-img": "Upload Image",
+        "content-detail": "Detailed Description",
+        "save": "Save Specialty"
     },
     "patient-profile": {
         "title": "Personal Information & Security",

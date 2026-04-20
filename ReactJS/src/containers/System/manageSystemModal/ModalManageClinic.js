@@ -128,10 +128,7 @@ class ModalManageClinic extends Component {
                         <FormattedMessage id="manage-clinic.btn-cancel" />
                     </button>
                     <button className="btn-action apple-btn btn-save" onClick={() => this.handleSave()}>
-                        {action === 'CREATE' 
-                            ? <FormattedMessage id="manage-clinic.save" /> 
-                            : <FormattedMessage id="manage-user.btn-update" />
-                        }
+                        <FormattedMessage id="manage-clinic.save" />
                     </button>
                 </ModalFooter>
             </Modal>

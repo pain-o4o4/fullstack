@@ -1,8 +1,9 @@
-
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
+import './ModalCreateUser.scss';
+
 class ModalCreateUser extends Component {
 
     constructor(props) {
@@ -27,7 +28,6 @@ class ModalCreateUser extends Component {
 
         this.setState({
             [id]: value
-        }, () => {
         });
     }
     checkValidateInput = () => {
@@ -46,14 +46,7 @@ class ModalCreateUser extends Component {
     handleAddNewUser = () => {
         let isValid = this.checkValidateInput();
         if (isValid === true) {
-            console.log('This is PROPS: ', this.props)
             this.props.createNewUser(this.state);
-
-            // this.setState({
-            //     email: '', password: '', phonenumber: '', firstName: '', lastName: '', address: ''
-            // });
-            console.log('Add Success: ', this.state);
-
         }
     }
     render() {
@@ -74,37 +67,12 @@ class ModalCreateUser extends Component {
                 <ModalBody>
                     <div className="modal-user-body">
                         <div className="input-container">
-                            <label><FormattedMessage id="manage-user.email" /></label>
-                            <input
-                                type="email"
-                                onChange={(e) => this.handleOnChangeInput(e, "email")}
-                                value={this.state.email}
-                                placeholder="example@domain.com"
-                            />
-                        </div>
-                        <div className="input-container">
-                            <label><FormattedMessage id="manage-user.password" /></label>
-                            <input
-                                type="password"
-                                onChange={(e) => this.handleOnChangeInput(e, "password")}
-                                value={this.state.password}
-                            />
-                        </div>
-
-                        {/*<div className="input-container">
-                            <label>Gender</label>
-                            <input
-                                type="tel"    // 
-                                onChange={(e) => this.handleOnChangeInput(e, "gender")}
-                                value={this.state.gender}
-                            />
-                        </div> */}
-                        <div className="input-container">
                             <label><FormattedMessage id="manage-user.first-name" /></label>
                             <input
                                 type="text"
                                 onChange={(e) => this.handleOnChangeInput(e, "firstName")}
                                 value={this.state.firstName}
+                                placeholder="Apple"
                             />
                         </div>
                         <div className="input-container">
@@ -113,8 +81,28 @@ class ModalCreateUser extends Component {
                                 type="text"
                                 onChange={(e) => this.handleOnChangeInput(e, "lastName")}
                                 value={this.state.lastName}
+                                placeholder="Steve"
                             />
                         </div>
+                        <div className="input-container">
+                            <label><FormattedMessage id="manage-user.email" /></label>
+                            <input
+                                type="email"
+                                onChange={(e) => this.handleOnChangeInput(e, "email")}
+                                value={this.state.email}
+                                placeholder="name@apple.com"
+                            />
+                        </div>
+                        <div className="input-container">
+                            <label><FormattedMessage id="manage-user.password" /></label>
+                            <input
+                                type="password"
+                                onChange={(e) => this.handleOnChangeInput(e, "password")}
+                                value={this.state.password}
+                                placeholder="••••••••"
+                            />
+                        </div>
+
                         <div className="input-container">
                             <label><FormattedMessage id="manage-user.phone-number" /></label>
                             <input
@@ -124,30 +112,29 @@ class ModalCreateUser extends Component {
                                 placeholder="+84 ..."
                             />
                         </div>
-                        <div className="input-container max-width-input">
+                        <div className="input-container">
                             <label><FormattedMessage id="manage-user.address" /></label>
                             <input
                                 type="text"
                                 onChange={(e) => this.handleOnChangeInput(e, "address")}
                                 value={this.state.address}
-                                placeholder="123 Example Street..."
+                                placeholder="1 Infinite Loop, Cupertino..."
                             />
                         </div>
                     </div>
                 </ModalBody>
 
                 <ModalFooter>
-                    <Button color="secondary" className="px-4" onClick={() => this.toggle()}>
+                    <Button className="btn-cancel" onClick={() => this.toggle()}>
                         <FormattedMessage id="manage-user.btn-cancel" />
                     </Button>
-                    <Button color="primary" className="px-4" onClick={() => this.handleAddNewUser()}>
+                    <Button className="btn-primary" onClick={() => this.handleAddNewUser()}>
                         <FormattedMessage id="manage-user.btn-save" />
                     </Button>
                 </ModalFooter>
             </Modal>
         )
     }
-
 }
 
 const mapStateToProps = state => {

@@ -1,64 +1,197 @@
-.manage-specialty-container {
-    padding: 0 15px;
+@import '../UserManage.scss';
 
-    .ms-title {
-        text-transform: uppercase;
-        font-weight: 600;
-        font-size: 18px;
-        margin-top: 15px;
-        margin-bottom: 15px;
-        text-align: center;
-    }
+.clinic-management-container {
+    margin-top: 50px;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
 
-    .add-new-specialty {
+    .header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 32px;
+        padding: 10px 0;
 
-        // Gom nhóm phần upload ảnh cho gọn
-        .preview-img-container {
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1d1d1f;
+            letter-spacing: -0.5px;
+            margin: 0;
+        }
+
+        .btn-add-new {
+            background: #0071e3;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            box-shadow: 0 4px 12px rgba(0, 113, 227, 0.2);
 
-            .label-upload {
-                background: #eee;
-                padding: 5px 10px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                cursor: pointer;
-                margin-bottom: 0; // Ghi đè default của bootstrap
+            &:hover {
+                background: #0077ed;
+                transform: translateY(-1px);
+                box-shadow: 0 6px 16px rgba(0, 113, 227, 0.3);
+            }
 
-                &:hover {
-                    background: #ddd;
+            &:active {
+                transform: scale(0.97);
+            }
+        }
+    }
+
+    .table-wrapper {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+
+        .apple-table {
+            width: 100%;
+            border-collapse: collapse;
+
+            th {
+                background: #f5f5f7;
+                padding: 16px 24px;
+                text-align: left;
+                font-size: 13px;
+                font-weight: 600;
+                color: #86868b;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                border-bottom: 1px solid #e5e5ea;
+            }
+
+            td {
+                padding: 16px 24px;
+                border-bottom: 1px solid #f2f2f7;
+                vertical-align: middle;
+
+                .clinic-cell-info {
+                    display: flex;
+                    align-items: center;
+                    gap: 16px;
+
+                    .clinic-img-wrapper {
+                        width: 60px !important;
+                        height: 60px !important;
+                        min-width: 60px !important;
+                        min-height: 60px !important;
+                        flex-shrink: 0;
+                        border-radius: 14px;
+                        overflow: hidden;
+                        background: #fff;
+                        border: 1px solid rgba(0, 0, 0, 0.05);
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+
+                        img {
+                            width: 100% !important;
+                            height: 100% !important;
+                            object-fit: cover !important;
+                        }
+                    }
+
+                    .specialty-img-wrapper {
+                        width: 60px !important;
+                        height: 60px !important;
+                        min-width: 60px !important;
+                        min-height: 60px !important;
+                        flex-shrink: 0;
+                        border-radius: 14px;
+                        overflow: hidden;
+                        background: #fff;
+                        border: 1px solid rgba(0, 0, 0, 0.05);
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+
+                        img {
+                            width: 100% !important;
+                            height: 100% !important;
+                            object-fit: cover !important;
+                        }
+                    }
+
+                    .clinic-text {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 2px;
+
+                        .clinic-name {
+                            font-weight: 600;
+                            color: #1d1d1f;
+                            font-size: 15px;
+                        }
+
+                        .clinic-address {
+                            font-size: 13px;
+                            color: #86868b;
+                        }
+                    }
+                }
+
+                .status-badge {
+                    padding: 4px 12px;
+                    border-radius: 12px;
+                    font-size: 12px;
+                    font-weight: 600;
+
+                    &.green {
+                        background: rgba(52, 199, 89, 0.1);
+                        color: #34c759;
+                    }
                 }
             }
 
-            .preview-image {
-                width: 120px;
-                /* Tăng lên chút cho dễ nhìn */
-                height: 60px;
-                /* Tăng lên chút */
-                border: 1px solid #ddd;
-                background-position: center;
-                background-repeat: no-repeat;
-                background-size: cover;
-                /* Để cover nhìn ảnh nó đầy đặn hơn Duy nhé */
-                cursor: pointer;
-                background-color: #f8f8f8;
+            tr:last-child td {
+                border-bottom: none;
+            }
+
+            tr:hover td {
+                background: rgba(0, 0, 0, 0.01);
             }
         }
+    }
 
-        .btn-save-specialty {
+    .actions-cell {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+
+        .btn-action {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
             border: none;
-            outline: none;
-            background: orange;
-            color: white;
-            width: 100px;
-            height: 35px;
-            margin-top: 15px;
-            border-radius: 5px;
-            float: right;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
 
-            &:hover {
-                background: darkorange;
+            &.btn-edit {
+                background: rgba(0, 113, 227, 0.1);
+                color: #0071e3;
+
+                &:hover {
+                    background: rgba(0, 113, 227, 0.2);
+                    transform: scale(1.1);
+                }
+            }
+
+            &.btn-delete {
+                background: rgba(255, 59, 48, 0.1);
+                color: #ff3b30;
+
+                &:hover {
+                    background: rgba(255, 59, 48, 0.2);
+                    transform: scale(1.1);
+                }
             }
         }
     }

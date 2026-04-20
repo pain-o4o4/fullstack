@@ -133,6 +133,7 @@ let postInforDoctorService = (data) => {
                 doctorInfor.note = data.note;
                 doctorInfor.specialtyId = data.specialtyId;
                 doctorInfor.clinicId = data.clinicId;
+                doctorInfor.count = data.maxNumber;
                 await doctorInfor.save();
             }
             else {// EDIT
@@ -145,7 +146,8 @@ let postInforDoctorService = (data) => {
                     addressClinic: data.addressClinic,
                     note: data.note,
                     specialtyId: data.specialtyId,
-                    clinicId: data.selectedClinic
+                    clinicId: data.clinicId,
+                    count: data.maxNumber
                 });
             }
             resolve({
@@ -240,9 +242,16 @@ let bulkCreateScheduleService = (data) => {
 
             let schedule = data.arrSchedule;
             if (schedule && schedule.length > 0) {
+                // Lấy thông tin maxNumber của bác sĩ từ bảng Doctor_infor
+                let doctorInfor = await db.Doctor_infor.findOne({
+                    where: { doctorId: data.doctorId },
+                    attributes: ['count']
+                });
+
+                let customMaxNumber = (doctorInfor && doctorInfor.count) ? doctorInfor.count : MAX_NUMBER_SCHEDULE;
 
                 schedule = schedule.map(item => {
-                    item.maxNumber = MAX_NUMBER_SCHEDULE;
+                    item.maxNumber = customMaxNumber;
                     return item;
                 });
             }

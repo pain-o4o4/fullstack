@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './HomeHeader.scss';
 import { FormattedMessage } from 'react-intl';
-
+import icon_icons from '../../assets/images/icon_icons.svg';
 import search from '../../assets/images/search.svg';
 import user_login from '../../assets/images/user_login.svg';
 import translate from '../../assets/images/translate.svg';
@@ -104,12 +104,10 @@ class HomeHeader extends Component {
                         </div>
                         <div className='center-content'>
                             {this.state.isShowSearch ? (
-                                /* KHI BẬT SEARCH: Chỉ vẽ Component Search */
                                 <ModalSearchHeader
                                     toggleFromParent={this.toggleShowSearchModal}
                                 />
                             ) : (
-                                /* KHI TẮT SEARCH: Chỉ vẽ 4 khối div Menu */
                                 <React.Fragment>
                                     <div className="menu-content">
                                         <div className='child-content'
@@ -153,7 +151,7 @@ class HomeHeader extends Component {
                                             <FormattedMessage id="homeheader.welcome" defaultMessage="Welcome, " />
                                             {userInfo && userInfo.firstName ? userInfo.firstName : ''}
                                         </span>
-                                        <img src={userInfo.image} className="icon-user" alt="User" />
+                                        <img src={userInfo.image || icon_icons} className="icon-user" alt="User" />
                                     </span>
                                 }
                                 {this.state.isOpenUserMenu && (
@@ -176,7 +174,6 @@ class HomeHeader extends Component {
                     <div className="clinical-trial-section">
                         <div className="clinical-trial-container">
                             <div className="enrolling-badge">
-                                <span className="icon">👥</span>
                                 300+ studies actively enrolling
                             </div>
                             <h1 className="main-title">

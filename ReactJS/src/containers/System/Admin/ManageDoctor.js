@@ -38,6 +38,7 @@ class ManageDoctor extends Component {
             nameClinic: '',
             addressClinic: '',
             note: '',
+            maxNumber: '',
         }
     }
 
@@ -137,6 +138,7 @@ class ManageDoctor extends Component {
             nameClinic: nameClinic,
             addressClinic: addressClinic,
             note: note,
+            maxNumber: this.state.maxNumber,
         });
     }
 
@@ -152,7 +154,7 @@ class ManageDoctor extends Component {
             let addressClinic = '', nameClinic = '', note = '',
                 selectedPrice = '', selectedPayment = '',
                 selectedProvince = '', selectedSpecialty = '',
-                selectedClinic = '';
+                selectedClinic = '', maxNumber = '';
 
             if (doctorInfor) {
                 addressClinic = doctorInfor.addressClinic;
@@ -164,6 +166,7 @@ class ManageDoctor extends Component {
                 selectedProvince = listProvince.find(item => item && item.value === doctorInfor.provinceId);
                 selectedSpecialty = listSpecialty.find(item => item && item.value === doctorInfor.specialtyId);
                 selectedClinic = listClinic.find(item => item && item.value === doctorInfor.clinicId);
+                maxNumber = doctorInfor.maxNumber;
             }
 
             this.setState({
@@ -180,6 +183,7 @@ class ManageDoctor extends Component {
                 selectedProvince: selectedProvince || '',
                 selectedSpecialty: selectedSpecialty || '',
                 selectedClinic: selectedClinic || '',
+                maxNumber: maxNumber || '',
             });
         } else {
             this.setState({
@@ -189,6 +193,7 @@ class ManageDoctor extends Component {
                 selectedPrice: '', selectedPayment: '',
                 selectedProvince: '', selectedSpecialty: '',
                 selectedClinic: '',
+                maxNumber: '',
             });
         }
     }
@@ -250,8 +255,7 @@ class ManageDoctor extends Component {
     };
 
     render() {
-        let { selectedDoctor, listDoctors, hasOldData } = this.state;
-        let { userInfo, language } = this.props;
+        let { language, userInfo } = this.props;
         let isDoctorRole = userInfo && userInfo.roleId === 'R2';
 
         return (
@@ -262,133 +266,178 @@ class ManageDoctor extends Component {
                     </h2>
                 </div>
 
-                <div className="apple-card">
-                    <div className="card-header-title">
-                        <FormattedMessage id="manage-doctor.basic-info" defaultMessage="Thông Tin Cơ Bản" />
-                    </div>
-                    
-                    <div className="form-grid">
-                        <div className="input-group-apple outline-group">
-                            <label><FormattedMessage id='manage-doctor.select' defaultMessage="Chọn Bác Sĩ" /></label>
-                            <Select
-                                classNamePrefix="react-select"
-                                value={this.state.selectedDoctor}
-                                onChange={this.handleChange}
-                                options={this.state.listAllDoctors}
-                                isDisabled={isDoctorRole}
-                                placeholder={language === LANGUAGES.VI ? 'Tìm kiếm bác sĩ...' : 'Search doctor...'}
-                            />
+                <div className="settings-grid">
+                    {/* Card 1: Core Assignment */}
+                    <div className="info-card">
+                        <div className="card-header">
+                            <span className="card-title">
+                                <FormattedMessage id="manage-doctor.core-assign" defaultMessage="Phân Bổ Chuyên Môn" />
+                            </span>
+                            <i className="fas fa-user-md card-icon"></i>
                         </div>
-
-                        <div className="input-group-apple outline-group">
-                            <label><FormattedMessage id='manage-doctor.price' defaultMessage="Giá Khám Bệnh" /></label>
-                            <Select
-                                classNamePrefix="react-select"
-                                value={this.state.selectedPrice}
-                                onChange={this.handleChangeSelectDoctorInfor}
-                                options={this.state.listPrice}
-                                placeholder={language === LANGUAGES.VI ? 'Chọn giá...' : 'Choose price...'}
-                                name="selectedPrice"
-                            />
-                        </div>
-
-                        <div className="input-group-apple outline-group">
-                            <label><FormattedMessage id='manage-doctor.payment' defaultMessage="Phương Thức Thanh Toán" /></label>
-                            <Select
-                                classNamePrefix="react-select"
-                                value={this.state.selectedPayment}
-                                onChange={this.handleChangeSelectDoctorInfor}
-                                options={this.state.listPayment}
-                                placeholder={language === LANGUAGES.VI ? 'Chọn phương thức...' : 'Choose payment...'}
-                                name="selectedPayment"
-                            />
-                        </div>
-
-                        <div className="input-group-apple outline-group">
-                            <label><FormattedMessage id='manage-doctor.province' defaultMessage="Tỉnh / Thành Phố" /></label>
-                            <Select
-                                classNamePrefix="react-select"
-                                value={this.state.selectedProvince}
-                                onChange={this.handleChangeSelectDoctorInfor}
-                                options={this.state.listProvince}
-                                placeholder={language === LANGUAGES.VI ? 'Chọn tỉnh thành...' : 'Choose province...'}
-                                name="selectedProvince"
-                            />
-                        </div>
-
-                        <div className="input-group-apple outline-group">
-                            <label><FormattedMessage id='manage-doctor.choose-specialty' defaultMessage="Chuyên Khoa" /></label>
-                            <Select
-                                classNamePrefix="react-select"
-                                value={this.state.selectedSpecialty}
-                                onChange={this.handleChangeSelectDoctorInfor}
-                                options={this.state.listSpecialty}
-                                placeholder={language === LANGUAGES.VI ? 'Chọn chuyên khoa...' : 'Choose specialty...'}
-                                name="selectedSpecialty"
-                            />
-                        </div>
-
-                        <div className="input-group-apple outline-group">
-                            <label><FormattedMessage id='manage-doctor.choose-clinic' defaultMessage="Phòng Khám" /></label>
-                            <Select
-                                classNamePrefix="react-select"
-                                value={this.state.selectedClinic}
-                                onChange={this.handleChangeSelectDoctorInfor}
-                                options={this.state.listClinic}
-                                placeholder={language === LANGUAGES.VI ? 'Chọn phòng khám...' : 'Choose clinic...'}
-                                name="selectedClinic"
-                            />
-                        </div>
-
-                        <div className="input-group-apple outline-group">
-                            <label><FormattedMessage id='manage-doctor.clinic' defaultMessage="Tên Phòng Khám" /></label>
-                            <input 
-                                type="text"
-                                className="apple-input"
-                                value={this.state.nameClinic}
-                                onChange={(e) => this.handleChangeText(e, "nameClinic")}
-                                placeholder={language === LANGUAGES.VI ? 'Nhập tên phòng khám' : 'Enter clinic name'}
-                            />
-                        </div>
-
-                        <div className="input-group-apple outline-group">
-                            <label><FormattedMessage id='manage-doctor.address' defaultMessage="Địa Chỉ Phòng Khám" /></label>
-                            <input 
-                                type="text"
-                                className="apple-input"
-                                value={this.state.addressClinic}
-                                onChange={(e) => this.handleChangeText(e, "addressClinic")}
-                                placeholder={language === LANGUAGES.VI ? 'Nhập địa chỉ' : 'Enter address'}
-                            />
+                        <div className="card-body">
+                            <div className="input-group-apple">
+                                <label><FormattedMessage id='manage-doctor.select' defaultMessage="Chọn Bác Sĩ" /></label>
+                                <Select
+                                    classNamePrefix="react-select"
+                                    value={this.state.selectedDoctor}
+                                    onChange={this.handleChange}
+                                    options={this.state.listAllDoctors}
+                                    isDisabled={isDoctorRole}
+                                    placeholder={language === LANGUAGES.VI ? 'Tìm kiếm bác sĩ...' : 'Search doctor...'}
+                                />
+                            </div>
+                            <div className="input-group-apple">
+                                <label><FormattedMessage id='manage-doctor.choose-specialty' defaultMessage="Chuyên Khoa" /></label>
+                                <Select
+                                    classNamePrefix="react-select"
+                                    value={this.state.selectedSpecialty}
+                                    onChange={this.handleChangeSelectDoctorInfor}
+                                    options={this.state.listSpecialty}
+                                    placeholder={language === LANGUAGES.VI ? 'Chọn chuyên khoa...' : 'Choose specialty...'}
+                                    name="selectedSpecialty"
+                                />
+                            </div>
+                            <div className="input-group-apple">
+                                <label><FormattedMessage id='manage-doctor.choose-clinic' defaultMessage="Cơ Sở Y Tế" /></label>
+                                <Select
+                                    classNamePrefix="react-select"
+                                    value={this.state.selectedClinic}
+                                    onChange={this.handleChangeSelectDoctorInfor}
+                                    options={this.state.listClinic}
+                                    placeholder={language === LANGUAGES.VI ? 'Chọn cơ sở...' : 'Choose clinic...'}
+                                    name="selectedClinic"
+                                />
+                            </div>
                         </div>
                     </div>
 
-                    <div className="input-group-apple full-width" style={{ marginTop: '20px' }}>
-                        <label><FormattedMessage id='manage-doctor.note' defaultMessage="Ghi Chú Chung" /></label>
-                        <input 
-                            type="text"
-                            className="apple-input"
-                            value={this.state.note}
-                            onChange={(e) => this.handleChangeText(e, "note")}
-                            placeholder={language === LANGUAGES.VI ? 'Ghi chú thêm nếu có...' : 'Add more notes if any...'}
-                        />
+                    {/* Card 2: Professional Pricing */}
+                    <div className="info-card">
+                        <div className="card-header">
+                            <span className="card-title">
+                                <FormattedMessage id="manage-doctor.pricing-info" defaultMessage="Giá & Thanh Toán" />
+                            </span>
+                            <i className="fas fa-credit-card card-icon"></i>
+                        </div>
+                        <div className="card-body">
+                            <div className="input-group-apple">
+                                <label><FormattedMessage id='manage-doctor.price' defaultMessage="Giá Khám Bệnh" /></label>
+                                <Select
+                                    classNamePrefix="react-select"
+                                    value={this.state.selectedPrice}
+                                    onChange={this.handleChangeSelectDoctorInfor}
+                                    options={this.state.listPrice}
+                                    placeholder={language === LANGUAGES.VI ? 'Chọn mức giá...' : 'Choose price...'}
+                                    name="selectedPrice"
+                                />
+                            </div>
+                            <div className="input-group-apple">
+                                <label><FormattedMessage id='manage-doctor.payment' defaultMessage="Phương Thức" /></label>
+                                <Select
+                                    classNamePrefix="react-select"
+                                    value={this.state.selectedPayment}
+                                    onChange={this.handleChangeSelectDoctorInfor}
+                                    options={this.state.listPayment}
+                                    placeholder={language === LANGUAGES.VI ? 'Chọn thanh toán...' : 'Choose payment...'}
+                                    name="selectedPayment"
+                                />
+                            </div>
+                            <div className="input-group-apple">
+                                <label><FormattedMessage id='manage-doctor.province' defaultMessage="Khu Vực / Tỉnh Thành" /></label>
+                                <Select
+                                    classNamePrefix="react-select"
+                                    value={this.state.selectedProvince}
+                                    onChange={this.handleChangeSelectDoctorInfor}
+                                    options={this.state.listProvince}
+                                    placeholder={language === LANGUAGES.VI ? 'Chọn tỉnh thành...' : 'Choose province...'}
+                                    name="selectedProvince"
+                                />
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="input-group-apple full-width" style={{ marginTop: '20px' }}>
-                        <label><FormattedMessage id='manage-doctor.infor' defaultMessage="Đoạn Giới Thiệu Ngắn (Introduction)" /></label>
-                        <textarea
-                            className="apple-textarea"
-                            value={this.state.description}
-                            onChange={(e) => this.handleChangeText(e, "description")}
-                            placeholder={language === LANGUAGES.VI ? 'Mô tả kỹ năng, chức danh...' : 'Describe skills, titles...'}
-                            rows={3}
-                        />
+                    {/* Card 3: Facility Information */}
+                    <div className="info-card">
+                        <div className="card-header">
+                            <span className="card-title">
+                                <FormattedMessage id="manage-doctor.facility-info" defaultMessage="Thông Tin Phòng Khám" />
+                            </span>
+                            <i className="fas fa-hospital card-icon"></i>
+                        </div>
+                        <div className="card-body">
+                            <div className="input-group-apple">
+                                <label><FormattedMessage id='manage-doctor.clinic' defaultMessage="Tên Phòng Khám" /></label>
+                                <input 
+                                    type="text"
+                                    className="apple-input"
+                                    value={this.state.nameClinic}
+                                    onChange={(e) => this.handleChangeText(e, "nameClinic")}
+                                    placeholder={language === LANGUAGES.VI ? 'VD: Phòng khám Đa khoa Việt Nhật' : 'Enter clinic name'}
+                                />
+                            </div>
+                            <div className="input-group-apple">
+                                <label><FormattedMessage id='manage-doctor.address' defaultMessage="Địa Chỉ" /></label>
+                                <input 
+                                    type="text"
+                                    className="apple-input"
+                                    value={this.state.addressClinic}
+                                    onChange={(e) => this.handleChangeText(e, "addressClinic")}
+                                    placeholder={language === LANGUAGES.VI ? 'Số nhà, tên đường...' : 'Enter address'}
+                                />
+                            </div>
+                            <div className="input-group-apple">
+                                <label><FormattedMessage id='manage-doctor.max-number' defaultMessage="Sức Chứa / Ca" /></label>
+                                <input 
+                                    type="number"
+                                    className="apple-input"
+                                    value={this.state.maxNumber}
+                                    onChange={(e) => this.handleChangeText(e, "maxNumber")}
+                                    placeholder="10"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Card 4: Additional Summary */}
+                    <div className="info-card">
+                        <div className="card-header">
+                            <span className="card-title">
+                                <FormattedMessage id="manage-doctor.summary-info" defaultMessage="Ghi Chú & Tóm Tắt" />
+                            </span>
+                            <i className="fas fa-sticky-note card-icon"></i>
+                        </div>
+                        <div className="card-body">
+                            <div className="input-group-apple">
+                                <label><FormattedMessage id='manage-doctor.infor' defaultMessage="Lời Giới Thiệu (Bio)" /></label>
+                                <textarea
+                                    className="apple-textarea"
+                                    value={this.state.description}
+                                    onChange={(e) => this.handleChangeText(e, "description")}
+                                    placeholder={language === LANGUAGES.VI ? 'Mô tả ngắn về trình độ chuyên môn...' : 'Short bio...'}
+                                    rows={3}
+                                />
+                            </div>
+                            <div className="input-group-apple">
+                                <label><FormattedMessage id='manage-doctor.note' defaultMessage="Ghi Chú" /></label>
+                                <input 
+                                    type="text"
+                                    className="apple-input"
+                                    value={this.state.note}
+                                    onChange={(e) => this.handleChangeText(e, "note")}
+                                    placeholder="..."
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div className="apple-card markdown-editor-card">
-                    <div className="card-header-title">
-                        <FormattedMessage id="manage-doctor.detail-desc" defaultMessage="Mô Tả Chi Tiết (Markdown)" />
+                <div className="markdown-card">
+                    <div className="card-header">
+                        <span className="card-title">
+                            <FormattedMessage id="manage-doctor.detail-desc" defaultMessage="Nội Dung Chi Tiết (Markdown)" />
+                        </span>
+                        <i className="fas fa-file-alt card-icon"></i>
                     </div>
                     <MdEditor
                         className="apple-md-editor"
@@ -402,8 +451,8 @@ class ManageDoctor extends Component {
                     <button className="btn-save-apple" onClick={() => this.handleSaveContent()}>
                         <i className={`fas ${this.state.hasOldData ? 'fa-pen' : 'fa-save'}`}></i>
                         {this.state.hasOldData 
-                            ? (language === LANGUAGES.VI ? " Cập Nhật Thông Tin" : " Update Information")
-                            : (language === LANGUAGES.VI ? " Lưu Mới Thông Tin" : " Save New Information")
+                            ? (language === LANGUAGES.VI ? " Cập Nhật" : " Update")
+                            : (language === LANGUAGES.VI ? " Lưu Mới" : " Save New")
                         }
                     </button>
                 </div>
