@@ -239,10 +239,11 @@
             "status": "Trạng thái",
             "actions": "Thao tác",
             "no-data": "Bạn chưa có lịch hẹn nào.",
-            "pending": "Chờ thanh toán",
-            "confirmed": "Đã xác nhận",
-            "done": "Đã xong",
-            "cancelled": "Đã hủy"
+            "pending": "Chưa thanh toán",
+            "confirmed": "Đã thanh toán",
+            "done": "Đã khám",
+            "cancelled": "Đã hủy",
+            "missed": "Lỡ hẹn"
         }
     },
     "verify-email": {

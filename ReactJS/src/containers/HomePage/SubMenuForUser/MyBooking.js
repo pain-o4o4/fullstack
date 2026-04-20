@@ -112,6 +112,7 @@ class MyBooking extends Component {
                                                          item.statusId === 'S2' ? <FormattedMessage id="patient.my-booking.confirmed" /> :
                                                          item.statusId === 'S3' ? <FormattedMessage id="patient.my-booking.done" /> :
                                                          item.statusId === 'S4' ? <FormattedMessage id="patient.my-booking.cancelled" /> :
+                                                         item.statusId === 'S5' ? <FormattedMessage id="patient.my-booking.missed" /> :
                                                          (language === 'vi' ? item.statusData.valueVi : item.statusData.valueEn)
                                                         }
                                                     </span>

@@ -117,7 +117,13 @@ class ManagePatient extends Component {
                             <tbody>
                                 {dataPatient && dataPatient.length > 0 ? (
                                     dataPatient.map((item, index) => {
-                                        let labelColor = item.statusId === 'S2' ? 'green' : (item.statusId === 'S3' ? 'gray' : 'red');
+                                        let labelColor = 'gray';
+                                        if (item.statusId === 'S1') labelColor = 'orange'; // Pending
+                                        if (item.statusId === 'S2') labelColor = 'blue';   // Paid
+                                        if (item.statusId === 'S3') labelColor = 'green';  // Done
+                                        if (item.statusId === 'S4') labelColor = 'gray';   // Cancelled
+                                        if (item.statusId === 'S5') labelColor = 'red';    // Missed
+
                                         return (
                                             <tr key={index}>
                                                 <td>
@@ -142,13 +148,21 @@ class ManagePatient extends Component {
                                                 </td>
                                                 <td>
                                                     <select
-                                                        className={`status-select pointer ${item.statusId}`}
+                                                        className={`status-select pointer-select ${item.statusId}`}
                                                         value={item.statusId}
                                                         onChange={(e) => this.handleOnChangeStatus(e, item)}
+                                                        style={{
+                                                            padding: '6px 12px',
+                                                            borderRadius: '8px',
+                                                            border: '1px solid #d2d2d7',
+                                                            fontSize: '13px'
+                                                        }}
                                                     >
-                                                        <option value="S1">S1 - Lịch Pending/Hủy</option>
-                                                        <option value="S2">S2 - Đã Thu Tiền (Chờ khám)</option>
-                                                        <option value="S3">S3 - Đã Khám Xong (Gửi Email)</option>
+                                                        <option value="S1">{language === 'vi' ? 'Chưa thanh toán' : 'Pending Payment'}</option>
+                                                        <option value="S2">{language === 'vi' ? 'Đã thanh toán (Chờ khám)' : 'Paid (Waiting)'}</option>
+                                                        <option value="S3">{language === 'vi' ? 'Đã khám (Gửi Email)' : 'Completed (Send Mail)'}</option>
+                                                        <option value="S4">{language === 'vi' ? 'Đã hủy' : 'Cancelled'}</option>
+                                                        <option value="S5">{language === 'vi' ? 'Lỡ hẹn' : 'Missed'}</option>
                                                     </select>
                                                 </td>
                                             </tr>

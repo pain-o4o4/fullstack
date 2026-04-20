@@ -27,29 +27,53 @@ let postBookAppointmentService = (data) => {
                     errMessage: "Missing required parameters!"
                 });
             }
-            const orderCode = Number(String(Date.now()).slice(-6));
+            let appointment;
+            if (data.bookingId) {
+                // CASE 1: Booking already exists, user wants to pay now
+                appointment = await db.Booking.findOne({
+                    where: { id: data.bookingId, statusId: 'S1' },
+                    raw: false
+                });
+                if (!appointment) {
+                    return resolve({
+                        errCode: 2,
+                        errMessage: "Appointment not found, expired or already paid!"
+                    });
+                }
+            } else {
+                // CASE 2: New booking creation
+                const orderCode = Number(String(Date.now()).slice(-6));
+                let token = uuidv4();
+                appointment = await db.Booking.create({
+                    statusId: 'S1', // Always start as S1
+                    doctorId: data.doctorId,
+                    patientId: data.patientId,
+                    paymentId: data.paymentId,
+                    date: data.date,
+                    orderCode: orderCode,
+                    timeType: data.timeType,
+                    token: token
+                });
+                
+                return resolve({
+                    errCode: 0,
+                    data: {
+                        bookingId: appointment.id
+                    }
+                });
+            }
 
-            let token = uuidv4();
-            let appointment = await db.Booking.create({
-                statusId: 'S1',
-                doctorId: data.doctorId,
-                patientId: data.patientId,
-                paymentId: data.paymentId,
-                date: data.date,
-                orderCode: orderCode,
-                timeType: data.timeType,
-                token: token
-            });
-
-
-            let finalAmount = 5000;
+            // PayOS logic...
+            const orderCode = Number(appointment.orderCode);
+            const token = appointment.token;
+            const finalAmount = 5000;
 
             const body = {
                 orderCode: orderCode,
                 amount: finalAmount,
                 description: `Booking for ${data.fullName || 'BN'}`.slice(0, 25),
                 returnUrl: `${process.env.URL_REACT}/patient/my-booking`,
-                cancelUrl: `${process.env.URL_REACT}/verify-booking?token=${token}`, //lay trang nay huy
+                cancelUrl: `${process.env.URL_REACT}/verify-booking?token=${token}`,
                 items: [
                     {
                         name: "Appointment booking",
@@ -58,12 +82,24 @@ let postBookAppointmentService = (data) => {
                     }
                 ]
             };
+            
             const payosInstance = payOS?.default || payOS;
             if (!payosInstance || typeof payosInstance.paymentRequests?.create !== 'function') {
-                throw new Error("Unable to call paymentRequests.create. Check @payos/node again!");
+                throw new Error("Unable to call PayOS. Check @payos/node configuration.");
             }
 
-            const paymentLinkRes = await payosInstance.paymentRequests.create(body);
+            console.log(">>> [DEBUG] Sending to PayOS:", JSON.stringify(body, null, 2));
+
+            let paymentLinkRes;
+            try {
+                paymentLinkRes = await payosInstance.paymentRequests.create(body);
+            } catch (payosError) {
+                console.error(">>> [ERROR] PayOS API:", payosError);
+                return resolve({
+                    errCode: 3,
+                    errMessage: `PayOS API Error: ${payosError.message || "Failed to create payment link"}`
+                });
+            }
 
             if (paymentLinkRes && paymentLinkRes.checkoutUrl) {
                 return resolve({
@@ -74,7 +110,7 @@ let postBookAppointmentService = (data) => {
                     }
                 });
             } else {
-                throw new Error("PayOS does not return the checkout URL.");
+                throw new Error("PayOS response missing checkoutUrl");
             }
 
         } catch (e) {
@@ -126,10 +162,38 @@ let getAllAppointmentsByIdService = async (id) => {
             if (!id) {
                 resolve({ errCode: 1, errMessage: 'Missing required parameter!' });
             } else {
+                // 1. Auto cleanup for this patient's records
+                let nowMillis = moment().valueOf();
+                let todayStart = moment().startOf('day').valueOf();
+                let fifteenMins = 15 * 60 * 1000;
+
+                let allActive = await db.Booking.findAll({
+                    where: { 
+                        patientId: id, 
+                        statusId: { [Op.in]: ['S1', 'S2'] } 
+                    },
+                    raw: false
+                });
+
+                for (let booking of allActive) {
+                    const createdAt = new Date(booking.createdAt).getTime();
+                    const bookingDate = Number(booking.date);
+
+                    if (booking.statusId === 'S1' && (nowMillis - createdAt > fifteenMins)) {
+                        booking.statusId = 'S4';
+                        await booking.save();
+                    }
+                    if (booking.statusId === 'S2' && (bookingDate < todayStart)) {
+                        booking.statusId = 'S5';
+                        await booking.save();
+                    }
+                }
+
+                // 2. Fetch the updated list
                 let data = await db.Booking.findAll({
                     where: {
                         patientId: id,
-                        statusId: { [Op.in]: ['S1', 'S2', 'S3'] }
+                        statusId: { [Op.in]: ['S1', 'S2', 'S3', 'S4', 'S5'] } // Fetch all types
                     },
                     include: [
                         {
@@ -251,7 +315,7 @@ let processPayOSWebhook = (webhookBody) => {
                 let booking = await db.Booking.findOne({
                     where: {
                         orderCode: String(orderCode), // Ép kiểu string cho chắc chắn khớp DB
-                        statusId: 'S1'
+                        statusId: { [Op.in]: ['S1', 'S4'] } // Allow rescuing S4 if late payment arrives
                     },
                     include: [
                         { model: db.User, as: 'patientBookingData', attributes: ['email', 'firstName', 'lastName'] },

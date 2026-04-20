@@ -230,9 +230,10 @@
             "actions": "Actions",
             "no-data": "You don't have any appointments yet.",
             "pending": "Pending Payment",
-            "confirmed": "Confirmed",
-            "done": "Done",
-            "cancelled": "Cancelled"
+            "confirmed": "Paid",
+            "done": "Completed",
+            "cancelled": "Cancelled",
+            "missed": "Missed"
         }
     },
     "verify-email": {

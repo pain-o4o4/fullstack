@@ -433,15 +433,34 @@ let getListPatientForDoctor = (doctorId, date) => {
                 });
             }
 
-            // 1. Auto cleanup for missed appointments (date < today, status = 'S2') => turn to 'S1'
-            let todayMillis = moment().startOf('day').valueOf();
-            let allS2 = await db.Booking.findAll({
-                where: { doctorId: doctorId, statusId: 'S2' },
+            // 1. Auto cleanup for missed and expired appointments
+            let nowMillis = moment().valueOf();
+            let todayStart = moment().startOf('day').valueOf();
+            let fifteenMins = 15 * 60 * 1000;
+
+            // Fetch all active bookings for this doctor to cleanup
+            let allActive = await db.Booking.findAll({
+                where: { 
+                    doctorId: doctorId, 
+                    statusId: { [Op.in]: ['S1', 'S2'] } 
+                },
                 raw: false
             });
-            for (let booking of allS2) {
-                if (Number(booking.date) < todayMillis) {
-                    booking.statusId = 'S1';
+
+            for (let booking of allActive) {
+                const createdAt = new Date(booking.createdAt).getTime();
+                const bookingDate = Number(booking.date);
+
+                // A. Auto-cancel S1 (Unpaid) after 15 mins
+                if (booking.statusId === 'S1' && (nowMillis - createdAt > fifteenMins)) {
+                    booking.statusId = 'S4'; // Cancelled
+                    await booking.save();
+                    continue;
+                }
+
+                // B. Auto-mark S2 (Paid) as S5 (Missed) if date passed
+                if (booking.statusId === 'S2' && (bookingDate < todayStart)) {
+                    booking.statusId = 'S5'; // Missed
                     await booking.save();
                 }
             }
@@ -464,11 +483,12 @@ let getListPatientForDoctor = (doctorId, date) => {
                 nest: true
             });
 
-            // 3. Custom Sort: S2 (priority 1) > S3 (priority 2) > S1 (priority 3)
+            // 3. Custom Sort: S2 (priority 1) > S3 (priority 2) > S5 (priority 3) > S1 (priority 4) > S4 (priority 5)
             if (data && data.length > 0) {
                 data.sort((a, b) => {
-                    let pA = a.statusId === 'S2' ? 1 : (a.statusId === 'S3' ? 2 : 3);
-                    let pB = b.statusId === 'S2' ? 1 : (b.statusId === 'S3' ? 2 : 3);
+                    let priorities = { 'S2': 1, 'S3': 2, 'S5': 3, 'S1': 4, 'S4': 5 };
+                    let pA = priorities[a.statusId] || 9;
+                    let pB = priorities[b.statusId] || 9;
                     return pA - pB;
                 });
             }
