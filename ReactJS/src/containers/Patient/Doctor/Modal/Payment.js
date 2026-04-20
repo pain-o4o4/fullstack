@@ -26,7 +26,7 @@ class Payment extends Component {
         // CASE 1: Arriving from BookingModal (New booking, not yet saved in DB)
         if (this.props.location.state && this.props.location.state.bookingData) {
             bookingData = this.props.location.state.bookingData;
-            
+
             this.setState({ bookingData, isLoading: false });
 
             if (!bookingData.bookingId) {
@@ -35,7 +35,7 @@ class Payment extends Component {
             } else {
                 this.handleTimerPersistence(bookingData.bookingId);
             }
-        } 
+        }
         // CASE 2: Arriving from MyBooking or URL (Existing bookingId)
         else {
             const query = new URLSearchParams(this.props.location.search);
@@ -55,7 +55,7 @@ class Payment extends Component {
             let res = await postBookAppointment(bookingData);
             if (res && res.errCode === 0 && res.data) {
                 const { bookingId, checkoutUrl } = res.data;
-                this.setState({ 
+                this.setState({
                     bookingData: { ...bookingData, bookingId },
                     checkoutUrl: checkoutUrl // Store for later
                 });
@@ -63,8 +63,8 @@ class Payment extends Component {
             } else {
                 // If backend fails (e.g. PayOS error), the record might or might not be saved 
                 // but we at least show the summary from state
-                toast.error(this.props.language === LANGUAGES.VI 
-                    ? "Lưu lịch hẹn thất bại hoặc lỗi cổng thanh toán!" 
+                toast.error(this.props.language === LANGUAGES.VI
+                    ? "Lưu lịch hẹn thất bại hoặc lỗi cổng thanh toán!"
                     : "Failed to save appointment or payment gateway error!");
             }
         } catch (e) {
@@ -75,11 +75,12 @@ class Payment extends Component {
     fetchBookingDetails = async (bookingId) => {
         try {
             let res = await getDetailSchedulePatient(bookingId);
+            console.log('>>> DEBUG PAYMENT API RES:', res);
             if (res && res.errCode === 0 && res.data) {
                 let data = res.data;
                 const { language } = this.props;
 
-                const createdAt = new Date(data.createdAt).getTime();
+                const createdAt = data.createdAt ? new Date(data.createdAt).getTime() : Date.now();
                 const now = Date.now();
                 const diff = now - createdAt;
                 const fifteenMins = 15 * 60 * 1000;
@@ -87,19 +88,20 @@ class Payment extends Component {
                 let reconstructed = {
                     bookingId: data.id,
                     doctorId: data.doctorId,
-                    doctorName: `${data.doctorBookingData.lastName} ${data.doctorBookingData.firstName}`,
-                    doctorImage: data.doctorBookingData.image,
-                    clinicName: data.doctorBookingData.doctorinforData?.nameClinic,
-                    addressClinic: data.doctorBookingData.doctorinforData?.addressClinic,
-                    specialtyName: data.doctorBookingData.Markdown?.description || '',
+                    patientId: data.patientId,
+                    doctorName: data.doctorBookingData ? `${data.doctorBookingData.lastName} ${data.doctorBookingData.firstName}` : '',
+                    doctorImage: data.doctorBookingData?.image,
+                    clinicName: data.doctorBookingData?.doctorinforData?.nameClinic,
+                    addressClinic: data.doctorBookingData?.doctorinforData?.addressClinic,
+                    specialtyName: data.doctorBookingData?.markdownData?.description || '',
                     date: data.date,
                     timeType: data.timeType,
-                    timeLabel: language === LANGUAGES.VI ? data.timeTypeDataPatient.valueVi : data.timeTypeDataPatient.valueEn,
-                    price: data.doctorBookingData.doctorinforData.priceTypeData.valueVi,
-                    priceId: language === LANGUAGES.VI 
-                        ? data.doctorBookingData.doctorinforData.priceTypeData.valueVi + ' VNĐ'
-                        : data.doctorBookingData.doctorinforData.priceTypeData.valueEn + ' USD',
-                    fullName: data.patientBookingData?.lastName + ' ' + data.patientBookingData?.firstName,
+                    timeLabel: language === LANGUAGES.VI ? data.timeTypeDataPatient?.valueVi : data.timeTypeDataPatient?.valueEn,
+                    price: data.doctorBookingData?.doctorinforData?.priceTypeData?.valueVi,
+                    priceId: language === LANGUAGES.VI
+                        ? (data.doctorBookingData?.doctorinforData?.priceTypeData?.valueVi + ' VNĐ')
+                        : (data.doctorBookingData?.doctorinforData?.priceTypeData?.valueEn + ' USD'),
+                    fullName: data.patientBookingData ? (data.patientBookingData.lastName + ' ' + data.patientBookingData.firstName) : '',
                     phoneNumber: data.patientBookingData?.phonenumber,
                     email: data.patientBookingData?.email,
                     address: data.patientBookingData?.address,
@@ -115,15 +117,23 @@ class Payment extends Component {
                     return;
                 }
 
-                this.setState({ 
-                    bookingData: reconstructed, 
+                this.setState({
+                    bookingData: reconstructed,
                     isLoading: false,
                     timeLeft: Math.max(0, Math.floor((fifteenMins - diff) / 1000))
                 }, () => {
                     this.startTimer(data.id);
                 });
+            } else {
+                toast.error(this.props.language === LANGUAGES.VI ? "Không tìm thấy dữ liệu đặt lịch!" : "Booking data not found!");
+                this.setState({ isLoading: false });
+                this.props.navigate('/home');
             }
-        } catch (e) { console.error(e); }
+        } catch (e) {
+            console.error(e);
+            this.setState({ isLoading: false });
+            toast.error("Error fetching booking details!");
+        }
     }
 
     handleTimerPersistence = (bookingId) => {
@@ -141,7 +151,7 @@ class Payment extends Component {
                 // Redirect to self with new ID
                 this.props.navigate(`/patient/payment?bookingId=${newBookingId}`, { replace: true });
                 // Force reload logic
-                window.location.reload(); 
+                window.location.reload();
             } else {
                 toast.error("Error regenerating session.");
                 this.props.navigate('/home');

@@ -54,7 +54,7 @@ let postBookAppointmentService = (data) => {
                     timeType: data.timeType,
                     token: token
                 });
-                
+
                 return resolve({
                     errCode: 0,
                     data: {
@@ -82,7 +82,7 @@ let postBookAppointmentService = (data) => {
                     }
                 ]
             };
-            
+
             const payosInstance = payOS?.default || payOS;
             if (!payosInstance || typeof payosInstance.paymentRequests?.create !== 'function') {
                 throw new Error("Unable to call PayOS. Check @payos/node configuration.");
@@ -168,9 +168,9 @@ let getAllAppointmentsByIdService = async (id) => {
                 let fifteenMins = 15 * 60 * 1000;
 
                 let allActive = await db.Booking.findAll({
-                    where: { 
-                        patientId: id, 
-                        statusId: { [Op.in]: ['S1', 'S2'] } 
+                    where: {
+                        patientId: id,
+                        statusId: { [Op.in]: ['S1', 'S2'] }
                     },
                     raw: false
                 });
@@ -240,16 +240,54 @@ let getDetailSchedulePatient = async (bookingId) => {
             if (!bookingId) {
                 resolve({ errCode: 1, errMessage: 'Missing ID!' });
             } else {
+                // 1. Fetch & Auto-Cleanup for this specific booking if needed
+                let appointment = await db.Booking.findOne({
+                    where: { id: bookingId },
+                    raw: false
+                });
+
+                if (appointment && appointment.statusId === 'S1') {
+                    let nowMillis = moment().valueOf();
+                    let fifteenMins = 15 * 60 * 1000;
+                    if (nowMillis - new Date(appointment.createdAt).getTime() > fifteenMins) {
+                        appointment.statusId = 'S4';
+                        await appointment.save();
+                    }
+                }
+                if (appointment && appointment.statusId === 'S2') {
+                    let todayStart = moment().startOf('day').valueOf();
+                    if (Number(appointment.date) < todayStart) {
+                        appointment.statusId = 'S5';
+                        await appointment.save();
+                    }
+                }
+
+                // 2. Fetch with all relations
                 let data = await db.Booking.findOne({
                     where: { id: bookingId },
                     include: [
                         {
                             model: db.User,
                             as: 'doctorBookingData',
-                            attributes: ['firstName', 'lastName'],
+                            attributes: ['firstName', 'lastName', 'image'],
                             include: [
-                                { model: db.Doctor_infor, as: 'doctorinforData', attributes: ['nameClinic', 'addressClinic', 'priceId', 'paymentId'] },
-                                { model: db.Markdown, as: 'Markdown', attributes: ['description'] }
+                                {
+                                    model: db.Doctor_infor, as: 'doctorinforData',
+                                    attributes: ['nameClinic', 'addressClinic', 'priceId', 'paymentId'],
+                                    include: [
+                                        { model: db.Allcode, as: 'priceTypeData', attributes: ['valueVi', 'valueEn'] },
+                                        { model: db.Allcode, as: 'paymentTypeData', attributes: ['valueVi', 'valueEn'] }
+                                    ]
+                                },
+                                { model: db.Markdown, as: 'markdownData', attributes: ['description'] }
+                            ]
+                        },
+                        {
+                            model: db.User,
+                            as: 'patientBookingData',
+                            attributes: ['firstName', 'lastName', 'email', 'phonenumber', 'address'],
+                            include: [
+                                { model: db.Allcode, as: 'genderData', attributes: ['valueVi', 'valueEn'] }
                             ]
                         },
                         { model: db.Allcode, as: 'timeTypeDataPatient', attributes: ['valueVi', 'valueEn'] },
@@ -258,18 +296,9 @@ let getDetailSchedulePatient = async (bookingId) => {
                     raw: false,
                     nest: true
                 });
-                
-                // Fetch AllCode values for price and payment if needed
-                if(data && data.doctorBookingData && data.doctorBookingData.doctorinforData) {
-                    let info = data.doctorBookingData.doctorinforData;
-                    if(info.priceId) {
-                        let priceData = await db.Allcode.findOne({where: {keyMap: info.priceId}, raw: true});
-                        if(priceData) info.priceTypeData = priceData;
-                    }
-                    if(info.paymentId) {
-                        let paymentData = await db.Allcode.findOne({where: {keyMap: info.paymentId}, raw: true});
-                        if(paymentData) info.paymentTypeData = paymentData;
-                    }
+
+                if (data && data.doctorBookingData && data.doctorBookingData.image) {
+                    data.doctorBookingData.image = Buffer.from(data.doctorBookingData.image, 'base64').toString('binary');
                 }
 
                 resolve({

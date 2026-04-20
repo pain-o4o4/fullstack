@@ -3,15 +3,18 @@ import { connect } from "react-redux";
 import { FormattedMessage } from 'react-intl';
 import { getDetailSchedulePatient } from '../../../services/userService';
 import moment from 'moment';
-import { withRouter } from '../../../components/Navigator';
 import './DetailSchedulePatient.scss';
+import HomeHeader from '../HomeHeader';
+import { withRouter } from '../../../components/Navigator';
+import { LANGUAGES } from '../../../utils';
 
 class DetailSchedulePatient extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            detailBooking: {}
-        };
+            detailBooking: {},
+            isLoading: true
+        }
     }
 
     async componentDidMount() {
@@ -20,125 +23,151 @@ class DetailSchedulePatient extends Component {
             let res = await getDetailSchedulePatient(id);
             if (res && res.errCode === 0) {
                 this.setState({
-                    detailBooking: res.data
-                });
+                    detailBooking: res.data,
+                    isLoading: false
+                })
+            } else {
+                this.setState({ isLoading: false });
             }
         }
     }
 
-    handleGoBack = () => {
-        this.props.navigate(-1);
+    handleBack = () => {
+        this.props.navigate('/patient/my-booking');
     }
 
     render() {
-        let { detailBooking } = this.state;
+        let { detailBooking, isLoading } = this.state;
         let { language } = this.props;
 
+        if (isLoading) return (
+            <div className="detail-schedule-container">
+                <HomeHeader />
+                <div className="loading-container">Loading...</div>
+            </div>
+        );
+
         let doctorName = '';
-        let clinicName = '';
-        let clinicAddress = '';
-        let price = '';
-        let payment = '';
-        let statusStr = '';
-        let statusBadge = '';
-        let timeStr = '';
-        let dateStr = '';
-
-        if (detailBooking && detailBooking.doctorBookingData) {
-            let drData = detailBooking.doctorBookingData;
-            doctorName = language === 'vi' 
-                ? `${drData.lastName} ${drData.firstName}` 
-                : `${drData.firstName} ${drData.lastName}`;
-            
-            if (drData.doctorinforData) {
-                let info = drData.doctorinforData;
-                clinicName = info.nameClinic;
-                clinicAddress = info.addressClinic;
-
-                if (info.priceTypeData) {
-                    price = language === 'vi' ? info.priceTypeData.valueVi : info.priceTypeData.valueEn;
-                }
-                if (info.paymentTypeData) {
-                    payment = language === 'vi' ? info.paymentTypeData.valueVi : info.paymentTypeData.valueEn;
-                }
-            }
+        if (detailBooking.doctorBookingData) {
+            doctorName = language === LANGUAGES.VI
+                ? `${detailBooking.doctorBookingData.lastName} ${detailBooking.doctorBookingData.firstName}`
+                : `${detailBooking.doctorBookingData.firstName} ${detailBooking.doctorBookingData.lastName}`;
         }
 
-        if (detailBooking.statusId) {
-            statusBadge = detailBooking.statusId;
-            if (detailBooking.statusData) {
-                statusStr = language === 'vi' ? detailBooking.statusData.valueVi : detailBooking.statusData.valueEn;
-            }
+        let patientName = '';
+        if (detailBooking.patientBookingData) {
+            patientName = language === LANGUAGES.VI
+                ? `${detailBooking.patientBookingData.lastName} ${detailBooking.patientBookingData.firstName}`
+                : `${detailBooking.patientBookingData.firstName} ${detailBooking.patientBookingData.lastName}`;
         }
 
-        if (detailBooking.timeTypeDataPatient) {
-            timeStr = language === 'vi' ? detailBooking.timeTypeDataPatient.valueVi : detailBooking.timeTypeDataPatient.valueEn;
-            dateStr = moment(new Date(parseInt(detailBooking.date))).format('DD/MM/YYYY');
-        }
-
+        let statusClass = detailBooking.statusId || '';
+        let dateStr = detailBooking.date ? moment(Number(detailBooking.date)).format('DD/MM/YYYY') : '';
 
         return (
-            <div className="detail-schedule-container my-booking-container container">
-                <div className="header-detail">
-                    <button className="btn-back pointer" onClick={this.handleGoBack}>
-                        <i className="fas fa-arrow-left"></i> <FormattedMessage id="patient-detail.btn-back" />
-                    </button>
-                    <h2 className="title-booking font-weight-bold ml-3 mb-0"><FormattedMessage id="patient-detail.title" /></h2>
-                </div>
+            <div className="detail-schedule-container">
+                <HomeHeader />
+                <div className="detail-schedule-body">
+                    <div className="back-button" onClick={this.handleBack}>
+                        <i className="fas fa-arrow-left"></i>
+                        <span><FormattedMessage id="patient-detail.btn-back" /></span>
+                    </div>
 
-                <div className="card-detail mt-4">
-                    <div className="card-body">
-                        <div className="status-banner mb-4">
-                            <span className={`status-badge ${statusBadge}`}>{statusStr}</span>
-                            <span className="ml-3 text-muted"><FormattedMessage id="patient-detail.appointment-id" />: {detailBooking.token ? detailBooking.token.substring(0, 8) : 'N/A'}</span>
-                        </div>
-
-                        <div className="row">
-                            <div className="col-md-6 mb-4">
-                                <h5 className="section-title"><FormattedMessage id="patient-detail.clinic-info" /></h5>
-                                <div className="info-box">
-                                    <div className="info-item">
-                                        <i className="fas fa-hospital text-primary"></i>
-                                        <span className="font-weight-bold ml-2">{clinicName || <FormattedMessage id="patient-detail.not-found" />}</span>
-                                    </div>
-                                    <div className="info-item mt-2">
-                                        <i className="fas fa-map-marker-alt text-danger"></i>
-                                        <span className="ml-2">{clinicAddress || <FormattedMessage id="patient-detail.not-found" />}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div className="col-md-6 mb-4">
-                                <h5 className="section-title"><FormattedMessage id="patient-detail.doctor-info" /></h5>
-                                <div className="info-box">
-                                    <div className="info-item">
-                                        <i className="fas fa-user-md text-success"></i>
-                                        <span className="font-weight-bold ml-2">{doctorName || <FormattedMessage id="patient-detail.not-found" />}</span>
-                                    </div>
-                                    <div className="info-item mt-2">
-                                        <i className="fas fa-calendar-alt text-warning"></i>
-                                        <span className="ml-2 font-weight-bold">{timeStr} - {dateStr}</span>
-                                    </div>
-                                </div>
+                    <div className="detail-card animate-slide-up">
+                        <div className="header-detail-row">
+                            <h2 className="title"><FormattedMessage id="patient-detail.title" /></h2>
+                            <div className={`status-tag ${statusClass}`}>
+                                {language === LANGUAGES.VI ? detailBooking.statusData?.valueVi : detailBooking.statusData?.valueEn}
                             </div>
                         </div>
 
-                        <div className="row">
-                            <div className="col-12">
-                                <h5 className="section-title"><FormattedMessage id="patient-detail.payment-info" /></h5>
-                                <div className="info-box payment-box">
-                                    <div className="d-flex justify-content-between mb-2">
-                                        <span className="text-muted"><FormattedMessage id="patient-detail.price" />:</span>
-                                        <span className="font-weight-bold text-success" style={{fontSize: '1.2rem'}}>{price || <FormattedMessage id="patient-detail.not-found" />}</span>
-                                    </div>
-                                    <div className="d-flex justify-content-between border-top pt-2">
-                                        <span className="text-muted"><FormattedMessage id="patient-detail.payment-method" />:</span>
-                                        <span className="font-weight-bold">{payment || <FormattedMessage id="patient-detail.not-found" />}</span>
-                                    </div>
+                        <div className="info-grid">
+                            <div className="info-section">
+                                <h3 className="section-title"><FormattedMessage id="patient-detail.doctor-info" /></h3>
+                                <div className="info-item">
+                                    <span className="label"><FormattedMessage id="patient-detail.doctor-name" />:</span>
+                                    <span className="value bold">{doctorName}</span>
+                                </div>
+                                <div className="info-item">
+                                    <span className="label"><FormattedMessage id="patient-detail.clinic-info" />:</span>
+                                    <span className="value">
+                                        {detailBooking.doctorBookingData?.doctorinforData?.nameClinic}
+                                    </span>
+                                </div>
+                                <div className="info-item">
+                                    <span className="label"><FormattedMessage id="patient.booking-modal.address" />:</span>
+                                    <span className="value">
+                                        {detailBooking.doctorBookingData?.doctorinforData?.addressClinic}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="info-section">
+                                <h3 className="section-title"><FormattedMessage id="patient-detail.appointment-info" /></h3>
+                                <div className="info-item">
+                                    <span className="label"><FormattedMessage id="patient.booking-modal.birthday" />:</span>
+                                    <span className="value">{dateStr}</span>
+                                </div>
+                                <div className="info-item">
+                                    <span className="label"><FormattedMessage id="manage-patient.time" />:</span>
+                                    <span className="value">
+                                        {language === LANGUAGES.VI ? detailBooking.timeTypeDataPatient?.valueVi : detailBooking.timeTypeDataPatient?.valueEn}
+                                    </span>
+                                </div>
+                                <div className="info-item">
+                                    <span className="label"><FormattedMessage id="patient-detail.appointment-id" />:</span>
+                                    <span className="value">#{detailBooking.id}</span>
+                                </div>
+                            </div>
+
+                            <div className="info-section">
+                                <h3 className="section-title"><FormattedMessage id="patient-detail.payment-info" /></h3>
+                                <div className="info-item">
+                                    <span className="label"><FormattedMessage id="patient-detail.price" />:</span>
+                                    <span className="value price">
+                                        {detailBooking.doctorBookingData?.doctorinforData?.priceTypeData ? 
+                                            (language === LANGUAGES.VI ? 
+                                                detailBooking.doctorBookingData.doctorinforData.priceTypeData.valueVi + ' VND' : 
+                                                detailBooking.doctorBookingData.doctorinforData.priceTypeData.valueEn + ' $') 
+                                            : <FormattedMessage id="patient-detail.not-found" />}
+                                    </span>
+                                </div>
+                                <div className="info-item">
+                                    <span className="label"><FormattedMessage id="patient-detail.payment-method" />:</span>
+                                    <span className="value">
+                                        {detailBooking.doctorBookingData?.doctorinforData?.paymentTypeData ? 
+                                            (language === LANGUAGES.VI ? 
+                                                detailBooking.doctorBookingData.doctorinforData.paymentTypeData.valueVi : 
+                                                detailBooking.doctorBookingData.doctorinforData.paymentTypeData.valueEn)
+                                            : <FormattedMessage id="patient-detail.not-found" />}
+                                    </span>
+                                </div>
+                            </div>
+
+                             <div className="info-section full-width">
+                                <h3 className="section-title"><FormattedMessage id="patient-profile.name-label" /></h3>
+                                <div className="info-item">
+                                    <span className="label"><FormattedMessage id="patient-detail.patient-name" />:</span>
+                                    <span className="value">{patientName}</span>
+                                </div>
+                                <div className="info-item">
+                                    <span className="label">Email:</span>
+                                    <span className="value">{detailBooking.patientBookingData?.email}</span>
+                                </div>
+                                <div className="info-item">
+                                    <span className="label"><FormattedMessage id="patient-profile.phone-place" />:</span>
+                                    <span className="value">{detailBooking.patientBookingData?.phonenumber}</span>
                                 </div>
                             </div>
                         </div>
 
+                        {detailBooking.statusId === 'S1' && (
+                            <div className="action-footer">
+                                <button className="btn-pay-now" onClick={() => this.props.navigate(`/patient/payment?bookingId=${detailBooking.id}`)}>
+                                    <FormattedMessage id="patient.my-booking.pending" defaultMessage="Thanh toán ngay" />
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -148,12 +177,8 @@ class DetailSchedulePatient extends Component {
 
 const mapStateToProps = state => {
     return {
-        language: state.app.language
+        language: state.app.language,
     };
 };
 
-const mapDispatchToProps = dispatch => {
-    return {};
-};
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DetailSchedulePatient));
+export default withRouter(connect(mapStateToProps)(DetailSchedulePatient));
