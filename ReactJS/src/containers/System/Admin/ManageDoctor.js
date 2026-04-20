@@ -78,19 +78,19 @@ class ManageDoctor extends Component {
             if (userInfo && userInfo.roleId === 'R2' && this.state.selectedDoctor) {
                 let labelVi = `${userInfo.lastName} ${userInfo.firstName}`;
                 let labelEn = `${userInfo.firstName} ${userInfo.lastName}`;
-                
+
                 let updatedOption = {
                     value: userInfo.id,
                     label: language === LANGUAGES.VI ? labelVi : labelEn
                 }
-                
+
                 this.setState({ selectedDoctor: updatedOption });
             }
         }
 
         if (prevProps.allRequiredDoctorInfor !== this.props.allRequiredDoctorInfor) {
             let { resPrice, resPayment, resProvince, resSpecialty, resClinic } = this.props.allRequiredDoctorInfor;
-            
+
             let dataSelectPrice = this.buildDataInput(resPrice, 'PRICE');
             let dataSelectPayment = this.buildDataInput(resPayment, 'PAYMENT');
             let dataSelectProvince = this.buildDataInput(resProvince, 'PROVINCE');
@@ -150,7 +150,7 @@ class ManageDoctor extends Component {
         if (res && res.errCode === 0 && res.data) {
             let markdown = res.data.markdownData;
             let doctorInfor = res.data.doctorinforData;
-            
+
             let addressClinic = '', nameClinic = '', note = '',
                 selectedPrice = '', selectedPayment = '',
                 selectedProvince = '', selectedSpecialty = '',
@@ -368,9 +368,9 @@ class ManageDoctor extends Component {
                         <div className="card-body">
                             <div className="input-group-apple">
                                 <label><FormattedMessage id='manage-doctor.clinic' defaultMessage="Tên Phòng Khám" /></label>
-                                <input 
+                                <input
                                     type="text"
-                                    className="apple-input"
+                                    className="input"
                                     value={this.state.nameClinic}
                                     onChange={(e) => this.handleChangeText(e, "nameClinic")}
                                     placeholder={language === LANGUAGES.VI ? 'VD: Phòng khám Đa khoa Việt Nhật' : 'Enter clinic name'}
@@ -378,9 +378,9 @@ class ManageDoctor extends Component {
                             </div>
                             <div className="input-group-apple">
                                 <label><FormattedMessage id='manage-doctor.address' defaultMessage="Địa Chỉ" /></label>
-                                <input 
+                                <input
                                     type="text"
-                                    className="apple-input"
+                                    className="input"
                                     value={this.state.addressClinic}
                                     onChange={(e) => this.handleChangeText(e, "addressClinic")}
                                     placeholder={language === LANGUAGES.VI ? 'Số nhà, tên đường...' : 'Enter address'}
@@ -388,9 +388,9 @@ class ManageDoctor extends Component {
                             </div>
                             <div className="input-group-apple">
                                 <label><FormattedMessage id='manage-doctor.max-number' defaultMessage="Sức Chứa / Ca" /></label>
-                                <input 
+                                <input
                                     type="number"
-                                    className="apple-input"
+                                    className="input"
                                     value={this.state.maxNumber}
                                     onChange={(e) => this.handleChangeText(e, "maxNumber")}
                                     placeholder="10"
@@ -411,7 +411,7 @@ class ManageDoctor extends Component {
                             <div className="input-group-apple">
                                 <label><FormattedMessage id='manage-doctor.infor' defaultMessage="Lời Giới Thiệu (Bio)" /></label>
                                 <textarea
-                                    className="apple-textarea"
+                                    className="textarea"
                                     value={this.state.description}
                                     onChange={(e) => this.handleChangeText(e, "description")}
                                     placeholder={language === LANGUAGES.VI ? 'Mô tả ngắn về trình độ chuyên môn...' : 'Short bio...'}
@@ -420,9 +420,9 @@ class ManageDoctor extends Component {
                             </div>
                             <div className="input-group-apple">
                                 <label><FormattedMessage id='manage-doctor.note' defaultMessage="Ghi Chú" /></label>
-                                <input 
+                                <input
                                     type="text"
-                                    className="apple-input"
+                                    className="input"
                                     value={this.state.note}
                                     onChange={(e) => this.handleChangeText(e, "note")}
                                     placeholder="..."
@@ -440,7 +440,7 @@ class ManageDoctor extends Component {
                         <i className="fas fa-file-alt card-icon"></i>
                     </div>
                     <MdEditor
-                        className="apple-md-editor"
+                        className="md-editor"
                         renderHTML={text => mdParser.render(text)}
                         onChange={this.handleEditorChange}
                         value={this.state.contentMarkdown}
@@ -450,7 +450,7 @@ class ManageDoctor extends Component {
                 <div className="action-footer">
                     <button className="btn-save-apple" onClick={() => this.handleSaveContent()}>
                         <i className={`fas ${this.state.hasOldData ? 'fa-pen' : 'fa-save'}`}></i>
-                        {this.state.hasOldData 
+                        {this.state.hasOldData
                             ? (language === LANGUAGES.VI ? " Cập Nhật" : " Update")
                             : (language === LANGUAGES.VI ? " Lưu Mới" : " Save New")
                         }
@@ -466,7 +466,7 @@ const mapStateToProps = state => {
         allDoctors: state.admin.allDoctors,
         allRequiredDoctorInfor: state.admin.allRequiredDoctorInfor,
         language: state.app.language,
-        userInfo: state.user.userInfo 
+        userInfo: state.user.userInfo
     };
 };
 

@@ -404,39 +404,39 @@ body {
 
             .react-select-container {
                 flex: 1;
-                font-family: -apple-system, BlinkMacSystemFont,
+                font-family: -system, BlinkMacSystemFont,
                     "Segoe UI", Roboto, sans-serif;
 
 
-                .apple-select__control {
+                .select__control {
                     background: transparent !important;
                     border: none !important;
                     box-shadow: none !important;
                     min-height: 48px !important;
                     cursor: pointer;
 
-                    .apple-select__value-container {
+                    .select__value-container {
                         padding: 0 !important;
 
-                        .apple-select__placeholder {
+                        .select__placeholder {
                             color: #6b7280 !important;
                             margin: 0 !important;
                             font-size: 0.95rem;
                         }
 
-                        .apple-select__single-value {
+                        .select__single-value {
                             color: #1c246d !important;
                             margin: 0 !important;
                             font-size: 1rem;
                         }
                     }
 
-                    .apple-select__indicators {
-                        .apple-select__indicator-separator {
+                    .select__indicators {
+                        .select__indicator-separator {
                             display: none !important;
                         }
 
-                        .apple-select__indicator {
+                        .select__indicator {
                             color: #1c246d !important;
                             padding: 0 !important;
                             opacity: 0.5;
@@ -450,7 +450,7 @@ body {
                 }
 
 
-                .apple-select__menu {
+                .select__menu {
                     border-radius: 14px !important;
                     box-shadow: 0 10px 40px rgba(28, 36, 109, 0.15) !important;
                     border: 1px solid rgba(28, 36, 109, 0.08) !important;
@@ -461,12 +461,12 @@ body {
 
                     margin-top: 12px !important;
                     overflow: hidden;
-                    animation: apple-drop 0.25s ease-out;
+                    animation: drop 0.25s ease-out;
 
-                    .apple-select__menu-list {
+                    .select__menu-list {
                         padding: 6px !important;
 
-                        .apple-select__option {
+                        .select__option {
                             border-radius: 9px !important;
                             margin-bottom: 2px !important;
                             padding: 10px 16px !important;
@@ -493,7 +493,7 @@ body {
             }
         }
 
-        @keyframes apple-drop {
+        @keyframes drop {
             from {
                 opacity: 0;
                 transform: translateY(-8px) scale(0.98);

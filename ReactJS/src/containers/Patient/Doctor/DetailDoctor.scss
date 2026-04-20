@@ -4,85 +4,90 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 40px 20px;
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
-.intro-doctor {
-    display: flex;
-    gap: 30px;
-    margin-bottom: 50px;
-    padding-bottom: 30px;
-    border-bottom: 1px solid #f5f5f7;
+    font-family: -system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
 
-    .content-left {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%; // Hình tròn kiểu Apple Profile
-        background-position: center;
-        background-size: cover;
-        background-repeat: no-repeat;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-    }
-
-    .content-right {
-        flex: 1;
+    .intro-doctor {
         display: flex;
-        flex-direction: column;
-        justify-content: center;
+        gap: 30px;
+        margin-bottom: 50px;
+        padding-bottom: 30px;
+        border-bottom: 1px solid #f5f5f7;
 
-        .up {
-            font-size: 28px;
-            font-weight: 700;
-            color: #1d1d1f;
-            letter-spacing: -0.5px;
-            margin-bottom: 10px;
+        .content-left {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%; // Hình tròn kiểu Apple Profile
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
         }
 
-        .down {
-            font-size: 16px;
-            color: #48484a;
-            line-height: 1.5;
-            max-width: 800px;
+        .content-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            .up {
+                font-size: 28px;
+                font-weight: 700;
+                color: #1d1d1f;
+                letter-spacing: -0.5px;
+                margin-bottom: 10px;
+            }
+
+            .down {
+                font-size: 16px;
+                color: #48484a;
+                line-height: 1.5;
+                max-width: 800px;
+            }
         }
     }
-}
 
-/* Schedule & Extra Info Section */
-.schedule-doctor {
-    display: flex;
-    gap: 40px;
-    background: #f5f5f7; // Nền xám nhạt nhẹ nhàng
-    padding: 30px;
-    border-radius: 24px; // Bo góc lớn kiểu iOS
-    margin-bottom: 50px;
+    /* Schedule & Extra Info Section */
+    .schedule-doctor {
+        display: flex;
+        gap: 40px;
+        background: #f5f5f7; // Nền xám nhạt nhẹ nhàng
+        padding: 30px;
+        border-radius: 24px; // Bo góc lớn kiểu iOS
+        margin-bottom: 50px;
 
-    .content-left {
-        flex: 1;
-        border-right: 1px solid #e5e5e7;
-        padding-right: 20px;
+        .content-left {
+            flex: 1;
+            border-right: 1px solid #e5e5e7;
+            padding-right: 20px;
+        }
+
+        .content-right {
+            flex: 1;
+            padding-left: 20px;
+        }
     }
 
-    .content-right {
-        flex: 1;
-        padding-left: 20px;
+    /* Nội dung Markdown phía dưới */
+    .detail-info-doctor {
+        padding: 20px;
+        color: #1d1d1f;
+        line-height: 1.6;
+        font-size: 17px;
+
+        /* Tùy chỉnh lại các thẻ HTML bên trong dangerouslySetInnerHTML */
+        h2,
+        h3 {
+            font-weight: 600;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            letter-spacing: -0.3px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: #424245;
+        }
     }
-}
-
-/* Nội dung Markdown phía dưới */
-.detail-info-doctor {
-    padding: 20px;
-    color: #1d1d1f;
-    line-height: 1.6;
-    font-size: 17px;
-
-    /* Tùy chỉnh lại các thẻ HTML bên trong dangerouslySetInnerHTML */
-    h2, h3 {
-        font-weight: 600;
-        margin-top: 30px;
-        margin-bottom: 15px;
-        letter-spacing: -0.3px;
-    }
-
-    p { margin-bottom: 15px; color: #424245; }
-}
 
 }
 
@@ -107,11 +112,23 @@
         .home-link {
             cursor: pointer;
             transition: color 0.2s;
-            &:hover { color: #0071e3; } // Apple Blue
+
+            &:hover {
+                color: #0071e3;
+            }
+
+            // Apple Blue
         }
 
-        .separator { margin: 0 8px; color: #d2d2d7; }
-        .current-page { color: #1d1d1f; font-weight: 500; }
+        .separator {
+            margin: 0 8px;
+            color: #d2d2d7;
+        }
+
+        .current-page {
+            color: #1d1d1f;
+            font-weight: 500;
+        }
     }
 }
 

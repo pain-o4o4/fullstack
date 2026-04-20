@@ -25,7 +25,7 @@ class ManagePatient extends Component {
         let { userInfo } = this.props;
         let { currentDate } = this.state;
         let formattedDate = new Date(currentDate).getTime();
-        
+
         if (userInfo && userInfo.id) {
             let res = await getListPatientForDoctor({
                 doctorId: userInfo.id,
@@ -54,11 +54,11 @@ class ManagePatient extends Component {
     handleOnChangeStatus = async (event, item) => {
         let { language } = this.props;
         let newStatus = event.target.value;
-        let confirmMsg = language === 'vi' 
+        let confirmMsg = language === 'vi'
             ? `Bạn có chắc chắn chuyển trạng thái đặt khám của bệnh nhân ${item.patientBookingData.lastName} ${item.patientBookingData.firstName} sang ${newStatus}?`
             : `Are you sure you want to change the status for patient ${item.patientBookingData.firstName} ${item.patientBookingData.lastName} to ${newStatus}?`;
 
-        if(window.confirm(confirmMsg)) {
+        if (window.confirm(confirmMsg)) {
             let res = await updateBookingStatus({
                 doctorId: item.doctorId,
                 patientId: item.patientId,
@@ -67,8 +67,8 @@ class ManagePatient extends Component {
                 statusId: newStatus,
                 email: item.patientBookingData.email,
                 patientName: `${item.patientBookingData.lastName} ${item.patientBookingData.firstName}`,
-                time: language === 'vi' ? item.timeTypeDataPatient.valueVi : item.timeTypeDataPatient.valueEn, 
-                doctorName: language === 'vi' 
+                time: language === 'vi' ? item.timeTypeDataPatient.valueVi : item.timeTypeDataPatient.valueEn,
+                doctorName: language === 'vi'
                     ? `${this.props.userInfo.lastName} ${this.props.userInfo.firstName}`
                     : `${this.props.userInfo.firstName} ${this.props.userInfo.lastName}`,
                 language: language
@@ -91,13 +91,13 @@ class ManagePatient extends Component {
                     <h2 className="title"><FormattedMessage id="manage-patient.title" /></h2>
                 </div>
 
-                <div className="apple-card filters-card">
+                <div className="card filters-card">
                     <div className="form-grid">
                         <div className="input-group-apple outline-group">
                             <label><FormattedMessage id="manage-patient.choose-date" /></label>
                             <DatePicker
                                 onChange={this.handleOnChangeDatePicker}
-                                className="apple-input form-control"
+                                className="input form-control"
                                 value={currentDate}
                             />
                         </div>
@@ -106,7 +106,7 @@ class ManagePatient extends Component {
 
                 <div className="table-wrapper">
                     <div className="table-card">
-                        <table className="apple-table">
+                        <table className="table">
                             <thead>
                                 <tr>
                                     <th><FormattedMessage id="manage-patient.time" /></th>
@@ -132,7 +132,7 @@ class ManagePatient extends Component {
                                                         </div>
                                                         <div className="user-name-block">
                                                             <span className="name">
-                                                                {language === 'vi' 
+                                                                {language === 'vi'
                                                                     ? `${item.patientBookingData.lastName} ${item.patientBookingData.firstName}`
                                                                     : `${item.patientBookingData.firstName} ${item.patientBookingData.lastName}`}
                                                             </span>
@@ -141,8 +141,8 @@ class ManagePatient extends Component {
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <select 
-                                                        className={`apple-status-select pointer ${item.statusId}`}
+                                                    <select
+                                                        className={`status-select pointer ${item.statusId}`}
                                                         value={item.statusId}
                                                         onChange={(e) => this.handleOnChangeStatus(e, item)}
                                                     >
@@ -173,7 +173,7 @@ class ManagePatient extends Component {
 const mapStateToProps = state => {
     return {
         language: state.app.language,
-        userInfo: state.user.userInfo 
+        userInfo: state.user.userInfo
     };
 };
 

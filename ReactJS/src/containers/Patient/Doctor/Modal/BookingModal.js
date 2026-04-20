@@ -220,6 +220,10 @@ class BookingModal extends Component {
         let date = new Date(birthday).getTime();
         let doctorInfor = detailDoctor?.doctorinforData || {};
 
+        let timeLabel = language === LANGUAGES.VI
+            ? dataTimeModal.timeTypeData.valueVi
+            : dataTimeModal.timeTypeData.valueEn;
+
         let bookingData = {
             patientId: userInfo?.id || null,
             fullName: fullName,
@@ -229,21 +233,25 @@ class BookingModal extends Component {
             reason: reason,
             date: dataTimeModal.date,
             birthday: date,
+            birthdayLabel: new Date(birthday).toLocaleDateString(language === LANGUAGES.VI ? 'vi-VN' : 'en-US'),
             gender: selectedGender.value,
+            genderLabel: selectedGender.label,
             doctorId: dataTimeModal.doctorId,
             timeType: dataTimeModal.timeType,
+            timeLabel: timeLabel,
             language: language,
             doctorName: this.state.doctorName,
 
             // Data cho PayOS và hiển thị Payment
             paymentId: doctorInfor.paymentId,
             price: doctorInfor.priceTypeData?.valueVi || 0,
-            priceId: language === 'vi' ? doctorInfor.priceTypeData?.valueVi + ' VNĐ' : doctorInfor.priceTypeData?.valueEn + ' USD',
+            priceId: language === LANGUAGES.VI ? doctorInfor.priceTypeData?.valueVi + ' VNĐ' : doctorInfor.priceTypeData?.valueEn + ' USD',
 
             // Data bổ sung cho trang Payment
             clinicName: doctorInfor.nameClinic,
             addressClinic: doctorInfor.addressClinic,
-            specialtyName: detailDoctor?.specialtyData?.name || ''
+            specialtyName: detailDoctor?.specialtyData?.name || '',
+            doctorImage: detailDoctor?.image || '', // Pass the image string to Payment page
         };
 
         this.props.navigate(path.PAYMENT, {

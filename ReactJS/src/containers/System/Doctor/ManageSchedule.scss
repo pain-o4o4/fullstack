@@ -1,7 +1,7 @@
 .manage-schedule-container {
     padding: 24px;
     margin-top: 50px;
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
+    font-family: -system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
     background-color: #ffffff;
     min-height: 100vh;
 
@@ -107,7 +107,7 @@
                     }
 
                     /* DatePicker override */
-                    .apple-date-picker {
+                    .date-picker {
                         border: none;
                         background: #f5f5f7;
                         padding: 12px 14px;
@@ -162,7 +162,7 @@
             grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
             gap: 16px;
 
-            .apple-pill-btn {
+            .pill-btn {
                 background: #f5f5f7;
                 border: 1px solid transparent;
                 padding: 14px 10px; // Reduced side padding, let grid handle width
@@ -218,7 +218,7 @@
             &:active {
                 transform: translateY(1px);
             }
-            
+
             i {
                 font-size: 14px;
             }

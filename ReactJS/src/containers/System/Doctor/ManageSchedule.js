@@ -33,7 +33,7 @@ class ManageSchedule extends Component {
         if (userInfo && userInfo.roleId === 'R2') {
             let labelVi = `${userInfo.lastName} ${userInfo.firstName}`;
             let labelEn = `${userInfo.firstName} ${userInfo.lastName}`;
-            
+
             this.setState({
                 selectedOption: {
                     value: userInfo.id,
@@ -149,7 +149,7 @@ class ManageSchedule extends Component {
         if (listAllScheduleTime && listAllScheduleTime.length > 0) {
             let data = listAllScheduleTime.map(item => {
                 if (item.value === time.value) {
-                    item.isSelected = !item.isSelected; 
+                    item.isSelected = !item.isSelected;
                 }
                 return item;
             });
@@ -166,7 +166,7 @@ class ManageSchedule extends Component {
         }
 
         let formartedDate = new Date(currentDate).getTime();
-        
+
         if (!selectedOption || _.isEmpty(selectedOption)) {
             toast.error('Vui lòng chọn Bác sĩ!');
             return;
@@ -186,11 +186,11 @@ class ManageSchedule extends Component {
                 });
             }
         }
-        
+
         let res = await bulkCreateScheduleService({
             arrSchedule: result,
-            doctorId: selectedOption.value, 
-            date: formartedDate             
+            doctorId: selectedOption.value,
+            date: formartedDate
         });
 
         if (res && res.errCode === 0) {
@@ -239,7 +239,7 @@ class ManageSchedule extends Component {
                             <div className="input-group-apple">
                                 <label><FormattedMessage id='manage-schedule.choose-day' defaultMessage="Chọn Ngày Khám" /></label>
                                 <DatePicker
-                                    className="apple-date-picker"
+                                    className="date-picker"
                                     value={this.state.currentDate}
                                     onChange={this.handleChangeDate}
                                     minDate={new Date()}
@@ -263,7 +263,7 @@ class ManageSchedule extends Component {
                                 return (
                                     <button
                                         key={index}
-                                        className={`apple-pill-btn ${item.isSelected ? 'active' : ''}`}
+                                        className={`pill-btn ${item.isSelected ? 'active' : ''}`}
                                         onClick={() => this.handleClickBtnTime(item)}
                                     >
                                         {item.label}

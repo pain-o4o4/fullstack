@@ -8,6 +8,20 @@ import { adminMenu, doctorMenu, patientMenu } from '../Header/menuApp';
 import translate from '../../assets/images/translate.svg';
 import './SystemLayout.scss';
 import icon_icons from '../../assets/images/icon_icons.svg';
+import { CommonUtils } from '../../utils';
+const decodeBase64Buffer = (imgObj) => {
+    if (imgObj && imgObj.data) {
+        let bytes = new Uint8Array(imgObj.data);
+        let binary = '';
+        for (let i = 0; i < bytes.byteLength; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return binary;
+    } else if (typeof imgObj === 'string') {
+        return imgObj;
+    }
+    return '';
+};
 class SystemLayout extends Component {
     constructor(props) {
         super(props);
@@ -41,7 +55,18 @@ class SystemLayout extends Component {
         }
         this.setState({ menuApp: menu });
     };
-
+    handleOnChangeImage = async (event) => {
+        let data = event.target.files;
+        let file = data[0];
+        if (file) {
+            let base64 = await CommonUtils.getBase64(file);
+            let objectUrl = URL.createObjectURL(file);
+            this.setState({
+                previewImgURL: objectUrl,
+                avatar: base64
+            });
+        }
+    }
     changeLanguage = () => {
         let { language } = this.props;
         let nextLanguage = language === 'vi' ? 'en' : 'vi';
@@ -55,9 +80,9 @@ class SystemLayout extends Component {
         const lang = language || 'vi'; // Fallback to avoid undefined
 
         return (
-            <div className="apple-account-page">
+            <div className="account-page">
                 {/* Top Header */}
-                <div className="apple-sub-header">
+                <div className="sub-header">
                     <div className="sub-header-content">
                         <span className="brand-name"
                             onClick={() => window.location.href = '/home'}
@@ -74,11 +99,11 @@ class SystemLayout extends Component {
                 </div>
 
 
-                <div className="apple-settings-container">
+                <div className="settings-container">
                     <div className="container-flex">
 
                         {/* Sidebar */}
-                        <aside className="apple-sidebar">
+                        <aside className="sidebar">
                             <div className="user-profile-summary">
                                 <div className="avatar-circle"
                                     onClick={() => this.handleViewList('SETTINGS')}
@@ -125,7 +150,7 @@ class SystemLayout extends Component {
                         </aside>
 
                         {/* Content Area */}
-                        <main className="apple-main-content">
+                        <main className="main-content">
                             {children}
                         </main>
                     </div>

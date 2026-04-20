@@ -103,7 +103,7 @@
                     }
                 }
 
-                .apple-inline-input {
+                .inline-input {
                     border: none;
                     background: #f5f5f7;
                     padding: 10px 12px;
@@ -125,13 +125,13 @@
         }
     }
 
-    .apple-footer-action {
+    .footer-action {
         // border-top: 1px solid #e5e5ea;
         padding-top: 25px;
         display: flex;
         justify-content: flex-end;
 
-        .apple-save-btn {
+        .save-btn {
             background: #0071e3;
             color: white;
             border: none;

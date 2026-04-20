@@ -46,7 +46,7 @@ class OutStandingDoctor extends Component {
             <React.Fragment>
                 <div className='section-OutStandingDoctor'>
                     <div className='section-header'>
-                                                <span className='title-section'>
+                        <span className='title-section'>
                             <FormattedMessage id="homepage.doctor" />
                         </span>
                         <button className='btn-section'

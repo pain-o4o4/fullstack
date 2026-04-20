@@ -89,8 +89,8 @@ class PatientProfile extends Component {
                             <i class="fas fa-user" ></i>
                         </div>
                         <div className="card-body form-group-row">
-                            <input className="apple-inline-input" value={this.state.lastName || ''} onChange={(e) => this.handleOnChangeInput(e, 'lastName')} placeholder={language === 'vi' ? "Họ" : "Last name"} />
-                            <input className="apple-inline-input" value={this.state.firstName || ''} onChange={(e) => this.handleOnChangeInput(e, 'firstName')} placeholder={language === 'vi' ? "Tên" : "First name"} />
+                            <input className="inline-input" value={this.state.lastName || ''} onChange={(e) => this.handleOnChangeInput(e, 'lastName')} placeholder={language === 'vi' ? "Họ" : "Last name"} />
+                            <input className="inline-input" value={this.state.firstName || ''} onChange={(e) => this.handleOnChangeInput(e, 'firstName')} placeholder={language === 'vi' ? "Tên" : "First name"} />
                         </div>
                     </div>
 
@@ -101,7 +101,7 @@ class PatientProfile extends Component {
                         </div>
                         <div className="card-body">
                             <p className="readonly-text">{this.state.email}</p>
-                            <input className="apple-inline-input" value={this.state.phonenumber || ''} onChange={(e) => this.handleOnChangeInput(e, 'phonenumber')} placeholder={language === 'vi' ? "Số điện thoại" : "Phone number"} />
+                            <input className="inline-input" value={this.state.phonenumber || ''} onChange={(e) => this.handleOnChangeInput(e, 'phonenumber')} placeholder={language === 'vi' ? "Số điện thoại" : "Phone number"} />
                         </div>
                     </div>
 
@@ -112,7 +112,7 @@ class PatientProfile extends Component {
                         </div>
                         <div className="card-body">
                             <input type="password"
-                                className="apple-inline-input"
+                                className="inline-input"
                                 placeholder={language === 'vi' ? "Đổi mật khẩu mới..." : "Change new password..."}
                                 value={this.state.password || ''}
                                 onChange={(e) => this.handleOnChangeInput(e, 'password')}
@@ -127,7 +127,7 @@ class PatientProfile extends Component {
                             <i className="fas fa-map-marker-alt card-icon blue"></i>
                         </div>
                         <div className="card-body">
-                            <input className="apple-inline-input"
+                            <input className="inline-input"
                                 value={this.state.address || ''}
                                 onChange={(e) => this.handleOnChangeInput(e, 'address')}
                                 placeholder={language === 'vi' ? "Nhập địa chỉ nhà..." : "Enter your home address..."}
@@ -136,8 +136,8 @@ class PatientProfile extends Component {
                     </div>
                 </div>
 
-                <div className="apple-footer-action">
-                    <button className="apple-save-btn" onClick={() => this.handleSaveSettings()}>
+                <div className="footer-action">
+                    <button className="save-btn" onClick={() => this.handleSaveSettings()}>
                         <FormattedMessage id="patient-profile.btn-save" />
                     </button>
                 </div>

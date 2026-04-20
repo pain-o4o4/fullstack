@@ -79,8 +79,8 @@ class ModalManageSpecialty extends Component {
         return (
             <Modal isOpen={isOpen} toggle={() => toggleFromParent()} size="xl" centered className="modal-add-new-user modal-manage-specialty" backdrop="static">
                 <ModalHeader toggle={() => toggleFromParent()}>
-                    {action === 'CREATE' 
-                        ? <FormattedMessage id="manage-specialty.modal-create" /> 
+                    {action === 'CREATE'
+                        ? <FormattedMessage id="manage-specialty.modal-create" />
                         : <FormattedMessage id="manage-specialty.modal-edit" />
                     }
                 </ModalHeader>
@@ -90,7 +90,7 @@ class ModalManageSpecialty extends Component {
                             <label><FormattedMessage id="manage-specialty.name" /> <span className="text-danger">*</span></label>
                             <input type="text" value={this.state.name} onChange={(e) => this.handleOnChangeInput(e, 'name')} />
                         </div>
-                        
+
                         <div className="input-group-apple full-width">
                             <label><FormattedMessage id="manage-specialty.image" /> <span className="text-danger">*</span></label>
                             <div className="preview-img-container">
@@ -117,12 +117,12 @@ class ModalManageSpecialty extends Component {
                     </div>
                 </ModalBody>
                 <ModalFooter>
-                    <button className="btn-action apple-btn btn-cancel" onClick={() => toggleFromParent()}>
+                    <button className="btn-action btn btn-cancel" onClick={() => toggleFromParent()}>
                         <FormattedMessage id="manage-specialty.btn-cancel" />
                     </button>
-                    <button className="btn-action apple-btn btn-save" onClick={() => this.handleSave()}>
-                        {action === 'CREATE' 
-                            ? <FormattedMessage id="manage-specialty.save" /> 
+                    <button className="btn-action btn btn-save" onClick={() => this.handleSave()}>
+                        {action === 'CREATE'
+                            ? <FormattedMessage id="manage-specialty.save" />
                             : <FormattedMessage id="manage-user.btn-update" />
                         }
                     </button>

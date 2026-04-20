@@ -128,7 +128,7 @@ class Register extends Component {
                                     {/* <img src={gender_icon} alt="Gender" /> */}
                                     <Select
                                         className="react-select-container"
-                                        classNamePrefix="apple-select"
+                                        classNamePrefix="select"
                                         options={this.handleSelectGender()}
                                         placeholder={language === 'vi' ? "Chọn giới tính" : "Select Gender"}
                                         onChange={(selected) => this.handleOnChangeInput({ target: { value: selected.value } }, 'gender')}

@@ -36,8 +36,9 @@ class ProfileDoctor extends Component {
                 }
 
                 if (result && result.image) {
-                    // Convert image base64 string to data URL for browser rendering
-                    result.image = `data:image/jpeg;base64,${result.image}`;
+                    if (typeof result.image === 'string' && !result.image.startsWith('data:')) {
+                        result.image = `data:image/jpeg;base64,${result.image}`;
+                    }
                 }
 
 

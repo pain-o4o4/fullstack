@@ -134,7 +134,7 @@ class ManageSpecialty extends Component {
                 </div>
 
                 <div className="table-wrapper">
-                    <table className="apple-table">
+                    <table className="table">
                         <thead>
                             <tr>
                                 <th><FormattedMessage id="manage-specialty.table-name" /></th>

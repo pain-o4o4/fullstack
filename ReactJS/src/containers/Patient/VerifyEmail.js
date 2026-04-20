@@ -57,12 +57,12 @@ class VerifyEmail extends Component {
             <React.Fragment>
                 <HomeHeader />
                 {/* <HomePage /> */}
-                <div className="apple-verify-container">
-                    <div className="apple-glass-card">
+                <div className="verify-container">
+                    <div className="glass-card">
                         {/* KHỐI 1: LOADING (Đang xác thực) */}
                         {isVerifyCompleted === true && (
                             <div className="loader-wrapper fade-in">
-                                <div className="apple-spinner"></div>
+                                <div className="spinner"></div>
                                 <p className="loading-text">
                                     <FormattedMessage id="verify-email.loading" defaultMessage="Verifying data..." />
 
@@ -79,13 +79,13 @@ class VerifyEmail extends Component {
                                         <div className="icon-circle">
                                             <i className="fas fa-check"></i>
                                         </div>
-                                        <h1 className="apple-title">
+                                        <h1 className="title">
                                             <FormattedMessage id="verify-email.success-title" defaultMessage="Verification Successful" />
                                         </h1>
-                                        <p className="apple-desc">
+                                        <p className="desc">
                                             <FormattedMessage id="verify-email.success-desc" defaultMessage="Your appointment has been recorded. Thank you for choosing us." />
                                         </p>
-                                        <button className="btn-apple-pill" onClick={() => this.props.navigate('/home')}>
+                                        <button className="btn-pill" onClick={() => this.props.navigate('/home')}>
                                             <FormattedMessage id="verify-email.back-home" defaultMessage="Back to Home" />
                                         </button>
                                     </div>
@@ -95,13 +95,13 @@ class VerifyEmail extends Component {
                                         <div className="icon-circle">
                                             <i className="fas fa-times"></i>
                                         </div>
-                                        <h1 className="apple-title">
+                                        <h1 className="title">
                                             <FormattedMessage id="verify-email.failed-title" defaultMessage="Verification Failed" />
                                         </h1>
-                                        <p className="apple-desc">
+                                        <p className="desc">
                                             <FormattedMessage id="verify-email.failed-desc" defaultMessage="The link is invalid or has expired. Please check your email again." />
                                         </p>
-                                        <button className="btn-apple-pill secondary" onClick={() => this.props.navigate('/home')}>
+                                        <button className="btn-pill secondary" onClick={() => this.props.navigate('/home')}>
                                             <FormattedMessage id="verify-email.back-home" defaultMessage="Back to Home" />
                                         </button>
                                     </div>

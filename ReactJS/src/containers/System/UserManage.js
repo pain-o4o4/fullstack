@@ -12,7 +12,7 @@ import {
 } from '../../services/userService';
 import ModalCreateUser from './manageSystemModal/ModalCreateUser';
 import './UserManage.scss';
-
+import icon_icons from '../../assets/images/icon_icons.svg';
 const decodeBase64Buffer = (imgObj) => {
     if (imgObj && imgObj.data) {
         let bytes = new Uint8Array(imgObj.data);
@@ -193,10 +193,10 @@ class UserManage extends Component {
     handleDeleteUser = async (user) => {
         let { language } = this.props;
         try {
-            let confirmMsg = language === 'vi' 
-                ? `Bạn có chắc chắn muốn xóa người dùng: ${user.email}?` 
+            let confirmMsg = language === 'vi'
+                ? `Bạn có chắc chắn muốn xóa người dùng: ${user.email}?`
                 : `Are you sure to delete user: ${user.email}?`;
-            
+
             if (window.confirm(confirmMsg)) {
                 let res = await deleteUserService(user.id);
                 if (res && res.errCode === 0) {
@@ -282,8 +282,8 @@ class UserManage extends Component {
                 <Modal isOpen={isModalOpen} toggle={this.resetFormState} className="user-modal" size="lg" centered>
                     <div className="modal-header">
                         <span className="modal-title">
-                            {action === 'CREATE' 
-                                ? <FormattedMessage id="manage-user.modal-create" defaultMessage="Thêm mới người dùng" /> 
+                            {action === 'CREATE'
+                                ? <FormattedMessage id="manage-user.modal-create" defaultMessage="Thêm mới người dùng" />
                                 : <FormattedMessage id="manage-user.modal-update" defaultMessage="Cập nhật người dùng" />
                             }
                         </span>
@@ -293,7 +293,19 @@ class UserManage extends Component {
                     </div>
                     <div className="modal-body">
                         <div className="user-form-grid">
-
+                            <div className="input-group-apple"
+                            >
+                                <label><FormattedMessage id="manage-user.image" defaultMessage="Ảnh đại diện (Avatar)" /></label>
+                                <div className="avatar-upload-area" >
+                                    <div className="avatar-preview">
+                                        <img src={this.state.previewImgURL || icon_icons} alt="Preview" />
+                                    </div>
+                                    <input type="file" id="uploadAvatar" hidden onChange={this.handleOnChangeImage} />
+                                    <label htmlFor="uploadAvatar" className="upload-btn-label">
+                                        <FormattedMessage id="manage-user.upload-avatar" defaultMessage="Tải ảnh lên" />
+                                    </label>
+                                </div>
+                            </div>
                             <div className="input-group-apple">
                                 <label>Email <span className="text-danger">*</span></label>
                                 <input type="email" value={this.state.email}
@@ -371,18 +383,7 @@ class UserManage extends Component {
                                 </select>
                             </div>
 
-                            <div className="input-group-apple">
-                                <label><FormattedMessage id="manage-user.image" defaultMessage="Ảnh đại diện (Avatar)" /></label>
-                                <div className="avatar-upload-area">
-                                    <div className="avatar-preview">
-                                        <img src={this.state.previewImgURL || 'https://static.vecteezy.com/system/resources/previews/026/625/600/non_2x/person-icon-symbol-design-illustration-vector.jpg'} alt="Preview" />
-                                    </div>
-                                    <input type="file" id="uploadAvatar" hidden onChange={this.handleOnChangeImage} />
-                                    <label htmlFor="uploadAvatar" className="upload-btn-label">
-                                        <FormattedMessage id="manage-user.upload-avatar" defaultMessage="Tải ảnh lên" />
-                                    </label>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                     <div className="modal-footer">
@@ -390,8 +391,8 @@ class UserManage extends Component {
                             <FormattedMessage id="manage-user.btn-cancel" defaultMessage="Hủy" />
                         </button>
                         <button className="btn-save" onClick={this.handleSaveUser}>
-                            {action === 'CREATE' 
-                                ? <FormattedMessage id="manage-user.btn-save" defaultMessage="Lưu mới" /> 
+                            {action === 'CREATE'
+                                ? <FormattedMessage id="manage-user.btn-save" defaultMessage="Lưu mới" />
                                 : <FormattedMessage id="manage-user.btn-update" defaultMessage="Cập nhật" />
                             }
                         </button>

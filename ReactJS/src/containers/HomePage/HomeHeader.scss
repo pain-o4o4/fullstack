@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-$apple-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+$ease: cubic-bezier(0.25, 0.1, 0.25, 1);
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
@@ -93,7 +93,7 @@ body {
                         background: #0071e3;
                         transform: translateX(-50%) scaleX(0);
                         transform-origin: center;
-                        transition: transform 0.3s $apple-ease;
+                        transition: transform 0.3s $ease;
                         border-radius: 1px;
                     }
 
@@ -121,7 +121,7 @@ body {
                     gap: 14px;
                     padding: 0 16px;
                     background: transparent;
-                    animation: spotlightOpen 0.35s $apple-ease;
+                    animation: spotlightOpen 0.35s $ease;
 
                     .search-input-container {
                         position: relative;
@@ -152,7 +152,7 @@ body {
                             font-weight: 400;
                             color: #1d1d1f;
                             font-family: inherit;
-                            transition: all 0.3s $apple-ease;
+                            transition: all 0.3s $ease;
 
                             &::placeholder {
                                 color: #86868b;
@@ -486,7 +486,7 @@ body {
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                transition: all 0.4s $apple-ease;
+                transition: all 0.4s $ease;
                 cursor: pointer;
 
                 &:hover {
@@ -513,12 +513,12 @@ body {
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    transition: all 0.4s $apple-ease;
+                    transition: all 0.4s $ease;
 
                     img {
                         width: 30px;
                         height: 30px;
-                        transition: transform 0.4s $apple-ease;
+                        transition: transform 0.4s $ease;
                     }
                 }
 

@@ -42,10 +42,7 @@ let postBookAppointmentService = (data) => {
             });
 
 
-            let finalAmount = Number("2000");
-            // if (isNaN(finalAmount) || finalAmount < 2000) {
-            //     finalAmount = 5000;
-            // }
+            let finalAmount = 5000;
 
             const body = {
                 orderCode: orderCode,
@@ -71,7 +68,10 @@ let postBookAppointmentService = (data) => {
             if (paymentLinkRes && paymentLinkRes.checkoutUrl) {
                 return resolve({
                     errCode: 0,
-                    data: paymentLinkRes.checkoutUrl
+                    data: {
+                        checkoutUrl: paymentLinkRes.checkoutUrl,
+                        bookingId: appointment.id
+                    }
                 });
             } else {
                 throw new Error("PayOS does not return the checkout URL.");

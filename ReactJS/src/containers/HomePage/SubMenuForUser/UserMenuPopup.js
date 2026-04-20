@@ -28,7 +28,7 @@ class UserMenuPopup extends Component {
         const { isLoggedIn, userInfo, handleViewList, processLogout } = this.props;
 
         return (
-            <div className="apple-popup-menu">
+            <div className="popup-menu">
                 {isLoggedIn ? (
                     <React.Fragment>
                         <div className="menu-header">

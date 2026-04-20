@@ -1,4 +1,4 @@
-.apple-account-page {
+.account-page {
     background-color: #ffffff;
     display: flex;
     flex-direction: column;
@@ -6,7 +6,7 @@
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
     height: 100vh;
 
-    .apple-sub-header {
+    .sub-header {
         position: sticky;
         top: 0;
         z-index: 1000;
@@ -85,7 +85,7 @@
         }
     }
 
-    .apple-settings-container {
+    .settings-container {
 
         flex: 1;
         width: 100%;
@@ -102,7 +102,7 @@
             height: 100%;
         }
 
-        .apple-sidebar {
+        .sidebar {
             margin-top: 45px !important;
             width: 260px;
             flex-shrink: 0;
@@ -256,7 +256,7 @@
             }
         }
 
-        .apple-main-content {
+        .main-content {
             flex: 1;
             min-width: 0;
             height: 100%;

@@ -15,7 +15,7 @@
 }
 
 .booking-modal-content {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+    font-family: -system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
 
     /* Header tối giản */
     .booking-modal-header {
@@ -83,7 +83,7 @@
             }
 
             .form-control {
-                    background: rgba(0, 0, 0, 0.03); // Màu nền input đặc trưng Apple
+                background: rgba(0, 0, 0, 0.03); // Màu nền input đặc trưng Apple
                 border: 2px solid transparent !important;
                 border-radius: 12px !important;
                 padding: 12px 16px !important;
@@ -91,13 +91,13 @@
                 font-size: 15px !important;
                 color: #1d1d1f !important;
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-                
+
                 &:focus {
                     background: #ffffff !important;
                     border-color: #0071e3 !important; // Apple Blue
                     box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1) !important;
                 }
-                
+
             }
 
             /* Custom cho React-Select và DatePicker nếu chúng dùng chung class */
@@ -140,17 +140,19 @@
         }
 
         /* Nút Hủy (Cancel) kiểu Apple thường là text link hoặc nút xám */
-        .btn-primary:first-child { 
+        .btn-primary:first-child {
             background: #f5f5f7 !important;
             color: #1d1d1f !important;
-            
+
             &:hover {
                 background: #e8e8ed !important;
             }
         }
     }
 }
+
 .react-select-container {
+
     // Thanh điều khiển chính (Cái ô input Duy nhìn thấy)
     .react-select__control {
         background-color: #f5f5f7 !important; // Màu xám nhạt Apple

@@ -84,7 +84,16 @@ class MyBooking extends Component {
                                         let formattedDate = moment(new Date(parseInt(item.date))).format('DD/MM/YYYY');
 
                                         return (
-                                            <tr key={index} className="pointer-row" onClick={() => this.props.navigate('/patient/detail-schedule/' + item.id)}>
+                                            <tr key={index} 
+                                                className={`pointer-row status-${item.statusId}`} 
+                                                onClick={() => {
+                                                    if (item.statusId === 'S1') {
+                                                        this.props.navigate(`/patient/payment?bookingId=${item.id}`);
+                                                    } else {
+                                                        this.props.navigate('/patient/detail-schedule/' + item.id);
+                                                    }
+                                                }}
+                                            >
                                                 <td>{index + 1}</td>
                                                 <td>
                                                     <div className="time-display">
@@ -99,11 +108,24 @@ class MyBooking extends Component {
                                                 </td>
                                                 <td>
                                                     <span className={`status-badge ${item.statusId}`}>
-                                                        {language === 'vi' ? item.statusData.valueVi : item.statusData.valueEn}
+                                                        {item.statusId === 'S1' ? <FormattedMessage id="patient.my-booking.pending" /> : 
+                                                         item.statusId === 'S2' ? <FormattedMessage id="patient.my-booking.confirmed" /> :
+                                                         item.statusId === 'S3' ? <FormattedMessage id="patient.my-booking.done" /> :
+                                                         item.statusId === 'S4' ? <FormattedMessage id="patient.my-booking.cancelled" /> :
+                                                         (language === 'vi' ? item.statusData.valueVi : item.statusData.valueEn)
+                                                        }
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <span className="text-primary" style={{cursor: 'pointer'}}>Xem chi tiết &rarr;</span>
+                                                    {item.statusId === 'S1' ? 
+                                                        <span className="text-primary" style={{fontWeight: '600', cursor: 'pointer'}}>
+                                                            {language === 'vi' ? 'Thanh toán ngay \u2192' : 'Pay now \u2192'}
+                                                        </span> 
+                                                        : 
+                                                        <span className="text-secondary" style={{cursor: 'pointer'}}>
+                                                            {language === 'vi' ? 'Xem chi tiết \u2192' : 'View details \u2192'}
+                                                        </span>
+                                                    }
                                                 </td>
                                             </tr>
                                         )

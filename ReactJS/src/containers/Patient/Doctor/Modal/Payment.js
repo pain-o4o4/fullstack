@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { withRouter } from '../../../../components/Navigator';
 import HomeHeader from '../../../HomePage/HomeHeader';
-import { postBookAppointment } from '../../../../services/userService';
+import { postBookAppointment, getDetailSchedulePatient } from '../../../../services/userService';
 import { toast } from 'react-toastify';
+import { FormattedMessage } from 'react-intl';
+import { LANGUAGES } from '../../../../utils';
 import _ from 'lodash';
 import './Payment.scss';
 
@@ -11,126 +13,324 @@ class Payment extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            timeLeft: 900, // 15 phút
-            bookingData: null
+            timeLeft: 900,
+            bookingData: null,
+            isLoading: true
         }
     }
 
-    componentDidMount() {
-        // Ưu tiên lấy từ location state (nhận từ BookingModal)
+    async componentDidMount() {
+        let bookingData = null;
+        let bookingId = null;
+
+        // CASE 1: Arriving from BookingModal (New booking, not yet saved in DB)
         if (this.props.location.state && this.props.location.state.bookingData) {
-            this.setState({
-                bookingData: this.props.location.state.bookingData
-            });
-            this.startTimer();
-        } else {
-            // Trường hợp user F5 hoặc vào trực tiếp link mà không có data
-            toast.error("Không tìm thấy thông tin đơn hàng!");
-            this.props.navigate('/home');
+            bookingData = this.props.location.state.bookingData;
+            
+            this.setState({ bookingData, isLoading: false });
+
+            if (!bookingData.bookingId) {
+                // Save to DB immediately to get S1 status
+                await this.saveInitialBooking(bookingData);
+            } else {
+                this.handleTimerPersistence(bookingData.bookingId);
+            }
+        } 
+        // CASE 2: Arriving from MyBooking or URL (Existing bookingId)
+        else {
+            const query = new URLSearchParams(this.props.location.search);
+            bookingId = query.get('bookingId');
+            if (bookingId) {
+                await this.fetchBookingDetails(bookingId);
+            } else {
+                toast.error(this.props.language === LANGUAGES.VI ? "Không tìm thấy thông tin đơn hàng!" : "Order information not found!");
+                this.props.navigate('/home');
+            }
         }
     }
 
-    componentWillUnmount() {
-        if (this.timer) clearInterval(this.timer);
+    saveInitialBooking = async (bookingData) => {
+        try {
+            // This backend call creates S1 AND PayOS link
+            let res = await postBookAppointment(bookingData);
+            if (res && res.errCode === 0 && res.data) {
+                const { bookingId, checkoutUrl } = res.data;
+                this.setState({ 
+                    bookingData: { ...bookingData, bookingId },
+                    checkoutUrl: checkoutUrl // Store for later
+                });
+                this.handleTimerPersistence(bookingId);
+            } else {
+                // If backend fails (e.g. PayOS error), the record might or might not be saved 
+                // but we at least show the summary from state
+                toast.error(this.props.language === LANGUAGES.VI 
+                    ? "Lưu lịch hẹn thất bại hoặc lỗi cổng thanh toán!" 
+                    : "Failed to save appointment or payment gateway error!");
+            }
+        } catch (e) {
+            console.error(e);
+        }
     }
 
-    startTimer = () => {
+    fetchBookingDetails = async (bookingId) => {
+        try {
+            let res = await getDetailSchedulePatient(bookingId);
+            if (res && res.errCode === 0 && res.data) {
+                let data = res.data;
+                const { language } = this.props;
+
+                const createdAt = new Date(data.createdAt).getTime();
+                const now = Date.now();
+                const diff = now - createdAt;
+                const fifteenMins = 15 * 60 * 1000;
+
+                let reconstructed = {
+                    bookingId: data.id,
+                    doctorId: data.doctorId,
+                    doctorName: `${data.doctorBookingData.lastName} ${data.doctorBookingData.firstName}`,
+                    doctorImage: data.doctorBookingData.image,
+                    clinicName: data.doctorBookingData.doctorinforData?.nameClinic,
+                    addressClinic: data.doctorBookingData.doctorinforData?.addressClinic,
+                    specialtyName: data.doctorBookingData.Markdown?.description || '',
+                    date: data.date,
+                    timeType: data.timeType,
+                    timeLabel: language === LANGUAGES.VI ? data.timeTypeDataPatient.valueVi : data.timeTypeDataPatient.valueEn,
+                    price: data.doctorBookingData.doctorinforData.priceTypeData.valueVi,
+                    priceId: language === LANGUAGES.VI 
+                        ? data.doctorBookingData.doctorinforData.priceTypeData.valueVi + ' VNĐ'
+                        : data.doctorBookingData.doctorinforData.priceTypeData.valueEn + ' USD',
+                    fullName: data.patientBookingData?.lastName + ' ' + data.patientBookingData?.firstName,
+                    phoneNumber: data.patientBookingData?.phonenumber,
+                    email: data.patientBookingData?.email,
+                    address: data.patientBookingData?.address,
+                    gender: data.patientBookingData?.gender,
+                    genderLabel: language === LANGUAGES.VI ? data.patientBookingData?.genderData?.valueVi : data.patientBookingData?.genderData?.valueEn,
+                    birthday: data.patientBookingData?.birthday,
+                    reason: data.patientBookingData?.reason,
+                };
+
+                if (diff > fifteenMins) {
+                    toast.warn(language === LANGUAGES.VI ? "Hết hạn! Đang tạo phiên mới..." : "Expired! Creating new session...");
+                    await this.createNewBookingSession(reconstructed);
+                    return;
+                }
+
+                this.setState({ 
+                    bookingData: reconstructed, 
+                    isLoading: false,
+                    timeLeft: Math.max(0, Math.floor((fifteenMins - diff) / 1000))
+                }, () => {
+                    this.startTimer(data.id);
+                });
+            }
+        } catch (e) { console.error(e); }
+    }
+
+    handleTimerPersistence = (bookingId) => {
+        // This is now redundant since we use fetchBookingDetails logic, but let's keep it simple
+        // If we have an ID but no fetch (newly created), we start 15 min timer
+        this.setState({ timeLeft: 900 }, () => this.startTimer(bookingId));
+    }
+
+    createNewBookingSession = async (oldData) => {
+        try {
+            // Re-call the booking API with old data to get a fresh ID
+            let res = await postBookAppointment(oldData);
+            if (res && res.errCode === 0 && res.data) {
+                const newBookingId = res.data.bookingId;
+                // Redirect to self with new ID
+                this.props.navigate(`/patient/payment?bookingId=${newBookingId}`, { replace: true });
+                // Force reload logic
+                window.location.reload(); 
+            } else {
+                toast.error("Error regenerating session.");
+                this.props.navigate('/home');
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    startTimer = (bookingId) => {
+        if (this.timer) clearInterval(this.timer);
         this.timer = setInterval(() => {
             this.setState(prevState => {
                 if (prevState.timeLeft <= 1) {
                     clearInterval(this.timer);
-                    toast.error("Hết thời gian thanh toán!");
-                    this.props.navigate('/home');
+                    this.handleTimeout(bookingId);
+                    return { timeLeft: 0 };
                 }
                 return { timeLeft: prevState.timeLeft - 1 };
             });
         }, 1000);
     }
 
+    handleTimeout = (bookingId) => {
+        if (bookingId) localStorage.removeItem(`payment_expiry_${bookingId}`);
+        toast.error(this.props.language === LANGUAGES.VI ? "Hết thời gian thanh toán!" : "Payment timeout!");
+        this.props.navigate('/home');
+    }
+
     handleConfirmPaid = async () => {
         let { bookingData } = this.state;
         if (bookingData) {
             try {
+                // Now calling postBookAppointment will actually get the PayOS link because record already exists
                 let res = await postBookAppointment(bookingData);
-                if (res && res.errCode === 0 && res.data) {
-                    // toast.success(res.errMessage || "Thanh toán thanh cong!");
-                    window.location.href = res.data;
+                if (res && res.errCode === 0 && res.data && res.data.checkoutUrl) {
+                    // Clear timer since user is proceeding to gateway
+                    localStorage.removeItem(`payment_expiry_${bookingData.bookingId}`);
+                    window.location.href = res.data.checkoutUrl;
                 } else {
-                    toast.error(res.errMessage || "Lỗi khởi tạo thanh toán!");
+                    toast.error(res.errMessage || "Error initializing payment!");
                 }
             } catch (e) {
                 console.log(e);
-                toast.error("Không thể kết nối đến máy chủ thanh toán!");
+                toast.error("Connection error!");
             }
         }
     }
 
     render() {
-        let { timeLeft, bookingData } = this.state;
+        let { timeLeft, bookingData, isLoading } = this.state;
+        let { language } = this.props;
         let minutes = Math.floor(timeLeft / 60);
         let seconds = timeLeft % 60;
 
         return (
             <React.Fragment>
-                <HomeHeader isShowBanner={false} />
-                <div className="payment-page">
-                    <div className="payment-container">
-                        <div className="payment-header">
-                            <h2>XÁC NHẬN THANH TOÁN</h2>
-                            <div className="timer-box">
-                                <i className="fas fa-clock"></i>
-                                <span>Thời gian giữ chỗ: {minutes}:{seconds < 10 ? `0${seconds}` : seconds}</span>
+                <div className="payment-wrapper">
+                    <HomeHeader isShowBanner={false} />
+
+                    <div className="payment-main">
+                        <div className="payment-content-layout">
+                            {/* Left Column - Sticky via CSS */}
+                            <div className="content-left">
+                                <div className="product-visual">
+                                    <div className="doctor-card">
+                                        <img
+                                            src={bookingData?.doctorImage || 'https://via.placeholder.com/400x270'}
+                                            alt="Doctor"
+                                            className="doctor-image"
+                                        />
+                                    </div>
+                                    <div className="name-overlay">
+                                        <h3 className="doctor-name">{bookingData?.doctorName}</h3>
+                                    </div>
+                                </div>
+
+                                <div className="perks-grid">
+                                    <div className="perk-item">
+                                        <i className="fas fa-calendar-check"></i>
+                                        <div className="perk-text">
+                                            <strong><FormattedMessage id="homepage.feature-booking" /></strong>
+                                            <span><FormattedMessage id="homepage.about-more" /></span>
+                                        </div>
+                                    </div>
+                                    <div className="perk-item">
+                                        <i className="fas fa-shield-alt"></i>
+                                        <div className="perk-text">
+                                            <strong><FormattedMessage id="payment-page.appointment-title" /></strong>
+                                            <span><FormattedMessage id="payment-page.note" /></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Right Column */}
+                            <div className="content-right">
+                                <h1 className="main-title">
+                                    {language === LANGUAGES.VI ? 'Kiểm tra thông tin lịch hẹn' : 'Review your appointment'}
+                                </h1>
+
+                                {!isLoading && bookingData ? (
+                                    <div className="selection-groups">
+                                        <div className="selection-section">
+                                            <h2 className="section-title"><FormattedMessage id="payment-page.doctor-title" /></h2>
+                                            <div className="card active">
+                                                <div className="card-header">
+                                                    <span className="card-label"><strong>{bookingData.doctorName}</strong></span>
+                                                    <span className="card-price">Included</span>
+                                                </div>
+                                                <div className="card-details">
+                                                    <p>{bookingData.clinicName}</p>
+                                                    <p className="secondary">{bookingData.addressClinic}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="selection-section">
+                                            <h2 className="section-title"><FormattedMessage id="payment-page.appointment-title" /></h2>
+                                            <div className="card active">
+                                                <div className="card-header">
+                                                    <span className="card-label"><strong>{bookingData.timeLabel}</strong></span>
+                                                    <span className="card-price">{bookingData.priceId}</span>
+                                                </div>
+                                                <div className="card-details">
+                                                    <p>{bookingData.date}</p>
+                                                    <p className="secondary">Time zone: GMT+7 (Vietnam)</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="selection-section">
+                                            <h2 className="section-title"><FormattedMessage id="payment-page.patient-title" /></h2>
+                                            <div className="card info-only">
+                                                <div className="patient-summary-grid">
+                                                    <div className="summary-item">
+                                                        <span className="label"><FormattedMessage id="payment-page.patient-name" /></span>
+                                                        <span className="value">{bookingData.fullName}</span>
+                                                    </div>
+                                                    <div className="summary-item">
+                                                        <span className="label"><FormattedMessage id="payment-page.phone" /></span>
+                                                        <span className="value">{bookingData.phoneNumber}</span>
+                                                    </div>
+                                                    <div className="summary-item">
+                                                        <span className="label"><FormattedMessage id="payment-page.email" /></span>
+                                                        <span className="value">{bookingData.email}</span>
+                                                    </div>
+                                                    <div className="summary-item">
+                                                        <span className="label"><FormattedMessage id="payment-page.gender" /></span>
+                                                        <span className="value">{bookingData.genderLabel}</span>
+                                                    </div>
+                                                    <div className="summary-item full">
+                                                        <span className="label"><FormattedMessage id="payment-page.patient-address" /></span>
+                                                        <span className="value">{bookingData.address}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="loading-state">
+                                        <div className="spinner"></div>
+                                        <span><FormattedMessage id="verify-email.loading" /></span>
+                                    </div>
+                                )}
                             </div>
                         </div>
+                    </div>
 
-                        {bookingData ? (
-                            <div className="payment-body">
-                                <div className="info-grid">
-                                    {/* Cột 1: Thông tin bác sĩ */}
-                                    <div className="info-card">
-                                        <div className="card-title"><i className="fas fa-user-md"></i> Thông tin bác sĩ</div>
-                                        <div className="card-content">
-                                            <p><span className="label">Bác sĩ:</span> <strong>{bookingData.doctorName}</strong></p>
-                                            <p><span className="label">Chuyên khoa:</span> <span>{bookingData.specialtyName}</span></p>
-                                            <p><span className="label">Phòng khám:</span> <span>{bookingData.clinicName}</span></p>
-                                            <p><span className="label">Địa chỉ:</span> <span className="address">{bookingData.addressClinic}</span></p>
-                                        </div>
+                    <div className="sticky-footer">
+                        <div className="footer-content">
+                            <div className="footer-left">
+                                <div className="status-item">
+                                    <i className="fas fa-clock"></i>
+                                    <div className="status-text">
+                                        <span><FormattedMessage id="payment-page.timer" /> <strong>{minutes}:{seconds < 10 ? `0${seconds}` : seconds}</strong></span>
+                                        <span className="action-link"><FormattedMessage id="homepage.support" /></span>
                                     </div>
-
-                                    {/* Cột 2: Thông tin bệnh nhân */}
-                                    <div className="info-card">
-                                        <div className="card-title"><i className="fas fa-user-injured"></i> Thông tin bệnh nhân</div>
-                                        <div className="card-content">
-                                            <p><span className="label">Họ tên:</span> <strong>{bookingData.fullName}</strong></p>
-                                            <p><span className="label">Số điện thoại:</span> <span>{bookingData.phoneNumber}</span></p>
-                                            <p><span className="label">Email:</span> <span>{bookingData.email}</span></p>
-                                            <p><span className="label">Lý do khám:</span> <i>{bookingData.reason || 'Khám sức khỏe'}</i></p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Tổng tiền */}
-                                <div className="total-section">
-                                    <div className="total-label">Tổng chi phí thanh toán:</div>
-                                    <div className="total-amount">{bookingData.priceId}</div>
-                                </div>
-
-                                <div className="payment-note">
-                                    <i className="fas fa-info-circle"></i>
-                                    Hệ thống sử dụng cổng thanh toán PayOS. Vui lòng không tắt trình duyệt cho đến khi nhận được thông báo thành công.
                                 </div>
                             </div>
-                        ) : (
-                            <div className="loading-state">Đang tải dữ liệu đơn hàng...</div>
-                        )}
-
-                        <div className="payment-footer">
-                            <button className="btn-confirm" onClick={this.handleConfirmPaid}>
-                                <i className="fas fa-credit-card"></i> THANH TOÁN NGAY
-                            </button>
-                            <button className="btn-cancel" onClick={() => this.props.navigate(-1)}>
-                                QUAY LẠI
-                            </button>
+                            <div className="footer-right">
+                                <div className="total-box">
+                                    <span className="total-amount-large">{bookingData?.priceId}</span>
+                                    <span className="loan-info">Approx. {bookingData?.priceId} with 0% interest.</span>
+                                </div>
+                                <button className="btn-primary" onClick={this.handleConfirmPaid}>
+                                    <FormattedMessage id="payment-page.pay-now" />
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

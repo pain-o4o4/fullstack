@@ -30,9 +30,19 @@ let getTopDoctorHomeService = (limit) => {
                         attributes: ["valueEn", "valueVi"],
                     },
                 ],
-                raw: true,
+                raw: false,
                 nest: true,
             });
+
+            if (users && users.length > 0) {
+                users.map(item => {
+                    if (item.image) {
+                        item.image = Buffer.from(item.image, 'base64').toString('binary');
+                    }
+                    return item;
+                })
+            }
+
             resolve({
                 errCode: 0,
                 data: users,
@@ -62,14 +72,13 @@ let getAllDoctorsService = () => {
                         attributes: ['valueEn', 'valueVi']
                     },
                 ],
-                raw: true,
+                raw: false,
                 nest: true
             });
 
             if (doctors && doctors.length > 0) {
                 doctors = doctors.map(item => {
                     if (item.image) {
-
                         item.image = Buffer.from(item.image, 'base64').toString('binary');
                     }
                     return item;
@@ -400,6 +409,9 @@ let getProfileDoctorById = (doctorId) => {
                     raw: false,
                     nest: true,
                 })
+                if (data && data.image) {
+                    data.image = Buffer.from(data.image, 'base64').toString('binary');
+                }
                 if (!data) data = {};
                 resolve({
                     errCode: 0,
@@ -427,8 +439,8 @@ let getListPatientForDoctor = (doctorId, date) => {
                 where: { doctorId: doctorId, statusId: 'S2' },
                 raw: false
             });
-            for(let booking of allS2) {
-                if(Number(booking.date) < todayMillis) {
+            for (let booking of allS2) {
+                if (Number(booking.date) < todayMillis) {
                     booking.statusId = 'S1';
                     await booking.save();
                 }
@@ -453,12 +465,12 @@ let getListPatientForDoctor = (doctorId, date) => {
             });
 
             // 3. Custom Sort: S2 (priority 1) > S3 (priority 2) > S1 (priority 3)
-            if(data && data.length > 0) {
-               data.sort((a,b) => {
-                   let pA = a.statusId === 'S2' ? 1 : (a.statusId === 'S3' ? 2 : 3);
-                   let pB = b.statusId === 'S2' ? 1 : (b.statusId === 'S3' ? 2 : 3);
-                   return pA - pB;
-               });
+            if (data && data.length > 0) {
+                data.sort((a, b) => {
+                    let pA = a.statusId === 'S2' ? 1 : (a.statusId === 'S3' ? 2 : 3);
+                    let pB = b.statusId === 'S2' ? 1 : (b.statusId === 'S3' ? 2 : 3);
+                    return pA - pB;
+                });
             }
 
             resolve({
@@ -497,7 +509,7 @@ let updateBookingStatus = (data) => {
                 await appointment.save();
 
                 // If shifting to S3, send complete email
-                if(data.statusId === 'S3' && oldStatus !== 'S3') {
+                if (data.statusId === 'S3' && oldStatus !== 'S3') {
                     if (data.email) {
                         try {
                             await emailService.sendRemedyEmail({
@@ -508,7 +520,7 @@ let updateBookingStatus = (data) => {
                                 clinicName: data.clinicName || 'BookingCare',
                                 language: data.language || 'vi'
                             });
-                        } catch(e) {
+                        } catch (e) {
                             console.log("Email failed to send but booking updated: ", e);
                         }
                     }

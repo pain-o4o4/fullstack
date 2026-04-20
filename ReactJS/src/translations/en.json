@@ -190,6 +190,51 @@
         "payment": "Payment",
         "today": "Today"
     },
+    "payment-page": {
+        "title": "PAYMENT CONFIRMATION",
+        "timer": "Reservation time: ",
+        "doctor-title": "DOCTOR INFORMATION",
+        "patient-title": "PATIENT INFORMATION",
+        "appointment-title": "APPOINTMENT INFORMATION",
+        "appointment-date": "Appointment date",
+        "appointment-time": "Appointment time",
+        "total": "Total payment amount",
+        "note": "The system uses the PayOS payment gateway. Please do not close the browser until you receive a success notification.",
+        "pay-now": "PAY NOW",
+        "back": "BACK",
+        "doctor-name": "Doctor",
+        "specialty": "Specialty",
+        "clinic": "Clinic",
+        "clinic-address": "Address",
+        "patient-name": "Full name",
+        "phone": "Phone number",
+        "email": "Email",
+        "birthday": "Birthday",
+        "gender": "Gender",
+        "reason": "Reason for visit",
+        "patient-address": "Contact address",
+        "status": {
+            "S1": "Pending payment",
+            "S2": "Confirmed",
+            "S3": "Done",
+            "S4": "Cancelled"
+        }
+    },
+    "patient": {
+        "my-booking": {
+            "title": "YOUR APPOINTMENTS",
+            "time": "Time",
+            "doctor": "Doctor",
+            "clinic": "Clinic",
+            "status": "Status",
+            "actions": "Actions",
+            "no-data": "You don't have any appointments yet.",
+            "pending": "Pending Payment",
+            "confirmed": "Confirmed",
+            "done": "Done",
+            "cancelled": "Cancelled"
+        }
+    },
     "verify-email": {
         "loading": "Verifying data...",
         "success-title": "Verification Successful",

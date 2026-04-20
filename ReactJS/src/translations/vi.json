@@ -200,6 +200,51 @@
         "payment": "Phương thức thanh toán",
         "today": "Hôm nay"
     },
+    "payment-page": {
+        "title": "XÁC NHẬN THANH TOÁN",
+        "timer": "Thời gian giữ chỗ: ",
+        "doctor-title": "THÔNG TIN BÁC SĨ",
+        "patient-title": "THÔNG TIN BỆNH NHÂN",
+        "appointment-title": "THÔNG TIN LỊCH KHÁM",
+        "appointment-date": "Ngày khám",
+        "appointment-time": "Giờ khám",
+        "total": "Tổng chi phí thanh toán",
+        "note": "Hệ thống sử dụng cổng thanh toán PayOS. Vui lòng không tắt trình duyệt cho đến khi nhận được thông báo thành công.",
+        "pay-now": "THANH TOÁN NGAY",
+        "back": "QUAY LẠI",
+        "doctor-name": "Bác sĩ",
+        "specialty": "Chuyên khoa",
+        "clinic": "Phòng khám",
+        "clinic-address": "Địa chỉ",
+        "patient-name": "Họ tên",
+        "phone": "Số điện thoại",
+        "email": "Email",
+        "birthday": "Ngày sinh",
+        "gender": "Giới tính",
+        "reason": "Lý do khám",
+        "patient-address": "Địa chỉ liên hệ",
+        "status": {
+            "S1": "Chờ thanh toán",
+            "S2": "Đã thanh toán",
+            "S3": "Đã xong",
+            "S4": "Đã hủy"
+        }
+    },
+    "patient": {
+        "my-booking": {
+            "title": "LỊCH HẸN CỦA BẠN",
+            "time": "Thời gian",
+            "doctor": "Bác sĩ",
+            "clinic": "Phòng khám",
+            "status": "Trạng thái",
+            "actions": "Thao tác",
+            "no-data": "Bạn chưa có lịch hẹn nào.",
+            "pending": "Chờ thanh toán",
+            "confirmed": "Đã xác nhận",
+            "done": "Đã xong",
+            "cancelled": "Đã hủy"
+        }
+    },
     "verify-email": {
         "loading": "Đang xác thực dữ liệu...",
         "success-title": "Xác nhận thành công",

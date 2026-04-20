@@ -81,8 +81,8 @@ class ModalManageClinic extends Component {
         return (
             <Modal isOpen={isOpen} toggle={() => toggleFromParent()} size="xl" centered className="modal-add-new-user modal-manage-clinic" backdrop="static">
                 <ModalHeader toggle={() => toggleFromParent()}>
-                    {action === 'CREATE' 
-                        ? <FormattedMessage id="manage-clinic.modal-create" /> 
+                    {action === 'CREATE'
+                        ? <FormattedMessage id="manage-clinic.modal-create" />
                         : <FormattedMessage id="manage-clinic.modal-edit" />
                     }
                 </ModalHeader>
@@ -92,12 +92,12 @@ class ModalManageClinic extends Component {
                             <label><FormattedMessage id="manage-clinic.name" /> <span className="text-danger">*</span></label>
                             <input type="text" value={this.state.name} onChange={(e) => this.handleOnChangeInput(e, 'name')} />
                         </div>
-                        
+
                         <div className="input-group-apple full-width">
                             <label><FormattedMessage id="manage-clinic.address" /> <span className="text-danger">*</span></label>
                             <input type="text" value={this.state.address} onChange={(e) => this.handleOnChangeInput(e, 'address')} />
                         </div>
-                        
+
                         <div className="input-group-apple full-width">
                             <label><FormattedMessage id="manage-clinic.image" /> <span className="text-danger">*</span></label>
                             <div className="preview-img-container">
@@ -124,10 +124,10 @@ class ModalManageClinic extends Component {
                     </div>
                 </ModalBody>
                 <ModalFooter>
-                    <button className="btn-action apple-btn btn-cancel" onClick={() => toggleFromParent()}>
+                    <button className="btn-action btn btn-cancel" onClick={() => toggleFromParent()}>
                         <FormattedMessage id="manage-clinic.btn-cancel" />
                     </button>
-                    <button className="btn-action apple-btn btn-save" onClick={() => this.handleSave()}>
+                    <button className="btn-action btn btn-save" onClick={() => this.handleSave()}>
                         <FormattedMessage id="manage-clinic.save" />
                     </button>
                 </ModalFooter>

@@ -13,7 +13,7 @@
         border: none !important;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important;
         overflow: hidden;
-        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
+        font-family: -system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
     }
 
     .modal-header {
@@ -60,7 +60,7 @@
                 opacity: 1 !important;
                 background: #d2d2d7 !important;
                 transform: scale(1.05);
-                
+
                 span {
                     color: #1d1d1f !important;
                 }
@@ -94,7 +94,8 @@
                 }
 
                 /* Target specifically Bootstrap's form-control to override the white bg seen in screenshot */
-                .form-control, input {
+                .form-control,
+                input {
                     background: rgba(0, 0, 0, 0.03) !important;
                     border: 2px solid transparent !important;
                     border-radius: 12px !important;
@@ -128,7 +129,7 @@
                 &.max-width-input {
                     grid-column: 1 / -1;
                 }
-                
+
                 /* Avatar Preview Area modernization */
                 .preview-img-container {
                     display: flex;
@@ -189,7 +190,7 @@
             align-items: center !important;
             justify-content: center !important;
             box-shadow: none !important;
-            
+
             &:active {
                 transform: scale(0.96);
             }
