@@ -440,16 +440,19 @@ let getListPatientForDoctor = (doctorId, date) => {
 
             // Fetch all active bookings for this doctor to cleanup
             let allActive = await db.Booking.findAll({
-                where: { 
-                    doctorId: doctorId, 
-                    statusId: { [Op.in]: ['S1', 'S2'] } 
+                where: {
+                    doctorId: doctorId,
+                    statusId: { [Op.in]: ['S1', 'S2'] }
                 },
                 raw: false
             });
 
             for (let booking of allActive) {
                 const createdAt = new Date(booking.createdAt).getTime();
-                const bookingDate = Number(booking.date);
+                // Parse date from DD/MM/YYYY format if necessary
+                const bookingDate = booking.date.includes('/') 
+                    ? moment(booking.date, 'DD/MM/YYYY').valueOf()
+                    : Number(booking.date);
 
                 // A. Auto-cancel S1 (Unpaid) after 15 mins
                 if (booking.statusId === 'S1' && (nowMillis - createdAt > fifteenMins)) {
@@ -465,9 +468,12 @@ let getListPatientForDoctor = (doctorId, date) => {
                 }
             }
 
-            // 2. Fetch all for the specified date
+            // 2. Format query date to DD/MM/YYYY to match DB format
+            let queryDate = moment(+date).startOf('day').format('DD/MM/YYYY');
+
+            // 3. Fetch all for the specified date
             let data = await db.Booking.findAll({
-                where: { doctorId: doctorId, date: date },
+                where: { doctorId: doctorId, date: queryDate },
                 include: [
                     {
                         model: db.User,

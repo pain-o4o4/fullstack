@@ -139,10 +139,10 @@ class ManagePatient extends Component {
                                                         <div className="user-name-block">
                                                             <span className="name">
                                                                 {language === 'vi'
-                                                                    ? `${item.patientBookingData.lastName} ${item.patientBookingData.firstName}`
+                                                                    ? `${item.patientBookingData.lastName} ${item.patientBookingData.firstName} `
                                                                     : `${item.patientBookingData.firstName} ${item.patientBookingData.lastName}`}
                                                             </span>
-                                                            <span className="email">{item.patientBookingData.email} - {item.patientBookingData.phonenumber}</span>
+                                                            <span className="email">- {item.patientBookingData.phonenumber} - {item.patientBookingData.email}</span>
                                                         </div>
                                                     </div>
                                                 </td>
