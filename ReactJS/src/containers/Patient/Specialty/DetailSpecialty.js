@@ -74,7 +74,9 @@ class DetailSpecialty extends Component {
 
                         {/* Danh sách Bác sĩ thuộc chuyên khoa */}
                         <div className="specialty-doctor-list">
-                            <div className="list-title">Bác sĩ chuyên khoa tiêu biểu</div>
+                            <div className="list-title">
+                                <FormattedMessage id="specialty-detail.title" />
+                            </div>
                             {arrDoctorId && arrDoctorId.length > 0 ?
                                 arrDoctorId.map((item, index) => {
                                     return (
@@ -105,7 +107,9 @@ class DetailSpecialty extends Component {
                                         </div>
                                     )
                                 })
-                                : <div className="no-data">Hiện tại chưa có bác sĩ cho chuyên khoa này.</div>
+                                : <div className="no-data">
+                                    <FormattedMessage id="specialty-detail.no-doctor" />
+                                </div>
                             }
                         </div>
                     </div>

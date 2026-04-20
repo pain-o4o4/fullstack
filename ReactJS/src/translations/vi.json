@@ -130,9 +130,55 @@
         "address": "Địa chỉ",
         "image": "Ảnh cơ sở y tế"
     },
-    "co_mun": {
-        "comment": "Từ đây trở xuống thuộc về user, phía trên là admin",
-        "like": "Thich"
+    "manage-specialty": {
+        "title": "Quản lý Chuyên Khoa",
+        "add": "Thêm Chuyên Khoa",
+        "table-name": "Tên Chuyên Khoa",
+        "table-desc": "Mô Tả",
+        "table-actions": "Hành Động",
+        "no-data": "Chưa có dữ liệu chuyên khoa!",
+        "status-ok": "Trạng thái Tốt",
+        "name": "Tên chuyên khoa",
+        "image": "Ảnh chuyên khoa",
+        "btn-cancel": "Hủy bỏ",
+        "modal-create": "Thêm mới Chuyên khoa",
+        "modal-edit": "Chỉnh sửa Chuyên khoa",
+        "upload-img": "Tải ảnh lên",
+        "content-detail": "Nội dung giới thiệu chi tiết",
+        "save": "Lưu thông tin"
+    },
+    "homepage": {
+        "specialty": "Chuyên khoa phổ biến",
+        "clinic": "Cơ sở y tế nổi bật",
+        "clinic-desc": "Tìm hiểu thêm về các cơ sở y tế hoặc chọn một địa điểm cụ thể.",
+        "clinic-explore": "Khám phá tất cả các địa điểm",
+        "doctor": "Bác sĩ nổi bật",
+        "handbook": "Cẩm nang",
+        "more": "Xem thêm",
+        "medical-specialty": "Chuyên khoa",
+        "medical-facility": "Phòng khám",
+        "outstanding-doctor": "Bác sĩ",
+        "about": "Truyền thông nói về chúng tôi",
+        "search": "Tìm kiếm chuyên khoa, phòng khám...",
+        "support": "Hỗ trợ",
+        "detail": "Xem chi tiết",
+        "about-title": "Về BookingCare",
+        "about-more": "Một số thông tin về BookingCare",
+        "about-desc-1": "BookingCare là nền tảng y tế hiện đại kết nối bệnh nhân với các bác sĩ chuyên khoa và cơ sở y tế uy tín trên khắp Việt Nam.",
+        "about-desc-2": "Sứ mệnh của chúng tôi là làm cho dịch vụ y tế chất lượng trở nên dễ tiếp cận, thuận tiện và minh bạch hơn. Cho dù bạn đang tìm kiếm bác sĩ chuyên khoa hay đặt lịch hẹn, BookingCare cung cấp trải nghiệm liền mạch từ đầu đến cuối.",
+        "about-desc-3": "Với hàng ngàn bác sĩ xác thực, phòng khám hiện đại và công nghệ đặt lịch tiên tiến, chúng tôi giúp hàng triệu người Việt Nam chăm sóc sức khỏe tốt hơn mỗi ngày.",
+        "feature-booking": "Dễ dàng đặt lịch trực tuyến",
+        "feature-specialist": "Bác sĩ chuyên khoa xác thực",
+        "feature-reminder": "Nhắc lịch hẹn thông minh",
+        "footer-rights": "© 2026 BookingCare. Mọi quyền được bảo lưu.",
+        "footer-terms": "Điều khoản sử dụng",
+        "footer-privacy": "Chính sách bảo mật",
+        "home": "Trang chủ",
+        "detail-doctor": "Chi tiết bác sĩ"
+    },
+    "specialty-detail": {
+        "title": "Bác sĩ chuyên khoa tiêu biểu",
+        "no-doctor": "Hiện tại chưa có bác sĩ cho chuyên khoa này."
     },
     "schedule-doctor": {
         "calendar": "Lịch khám",
@@ -151,7 +197,8 @@
         "gender": "Giới tính",
         "reason": "Lý do",
         "birthday": "Ngày sinh",
-        "payment": "Phương thức thanh toán"
+        "payment": "Phương thức thanh toán",
+        "today": "Hôm nay"
     },
     "verify-email": {
         "loading": "Đang xác thực dữ liệu...",
@@ -188,23 +235,6 @@
         "price": "Chi phí khám bệnh",
         "payment-method": "Hình thức thanh toán",
         "not-found": "Đang cập nhật"
-    },
-    "manage-specialty": {
-        "title": "Quản lý Chuyên Khoa",
-        "add": "Thêm Chuyên Khoa",
-        "table-name": "Tên Chuyên Khoa",
-        "table-desc": "Mô Tả",
-        "table-actions": "Hành Động",
-        "no-data": "Chưa có dữ liệu chuyên khoa!",
-        "status-ok": "Trạng thái Tốt",
-        "name": "Tên chuyên khoa",
-        "image": "Ảnh chuyên khoa",
-        "btn-cancel": "Hủy bỏ",
-        "modal-create": "Thêm mới Chuyên khoa",
-        "modal-edit": "Chỉnh sửa Chuyên khoa",
-        "upload-img": "Tải ảnh lên",
-        "content-detail": "Nội dung giới thiệu chi tiết",
-        "save": "Lưu thông tin"
     },
     "patient-profile": {
         "title": "Thông tin Cá nhân & Bảo mật",

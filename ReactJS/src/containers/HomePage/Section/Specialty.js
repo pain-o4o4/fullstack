@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './Specialty.scss';
-// import { FormattedMessage } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import Slider from 'react-slick';
 import { withRouter } from '../../../components/Navigator';
 import 'slick-carousel/slick/slick.css';
@@ -36,10 +36,14 @@ class Specialty extends Component {
         return (
             <div className='section-specialty'>
                 <div className='section-header'>
-                    <span className='title-section'>Chuyên khoa phổ biến</span>
+                    <span className='title-section'>
+                        <FormattedMessage id="homepage.specialty" />
+                    </span>
                     <button className='btn-section'
                         onClick={() => this.props.navigate && this.props.navigate('/all-specialty')}
-                    >Xem thêm</button>
+                    >
+                        <FormattedMessage id="homepage.more" />
+                    </button>
                 </div>
                 <div className='section-body'>
                     <Slider {...this.props.settings}>
@@ -62,7 +66,9 @@ class Specialty extends Component {
 
                                             <div className='position'>
                                                 <div className='section-name'>{item.name}</div>
-                                                <div className='section-desc'>Chuyên khoa</div>
+                                                <div className='section-desc'>
+                                                    <FormattedMessage id="homepage.medical-specialty" />
+                                                </div>
                                             </div>
 
                                         </div>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as action from '../../../store/actions'
-// import { FormattedMessage } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import { withRouter } from '../../../components/Navigator';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
@@ -58,9 +58,15 @@ class MedicalFacility extends Component {
                 <div className='medical-facility-container'>
 
                     <div className='medical-facility-header'>
-                        <h2 className='title-section'>Locations</h2>
-                        <p className='desc-section'>Learn more about Mayo Clinic locations or choose a specific location.</p>
-                        <button className='btn-explore'>Explore all locations</button>
+                                                <h2 className='title-section'>
+                            <FormattedMessage id="homepage.clinic" />
+                        </h2>
+                        <p className='desc-section'>
+                            <FormattedMessage id="homepage.clinic-desc" />
+                        </p>
+                        <button className='btn-explore'>
+                            <FormattedMessage id="homepage.clinic-explore" />
+                        </button>
                     </div>
 
 

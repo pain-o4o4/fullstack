@@ -30,7 +30,9 @@ class ScheduleDoctor extends Component {
             if (i === 0) {
                 // Nếu là ngày hiện tại, hiển thị "Hôm nay" thay vì "Thứ ..."
                 let ddMM = moment(new Date()).format('DD/MM');
-                object.label = language === LANGUAGES.VI ? `Hôm nay - ${ddMM}` : `Today - ${ddMM}`;
+                let todayVi = `Hôm nay - ${ddMM}`;
+                let todayEn = `Today - ${ddMM}`;
+                object.label = language === LANGUAGES.VI ? todayVi : todayEn;
             } else {
                 let label = moment(new Date()).add(i, 'days').locale(language).format('ddd - DD/MM');
                 object.label = label.charAt(0).toUpperCase() + label.slice(1);

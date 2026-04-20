@@ -75,6 +75,10 @@ class ExtraInforDoctor extends Component {
                     ? extraInfor.provinceTypeData.valueVi
                     : extraInfor.provinceTypeData.valueEn;
 
+                result.payment = language === LANGUAGES.VI
+                    ? extraInfor.paymentTypeData.valueVi
+                    : extraInfor.paymentTypeData.valueEn;
+
                 result.price = language === LANGUAGES.VI
                     ? new Intl.NumberFormat('vi-VN', {
                         style: 'currency',

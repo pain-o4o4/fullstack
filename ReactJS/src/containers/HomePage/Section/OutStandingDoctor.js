@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './OutStandingDoctor.scss';
-// import { FormattedMessage } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import Slider from 'react-slick';
 import { OutStandingDoctorData } from './Data/OutStandingDoctorData';   // Đúng
 import 'slick-carousel/slick/slick.css';
@@ -46,10 +46,14 @@ class OutStandingDoctor extends Component {
             <React.Fragment>
                 <div className='section-OutStandingDoctor'>
                     <div className='section-header'>
-                        <span className='title-section'>Bác sĩ nổi bật tuần qua</span>
+                                                <span className='title-section'>
+                            <FormattedMessage id="homepage.doctor" />
+                        </span>
                         <button className='btn-section'
                             onClick={() => this.props.navigate && this.props.navigate('/all-doctors')}
-                        >Xem thêm</button>
+                        >
+                            <FormattedMessage id="homepage.more" />
+                        </button>
                     </div>
                     <div className='section-body'>
                         <Slider {...this.props.settings}>
@@ -82,7 +86,9 @@ class OutStandingDoctor extends Component {
                                                     <div className='section-name'>
                                                         {language === LANGUAGES.VI ? nameVi : nameEn}
                                                     </div>
-                                                    <div className='section-desc'>Cơ xương khớp</div>
+                                                    <div className='section-desc'>
+                                                        <FormattedMessage id="homepage.medical-specialty" />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

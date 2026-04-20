@@ -120,6 +120,56 @@
         "address": "Address",
         "image": "Clinic Image"
     },
+    "manage-specialty": {
+        "title": "Manage Medical Specialty",
+        "add": "Add Medical Specialty",
+        "table-name": "Specialty Name",
+        "table-desc": "Status",
+        "table-actions": "Actions",
+        "no-data": "No specialty data available!",
+        "status-ok": "Status: Good",
+        "name": "Specialty Name",
+        "image": "Specialty Image",
+        "btn-cancel": "Cancel",
+        "modal-create": "Add New Specialty",
+        "modal-edit": "Edit Specialty",
+        "upload-img": "Upload Image",
+        "content-detail": "Detailed Description",
+        "save": "Save Specialty"
+    },
+    "homepage": {
+        "specialty": "Popular Specialties",
+        "clinic": "Outstanding Medical Facilities",
+        "clinic-desc": "Learn more about medical facility locations or choose a specific location.",
+        "clinic-explore": "Explore all locations",
+        "doctor": "Outstanding Doctors",
+        "handbook": "Handbooks",
+        "more": "More",
+        "medical-specialty": "Specialty",
+        "medical-facility": "Medical Facility",
+        "outstanding-doctor": "Doctor",
+        "about": "Media About Us",
+        "search": "Search for specialties, clinics...",
+        "support": "Support",
+        "detail": "Information",
+        "about-title": "About BookingCare",
+        "about-more": "Some Information About BookingCare",
+        "about-desc-1": "BookingCare is a modern healthcare platform that connects patients with trusted medical specialists and facilities across Vietnam.",
+        "about-desc-2": "Our mission is to make quality healthcare more accessible, convenient, and transparent. Whether you're looking for a specialist, booking an appointment, or seeking medical advice, BookingCare provides a seamless experience from start to finish.",
+        "about-desc-3": "With thousands of verified doctors, modern clinics, and advanced booking technology, we help millions of Vietnamese people take better care of their health every day.",
+        "feature-booking": "Easy online booking",
+        "feature-specialist": "Verified medical specialists",
+        "feature-reminder": "Smart appointment reminders",
+        "footer-rights": "© 2026 BookingCare. All rights reserved.",
+        "footer-terms": "Terms of Use",
+        "footer-privacy": "Privacy Policy",
+        "home": "Home",
+        "detail-doctor": "Detail Doctor"
+    },
+    "specialty-detail": {
+        "title": "Outstanding Specialists",
+        "no-doctor": "Currently there are no doctors for this specialty."
+    },
     "schedule-doctor": {
         "calendar": "Calendar",
         "time": "Time",
@@ -137,7 +187,8 @@
         "gender": "Gender",
         "reason": "Reason",
         "birthday": "Birthday",
-        "payment": "Payment"
+        "payment": "Payment",
+        "today": "Today"
     },
     "verify-email": {
         "loading": "Verifying data...",
@@ -174,23 +225,6 @@
         "price": "Medical Fee",
         "payment-method": "Payment Method",
         "not-found": "Updating..."
-    },
-    "manage-specialty": {
-        "title": "Manage Medical Specialty",
-        "add": "Add Medical Specialty",
-        "table-name": "Specialty Name",
-        "table-desc": "Status",
-        "table-actions": "Actions",
-        "no-data": "No specialty data available!",
-        "status-ok": "Status: Good",
-        "name": "Specialty Name",
-        "image": "Specialty Image",
-        "btn-cancel": "Cancel",
-        "modal-create": "Add New Specialty",
-        "modal-edit": "Edit Specialty",
-        "upload-img": "Upload Image",
-        "content-detail": "Detailed Description",
-        "save": "Save Specialty"
     },
     "patient-profile": {
         "title": "Personal Information & Security",

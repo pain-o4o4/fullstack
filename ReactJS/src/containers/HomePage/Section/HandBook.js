@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './Handbook.scss';
-// import { FormattedMessage } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import Slider from 'react-slick';
 import { HandBookData } from './Data/HandBookData';   // Đúng
 import 'slick-carousel/slick/slick.css';
@@ -23,8 +23,12 @@ class HandBook extends Component {
             <React.Fragment>
                 <div className='section-handbook'>
                     <div className='section-header'>
-                        <span className='title-section'>Handbook</span>
-                        <button className='btn-section'>More</button>
+                                                <span className='title-section'>
+                            <FormattedMessage id="homepage.handbook" />
+                        </span>
+                        <button className='btn-section'>
+                            <FormattedMessage id="homepage.more" />
+                        </button>
                     </div>
                     <div className='section-body'>
                         <Slider {...this.props.settings}>
@@ -40,7 +44,9 @@ class HandBook extends Component {
                                                 <div className='section-desc'>{item.address}</div>
 
                                                 <div className='section-action'>
-                                                    <button className='btn-learn-more'>Information</button>
+                                                    <button className='btn-learn-more'>
+                                                        <FormattedMessage id="homepage.detail" />
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>

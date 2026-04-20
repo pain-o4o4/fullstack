@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-// import { HomeFooterData } from '.\Section\Data\HomeFooterData';   // Đúng
-
+import { FormattedMessage } from 'react-intl';
 class HomeFooter extends Component {
     constructor(props) {
         super(props);
@@ -16,9 +15,10 @@ class HomeFooter extends Component {
             <React.Fragment>
                 <div className="section-homefooter">
                     <div className="footer-content">
-                        <p>&copy; 2026 BookingCare. All rights reserved.
-                            <a href="#!"> Terms of Use</a> |
-                            <a href="#!"> Privacy Policy</a>
+                        <p>
+                            <FormattedMessage id="homepage.footer-rights" />
+                            <a href="#!"> <FormattedMessage id="homepage.footer-terms" /></a> |
+                            <a href="#!"> <FormattedMessage id="homepage.footer-privacy" /></a>
                         </p>
                         <div className="social-links">
                             <a target="_blank" href="https://www.facebook.com/milah.o6o4/directory_links"><i className="fab fa-facebook-square"></i></a>

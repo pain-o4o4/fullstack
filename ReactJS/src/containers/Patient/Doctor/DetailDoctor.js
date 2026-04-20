@@ -53,7 +53,6 @@ class DetailDoctor extends Component {
             nameEn = `${detailDoctor.positionData.valueEn}, ${detailDoctor.firstName} ${detailDoctor.lastName}`;
         }
 
-        console.log(this.props.params && this.props.params.id)
         return (
             <React.Fragment>
                 <HomeHeader isShowBanner={false} />
@@ -63,10 +62,12 @@ class DetailDoctor extends Component {
                             className="home-link"
                             onClick={() => this.props.navigate('/home')}
                         >
-                            Home
+                            <FormattedMessage id="homepage.home" />
                         </span>
                         <span className="separator">›</span>
-                        <span className="current-page">Detail Doctor</span>
+                        <span className="current-page">
+                            <FormattedMessage id="homepage.detail-doctor" />
+                        </span>
                     </div>
                 </div>
 
