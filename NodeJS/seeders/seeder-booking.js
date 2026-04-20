@@ -3,9 +3,9 @@
 module.exports = {
     up: async (queryInterface, Sequelize) => {
         // Xóa dữ liệu cũ để tránh trùng lặp
-        await queryInterface.bulkDelete('Booking', null, {});
+        await queryInterface.bulkDelete('bookings', null, {});
 
-        return queryInterface.bulkInsert('Booking', [
+        return queryInterface.bulkInsert('bookings', [
             {
                 statusId: 'S1',
                 doctorId: 2,
@@ -20,6 +20,6 @@ module.exports = {
     },
 
     down: async (queryInterface, Sequelize) => {
-        return queryInterface.bulkDelete('Booking', null, {});
+        return queryInterface.bulkDelete('bookings', null, {});
     }
 };

@@ -7,12 +7,10 @@ module.exports = {
 
         return queryInterface.bulkInsert('Histories', [
             {
-                statusId: 'S1',
-                doctorId: 2,
                 patientId: 3,
-                date: '1713024000000',
-                timeType: 'T1',
-                token: 'random-token-123',
+                doctorId: 2,
+                description: 'Khám sức khỏe tổng quát định kỳ',
+                file: '',
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
