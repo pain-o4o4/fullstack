@@ -15,6 +15,8 @@ const initialState = {
     allClinics: [],
     allClinicsLoaded: false,
     allSpecialties: [],
+    allHandbooks: [],
+    detailHandbook: {},
     detailClinic: {},
     detailSpecialty: {},
     detailAppointment: [],
@@ -186,13 +188,13 @@ const adminReducer = (state = initialState, action = {}) => {
                 detailSpecialty: {}
             }
 
-        case actionTypes.FETCH_ALL_CLINIC_SUCCESS:
+        case actionTypes.FETCH_ALL_CLINICS_SUCCESS:
             return {
                 ...state,
                 allClinics: action.data,
                 allClinicsLoaded: true
             }
-        case actionTypes.FETCH_ALL_CLINIC_FAILD:
+        case actionTypes.FETCH_ALL_CLINICS_FAILED:
             return {
                 ...state,
                 allClinics: []
@@ -218,6 +220,28 @@ const adminReducer = (state = initialState, action = {}) => {
             return {
                 ...state,
                 bookingData: {}
+            }
+
+        case actionTypes.FETCH_ALL_HANDBOOKS_SUCCESS:
+            return {
+                ...state,
+                allHandbooks: action.dataHandbooks
+            }
+        case actionTypes.FETCH_ALL_HANDBOOKS_FAILED:
+            return {
+                ...state,
+                allHandbooks: []
+            }
+
+        case actionTypes.FETCH_DETAIL_HANDBOOK_SUCCESS:
+            return {
+                ...state,
+                detailHandbook: action.dataHandbook
+            }
+        case actionTypes.FETCH_DETAIL_HANDBOOK_FAILED:
+            return {
+                ...state,
+                detailHandbook: {}
             }
 
         default:

@@ -6,20 +6,26 @@ import Slider from 'react-slick';
 import { getAllHandbookService } from '../../../services/userService';
 import { withRouter } from '../../../components/Navigator';
 import { path } from '../../../utils/constant';
+import * as actions from '../../../store/actions'
 
 class HandBook extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            dataHandbook: []
+            dataHandbook: this.props.allHandbooks || []
         }
     }
 
     async componentDidMount() {
-        let res = await getAllHandbookService();
-        if (res && res.errCode === 0) {
+        if (!this.props.allHandbooks || this.props.allHandbooks.length === 0) {
+            this.props.fetchAllHandbooks();
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevProps.allHandbooks !== this.props.allHandbooks) {
             this.setState({
-                dataHandbook: res.data ? res.data : []
+                dataHandbook: this.props.allHandbooks
             })
         }
     }
@@ -80,13 +86,14 @@ class HandBook extends Component {
 const mapStateToProps = state => {
     return {
         isLoggedIn: state.user.isLoggedIn,
-        language: state.app.language
+        language: state.app.language,
+        allHandbooks: state.admin.allHandbooks
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-
+        fetchAllHandbooks: () => dispatch(actions.fetchAllHandbooks())
     };
 };
 

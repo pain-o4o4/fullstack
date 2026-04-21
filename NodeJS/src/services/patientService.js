@@ -331,6 +331,7 @@ let processPayOSWebhook = (webhookBody) => {
 
             // Lấy orderCode từ cấu trúc đúng
             const orderCode = verifiedData.data?.orderCode || verifiedData.orderCode;
+            console.log(">>> [DEBUG] Extracted orderCode:", orderCode, "Type:", typeof orderCode);
 
             if (!orderCode) {
                 console.log(">>> Webhook thiếu orderCode trong data");
@@ -339,7 +340,7 @@ let processPayOSWebhook = (webhookBody) => {
 
             console.log(">>> Đang xử lý thanh toán cho orderCode:", orderCode);
 
-            if (webhookBody.code === "00" || verifiedData.code === "00") {
+            if (webhookBody.code === "00" || verifiedData.code === "00" || webhookBody.desc === "success") {
 
                 let booking = await db.Booking.findOne({
                     where: {
@@ -378,7 +379,7 @@ let processPayOSWebhook = (webhookBody) => {
 
                         console.log(">>> [SUCCESS] EMAIL ĐÃ GỬI THÀNH CÔNG!");
                     } else {
-                        console.log(">>> [WARNING] Tìm thấy booking nhưng Patient email bị trống!");
+                        console.log(">>> [WARNING] Tìm thấy booking nhưng Patient email bị trống! BookingDetails:", JSON.stringify(booking, null, 2));
                     }
                 } else {
                     console.log(`>>> [ERROR] Không tìm thấy booking với orderCode = ${orderCode} trong DB.`);

@@ -106,7 +106,7 @@ class SystemLayout extends Component {
                         <aside className="sidebar">
                             <div className="user-profile-summary">
                                 <div className="avatar-circle"
-                                    onClick={() => this.handleViewList('SETTINGS')}
+                                // onClick={() => this.('')}
                                 >
                                     <img src={userInfo?.image || icon_icons} alt="avatar" />
                                 </div>

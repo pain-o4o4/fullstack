@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from '../../components/Navigator';
-import { getAllHandbookService } from '../../services/userService';
+import * as actions from '../../store/actions';
 import HomeHeader from '../HomePage/HomeHeader';
 import './AllHandbook.scss';
 
@@ -9,15 +9,20 @@ class AllHandbook extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            dataHandbook: []
+            dataHandbook: this.props.allHandbooks || []
         }
     }
 
-    async componentDidMount() {
-        let res = await getAllHandbookService();
-        if (res && res.errCode === 0) {
+    componentDidMount() {
+        if (!this.props.allHandbooks || this.props.allHandbooks.length === 0) {
+            this.props.fetchAllHandbooks();
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevProps.allHandbooks !== this.props.allHandbooks) {
             this.setState({
-                dataHandbook: res.data ? res.data : []
+                dataHandbook: this.props.allHandbooks
             })
         }
     }
@@ -54,11 +59,13 @@ class AllHandbook extends Component {
 const mapStateToProps = state => {
     return {
         language: state.app.language,
+        allHandbooks: state.admin.allHandbooks
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
+        fetchAllHandbooks: () => dispatch(actions.fetchAllHandbooks())
     };
 };
 

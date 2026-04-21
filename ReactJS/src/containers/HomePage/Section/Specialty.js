@@ -12,11 +12,13 @@ class Specialty extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            dataSpecialty: []
+            dataSpecialty: this.props.allSpecialties || []
         }
     }
     componentDidMount() {
-        this.props.fecthAllSpecialties();
+        if (!this.props.allSpecialties || this.props.allSpecialties.length === 0) {
+            this.props.fecthAllSpecialties();
+        }
     }
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (prevProps.allSpecialties !== this.props.allSpecialties) {

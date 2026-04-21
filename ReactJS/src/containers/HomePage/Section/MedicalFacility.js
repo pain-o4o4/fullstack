@@ -4,17 +4,20 @@ import * as action from '../../../store/actions'
 import { FormattedMessage } from 'react-intl';
 import { withRouter } from '../../../components/Navigator';
 import Slider from 'react-slick';
+import { path } from '../../../utils/constant';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 class MedicalFacility extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            dataClinics: []
+            dataClinics: this.props.allClinics || []
         }
     }
     componentDidMount() {
-        this.props.fecthAllClinics();
+        if (!this.props.allClinics || this.props.allClinics.length === 0) {
+            this.props.fecthAllClinics();
+        }
     }
     componentDidUpdate(prevProps, prevState, snapshot) {
 
@@ -58,13 +61,15 @@ class MedicalFacility extends Component {
                 <div className='medical-facility-container'>
 
                     <div className='medical-facility-header'>
-                                                <h2 className='title-section'>
+                        <h2 className='title-section'>
                             <FormattedMessage id="homepage.clinic" />
                         </h2>
                         <p className='desc-section'>
                             <FormattedMessage id="homepage.clinic-desc" />
                         </p>
-                        <button className='btn-explore'>
+                        <button className='btn-explore'
+                            onClick={() => this.props.navigate && this.props.navigate(path.ALL_CLINIC)}
+                        >
                             <FormattedMessage id="homepage.clinic-explore" />
                         </button>
                     </div>

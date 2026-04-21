@@ -6,7 +6,8 @@ import {
     postInforDoctorService, getDetailDoctorByIdService,
     getAllSpecialtyService, getAllClinicService,
     getDetailClinicByIdService, getDetailSpecialtyByIdService,
-    getAllAppointmentsByIdService
+    getAllAppointmentsByIdService, getAllHandbookService,
+    getDetailHandbookByIdService
 } from '../../services/userService';
 import { toast } from 'react-toastify';
 export const fetchGenderStart = () => {
@@ -311,6 +312,29 @@ export const getDetailDoctor = (id) => {
         }
     }
 }
+
+export const fetchAllHandbooks = () => {
+    return async (dispatch, getState) => {
+        try {
+            let res = await getAllHandbookService();
+            if (res && res.errCode === 0) {
+                dispatch({
+                    type: actionTypes.FETCH_ALL_HANDBOOKS_SUCCESS,
+                    dataHandbooks: res.data
+                });
+            } else {
+                dispatch({
+                    type: actionTypes.FETCH_ALL_HANDBOOKS_FAILED
+                });
+            }
+        } catch (e) {
+            console.log('fetchAllHandbooks error: ', e);
+            dispatch({
+                type: actionTypes.FETCH_ALL_HANDBOOKS_FAILED
+            });
+        }
+    };
+};
 export const fetchAllScheduleTime = () => {
     return async (dispatch, getState) => {
         try {
@@ -403,18 +427,18 @@ export const fecthAllClinics = () => {
             let res = await getAllClinicService();
             if (res && res.errCode === 0) {
                 dispatch({
-                    type: actionTypes.FETCH_ALL_CLINIC_SUCCESS,
+                    type: actionTypes.FETCH_ALL_CLINICS_SUCCESS,
                     data: res.data
                 })
             } else {
                 dispatch({
-                    type: actionTypes.FETCH_ALL_CLINIC_FAIL
+                    type: actionTypes.FETCH_ALL_CLINICS_FAILED
                 })
             }
         } catch (e) {
             console.log('fetchSpecialty error: ', e);
             dispatch({
-                type: actionTypes.FETCH_ALL_CLINIC_FAIL
+                type: actionTypes.FETCH_ALL_CLINICS_FAILED
             })
         }
     }
@@ -501,3 +525,26 @@ export const saveBookingData = (data, callback) => {
         }
     }
 }
+
+export const fetchDetailHandbookById = (id) => {
+    return async (dispatch, getState) => {
+        try {
+            let res = await getDetailHandbookByIdService(id);
+            if (res && res.errCode === 0) {
+                dispatch({
+                    type: actionTypes.FETCH_DETAIL_HANDBOOK_SUCCESS,
+                    dataHandbook: res.data
+                });
+            } else {
+                dispatch({
+                    type: actionTypes.FETCH_DETAIL_HANDBOOK_FAILED
+                });
+            }
+        } catch (e) {
+            console.log('fetchDetailHandbookById error: ', e);
+            dispatch({
+                type: actionTypes.FETCH_DETAIL_HANDBOOK_FAILED
+            });
+        }
+    };
+};

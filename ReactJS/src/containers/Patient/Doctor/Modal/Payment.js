@@ -260,7 +260,7 @@ class Payment extends Component {
                                             <div className="card active">
                                                 <div className="card-header">
                                                     <span className="card-label"><strong>{bookingData.doctorName}</strong></span>
-                                                    <span className="card-price">Included</span>
+                                                    <span className="card-price">{language === LANGUAGES.VI ? 'Bao gồm' : 'Included'}</span>
                                                 </div>
                                                 <div className="card-details">
                                                     <p>{bookingData.clinicName}</p>

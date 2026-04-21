@@ -27,7 +27,7 @@ export const UserIsDoctor = ({ children }) => {
 export const UserIsPatientOrAdmin = ({ children }) => {
     const isLoggedIn = useSelector(state => state.user.isLoggedIn);
     const userInfo = useSelector(state => state.user.userInfo);
-    const isPatientOrAdmin = userInfo?.roleId === "R3" || userInfo?.roleId === "R1";
+    const isPatientOrAdmin = userInfo?.roleId === "R3" || userInfo?.roleId === "R1" || userInfo?.roleId === "R2";
     return (isLoggedIn && isPatientOrAdmin) ? children : <Navigate to="/home" replace />;
 };
 

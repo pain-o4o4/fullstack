@@ -50,7 +50,13 @@ export const doctorMenu = [
     {
         name: 'menu.doctor.manage-booking',
         link: '/doctor/manage-booking'
-    }
+    },
+    { // Quản lý thong tin ca nhan
+        name: 'menu.admin.security',
+        menus: [
+            { name: 'menu.admin.information', link: '/system/patient-profile' }
+        ]
+    },
 ];
 
 export const patientMenu = [

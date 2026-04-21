@@ -18,6 +18,7 @@ class PatientProfile extends Component {
             address: '',
             image: '',
             password: '',
+            roleId: ''
         }
     }
 
@@ -32,6 +33,7 @@ class PatientProfile extends Component {
                 phonenumber: userInfo.phonenumber,
                 address: userInfo.address,
                 image: userInfo.image,
+                roleId: userInfo.roleId
             });
         }
     }
@@ -40,9 +42,9 @@ class PatientProfile extends Component {
         if (prevProps.userInfo !== this.props.userInfo) {
             let { userInfo } = this.props;
             if (userInfo) {
-                let { id, email, firstName, lastName, phonenumber, address, image } = userInfo;
+                let { id, email, firstName, lastName, phonenumber, address, image, roleId } = userInfo;
                 this.setState({
-                    id, email, firstName, lastName, phonenumber, address, image
+                    id, email, firstName, lastName, phonenumber, address, image, roleId
                 });
             }
         }

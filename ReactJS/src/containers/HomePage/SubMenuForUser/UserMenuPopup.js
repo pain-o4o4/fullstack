@@ -55,7 +55,7 @@ class UserMenuPopup extends Component {
 
                             <div className="menu-item logout" onClick={processLogout}>
                                 <i className="fas fa-sign-out-alt"></i>
-                                <span>Đăng xuất (Sign Out)</span>
+                                <span>Đăng xuất</span>
                             </div>
                         </div>
                     </React.Fragment>

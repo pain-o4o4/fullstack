@@ -76,6 +76,7 @@ class HomeHeader extends Component {
             SPECIALTY: path.ALL_SPECIALTY,
             CLINIC: path.ALL_CLINIC,
             PHYSICIAN: path.ALL_DOCTOR,
+            HANDBOOK: path.ALL_HANDBOOK,
             HOME: path.HOMEPAGE,
             REGISTER: path.REGISTER,
             SETTINGS: path.SETTINGS,
@@ -164,9 +165,9 @@ class HomeHeader extends Component {
                             <div className="icon-btn" onClick={() => this.handleToggleSearch()}>
                                 <img src={search} className="icon-search" alt="icon-search" />
                             </div>
-                            <div className="translate-wrapper" onClick={() => this.changeLanguage()}>
+                            {/* <div className="translate-wrapper" onClick={() => this.changeLanguage()}>
                                 <img src={translate} className="icon-translate" alt="Translate" />
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </div>
