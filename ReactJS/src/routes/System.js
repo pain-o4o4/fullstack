@@ -10,6 +10,7 @@ import ManageSpecialty from '../containers/System/Specialty/ManageSpecialty';
 import ManageClinic from '../containers/System/Clinic/ManageClinic';
 import ManageSchedule from '../containers/System/Doctor/ManageSchedule';
 import PatientProfile from '../containers/System/Patient/PatientProfile';
+import ManageHandbook from '../containers/System/Handbook/ManageHandbook';
 
 class System extends Component {
 
@@ -26,6 +27,7 @@ class System extends Component {
                             <Route path="manage-specialty" element={<UserIsAdmin><ManageSpecialty /></UserIsAdmin>} />
                             <Route path="manage-clinic" element={<UserIsAdmin><ManageClinic /></UserIsAdmin>} />
                             <Route path="manage-schedule" element={<UserIsAdmin><ManageSchedule /></UserIsAdmin>} />
+                            <Route path="manage-handbook" element={<UserIsAdmin><ManageHandbook /></UserIsAdmin>} />
                             <Route path="patient-profile" element={<UserIsPatientOrAdmin><PatientProfile /></UserIsPatientOrAdmin>} />
                             <Route path="*" element={<Navigate to="patient-profile" replace />} />
                         </Routes>

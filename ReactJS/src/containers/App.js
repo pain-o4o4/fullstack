@@ -27,10 +27,12 @@ import VerifyEmail from '../containers/Patient/VerifyEmail.js';
 import DetailDoctor from './Patient/Doctor/DetailDoctor.js';
 import DetailSpecialty from './Patient/Specialty/DetailSpecialty.js';
 import DetailClinic from './Patient/Clinic/DetailClinic.js';
+import DetailHandbook from './Patient/Handbook/DetailHandbook.js';
 
 import AllSpecialty from '../containers/Navigation/AllSpecialty.js';
 import AllClinic from '../containers/Navigation/AllClinics.js';
 import AllDoctor from '../containers/Navigation/AllDoctor.js';
+import AllHandbook from '../containers/Navigation/AllHandbook.js';
 
 import MyBooking from './HomePage/SubMenuForUser/MyBooking';
 import BookingHistory from './HomePage/SubMenuForUser/BookingHistory';
@@ -112,10 +114,12 @@ class App extends Component {
                                     <Route path={path.DETAIL_DOCTOR} element={<DetailDoctor />} />
                                     <Route path={path.DETAIL_SPECIALTY} element={<DetailSpecialty />} />
                                     <Route path={path.DETAIL_CLINIC} element={<DetailClinic />} />
+                                    <Route path="/detail-handbook/:id" element={<DetailHandbook />} />
 
                                     <Route path={path.ALL_SPECIALTY} element={<AllSpecialty />} />
                                     <Route path={path.ALL_CLINIC} element={<AllClinic />} />
                                     <Route path={path.ALL_DOCTOR} element={<AllDoctor />} />
+                                    <Route path={path.ALL_HANDBOOK} element={<AllHandbook />} />
 
 
                                 </Routes>

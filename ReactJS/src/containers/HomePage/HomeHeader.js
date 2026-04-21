@@ -6,7 +6,7 @@ import icon_icons from '../../assets/images/icon_icons.svg';
 import search from '../../assets/images/search.svg';
 import user_login from '../../assets/images/user_login.svg';
 import translate from '../../assets/images/translate.svg';
-
+import { LANGUAGES } from '../../utils/constant';
 import ModalSearchHeader from './ModalSearchHeader.js';
 import { changeLanguageApp } from "../../store/actions";
 import { path } from '../../utils/constant';
@@ -90,6 +90,7 @@ class HomeHeader extends Component {
         }
     }
     render() {
+        let { language } = this.props;
         console.log(">>> check props: ", this.props.userInfo);
         let { isLoggedIn, userInfo } = this.props;
         return (
@@ -100,7 +101,7 @@ class HomeHeader extends Component {
                         <div className='left-content'>
                             <span className='brand-name'
                                 onClick={() => this.handleViewList('HOME')}
-                            >BookingCare</span>
+                            ><FormattedMessage id="homeheader.brand-name" defaultMessage="BookingCare" /></span>
                         </div>
                         <div className='center-content'>
                             {this.state.isShowSearch ? (
@@ -126,10 +127,10 @@ class HomeHeader extends Component {
                                             <FormattedMessage id="homeheader.Physician" defaultMessage="Physician" />
                                         </div>
                                         <div className='child-content'
-                                            onClick={() => this.handleViewList('SERVICE')}
+                                            onClick={() => this.handleViewList('HANDBOOK')}
 
                                         >
-                                            <FormattedMessage id="homeheader.ServicePackage" defaultMessage="Service Package" />
+                                            <FormattedMessage id="homeheader.Handbook" defaultMessage="Handbook" />
                                         </div>
                                     </div>
                                 </React.Fragment>
@@ -174,15 +175,14 @@ class HomeHeader extends Component {
                     <div className="clinical-trial-section">
                         <div className="clinical-trial-container">
                             <div className="enrolling-badge">
-                                300+ studies actively enrolling
+                                {language === LANGUAGES.VI ? "300 + nghiên cứu đang tích cực tuyển người tham gia" : "300+ studies actively enrolling"}
                             </div>
                             <h1 className="main-title">
-                                Find your perfect <span>clinical trial match</span>
+                                {language === LANGUAGES.VI ? "Tìm kiếm phòng khám phù hợp" : "Find your perfect clinical trial match"}
                             </h1>
 
-                            {/* Mô tả nhỏ */}
                             <p className="subtitle">
-                                Join 2+ million people shaping the future of healthcare.
+                                {language === LANGUAGES.VI ? "Cùng hơn 2 triệu người định hình tương lai của chăm sóc sức khỏe" : "Join 2+ million people shaping the future of healthcare."}
                             </p>
                         </div>
                     </div>

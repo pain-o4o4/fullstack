@@ -3,7 +3,8 @@
         "MedicalSpecialty": "Chuyên Khoa",
         "MedicalFacility": "Cơ Sở Y Tế",
         "Physician": "Bác Sỹ",
-        "ServicePackage": "Gói Dịch Vụ",
+        "Handbook": "Cẩm Nang",
+        "brand-name": "Đặt Lịch Khám",
         "welcome": "Xin chào, "
     },
     "login": {
@@ -46,7 +47,9 @@
             "manage-specialty": "Quản lý chuyên khoa",
             "information": "Thông tin",
             "security": "Bảo mật",
-            "manage-clinic": "Quản lý cơ sở y tế"
+            "manage-clinic": "Quản lý cơ sở y tế",
+            "handbook": "Cẩm nang",
+            "manage-handbook": "Quản lý cẩm nang"
         },
         "doctor": {
             "header": "Bác sỹ",
@@ -55,6 +58,14 @@
         },
         "patient": {
             "edit-profile": "Chỉnh sửa thông tin"
+        }
+    },
+    "admin": {
+        "manage-handbook": {
+            "title": "Quản lý cẩm nang",
+            "name": "Tên cẩm nang",
+            "image": "Ảnh cẩm nang",
+            "save": "Lưu thông tin"
         }
     },
     "manage-user": {

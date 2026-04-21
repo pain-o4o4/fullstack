@@ -5,6 +5,7 @@ import doctorController from "../controller/doctorController"
 import patientController from "../controller/patientController"
 import specialtyController from "../controller/specialtyController"
 import clinicController from "../controller/clinicController"
+import handbookController from "../controller/handbookController"
 let router = express.Router()
 
 let initWebRoutes = (app) => {
@@ -47,6 +48,14 @@ let initWebRoutes = (app) => {
     router.get('/api/get-all-appointments-by-id', patientController.getAllAppointmentsById);
     router.post('/api/payos-webhook', patientController.handlePayOSWebhook);
     router.post('/api/update-patient', patientController.postUpdatePatient);
+
+    //handbook
+    router.post('/api/create-new-handbook', handbookController.createHandbook);
+    router.get('/api/get-handbook', handbookController.getAllHandbook);
+    router.get('/api/get-detail-handbook-by-id', handbookController.getDetailHandbookById);
+    router.delete('/api/delete-handbook', handbookController.deleteHandbook);
+    router.put('/api/edit-handbook', handbookController.handleEditHandbook);
+
     return app.use("/", router)
 }
 

@@ -132,6 +132,31 @@ const updateBookingStatus = (data) => {
 const postUpdatePatientService = (data) => {
     return axios.post(`/api/update-patient`, data);
 }
+
+const createNewHandbookService = (data) => {
+    return axios.post(`/api/create-new-handbook`, data);
+}
+
+const getAllHandbookService = () => {
+    return axios.get(`/api/get-handbook`);
+}
+
+const getDetailHandbookByIdService = (id) => {
+    return axios.get(`/api/get-detail-handbook-by-id?id=${id}`);
+}
+
+const deleteHandbookService = (handbookId) => {
+    return axios.delete('/api/delete-handbook', {
+        data: {
+            id: handbookId
+        }
+    });
+}
+
+const editHandbookService = (data) => {
+    return axios.put('/api/edit-handbook', data);
+}
+
 export {
     handleLoginApi,
     createRegister,
@@ -164,5 +189,10 @@ export {
     editClinicService,
     getListPatientForDoctor,
     updateBookingStatus,
-    getDetailSchedulePatient
+    getDetailSchedulePatient,
+    createNewHandbookService,
+    getAllHandbookService,
+    getDetailHandbookByIdService,
+    deleteHandbookService,
+    editHandbookService
 }

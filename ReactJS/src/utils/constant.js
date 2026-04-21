@@ -17,6 +17,7 @@ export const path = {
     ALL_CLINIC: '/all-clinic',
     ALL_DOCTOR: '/all-doctor',
     ALL_SPECIALTY: '/all-specialty',
+    ALL_HANDBOOK: '/all-handbook',
 
     SETTINGS: '/system/patient-profile',
     MY_BOOKING: '/patient/my-booking',

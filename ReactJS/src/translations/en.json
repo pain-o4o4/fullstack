@@ -3,7 +3,8 @@
         "MedicalSpecialty": "Medical Specialty",
         "MedicalFacility": "Medical Facility",
         "Physician": "Physician",
-        "ServicePackage": "Service Package",
+        "Handbook": "Handbook",
+        "brand-name": "Booking Care",
         "welcome": "Welcome, "
     },
     "login": {
@@ -36,7 +37,9 @@
             "manage-specialty": "Manage specialty",
             "information": "Information",
             "security": "Security",
-            "manage-clinic": "Manage clinic"
+            "manage-clinic": "Manage clinic",
+            "handbook": "Handbook",
+            "manage-handbook": "Manage handbook"
         },
         "doctor": {
             "header": "Doctor",
@@ -45,6 +48,14 @@
         },
         "patient": {
             "edit-profile": "Edit Profile"
+        }
+    },
+    "admin": {
+        "manage-handbook": {
+            "title": "Manage Handbook",
+            "name": "Handbook name",
+            "image": "Handbook image",
+            "save": "Save"
         }
     },
     "manage-user": {

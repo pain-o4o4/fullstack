@@ -7,7 +7,7 @@ import { OutStandingDoctorData } from './Data/OutStandingDoctorData';   // Đún
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import * as actions from '../../../store/actions'
-import { LANGUAGES } from '../../../utils/constant'
+import { LANGUAGES, path } from '../../../utils/constant'
 import { withRouter } from '../../../components/Navigator';
 class OutStandingDoctor extends Component {
     constructor(props) {
@@ -50,7 +50,7 @@ class OutStandingDoctor extends Component {
                             <FormattedMessage id="homepage.doctor" />
                         </span>
                         <button className='btn-section'
-                            onClick={() => this.props.navigate && this.props.navigate('/all-doctors')}
+                            onClick={() => this.props.navigate && this.props.navigate(path.ALL_DOCTOR)}
                         >
                             <FormattedMessage id="homepage.more" />
                         </button>

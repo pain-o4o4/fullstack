@@ -19,6 +19,12 @@ export const adminMenu = [
             { name: 'menu.admin.manage-clinic', link: '/system/manage-clinic' }
         ]
     },
+    { // Quản lý cẩm nang
+        name: 'menu.admin.handbook',
+        menus: [
+            { name: 'menu.admin.manage-handbook', link: '/system/manage-handbook' }
+        ]
+    },
     { // Quản lý thong tin ca nhan
         name: 'menu.admin.security',
         menus: [
