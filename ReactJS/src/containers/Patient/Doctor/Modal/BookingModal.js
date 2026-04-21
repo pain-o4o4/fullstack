@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { Button, Modal } from 'reactstrap';
 import { LANGUAGES } from '../../../../utils/constant'
 import { withRouter } from '../../../../components/Navigator'; // hoặc 'react-router-dom'
 import { FormattedMessage } from 'react-intl';
@@ -55,7 +55,7 @@ class BookingModal extends Component {
 
         if (dataInput && dataInput.length > 0) {
             if (type === "USER") {
-                dataInput.map((item, index) => {
+                dataInput.forEach((item, index) => {
                     let object = {};
                     let labelVi = `${item.lastName} ${item.firstName}`;
                     let labelEn = `${item.firstName} ${item.lastName}`;
@@ -66,7 +66,7 @@ class BookingModal extends Component {
                 return result;
             }
             if (type === "PAYMENT" || type === "PROVINCE") {
-                dataInput.map((item, index) => {
+                dataInput.forEach((item, index) => {
                     let object = {};
                     let labelVi = `${item.valueVi}`;
                     let labelEn = `${item.valueEn}`;
@@ -77,7 +77,7 @@ class BookingModal extends Component {
                 return result;
             }
             if (type === "PRICE") {
-                dataInput.map((item, index) => {
+                dataInput.forEach((item, index) => {
                     let object = {};
                     let labelVi = `${item.valueVi}` + 'VNđ';
                     let labelEn = `${item.valueEn}` + 'USD$';
@@ -88,7 +88,7 @@ class BookingModal extends Component {
                 return result;
             }
             if (type === "SPECIALTY") {
-                dataInput.map((item, index) => {
+                dataInput.forEach((item, index) => {
                     let object = {};
                     object.label = item.name;
                     object.value = item.id;
@@ -97,7 +97,7 @@ class BookingModal extends Component {
                 return result;
             }
             if (type === "CLINIC") {
-                dataInput.map((item, index) => {
+                dataInput.forEach((item, index) => {
                     let object = {};
                     object.label = item.name;
                     object.value = item.id;
@@ -106,12 +106,11 @@ class BookingModal extends Component {
                 return result;
             }
             if (type === "GENDER") {
-                dataInput.map((item) => {
+                dataInput.forEach((item) => {
                     let object = {};
                     object.label = language === 'vi' ? item.valueVi : item.valueEn;
                     object.value = item.keyMap;
                     result.push(object);
-                    return item;
                 });
             }
 

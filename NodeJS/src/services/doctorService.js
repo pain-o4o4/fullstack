@@ -250,6 +250,8 @@ let bulkCreateScheduleService = (data) => {
             }
 
             let schedule = data.arrSchedule;
+            let formattedDate = moment(+data.date).startOf('day').format('DD/MM/YYYY');
+
             if (schedule && schedule.length > 0) {
                 // Lấy thông tin maxNumber của bác sĩ từ bảng Doctor_infor
                 let doctorInfor = await db.Doctor_infor.findOne({
@@ -261,11 +263,12 @@ let bulkCreateScheduleService = (data) => {
 
                 schedule = schedule.map(item => {
                     item.maxNumber = customMaxNumber;
+                    item.date = moment(+item.date).startOf('day').format('DD/MM/YYYY');
                     return item;
                 });
             }
             let existing = await db.Schedule.findAll({
-                where: { doctorId: data.doctorId, date: data.date },
+                where: { doctorId: data.doctorId, date: formattedDate },
                 attributes: ['timeType', 'date', 'doctorId', 'maxNumber']
             });
             let toCreate = _.differenceWith(schedule, existing, (a, b) => {

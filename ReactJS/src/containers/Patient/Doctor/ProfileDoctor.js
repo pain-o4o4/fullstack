@@ -6,7 +6,6 @@ import { withRouter } from '../../../components/Navigator'; // hoặc 'react-rou
 import { FormattedMessage } from 'react-intl';
 import './ProfileDoctor.scss'
 import { FormattedNumber } from 'react-intl';
-import DatePicker from '../../../../src/components/Input/DatePicker';
 class ProfileDoctor extends Component {
     constructor(props) {
         super(props);

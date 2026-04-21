@@ -2,12 +2,10 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { FormattedMessage } from 'react-intl';
 import './ManageSchedule.scss';
-import { LANGUAGES, dateFormat } from '../../../utils/constant';
+import { LANGUAGES } from '../../../utils/constant';
 import Select from 'react-select';
-import { fetchAllDoctors } from '../../../store/actions';
 import * as action from '../../../store/actions'
 import DatePicker from '../../../components/Input/DatePicker';
-import moment from 'moment';
 import { toast } from 'react-toastify';
 import _ from 'lodash';
 import { bulkCreateScheduleService, getScheduleByDate } from '../../../services/userService'
@@ -117,7 +115,7 @@ class ManageSchedule extends Component {
         let { language } = this.props;
 
         if (dataInput && dataInput.length > 0) {
-            dataInput.map((item) => {
+            dataInput.forEach((item) => {
                 let object = {};
                 if (type === 'USERS') {
                     let labelVi = `${item.lastName} ${item.firstName}`;
@@ -176,13 +174,12 @@ class ManageSchedule extends Component {
             let schedule = listAllScheduleTime.filter(item => item.isSelected === true);
             if (schedule && schedule.length >= 0) {
                 // Allows emptying schedules.
-                schedule.map(item => {
+                schedule.forEach(item => {
                     let object = {};
                     object.doctorId = selectedOption.value;
                     object.date = formartedDate;
                     object.timeType = item.value;
                     result.push(object);
-                    return result;
                 });
             }
         }
