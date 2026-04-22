@@ -19,12 +19,15 @@ module.exports = (sequelize, DataTypes) => {
             // Giữ nguyên các phần Allcode cũ của Duy
             booking.belongsTo(models.Allcode, { foreignKey: 'timeType', targetKey: 'keyMap', as: 'timeTypeDataPatient' });
             booking.belongsTo(models.Allcode, { foreignKey: 'statusId', targetKey: 'keyMap', as: 'statusData' });
+
+            booking.belongsTo(models.Clinic, { foreignKey: 'clinicId', targetKey: 'id', as: 'clinicBookingData' });
         }
     }
     booking.init({
         statusId: DataTypes.STRING,
         doctorId: DataTypes.INTEGER,
         patientId: DataTypes.INTEGER,
+        clinicId: DataTypes.INTEGER,
         orderCode: DataTypes.STRING,
         reason: DataTypes.STRING,
         paymentId: DataTypes.STRING,

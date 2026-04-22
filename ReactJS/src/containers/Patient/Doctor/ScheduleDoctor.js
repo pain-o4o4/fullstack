@@ -145,24 +145,38 @@ class ScheduleDoctor extends Component {
 
                     </div>
                     <div className="time-content">
-                        {allAvalabelTime && allAvalabelTime.length > 0 &&
-                            allAvalabelTime.map((item, index) => {
-                                return (
-                                    <button
-                                        key={index}
-                                        className="time-content-btn"
-                                        onClick={() => {
-                                            console.log("Dữ liệu item khi click:", item);
-                                            this.handleClickSheduleTime(item);
-                                        }}
-                                    >
-                                        {language === 'vi'
-                                            ? item.timeTypeData.valueVi
-                                            : item.timeTypeData.valueEn
-                                        }
-                                    </button>
-                                )
-                            })}
+                        {allAvalabelTime && allAvalabelTime.length > 0 ?
+                            <>
+                                {allAvalabelTime.map((item, index) => {
+                                    return (
+                                        <button
+                                            key={index}
+                                            className="time-content-btn"
+                                            onClick={() => {
+                                                console.log("Dữ liệu item khi click:", item);
+                                                this.handleClickSheduleTime(item);
+                                            }}
+                                        >
+                                            <div className="btn-time">
+                                                {language === 'vi'
+                                                    ? item.timeTypeData.valueVi
+                                                    : item.timeTypeData.valueEn
+                                                }
+                                            </div>
+                                            {item.clinicData && (
+                                                <div className="btn-location">
+                                                    <i className="fas fa-map-marker-alt"></i> {item.clinicData.name}
+                                                </div>
+                                            )}
+                                        </button>
+                                    )
+                                })}
+                            </>
+                            :
+                            <div className="no-schedule">
+                                <FormattedMessage id="patient.detail-doctor.no-schedule" />
+                            </div>
+                        }
                     </div>
                 </div>
                 <>

@@ -133,9 +133,9 @@ class ManagePatient extends Component {
                                                 </td>
                                                 <td>
                                                     <div className="user-info-cell">
-                                                        <div className="avatar-mini rounded circle-avatar">
+                                                        {/* <div className="avatar-mini rounded circle-avatar">
                                                             <span>{item.patientBookingData.firstName ? item.patientBookingData.firstName.charAt(0) : 'BN'}</span>
-                                                        </div>
+                                                        </div> */}
                                                         <div className="user-name-block">
                                                             <span className="name">
                                                                 {language === 'vi'

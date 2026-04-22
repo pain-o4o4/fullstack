@@ -48,6 +48,7 @@ let postBookAppointmentService = (data) => {
                     statusId: 'S1', // Always start as S1
                     doctorId: data.doctorId,
                     patientId: data.patientId,
+                    clinicId: data.clinicId, // Persistent Location
                     paymentId: data.paymentId,
                     date: data.date,
                     orderCode: orderCode,
@@ -217,6 +218,11 @@ let getAllAppointmentsByIdService = async (id) => {
                             model: db.Allcode,
                             as: 'statusData',
                             attributes: ['valueVi', 'valueEn']
+                        },
+                        {
+                            model: db.Clinic,
+                            as: 'clinicBookingData',
+                            attributes: ['name', 'address']
                         }
                     ],
                     raw: false,
@@ -291,7 +297,12 @@ let getDetailSchedulePatient = async (bookingId) => {
                             ]
                         },
                         { model: db.Allcode, as: 'timeTypeDataPatient', attributes: ['valueVi', 'valueEn'] },
-                        { model: db.Allcode, as: 'statusData', attributes: ['valueVi', 'valueEn'] }
+                        { model: db.Allcode, as: 'statusData', attributes: ['valueVi', 'valueEn'] },
+                        {
+                            model: db.Clinic,
+                            as: 'clinicBookingData',
+                            attributes: ['name', 'address']
+                        }
                     ],
                     raw: false,
                     nest: true
@@ -372,8 +383,8 @@ let processPayOSWebhook = (webhookBody) => {
                             patientName: `${booking.patientBookingData?.lastName || ''} ${booking.patientBookingData?.firstName || ''}`.trim() || "Bệnh nhân",
                             doctorName: `${booking.doctorBookingData?.lastName || ''} ${booking.doctorBookingData?.firstName || ''}`.trim(),
                             time: booking.timeTypeDataPatient?.valueVi || "",
-                            clinicName: "BookingCare 🏥",
-                            addressClinic: "Hà Nội, Việt Nam",
+                            clinicName: booking.clinicBookingData?.name || "BookingCare 🏥",
+                            addressClinic: booking.clinicBookingData?.address || "Hà Nội, Việt Nam",
                             language: booking.language || 'vi'
                         });
 

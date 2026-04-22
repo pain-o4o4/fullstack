@@ -16,7 +16,12 @@ module.exports = (sequelize, DataTypes) => {
                 foreignKey: 'doctorId',
                 targetKey: 'id',
                 as: 'doctorData'
-            })
+            });
+            Schedule.belongsTo(models.Clinic, {
+                foreignKey: 'clinicId',
+                targetKey: 'id',
+                as: 'clinicData'
+            });
         }
     }
 
@@ -26,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
         date: DataTypes.STRING,
         timeType: DataTypes.STRING,
         doctorId: DataTypes.INTEGER,
+        clinicId: DataTypes.INTEGER,
         roleId: DataTypes.STRING
     }, {
         sequelize,

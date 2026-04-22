@@ -9,6 +9,7 @@ import 'react-markdown-editor-lite/lib/index.css'
 import Select from 'react-select';
 import { LANGUAGES } from '../../../utils/constant'
 import { getDetailDoctorByIdService } from '../../../services/userService'
+import _ from 'lodash';
 
 const mdParser = new MarkdownIt();
 
@@ -32,8 +33,8 @@ class ManageDoctor extends Component {
             selectedPrice: '',
             selectedPayment: '',
             selectedProvince: '',
-            selectedSpecialty: '',
-            selectedClinic: '',
+            selectedSpecialty: [], // Array for Multi-select
+            selectedClinic: [],    // Array for Multi-select
 
             nameClinic: '',
             addressClinic: '',
@@ -132,8 +133,12 @@ class ManageDoctor extends Component {
             selectedPrice: selectedPrice && selectedPrice.value ? selectedPrice.value : '',
             selectedPayment: selectedPayment && selectedPayment.value ? selectedPayment.value : '',
             selectedProvince: selectedProvince && selectedProvince.value ? selectedProvince.value : '',
-            specialtyId: selectedSpecialty && selectedSpecialty.value ? selectedSpecialty.value : '',
-            clinicId: selectedClinic && selectedClinic.value ? selectedClinic.value : '',
+            
+            // Multi-select handling
+            specialtyId: selectedSpecialty && selectedSpecialty.length > 0 ? selectedSpecialty[0].value : '', // Primary
+            clinicId: selectedClinic && selectedClinic.length > 0 ? selectedClinic[0].value : '',       // Primary
+            specialtyIds: selectedSpecialty ? selectedSpecialty.map(item => item.value) : [],
+            clinicIds: selectedClinic ? selectedClinic.map(item => item.value) : [],
 
             nameClinic: nameClinic,
             addressClinic: addressClinic,
@@ -153,8 +158,9 @@ class ManageDoctor extends Component {
 
             let addressClinic = '', nameClinic = '', note = '',
                 selectedPrice = '', selectedPayment = '',
-                selectedProvince = '', selectedSpecialty = '',
-                selectedClinic = '', maxNumber = '';
+                selectedProvince = '', maxNumber = '';
+            
+            let selectedSpecialty = [], selectedClinic = [];
 
             if (doctorInfor) {
                 addressClinic = doctorInfor.addressClinic;
@@ -164,9 +170,32 @@ class ManageDoctor extends Component {
                 selectedPrice = listPrice.find(item => item && item.value === doctorInfor.priceId);
                 selectedPayment = listPayment.find(item => item && item.value === doctorInfor.paymentId);
                 selectedProvince = listProvince.find(item => item && item.value === doctorInfor.provinceId);
-                selectedSpecialty = listSpecialty.find(item => item && item.value === doctorInfor.specialtyId);
-                selectedClinic = listClinic.find(item => item && item.value === doctorInfor.clinicId);
                 maxNumber = doctorInfor.maxNumber;
+            }
+
+            if (res.data.doctorClinicSpecialtyData && res.data.doctorClinicSpecialtyData.length > 0) {
+                // Populate multi-select from junction table
+                let junctionData = res.data.doctorClinicSpecialtyData;
+                
+                // Extract unique specialties
+                let uniqueSpecialties = _.uniqBy(junctionData.filter(i => i.specialtyData).map(i => i.specialtyData), 'id');
+                selectedSpecialty = uniqueSpecialties.map(item => ({
+                    label: item.name,
+                    value: item.id
+                }));
+
+                // Extract unique clinics
+                let uniqueClinics = _.uniqBy(junctionData.filter(i => i.clinicData).map(i => i.clinicData), 'id');
+                selectedClinic = uniqueClinics.map(item => ({
+                    label: item.name,
+                    value: item.id
+                }));
+            } else if (doctorInfor) {
+                // Fallback to legacy primary if junction is empty
+                let primarySpecialty = listSpecialty.find(item => item && item.value === doctorInfor.specialtyId);
+                let primaryClinic = listClinic.find(item => item && item.value === doctorInfor.clinicId);
+                if (primarySpecialty) selectedSpecialty = [primarySpecialty];
+                if (primaryClinic) selectedClinic = [primaryClinic];
             }
 
             this.setState({
@@ -191,8 +220,8 @@ class ManageDoctor extends Component {
                 hasOldData: false,
                 addressClinic: '', nameClinic: '', note: '',
                 selectedPrice: '', selectedPayment: '',
-                selectedProvince: '', selectedSpecialty: '',
-                selectedClinic: '',
+                selectedProvince: '', selectedSpecialty: [],
+                selectedClinic: [],
                 maxNumber: '',
             });
         }
@@ -296,6 +325,7 @@ class ManageDoctor extends Component {
                                     options={this.state.listSpecialty}
                                     placeholder={language === LANGUAGES.VI ? 'Chọn chuyên khoa...' : 'Choose specialty...'}
                                     name="selectedSpecialty"
+                                    isMulti={true}
                                 />
                             </div>
                             <div className="input-group-apple">
@@ -307,6 +337,7 @@ class ManageDoctor extends Component {
                                     options={this.state.listClinic}
                                     placeholder={language === LANGUAGES.VI ? 'Chọn cơ sở...' : 'Choose clinic...'}
                                     name="selectedClinic"
+                                    isMulti={true}
                                 />
                             </div>
                         </div>

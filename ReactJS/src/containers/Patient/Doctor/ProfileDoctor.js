@@ -6,6 +6,7 @@ import { withRouter } from '../../../components/Navigator'; // hoặc 'react-rou
 import { FormattedMessage } from 'react-intl';
 import './ProfileDoctor.scss'
 import { FormattedNumber } from 'react-intl';
+import _ from 'lodash';
 class ProfileDoctor extends Component {
     constructor(props) {
         super(props);
@@ -90,6 +91,22 @@ class ProfileDoctor extends Component {
                                             <span>{dataProfile.markdownData
                                                 .description}</span>
                                         )}
+                                    
+                                    {/* Multi-Clinic/Specialty Display */}
+                                    <div className="multi-infor">
+                                        {dataProfile && dataProfile.doctorClinicSpecialtyData && dataProfile.doctorClinicSpecialtyData.length > 0 && (
+                                            <>
+                                                <div className="clinics">
+                                                    <i className="fas fa-hospital-alt"></i>
+                                                    {_.uniqBy(dataProfile.doctorClinicSpecialtyData.filter(i => i.clinicData), 'clinicId')
+                                                        .map((item, index) => (
+                                                            <span key={index} className="clinic-tag">{item.clinicData.name}{index < dataProfile.doctorClinicSpecialtyData.length - 1 ? ', ' : ''}</span>
+                                                        ))
+                                                    }
+                                                </div>
+                                            </>
+                                        )}
+                                    </div>
                                 </>
                                 :
                                 <>

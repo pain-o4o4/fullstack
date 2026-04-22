@@ -159,6 +159,53 @@ let postInforDoctorService = (data) => {
                     count: data.maxNumber
                 });
             }
+
+            // --- SYNC MANY-TO-MANY RELATIONSHIPS ---
+            let { specialtyIds, clinicIds } = data;
+            if (specialtyIds || clinicIds) {
+                // 1. Clear old associations
+                await db.doctor_clinic_specialty.destroy({
+                    where: { doctorId: data.doctorId }
+                });
+
+                // 2. Build new associations
+                // Strategy: Save all selected specialties and all selected clinics.
+                // We use combinations to ensure the doctor appears in all relevant searches.
+                let junctionData = [];
+                
+                // If we have specialties, link them to the primary clinic (or null)
+                if (specialtyIds && specialtyIds.length > 0) {
+                    specialtyIds.forEach(specId => {
+                        junctionData.push({
+                            doctorId: data.doctorId,
+                            specialtyId: specId,
+                            clinicId: data.clinicId || null
+                        });
+                    });
+                }
+
+                // If we have clinics, link them to the primary specialty (or null)
+                if (clinicIds && clinicIds.length > 0) {
+                    clinicIds.forEach(clinId => {
+                        // Avoid duplicates if primary specialty + primary clinic was already added
+                        if (!(clinId === data.clinicId && specialtyIds && specialtyIds.includes(data.specialtyId))) {
+                            junctionData.push({
+                                doctorId: data.doctorId,
+                                specialtyId: data.specialtyId || null,
+                                clinicId: clinId
+                            });
+                        }
+                    });
+                }
+
+                // Remove duplicates from junctionData just in case
+                junctionData = _.uniqWith(junctionData, _.isEqual);
+
+                if (junctionData.length > 0) {
+                    await db.doctor_clinic_specialty.bulkCreate(junctionData);
+                }
+            }
+
             resolve({
                 errCode: 0,
                 errMessage: "Save info doctor successfully!"
@@ -204,23 +251,20 @@ let getDetailDoctorByIdService = (idInput) => {
                         as: "doctorinforData",
                         attributes: { exclude: ["id", "createdAt", "updatedAt", "doctorId"], },
                         include: [
-                            {
-                                model: db.Allcode,
-                                as: "priceTypeData",
-                                attributes: ["valueEn", "valueVi"],
-                            },
-                            {
-                                model: db.Allcode,
-                                as: "provinceTypeData",
-                                attributes: ["valueEn", "valueVi"],
-                            },
-                            {
-                                model: db.Allcode,
-                                as: "paymentTypeData",
-                                attributes: ["valueEn", "valueVi"],
-                            },
+                            { model: db.Allcode, as: "priceTypeData", attributes: ["valueEn", "valueVi"] },
+                            { model: db.Allcode, as: "provinceTypeData", attributes: ["valueEn", "valueVi"] },
+                            { model: db.Allcode, as: "paymentTypeData", attributes: ["valueEn", "valueVi"] },
                         ]
                     },
+                    // {
+                    //     model: db.doctor_clinic_specialty,
+                    //     as: 'doctorClinicSpecialtyData',
+                    //     attributes: ['specialtyId', 'clinicId'],
+                    //     include: [
+                    //         { model: db.Specialty, as: 'specialtyData', attributes: ['name', 'id'] },
+                    //         { model: db.Clinic, as: 'clinicData', attributes: ['name', 'id'] },
+                    //     ]
+                    // }
                 ],
                 raw: false,
                 nest: true,
@@ -269,7 +313,7 @@ let bulkCreateScheduleService = (data) => {
             }
             let existing = await db.Schedule.findAll({
                 where: { doctorId: data.doctorId, date: formattedDate },
-                attributes: ['timeType', 'date', 'doctorId', 'maxNumber']
+                attributes: ['timeType', 'date', 'doctorId', 'maxNumber', 'clinicId']
             });
             let toCreate = _.differenceWith(schedule, existing, (a, b) => {
                 return a.timeType === b.timeType && a.date === b.date;
@@ -313,6 +357,11 @@ let getScheduleByDateService = (doctorId, date) => {
                             as: "timeTypeData",
                             attributes: ["valueEn", "valueVi"],
                         },
+                        {
+                            model: db.Clinic,
+                            as: "clinicData",
+                            attributes: ["name", "address"],
+                        }
                     ],
                     raw: false,
                     nest: true,
@@ -407,7 +456,16 @@ let getProfileDoctorById = (doctorId) => {
                                 { model: db.Allcode, as: "paymentTypeData", attributes: ["valueEn", "valueVi"] },
                             ]
 
-                        },
+                        }
+                        // {
+                        //     model: db.doctor_clinic_specialty,
+                        //     as: 'doctorClinicSpecialtyData',
+                        //     attributes: ['specialtyId', 'clinicId'],
+                        //     include: [
+                        //         { model: db.Specialty, as: 'specialtyData', attributes: ['name', 'id'] },
+                        //         { model: db.Clinic, as: 'clinicData', attributes: ['name', 'id'] },
+                        //     ]
+                        // }
                     ],
                     raw: false,
                     nest: true,

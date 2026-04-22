@@ -241,14 +241,17 @@ class BookingModal extends Component {
             language: language,
             doctorName: this.state.doctorName,
 
+            // Location Sync
+            clinicId: dataTimeModal.clinicId,
+            clinicName: dataTimeModal.clinicData?.name || doctorInfor.nameClinic,
+            addressClinic: dataTimeModal.clinicData?.address || doctorInfor.addressClinic,
+
             // Data cho PayOS và hiển thị Payment
             paymentId: doctorInfor.paymentId,
             price: doctorInfor.priceTypeData?.valueVi || 0,
             priceId: language === LANGUAGES.VI ? doctorInfor.priceTypeData?.valueVi + ' VNĐ' : doctorInfor.priceTypeData?.valueEn + ' USD',
 
             // Data bổ sung cho trang Payment
-            clinicName: doctorInfor.nameClinic,
-            addressClinic: doctorInfor.addressClinic,
             specialtyName: detailDoctor?.specialtyData?.name || '',
             doctorImage: detailDoctor?.image || '', // Pass the image string to Payment page
         };

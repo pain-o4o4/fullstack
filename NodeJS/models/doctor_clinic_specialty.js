@@ -15,11 +15,16 @@ module.exports = (sequelize, DataTypes) => {
                 targetKey: 'id',
                 as: 'specialtyData'
             });
-            // doctor_clinic_specialty.belongsTo(models.Clinic, {
-            //     foreignKey: 'clinicId',
-            //     targetKey: 'id',
-            //     as: 'clinicData'
-            // });
+            doctor_clinic_specialty.belongsTo(models.Clinic, {
+                foreignKey: 'clinicId',
+                targetKey: 'id',
+                as: 'clinicData'
+            });
+            doctor_clinic_specialty.belongsTo(models.User, {
+                foreignKey: 'doctorId',
+                targetKey: 'id',
+                as: 'doctorData'
+            });
         }
     }
     doctor_clinic_specialty.init({
