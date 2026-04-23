@@ -106,9 +106,22 @@ class ManageSchedule extends Component {
                         return { ...item, isSelected: isBooked };
                     });
 
-                    this.setState({
+                    let newState = {
                         listAllScheduleTime: updatedScheduleTime
-                    });
+                    };
+
+                    // Auto-set the clinic if it exists in DB
+                    if (existingSchedules && existingSchedules.length > 0) {
+                        let firstClinic = existingSchedules[0].clinicData;
+                        if (firstClinic) {
+                            newState.selectedClinic = {
+                                label: firstClinic.name,
+                                value: firstClinic.id
+                            };
+                        }
+                    }
+
+                    this.setState(newState);
                 }
             } else {
                 toast.error("Không thể tải lịch trình bác sĩ!");

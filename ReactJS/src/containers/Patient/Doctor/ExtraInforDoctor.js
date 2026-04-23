@@ -106,10 +106,10 @@ class ExtraInforDoctor extends Component {
                             <FormattedMessage id="schedule-doctor.text-address" />
                         </div>
                         <div className="name-clinic">
-                            {extraInfor && extraInfor.nameClinic ? extraInfor.nameClinic : ''}
+                            {extraInfor && extraInfor.clinicData ? extraInfor.clinicData.name : (extraInfor && extraInfor.nameClinic ? extraInfor.nameClinic : '')}
                         </div>
                         <div className="detail-address">
-                            {listExtraInforLanguage.province}
+                            {extraInfor && extraInfor.clinicData ? extraInfor.clinicData.address : listExtraInforLanguage.province}
                         </div>
 
                     </div>
@@ -130,7 +130,7 @@ class ExtraInforDoctor extends Component {
                                     }
                                 </div>
                                 <div className="detail-infor">
-                                    {extraInfor && extraInfor.addressClinic ? extraInfor.addressClinic : ''}
+                                    {extraInfor && extraInfor.clinicData ? extraInfor.clinicData.address : (extraInfor && extraInfor.addressClinic ? extraInfor.addressClinic : '')}
                                 </div>
                                 <div className="price">
                                     <span className="left">

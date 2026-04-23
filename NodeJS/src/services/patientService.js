@@ -20,102 +20,141 @@ let buildUrlEmail = (doctorId, token) => {
 
 let postBookAppointmentService = (data) => {
     return new Promise(async (resolve, reject) => {
+        const t = await db.sequelize.transaction();
         try {
-            if (!data) {
+            if (!data || !data.doctorId || !data.date || !data.timeType || !data.patientId) {
+                await t.rollback();
                 return resolve({
                     errCode: 1,
                     errMessage: "Missing required parameters!"
                 });
             }
-            let appointment;
-            if (data.bookingId) {
-                // CASE 1: Booking already exists, user wants to pay now
-                appointment = await db.Booking.findOne({
-                    where: { id: data.bookingId, statusId: 'S1' },
-                    raw: false
-                });
-                if (!appointment) {
-                    return resolve({
-                        errCode: 2,
-                        errMessage: "Appointment not found, expired or already paid!"
-                    });
-                }
-            } else {
-                // CASE 2: New booking creation
-                const orderCode = Number(String(Date.now()).slice(-6));
-                let token = uuidv4();
-                appointment = await db.Booking.create({
-                    statusId: 'S1', // Always start as S1
-                    doctorId: data.doctorId,
-                    patientId: data.patientId,
-                    clinicId: data.clinicId, // Persistent Location
-                    paymentId: data.paymentId,
-                    date: data.date,
-                    orderCode: orderCode,
-                    timeType: data.timeType,
-                    token: token
-                });
 
+            let formattedDate = '';
+            if (moment(data.date, 'DD/MM/YYYY', true).isValid()) {
+                formattedDate = data.date;
+            } else {
+                formattedDate = moment(+data.date).startOf('day').format('DD/MM/YYYY');
+            }
+
+            // 1. Kiểm tra xem Bệnh nhân này đã đặt lịch cho khung giờ này chưa? (Tránh đặt trùng)
+            let appointment = await db.Booking.findOne({
+                where: {
+                    patientId: data.patientId,
+                    doctorId: data.doctorId,
+                    date: formattedDate,
+                    timeType: data.timeType,
+                    statusId: { [Op.ne]: 'S4' }
+                },
+                transaction: t,
+                raw: false
+            });
+
+            if (appointment && appointment.statusId !== 'S1') {
+                await t.rollback();
                 return resolve({
-                    errCode: 0,
-                    data: {
-                        bookingId: appointment.id
-                    }
+                    errCode: 5,
+                    errMessage: "Bạn đã đặt lịch khám này rồi. Vui lòng kiểm tra lại trong mục 'Lịch hẹn của bạn'."
                 });
             }
 
-            // PayOS logic...
-            const orderCode = Number(appointment.orderCode);
-            const token = appointment.token;
-            const finalAmount = 5000;
+            if (appointment && appointment.statusId === 'S1') {
+                // CASE 1: Đã có booking (S1), tái sử dụng để thanh toán lại
+                await appointment.update({
+                    reason: data.reason,
+                    paymentId: data.paymentId,
+                    orderCode: Number(String(Date.now()).slice(-6)) // Cập nhật mã đơn mới
+                }, { transaction: t });
+            } else {
+                // CASE 2: Tạo mới booking (Chưa có hoặc đã hủy)
+                
+                // 2. KHÓA dòng Schedule này lại để kiểm tra sức chứa
+                let schedule = await db.Schedule.findOne({
+                    where: { doctorId: data.doctorId, date: formattedDate, timeType: data.timeType },
+                    transaction: t,
+                    lock: t.LOCK.UPDATE
+                });
 
+                if (!schedule) {
+                    await t.rollback();
+                    return resolve({
+                        errCode: 3,
+                        errMessage: "Bác sĩ chưa mở lịch khám cho khung giờ này!"
+                    });
+                }
+
+                // 3. Đếm số lượng booking hiện có
+                let bookingCount = await db.Booking.count({
+                    where: {
+                        doctorId: data.doctorId,
+                        date: formattedDate,
+                        timeType: data.timeType,
+                        statusId: { [Op.ne]: 'S4' }
+                    },
+                    transaction: t
+                });
+
+                if (bookingCount >= schedule.maxNumber) {
+                    await t.rollback();
+                    return resolve({
+                        errCode: 4,
+                        errMessage: "Khung giờ này đã đầy, vui lòng chọn khung giờ khác!"
+                    });
+                }
+
+                const orderCode = Number(String(Date.now()).slice(-6));
+                let token = uuidv4();
+                appointment = await db.Booking.create({
+                    statusId: 'S1', 
+                    doctorId: data.doctorId,
+                    patientId: data.patientId,
+                    clinicId: data.clinicId,
+                    paymentId: data.paymentId,
+                    date: formattedDate,
+                    orderCode: orderCode,
+                    timeType: data.timeType,
+                    token: token,
+                    reason: data.reason
+                }, { transaction: t });
+            }
+
+            // --- PAYOS LOGIC ---
+            // Chỉ thực hiện gọi PayOS sau khi đã xác định các bước kiểm tra logic DB đều OK
+            const finalAmount = 5000;
             const body = {
-                orderCode: orderCode,
+                orderCode: Number(appointment.orderCode),
                 amount: finalAmount,
                 description: `Booking for ${data.fullName || 'BN'}`.slice(0, 25),
                 returnUrl: `${process.env.URL_REACT}/patient/my-booking`,
-                cancelUrl: `${process.env.URL_REACT}/verify-booking?token=${token}`,
-                items: [
-                    {
-                        name: "Appointment booking",
-                        quantity: 1,
-                        price: finalAmount
-                    }
-                ]
+                cancelUrl: `${process.env.URL_REACT}/verify-booking?token=${appointment.token}`,
+                items: [{ name: "Appointment booking", quantity: 1, price: finalAmount }]
             };
 
             const payosInstance = payOS?.default || payOS;
             if (!payosInstance || typeof payosInstance.paymentRequests?.create !== 'function') {
-                throw new Error("Unable to call PayOS. Check @payos/node configuration.");
+                await t.rollback();
+                throw new Error("PayOS not configured properly.");
             }
 
-            console.log(">>> [DEBUG] Sending to PayOS:", JSON.stringify(body, null, 2));
-
-            let paymentLinkRes;
             try {
-                paymentLinkRes = await payosInstance.paymentRequests.create(body);
-            } catch (payosError) {
-                console.error(">>> [ERROR] PayOS API:", payosError);
-                return resolve({
-                    errCode: 3,
-                    errMessage: `PayOS API Error: ${payosError.message || "Failed to create payment link"}`
-                });
-            }
-
-            if (paymentLinkRes && paymentLinkRes.checkoutUrl) {
+                let paymentLinkRes = await payosInstance.paymentRequests.create(body);
+                await t.commit(); // THÀNH CÔNG: Lưu mọi thay đổi vào DB
                 return resolve({
                     errCode: 0,
-                    data: {
-                        checkoutUrl: paymentLinkRes.checkoutUrl,
-                        bookingId: appointment.id
-                    }
+                    data: { checkoutUrl: paymentLinkRes.checkoutUrl, bookingId: appointment.id }
                 });
-            } else {
-                throw new Error("PayOS response missing checkoutUrl");
+            } catch (payosError) {
+                console.error(">>> [ERROR] PayOS API:", payosError);
+                await t.rollback(); // THẤT BẠI: Hủy bỏ booking vừa tạo để nhường slot cho người khác
+                return resolve({
+                    errCode: 3,
+                    errMessage: "Lỗi kết nối cổng thanh toán. Vui lòng thử lại!"
+                });
             }
 
         } catch (e) {
             console.log('>>> SYSTEM ERROR:', e);
+            if (t) await t.rollback();
             reject(e);
         }
     });
@@ -178,7 +217,7 @@ let getAllAppointmentsByIdService = async (id) => {
 
                 for (let booking of allActive) {
                     const createdAt = new Date(booking.createdAt).getTime();
-                    const bookingDate = Number(booking.date);
+                    const bookingDate = /^\d{10,13}$/.test(booking.date) ? Number(booking.date) : moment(booking.date, 'DD/MM/YYYY').valueOf();
 
                     if (booking.statusId === 'S1' && (nowMillis - createdAt > fifteenMins)) {
                         booking.statusId = 'S4';
@@ -262,7 +301,8 @@ let getDetailSchedulePatient = async (bookingId) => {
                 }
                 if (appointment && appointment.statusId === 'S2') {
                     let todayStart = moment().startOf('day').valueOf();
-                    if (Number(appointment.date) < todayStart) {
+                    let bookingDate = /^\d{10,13}$/.test(appointment.date) ? Number(appointment.date) : moment(appointment.date, 'DD/MM/YYYY').valueOf();
+                    if (bookingDate < todayStart) {
                         appointment.statusId = 'S5';
                         await appointment.save();
                     }

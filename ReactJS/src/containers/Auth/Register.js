@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createRegister } from '../../services/userService';
 import './Login.scss'; // Dùng chung scss cho đồng bộ
+import { FormattedMessage } from 'react-intl';
 import { toast } from 'react-toastify';
 import Select from 'react-select';
 import gender_icon from '../../assets/images/gender_icon.svg';
@@ -30,8 +31,40 @@ class Register extends Component {
         this.setState({ ...copyState });
     }
 
+    checkValidateInput = () => {
+        let isValid = true;
+        let arrInput = ['firstName', 'lastName', 'email', 'password', 'phonenumber', 'address'];
+        const re = /\S+@\S+\.\S+/;
+        const phoneRe = /^\d+$/;
+
+        for (let i = 0; i < arrInput.length; i++) {
+            if (!this.state[arrInput[i]]) {
+                isValid = false;
+                toast.error(`Vui lòng không để trống: ${arrInput[i]}`);
+                break;
+            }
+        }
+
+        if (isValid) {
+            if (!re.test(this.state.email)) {
+                isValid = false;
+                toast.error("Định dạng Email không hợp lệ!");
+            } else if (this.state.password.length < 6) {
+                isValid = false;
+                toast.error("Mật khẩu phải có tối thiểu 6 ký tự!");
+            } else if (!phoneRe.test(this.state.phonenumber)) {
+                isValid = false;
+                toast.error("Số điện thoại chỉ được chứa các chữ số!");
+            }
+        }
+
+        return isValid;
+    }
+
     handleRegister = async () => {
         this.setState({ errMessage: '' });
+        let isValid = this.checkValidateInput();
+        if (!isValid) return;
 
         try {
             let res = await createRegister({
@@ -42,15 +75,14 @@ class Register extends Component {
                 address: this.state.address,
                 phonenumber: this.state.phonenumber,
                 gender: this.state.gender,
-                roleId: ':))',
+                roleId: 'R3', // Mặc định là bệnh nhân khi đăng ký
             });
 
             if (res && res.errCode !== 0) {
-                toast.error(res.errMessage);
-                this.setState({ errMessage: res.errMessage });
+                toast.error(res.errMessage || res.message);
+                this.setState({ errMessage: res.errMessage || res.message });
             } else {
-                toast.success("Register succeed!");
-                // After successful registration, navigate to login
+                toast.success("Đăng ký tài khoản thành công!");
                 this.props.navigate('/login');
             }
         } catch (e) {
@@ -73,27 +105,27 @@ class Register extends Component {
             <div className="auth-split-container">
                 <div className="welcome-left">
                     <div className="welcome-text">
-                        <h1>Join us!</h1>
-                        <p>Create an account to manage your health appointments easily.</p>
+                        <h1><FormattedMessage id="register.join" /></h1>
+                        <p><FormattedMessage id="register.join-desc" /></p>
                     </div>
                 </div>
                 <div className="form-right-signup">
                     <div className="container">
                         <div className="header">
-                            <div className="text">Sign Up</div>
+                            <div className="text"><FormattedMessage id="register.signup" /></div>
                             <div className="underline"></div>
                         </div>
                         <div className="inputs">
                             {/* First Name - Last Name */}
                             <div className="input-group-row" style={{ display: 'flex', gap: '10px' }}>
                                 <div className="input" style={{ width: '50%' }}>
-                                    <input placeholder="First Name"
+                                    <input placeholder={language === 'vi' ? 'Tên' : 'First Name'}
                                         value={this.state.firstName}
                                         onChange={(event) => this.handleOnChangeInput(event, 'firstName')}
                                     />
                                 </div>
                                 <div className="input" style={{ width: '50%' }}>
-                                    <input placeholder="Last Name"
+                                    <input placeholder={language === 'vi' ? 'Họ' : 'Last Name'}
                                         value={this.state.lastName}
                                         onChange={(event) => this.handleOnChangeInput(event, 'lastName')}
                                     />
@@ -102,14 +134,14 @@ class Register extends Component {
 
                             {/* Email */}
                             <div className="input">
-                                <input type="email" placeholder="Email"
+                                <input type="email" placeholder={language === 'vi' ? 'Email' : 'Email'}
                                     value={this.state.email}
                                     onChange={(event) => this.handleOnChangeInput(event, 'email')} />
                             </div>
 
                             {/* Password */}
                             <div className="input">
-                                <input type="password" placeholder="Password"
+                                <input type="password" placeholder={language === 'vi' ? 'Mật khẩu' : 'Password'}
                                     value={this.state.password}
                                     onChange={(event) => this.handleOnChangeInput(event, 'password')} />
                             </div>
@@ -118,7 +150,7 @@ class Register extends Component {
                                 {/* Phone Number */}
                                 <div className="input"
                                     style={{ width: '50%' }}>
-                                    <input placeholder="Phone Number"
+                                    <input placeholder={language === 'vi' ? 'Số điện thoại' : 'Phone Number'}
                                         value={this.state.phonenumber}
                                         onChange={(event) => this.handleOnChangeInput(event, 'phonenumber')} />
                                 </div>
@@ -130,14 +162,14 @@ class Register extends Component {
                                         className="react-select-container"
                                         classNamePrefix="select"
                                         options={this.handleSelectGender()}
-                                        placeholder={language === 'vi' ? "Chọn giới tính" : "Select Gender"}
+                                        placeholder={<FormattedMessage id="register.gender" />}
                                         onChange={(selected) => this.handleOnChangeInput({ target: { value: selected.value } }, 'gender')}
                                     />
                                 </div>
                             </div>
                             {/* Address */}
                             <div className="input">
-                                <input placeholder="Address"
+                                <input placeholder={language === 'vi' ? 'Địa chỉ' : 'Address'}
                                     value={this.state.address}
                                     onChange={(event) => this.handleOnChangeInput(event, 'address')} />
                             </div>
@@ -146,13 +178,15 @@ class Register extends Component {
 
                             <div className="error-message">{this.state.errMessage}</div>
 
-                            <div className="submit-container">
-                                <button className="submit" onClick={this.handleRegister}>Register</button>
+                             <div className="submit-container">
+                                <button className="submit" onClick={this.handleRegister}>
+                                    <FormattedMessage id="register.register-btn" />
+                                </button>
                                 <button
                                     className="submit gray"
                                     onClick={() => this.props.navigate('/login')}
                                 >
-                                    Back to Login
+                                    <FormattedMessage id="register.back-btn" />
                                 </button>
                             </div>
                         </div>

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Flatpickr from 'react-flatpickr';
 import moment from 'moment';
+import { Vietnamese } from "flatpickr/dist/l10n/vn.js";
 
 import { KeyCodeUtils } from "../../utils";
 import './DatePicker.scss';
@@ -32,9 +33,15 @@ class DatePicker extends Component {
             const { onChange } = this.props;
             const value = event.target.value;
 
-            // Take the blur event and process the string value
+            if (!value) {
+                onChange([]);
+                return;
+            }
+
             const valueMoment = moment(value, 'DD/MM/YYYY');
-            onChange([valueMoment.toDate(), valueMoment.toDate()]);
+            if (valueMoment.isValid()) {
+                onChange([valueMoment.toDate(), valueMoment.toDate()]);
+            }
         }
     }
 
@@ -49,10 +56,15 @@ class DatePicker extends Component {
         const { onChange } = this.props;
         const value = event.target.value;
 
-        // Take the blur event and process the string value
-        event.preventDefault();
+        if (!value) {
+            onChange([]);
+            return;
+        }
+
         const valueMoment = moment(value, 'DD/MM/YYYY');
-        onChange([valueMoment.toDate(), valueMoment.toDate()]);
+        if (valueMoment.isValid()) {
+            onChange([valueMoment.toDate(), valueMoment.toDate()]);
+        }
     };
 
     onOpen = () => {
@@ -138,16 +150,38 @@ class DatePicker extends Component {
     DISPLAY_FORMAT = "d/m/Y";
 
     render() {
-        const { value, onChange, minDate, onClose, ...otherProps } = this.props;
+        const { value, onChange, minDate, maxDate, onClose, ...otherProps } = this.props;
         const options = {
             dateFormat: this.DISPLAY_FORMAT,
             allowInput: true,
             disableMobile: true,
             onClose: onClose,
-            onOpen: this.onOpen
+            onOpen: this.onOpen,
+            locale: Vietnamese,
+            onReady: (selectedDates, dateStr, instance) => {
+                const yearInput = instance.currentYearElement;
+                if (yearInput) {
+                    const select = document.createElement("select");
+                    select.className = "flatpickr-monthDropdown-months year-select"; 
+                    for (let i = 2060; i >= 1960; i--) {
+                        const option = document.createElement("option");
+                        option.value = i;
+                        option.text = i;
+                        if (i === instance.currentYear) option.selected = true;
+                        select.appendChild(option);
+                    }
+                    select.addEventListener("change", (e) => {
+                        instance.changeYear(parseInt(e.target.value));
+                    });
+                    yearInput.parentNode.replaceChild(select, yearInput);
+                }
+            }
         };
         if (minDate) {
             options.minDate = minDate;
+        }
+        if (maxDate) {
+            options.maxDate = maxDate;
         }
         return (
             <Flatpickr
@@ -155,11 +189,6 @@ class DatePicker extends Component {
                 value={value}
                 onChange={onChange}
                 options={options}
-                // render={
-                //     ({ defaultValue, value, ...props }, ref) => {
-                //         return <CustomInput defaultValue={defaultValue} inputRef={ref} onInputChange={this.onInputChange} onInputBlur={this.onInputBlur} />
-                //     }
-                // }
                 {...otherProps}
             />
         );

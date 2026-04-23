@@ -36,8 +36,6 @@ class ManageDoctor extends Component {
             selectedSpecialty: [], // Array for Multi-select
             selectedClinic: [],    // Array for Multi-select
 
-            nameClinic: '',
-            addressClinic: '',
             note: '',
             maxNumber: '',
         }
@@ -140,8 +138,6 @@ class ManageDoctor extends Component {
             specialtyIds: selectedSpecialty ? selectedSpecialty.map(item => item.value) : [],
             clinicIds: selectedClinic ? selectedClinic.map(item => item.value) : [],
 
-            nameClinic: nameClinic,
-            addressClinic: addressClinic,
             note: note,
             maxNumber: this.state.maxNumber,
         });
@@ -163,14 +159,12 @@ class ManageDoctor extends Component {
             let selectedSpecialty = [], selectedClinic = [];
 
             if (doctorInfor) {
-                addressClinic = doctorInfor.addressClinic;
-                nameClinic = doctorInfor.nameClinic;
                 note = doctorInfor.note;
 
                 selectedPrice = listPrice.find(item => item && item.value === doctorInfor.priceId);
                 selectedPayment = listPayment.find(item => item && item.value === doctorInfor.paymentId);
                 selectedProvince = listProvince.find(item => item && item.value === doctorInfor.provinceId);
-                maxNumber = doctorInfor.maxNumber;
+                maxNumber = doctorInfor.count;
             }
 
             if (res.data.doctorClinicSpecialtyData && res.data.doctorClinicSpecialtyData.length > 0) {
@@ -204,8 +198,6 @@ class ManageDoctor extends Component {
                 contentMarkdown: markdown ? markdown.contentMarkdown : '',
                 hasOldData: markdown ? true : false,
 
-                addressClinic: addressClinic || '',
-                nameClinic: nameClinic || '',
                 note: note || '',
                 selectedPrice: selectedPrice || '',
                 selectedPayment: selectedPayment || '',
@@ -218,7 +210,7 @@ class ManageDoctor extends Component {
             this.setState({
                 description: '', contentHTML: '', contentMarkdown: '',
                 hasOldData: false,
-                addressClinic: '', nameClinic: '', note: '',
+                note: '',
                 selectedPrice: '', selectedPayment: '',
                 selectedProvince: '', selectedSpecialty: [],
                 selectedClinic: [],
@@ -314,6 +306,8 @@ class ManageDoctor extends Component {
                                     options={this.state.listAllDoctors}
                                     isDisabled={isDoctorRole}
                                     placeholder={language === LANGUAGES.VI ? 'Tìm kiếm bác sĩ...' : 'Search doctor...'}
+                                    menuPortalTarget={document.body}
+                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                 />
                             </div>
                             <div className="input-group-apple">
@@ -326,6 +320,8 @@ class ManageDoctor extends Component {
                                     placeholder={language === LANGUAGES.VI ? 'Chọn chuyên khoa...' : 'Choose specialty...'}
                                     name="selectedSpecialty"
                                     isMulti={true}
+                                    menuPortalTarget={document.body}
+                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                 />
                             </div>
                             <div className="input-group-apple">
@@ -338,6 +334,8 @@ class ManageDoctor extends Component {
                                     placeholder={language === LANGUAGES.VI ? 'Chọn cơ sở...' : 'Choose clinic...'}
                                     name="selectedClinic"
                                     isMulti={true}
+                                    menuPortalTarget={document.body}
+                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                 />
                             </div>
                         </div>
@@ -361,6 +359,8 @@ class ManageDoctor extends Component {
                                     options={this.state.listPrice}
                                     placeholder={language === LANGUAGES.VI ? 'Chọn mức giá...' : 'Choose price...'}
                                     name="selectedPrice"
+                                    menuPortalTarget={document.body}
+                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                 />
                             </div>
                             <div className="input-group-apple">
@@ -372,6 +372,8 @@ class ManageDoctor extends Component {
                                     options={this.state.listPayment}
                                     placeholder={language === LANGUAGES.VI ? 'Chọn thanh toán...' : 'Choose payment...'}
                                     name="selectedPayment"
+                                    menuPortalTarget={document.body}
+                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                 />
                             </div>
                             <div className="input-group-apple">
@@ -383,6 +385,8 @@ class ManageDoctor extends Component {
                                     options={this.state.listProvince}
                                     placeholder={language === LANGUAGES.VI ? 'Chọn tỉnh thành...' : 'Choose province...'}
                                     name="selectedProvince"
+                                    menuPortalTarget={document.body}
+                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                 />
                             </div>
                         </div>
@@ -392,39 +396,29 @@ class ManageDoctor extends Component {
                     <div className="info-card">
                         <div className="card-header">
                             <span className="card-title">
-                                <FormattedMessage id="manage-doctor.facility-info" defaultMessage="Thông Tin Phòng Khám" />
+                                <FormattedMessage id="manage-doctor.facility-info" defaultMessage="Cấu Hình Lịch Khám" />
                             </span>
                             <i className="fas fa-hospital card-icon"></i>
                         </div>
                         <div className="card-body">
                             <div className="input-group-apple">
-                                <label><FormattedMessage id='manage-doctor.clinic' defaultMessage="Tên Phòng Khám" /></label>
-                                <input
-                                    type="text"
-                                    className="input"
-                                    value={this.state.nameClinic}
-                                    onChange={(e) => this.handleChangeText(e, "nameClinic")}
-                                    placeholder={language === LANGUAGES.VI ? 'VD: Phòng khám Đa khoa Việt Nhật' : 'Enter clinic name'}
-                                />
-                            </div>
-                            <div className="input-group-apple">
-                                <label><FormattedMessage id='manage-doctor.address' defaultMessage="Địa Chỉ" /></label>
-                                <input
-                                    type="text"
-                                    className="input"
-                                    value={this.state.addressClinic}
-                                    onChange={(e) => this.handleChangeText(e, "addressClinic")}
-                                    placeholder={language === LANGUAGES.VI ? 'Số nhà, tên đường...' : 'Enter address'}
-                                />
-                            </div>
-                            <div className="input-group-apple">
-                                <label><FormattedMessage id='manage-doctor.max-number' defaultMessage="Sức Chứa / Ca" /></label>
+                                <label><FormattedMessage id='manage-doctor.max-number' defaultMessage="Sức Chứa Tối Đa / Ca" /></label>
                                 <input
                                     type="number"
                                     className="input"
                                     value={this.state.maxNumber}
                                     onChange={(e) => this.handleChangeText(e, "maxNumber")}
-                                    placeholder="10"
+                                    placeholder="Ví dụ: 10"
+                                />
+                            </div>
+                            <div className="input-group-apple">
+                                <label><FormattedMessage id='manage-doctor.note' defaultMessage="Ghi Chú Thêm" /></label>
+                                <textarea
+                                    className="textarea"
+                                    value={this.state.note}
+                                    onChange={(e) => this.handleChangeText(e, "note")}
+                                    placeholder="..."
+                                    rows={2}
                                 />
                             </div>
                         </div>
@@ -447,16 +441,6 @@ class ManageDoctor extends Component {
                                     onChange={(e) => this.handleChangeText(e, "description")}
                                     placeholder={language === LANGUAGES.VI ? 'Mô tả ngắn về trình độ chuyên môn...' : 'Short bio...'}
                                     rows={3}
-                                />
-                            </div>
-                            <div className="input-group-apple">
-                                <label><FormattedMessage id='manage-doctor.note' defaultMessage="Ghi Chú" /></label>
-                                <input
-                                    type="text"
-                                    className="input"
-                                    value={this.state.note}
-                                    onChange={(e) => this.handleChangeText(e, "note")}
-                                    placeholder="..."
                                 />
                             </div>
                         </div>

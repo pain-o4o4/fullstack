@@ -81,7 +81,12 @@ class MyBooking extends Component {
                                             : '';
 
 
-                                        let formattedDate = moment(new Date(parseInt(item.date))).format('DD/MM/YYYY');
+                                        let formattedDate = '';
+                                        if (moment(item.date, 'DD/MM/YYYY', true).isValid()) {
+                                            formattedDate = item.date;
+                                        } else {
+                                            formattedDate = moment(new Date(parseInt(item.date))).format('DD/MM/YYYY');
+                                        }
 
                                         return (
                                             <tr key={index} 

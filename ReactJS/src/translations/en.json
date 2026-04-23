@@ -11,7 +11,24 @@
         "login": "Login",
         "username": "Username",
         "password": "Password",
-        "userpass-wrong": "Invalid username or password!"
+        "userpass-wrong": "Invalid username or password!",
+        "welcome": "Welcome back!",
+        "welcome-desc": "You can sign in to access your account.",
+        "email-placeholder": "Email",
+        "password-placeholder": "Password",
+        "signup": "Sign Up"
+    },
+    "register": {
+        "join": "Join us!",
+        "join-desc": "Create an account to manage your health appointments easily.",
+        "signup": "Sign Up",
+        "first-name": "First Name",
+        "last-name": "Last Name",
+        "phone": "Phone Number",
+        "gender": "Select Gender",
+        "address": "Address",
+        "register-btn": "Register",
+        "back-btn": "Back to Login"
     },
     "menu": {
         "system": {

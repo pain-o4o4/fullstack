@@ -280,67 +280,69 @@ class UserManage extends Component {
 
                 {/* MODAL CẬP NHẬT/THÊM NGƯỜI DÙNG */}
                 <Modal isOpen={isModalOpen} toggle={this.resetFormState} className="user-modal" size="lg" centered>
-                    <div className="modal-header">
-                        <span className="modal-title">
-                            {action === 'CREATE'
-                                ? <FormattedMessage id="manage-user.modal-create" defaultMessage="Thêm mới người dùng" />
-                                : <FormattedMessage id="manage-user.modal-update" defaultMessage="Cập nhật người dùng" />
-                            }
-                        </span>
-                        <button className="close" onClick={this.resetFormState}>
-                            <span>&times;</span>
-                        </button>
-                    </div>
+                    <ModalHeader toggle={this.resetFormState}>
+                        {action === 'CREATE'
+                            ? <FormattedMessage id="manage-user.modal-create" defaultMessage="Thêm mới người dùng" />
+                            : <FormattedMessage id="manage-user.modal-update" defaultMessage="Cập nhật người dùng" />
+                        }
+                    </ModalHeader>
                     <div className="modal-body">
                         <div className="user-form-grid">
-                            <div className="input-group-apple"
-                            >
+                            <div className="input-group-apple full-width">
                                 <label><FormattedMessage id="manage-user.image" defaultMessage="Ảnh đại diện (Avatar)" /></label>
-                                <div className="avatar-upload-area" >
+                                <div className="avatar-upload-area">
                                     <div className="avatar-preview">
                                         <img src={this.state.previewImgURL || icon_icons} alt="Preview" />
                                     </div>
                                     <input type="file" id="uploadAvatar" hidden onChange={this.handleOnChangeImage} />
                                     <label htmlFor="uploadAvatar" className="upload-btn-label">
-                                        <FormattedMessage id="manage-user.upload-avatar" defaultMessage="Tải ảnh lên" />
+                                        <i className="fas fa-camera mr-2"></i>
+                                        <FormattedMessage id="manage-user.upload-avatar" defaultMessage="Thay đổi ảnh" />
                                     </label>
                                 </div>
                             </div>
+                            
                             <div className="input-group-apple">
                                 <label>Email <span className="text-danger">*</span></label>
                                 <input type="email" value={this.state.email}
+                                    placeholder="name@example.com"
                                     onChange={(e) => this.handleOnChangeInput(e, 'email')}
                                     disabled={action === 'EDIT'} />
                             </div>
 
                             <div className="input-group-apple">
-                                <label>Password <span className="text-danger">*</span></label>
+                                <label><FormattedMessage id="system.user-manage.password" defaultMessage="Mật khẩu" /> <span className="text-danger">*</span></label>
                                 <input type="password" value={this.state.password}
+                                    placeholder="••••••••"
                                     onChange={(e) => this.handleOnChangeInput(e, 'password')}
                                     disabled={action === 'EDIT'} />
                             </div>
 
                             <div className="input-group-apple">
-                                <label>First Name <span className="text-danger">*</span></label>
+                                <label><FormattedMessage id="system.user-manage.first-name" defaultMessage="Tên" /> <span className="text-danger">*</span></label>
                                 <input type="text" value={this.state.firstName}
+                                    placeholder="Steve"
                                     onChange={(e) => this.handleOnChangeInput(e, 'firstName')} />
                             </div>
 
                             <div className="input-group-apple">
-                                <label>Last Name <span className="text-danger">*</span></label>
+                                <label><FormattedMessage id="system.user-manage.last-name" defaultMessage="Họ" /> <span className="text-danger">*</span></label>
                                 <input type="text" value={this.state.lastName}
+                                    placeholder="Jobs"
                                     onChange={(e) => this.handleOnChangeInput(e, 'lastName')} />
                             </div>
 
                             <div className="input-group-apple">
                                 <label><FormattedMessage id="manage-user.phone-number" defaultMessage="Số điện thoại" /> <span className="text-danger">*</span></label>
                                 <input type="tel" value={this.state.phonenumber}
+                                    placeholder="+84 ..."
                                     onChange={(e) => this.handleOnChangeInput(e, 'phonenumber')} />
                             </div>
 
-                            <div className="input-group-apple full-width">
+                            <div className="input-group-apple">
                                 <label><FormattedMessage id="manage-user.address" defaultMessage="Địa chỉ" /> <span className="text-danger">*</span></label>
                                 <input type="text" value={this.state.address}
+                                    placeholder="1 Infinite Loop, Cupertino..."
                                     onChange={(e) => this.handleOnChangeInput(e, 'address')} />
                             </div>
 
@@ -348,19 +350,6 @@ class UserManage extends Component {
                                 <label><FormattedMessage id="manage-user.gender" defaultMessage="Giới tính" /></label>
                                 <select value={this.state.gender} onChange={(e) => this.handleOnChangeInput(e, 'gender')}>
                                     {genderArr && genderArr.length > 0 && genderArr.map((item, index) => {
-                                        return (
-                                            <option key={index} value={item.keyMap}>
-                                                {language === 'vi' ? item.valueVi : item.valueEn}
-                                            </option>
-                                        )
-                                    })}
-                                </select>
-                            </div>
-
-                            <div className="input-group-apple">
-                                <label><FormattedMessage id="manage-user.position" defaultMessage="Chức danh" /></label>
-                                <select value={this.state.positionId} onChange={(e) => this.handleOnChangeInput(e, 'positionId')}>
-                                    {positionArr && positionArr.length > 0 && positionArr.map((item, index) => {
                                         return (
                                             <option key={index} value={item.keyMap}>
                                                 {language === 'vi' ? item.valueVi : item.valueEn}
@@ -383,7 +372,18 @@ class UserManage extends Component {
                                 </select>
                             </div>
 
-
+                            <div className="input-group-apple full-width">
+                                <label><FormattedMessage id="manage-user.position" defaultMessage="Chức danh" /></label>
+                                <select value={this.state.positionId} onChange={(e) => this.handleOnChangeInput(e, 'positionId')}>
+                                    {positionArr && positionArr.length > 0 && positionArr.map((item, index) => {
+                                        return (
+                                            <option key={index} value={item.keyMap}>
+                                                {language === 'vi' ? item.valueVi : item.valueEn}
+                                            </option>
+                                        )
+                                    })}
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <div className="modal-footer">

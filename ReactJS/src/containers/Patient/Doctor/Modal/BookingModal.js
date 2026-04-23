@@ -124,10 +124,10 @@ class BookingModal extends Component {
             let { userInfo } = this.props;
             if (userInfo) {
                 this.setState({
-                    fullName: userInfo.firstName && userInfo.lastName ? `${userInfo.lastName} ${userInfo.firstName}` : this.state.fullName,
-                    email: userInfo.email || this.state.email,
-                    phoneNumber: userInfo.phoneNumber || this.state.phoneNumber,
-                    address: userInfo.address || this.state.address
+                    fullName: (userInfo.firstName && userInfo.lastName) ? `${userInfo.lastName} ${userInfo.firstName}` : this.state.fullName,
+                    email: userInfo.email || this.state.email || '',
+                    phoneNumber: userInfo.phonenumber || userInfo.phoneNumber || this.state.phoneNumber || '',
+                    address: userInfo.address || this.state.address || ''
                 });
             }
         }
@@ -190,27 +190,42 @@ class BookingModal extends Component {
         });
     }
     handleConfirmBooking = async () => {
-        let { dataTimeModal, userInfo } = this.props;
+        let { dataTimeModal } = this.props;
         let {
-            selectedPayment, fullName,
-            email, address, birthday,
-            phoneNumber, selectedGender
+            selectedPayment, fullName, email, address, 
+            birthday, phoneNumber, selectedGender, reason
         } = this.state;
-        if (!fullName || !email || !address ||
-            !phoneNumber || !selectedGender ||
-            !selectedPayment) {
-            toast.error("Missing required information!");
+
+        // Regular Expressions
+        const emailRe = /\S+@\S+\.\S+/;
+        const phoneRe = /^\d+$/;
+
+        if (!fullName || !email || !address || !phoneNumber || !selectedGender || !selectedPayment || !birthday || !reason) {
+            toast.error("Vui lòng điền đầy đủ các thông tin bắt buộc!");
             return;
         }
-        let timestamp = new Date(birthday).getTime();
-        if (selectedPayment === 'PAY1') {
-            toast.warning(`
-            Currently, the system only supports QR code payments. 
-            Please choose another payment method!`
-            );
-        } else {
-            this.handleOnlinePayment();
+
+        if (!emailRe.test(email)) {
+            toast.error("Định dạng Email không hợp lệ!");
+            return;
         }
+
+        if (!phoneRe.test(phoneNumber)) {
+            toast.error("Số điện thoại chỉ được chứa các chữ số!");
+            return;
+        }
+
+        if (reason.length < 10) {
+            toast.error("Vui lòng mô tả lý do khám chi tiết hơn (tối thiểu 10 ký tự)!");
+            return;
+        }
+
+        if (selectedPayment === 'PAY1') {
+            toast.warning(`Hiện tại hệ thống chỉ hỗ trợ thanh toán qua mã QR. Vui lòng chọn phương thức thanh toán khác!`);
+            return;
+        }
+
+        this.handleOnlinePayment();
     }
     handleOnlinePayment = async () => {
         let { dataTimeModal, userInfo, detailDoctor, language } = this.props;
@@ -236,6 +251,7 @@ class BookingModal extends Component {
             gender: selectedGender.value,
             genderLabel: selectedGender.label,
             doctorId: dataTimeModal.doctorId,
+            clinicId: dataTimeModal.clinicId,
             timeType: dataTimeModal.timeType,
             timeLabel: timeLabel,
             language: language,
@@ -278,6 +294,7 @@ class BookingModal extends Component {
                 className={'booking-modal'}
                 size="lg"
                 centered
+                fade={false}
             >
                 <div className="booking-modal-content">
                     <div className="booking-modal-header">
@@ -356,27 +373,27 @@ class BookingModal extends Component {
                                     onChange={(date) => { this.handleOnChangeDatePicker(date) }}
                                     className="form-control"
                                     value={this.state.birthday}
+                                    maxDate={new Date()} // Prevent future birthdays
                                 />
                             </div>
                             <div className="col-6 form-group">
                                 <label><FormattedMessage id="schedule-doctor.gender" /></label>
                                 <Select
-                                    value={this.state.selectedGender}
+                                    value={this.state.selectedGender || null}
                                     onChange={this.handleChangeSelect}
                                     name='selectedGender'
                                     options={this.state.genders}
-                                    className="react-select-container" // Class bọc ngoài
-                                    classNamePrefix="react-select"     // Tiền tố cho các class con
+                                    className="react-select-container"
+                                    classNamePrefix="react-select"
                                 />
                             </div>
                             <div className="col-6 form-group">
                                 <label><FormattedMessage id="schedule-doctor.payment" /></label>
                                 <Select
-                                    value={this.state.selectedPayment}
+                                    value={this.state.selectedPayment || null}
                                     onChange={this.handleChangeSelect}
                                     name='selectedPayment'
                                     options={this.state.listPayment}
-                                    // placeholder="Chọn phương thức thanh toán"
                                     className="react-select-container"
                                     classNamePrefix="react-select"
                                 />

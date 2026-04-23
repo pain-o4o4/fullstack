@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from "../../store/actions";
 import './Login.scss';
+import { FormattedMessage } from 'react-intl';
 
 import emailIcon from '../../assets/images/email.png';
 import passwordIcon from '../../assets/images/password.png';
@@ -25,8 +26,33 @@ class Login extends Component {
         this.setState({ password: e.target.value });
     };
 
+    validate = () => {
+        let { email, password } = this.state;
+        const re = /\S+@\S+\.\S+/;
+
+        if (!email) {
+            this.setState({ errMessage: 'Vui lòng nhập Email!' });
+            return false;
+        }
+        if (!re.test(email)) {
+            this.setState({ errMessage: 'Định dạng Email không hợp lệ!' });
+            return false;
+        }
+        if (!password) {
+            this.setState({ errMessage: 'Vui lòng nhập mật khẩu!' });
+            return false;
+        }
+        if (password.length < 6) {
+            this.setState({ errMessage: 'Mật khẩu phải có tối thiểu 6 ký tự!' });
+            return false;
+        }
+        return true;
+    }
+
     handleLogin = async () => {
         this.setState({ errMessage: '' });
+
+        if (!this.validate()) return;
 
         try {
             let res = await handleLoginApi(this.state.email, this.state.password);
@@ -78,19 +104,20 @@ class Login extends Component {
     };
 
     render() {
+        let { language } = this.props;
         return (
             <div className="auth-split-container">
                 <div className="welcome-left">
                     <div className="welcome-text">
-                        <h1>Welcome back!</h1>
-                        <p>You can sign in to access your account.</p>
+                        <h1><FormattedMessage id="login.welcome" /></h1>
+                        <p><FormattedMessage id="login.welcome-desc" /></p>
                     </div>
                 </div>
 
                 <div className="form-right-login">
                     <div className="container">
                         <div className="header">
-                            <div className="text">Login</div>
+                            <div className="text"><FormattedMessage id="login.login" /></div>
                             <div className="underline"></div>
                         </div>
 
@@ -99,7 +126,7 @@ class Login extends Component {
                                 <img className="input-icon" src={emailIcon} alt="email" />
                                 <input
                                     type="email"
-                                    placeholder="Email"
+                                    placeholder={language === 'vi' ? 'Email' : 'Email'}
                                     value={this.state.email}
                                     onChange={this.handleEmailChange}
                                 />
@@ -109,7 +136,7 @@ class Login extends Component {
                                 <img className="input-icon" src={passwordIcon} alt="password" />
                                 <input
                                     type={this.state.isShowPassword ? "text" : "password"}
-                                    placeholder="Password"
+                                    placeholder={language === 'vi' ? 'Mật khẩu' : 'Password'}
                                     value={this.state.password}
                                     onChange={this.handlePasswordChange}
                                     onKeyDown={this.handleKeyDown}
@@ -125,10 +152,10 @@ class Login extends Component {
 
                             <div className="submit-container">
                                 <button className="submit" onClick={this.handleLogin}>
-                                    Login
+                                    <FormattedMessage id="login.login" />
                                 </button>
                                 <button className="submit gray" onClick={this.handleSignUp}>
-                                    Sign Up
+                                    <FormattedMessage id="login.signup" />
                                 </button>
                             </div>
                         </div>
@@ -139,8 +166,14 @@ class Login extends Component {
     }
 }
 
+const mapStateToProps = state => {
+    return {
+        language: state.app.language
+    };
+};
+
 const mapDispatchToProps = dispatch => ({
     userLoginSuccess: (userInfo) => dispatch(actions.userLoginSuccess(userInfo)),
 });
 
-export default withRouter(connect(null, mapDispatchToProps)(Login));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Login));

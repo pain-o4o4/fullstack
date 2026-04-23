@@ -101,13 +101,12 @@ let postInforDoctorService = (data) => {
 
             if (!data.doctorId || !data.contentHTML || !data.contentMarkdown || !data.action
                 || !data.selectedPrice || !data.selectedPayment || !data.selectedProvince
-                || !data.nameClinic || !data.addressClinic || !data.note || !data.specialtyId || !data.clinicId) {
+                || !data.note || !data.specialtyId || !data.clinicId) {
                 return resolve({
                     errCode: 1,
                     errMessage: "Missing required parameters !"
                 });
             }
-
 
             let doctorMarkdown = await db.Markdown.findOne({
                 where: { doctorId: data.doctorId },
@@ -127,32 +126,30 @@ let postInforDoctorService = (data) => {
                     doctorId: data.doctorId,
                 });
             }
+
             let doctorInfor = await db.Doctor_infor.findOne({
                 where: { doctorId: data.doctorId },
                 raw: false
             })
+
             if (doctorInfor) {
                 // EDIT
                 doctorInfor.doctorId = data.doctorId;
                 doctorInfor.priceId = data.selectedPrice;
                 doctorInfor.provinceId = data.selectedProvince;
                 doctorInfor.paymentId = data.selectedPayment;
-                doctorInfor.nameClinic = data.nameClinic;
-                doctorInfor.addressClinic = data.addressClinic;
                 doctorInfor.note = data.note;
                 doctorInfor.specialtyId = data.specialtyId;
                 doctorInfor.clinicId = data.clinicId;
                 doctorInfor.count = data.maxNumber;
                 await doctorInfor.save();
             }
-            else {// EDIT
+            else {// CREATE
                 await db.Doctor_infor.create({
                     doctorId: data.doctorId,
                     priceId: data.selectedPrice,
                     provinceId: data.selectedProvince,
                     paymentId: data.selectedPayment,
-                    nameClinic: data.nameClinic,
-                    addressClinic: data.addressClinic,
                     note: data.note,
                     specialtyId: data.specialtyId,
                     clinicId: data.clinicId,
@@ -254,6 +251,7 @@ let getDetailDoctorByIdService = (idInput) => {
                             { model: db.Allcode, as: "priceTypeData", attributes: ["valueEn", "valueVi"] },
                             { model: db.Allcode, as: "provinceTypeData", attributes: ["valueEn", "valueVi"] },
                             { model: db.Allcode, as: "paymentTypeData", attributes: ["valueEn", "valueVi"] },
+                            { model: db.Clinic, as: "clinicData", attributes: ["name", "address"] },
                         ]
                     },
                     // {
@@ -311,20 +309,59 @@ let bulkCreateScheduleService = (data) => {
                     return item;
                 });
             }
+            // 1. Get all unique dates from the schedule array
+            let allDates = _.uniq(schedule.map(item => item.date));
+
+            // 2. Fetch all existing schedules for these dates and this doctor
             let existing = await db.Schedule.findAll({
-                where: { doctorId: data.doctorId, date: formattedDate },
-                attributes: ['timeType', 'date', 'doctorId', 'maxNumber', 'clinicId']
+                where: { doctorId: data.doctorId, date: { [Op.in]: allDates } },
+                attributes: ['id', 'timeType', 'date', 'doctorId', 'maxNumber', 'clinicId', 'currentNumber']
             });
-            let toCreate = _.differenceWith(schedule, existing, (a, b) => {
-                return a.timeType === b.timeType && a.date === b.date;
+
+            // 3. Identify slots to DELETE, UPDATE, or CREATE
+            // We should delete slots that are in 'existing' but not in the new 'schedule'
+            // UNLESS they already have bookings (currentNumber > 0)
+            let toDelete = existing.filter(ex => {
+                return !schedule.some(s => s.timeType === ex.timeType && s.date === ex.date) && (!ex.currentNumber || ex.currentNumber === 0);
             });
-            if (toCreate && toCreate.length > 0) {
-                await db.Schedule.bulkCreate(toCreate);
+
+            if (toDelete.length > 0) {
+                await db.Schedule.destroy({
+                    where: { id: { [Op.in]: toDelete.map(d => d.id) } }
+                });
+            }
+
+            // 4. Force all schedules (new and remaining) on these dates to the same clinicId
+            // This enforces the "One Clinic Per Day" rule
+            if (schedule && schedule.length > 0) {
+                // All items in schedule array have the same clinicId from the UI dropdown
+                const targetClinicId = schedule[0].clinicId;
+
+                // CRITICAL CHECK: If any existing schedule on these dates has bookings (currentNumber > 0)
+                // and the clinicId is DIFFERENT from targetClinicId, we must BLOCK this action.
+                let conflictingBooking = existing.find(ex => ex.currentNumber > 0 && ex.clinicId !== targetClinicId);
+                if (conflictingBooking) {
+                    return resolve({
+                        errCode: 2,
+                        errMessage: `Không thể đổi phòng khám vì đã có bệnh nhân đặt lịch tại bệnh viện cũ trong ngày này!`
+                    });
+                }
+
+                // Update ALL existing schedules for this doctor on these dates to the targetClinicId
+                await db.Schedule.update(
+                    { clinicId: targetClinicId },
+                    { where: { doctorId: data.doctorId, date: { [Op.in]: allDates } } }
+                );
+
+                // Now use bulkCreate with updateOnDuplicate for the rest
+                await db.Schedule.bulkCreate(schedule, {
+                    updateOnDuplicate: ['maxNumber', 'clinicId']
+                });
             }
             resolve({
                 errCode: 0,
                 errMessage: 'Save infor schedule successfully!',
-                data: toCreate
+                data: schedule
             });
 
         } catch (error) {
@@ -398,6 +435,7 @@ let getExtraDoctorById = (inputId) => {
                         { model: db.Allcode, as: 'priceTypeData', attributes: ['valueEn', 'valueVi'] },
                         { model: db.Allcode, as: 'provinceTypeData', attributes: ['valueEn', 'valueVi'] },
                         { model: db.Allcode, as: 'paymentTypeData', attributes: ['valueEn', 'valueVi'] },
+                        { model: db.Clinic, as: 'clinicData', attributes: ['name', 'address'] },
                     ],
                     raw: false,
                     nest: true,

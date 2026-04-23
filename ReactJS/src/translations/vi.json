@@ -11,7 +11,24 @@
         "login": "Đăng nhập",
         "username": "Tên đăng nhập",
         "password": "Mật khẩu",
-        "userpass-wrong": "Sai tên đăng nhập hoặc mật khẩu!"
+        "userpass-wrong": "Sai tên đăng nhập hoặc mật khẩu!",
+        "welcome": "Chào mừng trở lại!",
+        "welcome-desc": "Bạn có thể đăng nhập để truy cập tài khoản của mình.",
+        "email-placeholder": "Email",
+        "password-placeholder": "Mật khẩu",
+        "signup": "Đăng ký"
+    },
+    "register": {
+        "join": "Tham gia với chúng tôi!",
+        "join-desc": "Tạo tài khoản để quản lý lịch khám sức khỏe của bạn một cách dễ dàng.",
+        "signup": "Đăng ký",
+        "first-name": "Tên",
+        "last-name": "Họ",
+        "phone": "Số điện thoại",
+        "gender": "Chọn giới tính",
+        "address": "Địa chỉ",
+        "register-btn": "Đăng ký",
+        "back-btn": "Quay lại Đăng nhập"
     },
     "list": {
         "specialty": {
