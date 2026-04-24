@@ -95,23 +95,27 @@ class ExtraInforDoctor extends Component {
     }
     render() {
         let { isShowDetailInfor, extraInfor } = this.state
-        let { language } = this.props;
+        let { language, clinicData } = this.props;
         let listExtraInforLanguage = this.getInfoByLanguage();
+        
+        // Dữ liệu hiển thị (ưu tiên từ props nếu có, fallback về extraInfor)
+        let displayClinicName = clinicData ? clinicData.name : (extraInfor && extraInfor.clinicData ? extraInfor.clinicData.name : (extraInfor && extraInfor.nameClinic ? extraInfor.nameClinic : ''));
+        let displayClinicAddress = clinicData ? clinicData.address : (extraInfor && extraInfor.clinicData ? extraInfor.clinicData.address : listExtraInforLanguage.province);
+
         console.log('check state', this.state)
         return (
             <React.Fragment>
-                <div className="schedule-doctor">
+                <div className="extra-infor-doctor-container">
                     <div className="content-up">
                         <div className="text-address">
                             <FormattedMessage id="schedule-doctor.text-address" />
                         </div>
                         <div className="name-clinic">
-                            {extraInfor && extraInfor.clinicData ? extraInfor.clinicData.name : (extraInfor && extraInfor.nameClinic ? extraInfor.nameClinic : '')}
+                            {displayClinicName}
                         </div>
                         <div className="detail-address">
-                            {extraInfor && extraInfor.clinicData ? extraInfor.clinicData.address : listExtraInforLanguage.province}
+                            {displayClinicAddress}
                         </div>
-
                     </div>
                     <div className="content-donw">
 
@@ -130,7 +134,7 @@ class ExtraInforDoctor extends Component {
                                     }
                                 </div>
                                 <div className="detail-infor">
-                                    {extraInfor && extraInfor.clinicData ? extraInfor.clinicData.address : (extraInfor && extraInfor.addressClinic ? extraInfor.addressClinic : '')}
+                                    {displayClinicAddress}
                                 </div>
                                 <div className="price">
                                     <span className="left">

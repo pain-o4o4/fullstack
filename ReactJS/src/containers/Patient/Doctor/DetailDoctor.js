@@ -15,7 +15,7 @@ class DetailDoctor extends Component {
         this.state = {
             detailDoctor: {},
             currentDoctorId: this.props.params && this.props.params.id ? this.props.params.id : -1,
-
+            selectedClinicData: null,
         }
     }
 
@@ -43,8 +43,14 @@ class DetailDoctor extends Component {
             this.props.getDetailDoctor(id);
         }
     }
+    handleClinicSelection = (clinicData) => {
+        this.setState({
+            selectedClinicData: clinicData
+        });
+    }
+
     render() {
-        let { detailDoctor } = this.state;
+        let { detailDoctor, selectedClinicData } = this.state;
         let { language } = this.props;
         let nameVi = '', nameEn = '';
 
@@ -91,12 +97,13 @@ class DetailDoctor extends Component {
                         <div className='content-left'>
                             <ScheduleDoctor
                                 doctorIdFromParent={this.state.currentDoctorId}
+                                handleClinicSelection={this.handleClinicSelection}
                             />
                         </div>
                         <div className='content-right'>
                             <ExtraInforDoctor
                                 doctorIdFromParent={this.state.currentDoctorId}
-
+                                clinicData={selectedClinicData}
                             />
                         </div>
                     </div>

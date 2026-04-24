@@ -9,6 +9,8 @@ import 'moment/locale/vi';
 import calendar_icon from '../../../assets/images/calendar_icon.svg'
 import { FormattedMessage } from 'react-intl';
 import BookingModal from './Modal/BookingModal';
+import _ from 'lodash';
+
 class ScheduleDoctor extends Component {
     constructor(props) {
         super(props);
@@ -59,6 +61,10 @@ class ScheduleDoctor extends Component {
                 this.setState({
                     allAvalabelTime: res.data ? res.data : []
                 });
+                // Mặc định chọn clinic đầu tiên nếu có dữ liệu
+                if (res.data && res.data.length > 0 && res.data[0].clinicData) {
+                    this.props.handleClinicSelection(res.data[0].clinicData);
+                }
             }
         }
     }
@@ -78,6 +84,9 @@ class ScheduleDoctor extends Component {
                 this.setState({
                     allAvalabelTime: res.data ? res.data : []
                 });
+                if (res.data && res.data.length > 0 && res.data[0].clinicData) {
+                    this.props.handleClinicSelection(res.data[0].clinicData);
+                }
             }
         }
     }
@@ -86,14 +95,13 @@ class ScheduleDoctor extends Component {
             let doctorId = this.props.params.id;
             let date = e.target.value;
             let res = await getScheduleByDate(doctorId, date);
-            // if (res && res.errCode === 0) {
-            //     this.setState({
-            //         allAvalabelTime: res.data ? res.data : []
-            //     })
-            // }
+
             this.setState({
                 allAvalabelTime: res.data
             })
+            if (res.data && res.data.length > 0 && res.data[0].clinicData) {
+                this.props.handleClinicSelection(res.data[0].clinicData);
+            }
             console.log('check  getScheduleByDate(doctorId, date);', doctorId, "date", date, "res get form api", res);
         }
     }
@@ -102,6 +110,9 @@ class ScheduleDoctor extends Component {
             isTheModalOpen: true,
             dataTimeModal: time
         })
+        if (time.clinicData) {
+            this.props.handleClinicSelection(time.clinicData);
+        }
     }
     closeModal = () => {
         this.setState({
@@ -111,14 +122,14 @@ class ScheduleDoctor extends Component {
     render() {
         let { allDay, allAvalabelTime, isTheModalOpen, dataTimeModal } = this.state
         let { language } = this.props
-        // console.log('check state', this.state.allAvalabelTime);
         let doctorId = this.props.params ? this.props.params.id : '';
-        console.log('check doctorId', this.state);
+
+        // Nhóm lịch theo clinicId
+        let groupedTime = _.groupBy(allAvalabelTime, (item) => item.clinicData ? item.clinicData.id : 'unknown');
+
         return (
             <React.Fragment>
-                {/* <HomeHeader isShowBanner={false} /> */}
                 <div className="schedule-doctor-container">
-
                     <div className='all-schedule'>
                         <select
                             onChange={(e) => this.handleChangeSelect(e)}
@@ -133,45 +144,51 @@ class ScheduleDoctor extends Component {
                                         </option>
                                     )
                                 })}
-
                         </select>
                     </div>
-                    <div className='all-schedule-time'></div>
                     <div className='text-calendar'>
                         <span>
                             <img src={calendar_icon} alt="calendar" />
                             <FormattedMessage id="schedule-doctor.calendar" />
                         </span>
-
                     </div>
                     <div className="time-content">
                         {allAvalabelTime && allAvalabelTime.length > 0 ?
-                            <>
-                                {allAvalabelTime.map((item, index) => {
-                                    return (
-                                        <button
-                                            key={index}
-                                            className="time-content-btn"
-                                            onClick={() => {
-                                                console.log("Dữ liệu item khi click:", item);
-                                                this.handleClickSheduleTime(item);
-                                            }}
-                                        >
-                                            <div className="btn-time">
-                                                {language === 'vi'
-                                                    ? item.timeTypeData.valueVi
-                                                    : item.timeTypeData.valueEn
-                                                }
+                            Object.keys(groupedTime).map((clinicId, clinicIndex) => {
+                                let clinicData = groupedTime[clinicId][0].clinicData;
+                                return (
+                                    <div key={clinicId} className="clinic-group">
+                                        {clinicData && (
+                                            <div className="clinic-name-header">
+                                                <i className="fas fa-hospital"></i> {clinicData.name}
                                             </div>
-                                            {item.clinicData && (
-                                                <div className="btn-location">
-                                                    <i className="fas fa-map-marker-alt"></i> {item.clinicData.name}
-                                                </div>
-                                            )}
-                                        </button>
-                                    )
-                                })}
-                            </>
+                                        )}
+                                        <div className="time-grid">
+                                            {groupedTime[clinicId].map((item, index) => {
+                                                return (
+                                                    <button
+                                                        key={index}
+                                                        className="time-slot-btn"
+                                                        onMouseEnter={() => {
+                                                            if (item.clinicData) this.props.handleClinicSelection(item.clinicData);
+                                                        }}
+                                                        onClick={() => {
+                                                            this.handleClickSheduleTime(item);
+                                                        }}
+                                                    >
+                                                        <span className="time-label">
+                                                            {language === 'vi'
+                                                                ? item.timeTypeData.valueVi
+                                                                : item.timeTypeData.valueEn
+                                                            }
+                                                        </span>
+                                                    </button>
+                                                )
+                                            })}
+                                        </div>
+                                    </div>
+                                )
+                            })
                             :
                             <div className="no-schedule">
                                 <FormattedMessage id="patient.detail-doctor.no-schedule" />

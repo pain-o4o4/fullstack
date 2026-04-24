@@ -49,21 +49,22 @@
     /* Schedule & Extra Info Section */
     .schedule-doctor {
         display: flex;
-        gap: 40px;
-        background: #f5f5f7; // Nền xám nhạt nhẹ nhàng
-        padding: 30px;
-        border-radius: 24px; // Bo góc lớn kiểu iOS
+        gap: 30px;
+        background: #f8f9fa; // Nền sáng hơn một chút để tạo sự sạch sẽ
+        padding: 35px;
+        border-radius: 28px;
         margin-bottom: 50px;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
 
         .content-left {
-            flex: 1;
-            border-right: 1px solid #e5e5e7;
-            padding-right: 20px;
+            flex: 1.6; // Cho phép phần lịch rộng hơn
+            border-right: 1px solid #eef0f2;
+            padding-right: 30px;
         }
 
         .content-right {
             flex: 1;
-            padding-left: 20px;
+            padding-left: 10px;
         }
     }
 
