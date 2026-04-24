@@ -23,15 +23,21 @@ class VerifyEmail extends Component {
             let urlParams = new URLSearchParams(this.props.location.search);
             let token = urlParams.get('token');
             let doctorId = urlParams.get('doctorId');
+            let status = urlParams.get('status');
+
             if (token && doctorId) {
+                this.setState({ isVerifyCompleted: false }); // Start loading
                 let res = await postVerifyAppointmentService({
                     token: token,
-                    doctorId: doctorId
+                    doctorId: doctorId,
+                    status: status
                 })
+
                 if (res && res.errCode === 0) {
                     this.setState({
                         statusVerify: true,
-                        isVerifyCompleted: true
+                        isVerifyCompleted: true,
+                        isCancelled: res.errMessage === "CANCELLED"
                     });
                 } else {
                     this.setState({
@@ -43,38 +49,48 @@ class VerifyEmail extends Component {
         }
     }
 
-    async componentDidUpdate(prevProps, prevState, snapshot) {
-
-    }
-
-
     render() {
-        let { statusVerify, isVerifyCompleted } = this.state;
-        // this.props.language đã được connect từ mapStateToProps
+        let { statusVerify, isVerifyCompleted, isCancelled } = this.state;
         let { language } = this.props;
 
         return (
             <React.Fragment>
                 <HomeHeader />
-                {/* <HomePage /> */}
                 <div className="verify-container">
                     <div className="glass-card">
-                        {/* KHỐI 1: LOADING (Đang xác thực) */}
-                        {isVerifyCompleted === true && (
+                        {/* KHỐI 1: LOADING (Đang xử lý) */}
+                        {!isVerifyCompleted && (
                             <div className="loader-wrapper fade-in">
                                 <div className="spinner"></div>
                                 <p className="loading-text">
                                     <FormattedMessage id="verify-email.loading" defaultMessage="Verifying data..." />
-
                                 </p>
                             </div>
                         )}
 
                         {/* KHỐI 2: KẾT QUẢ (Sau khi gọi API xong) */}
-                        {isVerifyCompleted === false && (
+                        {isVerifyCompleted && (
                             <div className="result-wrapper fade-in-up">
-                                {statusVerify === true ? (
-                                    // TRƯỜNG HỢP THÀNH CÔNG
+                                {isCancelled ? (
+                                    // TRƯỜNG HỢP HỦY THANH TOÁN
+                                    <div className="result-content warning">
+                                        <div className="icon-circle warning">
+                                            <i className="fas fa-exclamation-triangle"></i>
+                                        </div>
+                                        <h1 className="title">
+                                            {language === 'vi' ? 'Đã hủy thanh toán' : 'Payment Cancelled'}
+                                        </h1>
+                                        <p className="desc">
+                                            {language === 'vi' 
+                                                ? 'Bạn đã hủy quá trình thanh toán. Lịch hẹn này đã được giải phóng.' 
+                                                : 'You have cancelled the payment. This appointment slot has been released.'}
+                                        </p>
+                                        <button className="btn-pill secondary" onClick={() => this.props.navigate('/home')}>
+                                            <FormattedMessage id="verify-email.back-home" defaultMessage="Back to Home" />
+                                        </button>
+                                    </div>
+                                ) : statusVerify ? (
+                                    // TRƯỜNG HỢP XÁC THỰC THÀNH CÔNG
                                     <div className="result-content success">
                                         <div className="icon-circle">
                                             <i className="fas fa-check"></i>

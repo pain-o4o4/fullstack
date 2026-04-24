@@ -87,11 +87,25 @@ let getDetailSchedulePatient = async (req, res) => {
     }
 }
 
+let handleVerifyPayment = async (req, res) => {
+    try {
+        let response = await patientService.verifyPaymentStatusService(req.body.orderCode);
+        return res.status(200).json(response);
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server'
+        });
+    }
+}
+
 export default {
     postBookAppointment,
     postVerifyAppointment,
     getAllAppointmentsById: getAllAppointmentsById,
     handlePayOSWebhook,
     postUpdatePatient: postUpdatePatient,
-    getDetailSchedulePatient: getDetailSchedulePatient
+    getDetailSchedulePatient: getDetailSchedulePatient,
+    handleVerifyPayment: handleVerifyPayment
 }

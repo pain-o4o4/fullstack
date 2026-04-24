@@ -7,17 +7,35 @@ import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
 import { LANGUAGES } from '../../../utils';
 import './MyBooking.scss'
-import { getAllAppointmentsByIdService } from '../../../services/userService'
+import { getAllAppointmentsByIdService, verifyPaymentStatus } from '../../../services/userService'
+import { toast } from 'react-toastify';
 
 class MyBooking extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            listAppointments: []
+            listAppointments: [],
+            isVerifying: false
         }
     }
 
     async componentDidMount() {
+        const query = new URLSearchParams(this.props.location.search);
+        const status = query.get('status');
+        const orderCode = query.get('orderCode');
+
+        // Nếu quay về từ PayOS với trạng thái PAID
+        if (status === 'PAID' && orderCode) {
+            this.setState({ isVerifying: true });
+            let verifyRes = await verifyPaymentStatus(orderCode);
+            if (verifyRes && verifyRes.errCode === 0) {
+                toast.success(this.props.language === LANGUAGES.VI ? "Thanh toán thành công!" : "Payment successful!");
+                // Xóa query params để không verify lại khi F5
+                this.props.navigate('/patient/my-booking', { replace: true });
+            }
+            this.setState({ isVerifying: false });
+        }
+
         if (this.props.userInfo && this.props.userInfo.id) {
             let id = this.props.userInfo.id;
             let res = await getAllAppointmentsByIdService(id);

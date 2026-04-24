@@ -157,8 +157,13 @@ const editHandbookService = (data) => {
     return axios.put('/api/edit-handbook', data);
 }
 
+const verifyPaymentStatus = (orderCode) => {
+    return axios.post('/api/verify-payment-status', { orderCode });
+}
+
 export {
     handleLoginApi,
+    verifyPaymentStatus,
     createRegister,
     getAllUsers,
     createNewUsersService,
