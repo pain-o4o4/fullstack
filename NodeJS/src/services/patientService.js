@@ -59,19 +59,17 @@ let postBookAppointmentService = (data) => {
             }
 
             if (appointment && appointment.statusId === 'S1') {
-                // CASE 1: Đã có booking (S1), tái sử dụng để thanh toán lại
-                let updateData = {
+                // CASE 1: Đã có booking (S1), tái sử dụng nhưng sinh mã đơn mới 
+                // để tránh lỗi trùng mã (Duplicate OrderCode) trên PayOS
+                const newOrderCode = Number(String(Date.now()).slice(-10));
+                await appointment.update({
                     reason: data.reason,
                     paymentId: data.paymentId,
-                };
-                // CHỈ cập nhật orderCode nếu chưa có, để tránh lệch mã với PayOS link cũ
-                if (!appointment.orderCode) {
-                    updateData.orderCode = Number(String(Date.now()).slice(-6));
-                }
-                await appointment.update(updateData, { transaction: t });
+                    orderCode: newOrderCode
+                }, { transaction: t });
             } else {
                 // CASE 2: Tạo mới booking (Chưa có hoặc đã hủy)
-                
+
                 // 2. KHÓA dòng Schedule này lại để kiểm tra sức chứa
                 let schedule = await db.Schedule.findOne({
                     where: { doctorId: data.doctorId, date: formattedDate, timeType: data.timeType },
@@ -106,7 +104,7 @@ let postBookAppointmentService = (data) => {
                     });
                 }
 
-                const orderCode = Number(String(Date.now()).slice(-6));
+                const orderCode = Number(String(Date.now()).slice(-10));
                 let token = uuidv4();
                 appointment = await db.Booking.create({
                     statusId: 'S1', 
@@ -123,7 +121,6 @@ let postBookAppointmentService = (data) => {
             }
 
             // --- PAYOS LOGIC ---
-            // Chỉ thực hiện gọi PayOS sau khi đã xác định các bước kiểm tra logic DB đều OK
             const finalAmount = 5000;
             const body = {
                 orderCode: Number(appointment.orderCode),
@@ -134,22 +131,22 @@ let postBookAppointmentService = (data) => {
                 items: [{ name: "Appointment booking", quantity: 1, price: finalAmount }]
             };
 
-            const payosInstance = payOS?.default || payOS;
-            if (!payosInstance || typeof payosInstance.paymentRequests?.create !== 'function') {
-                await t.rollback();
-                throw new Error("PayOS not configured properly.");
-            }
+            // Lấy instance chuẩn xác nhất
+            let payosInstance = payOS;
+            if (payOS && payOS.default) payosInstance = payOS.default;
 
             try {
+                // Sử dụng cấu trúc paymentRequests đã được xác nhận qua log
                 let paymentLinkRes = await payosInstance.paymentRequests.create(body);
-                await t.commit(); // THÀNH CÔNG: Lưu mọi thay đổi vào DB
+                
+                await t.commit(); 
                 return resolve({
                     errCode: 0,
                     data: { checkoutUrl: paymentLinkRes.checkoutUrl, bookingId: appointment.id }
                 });
             } catch (payosError) {
-                console.error(">>> [ERROR] PayOS API:", payosError);
-                await t.rollback(); // THẤT BẠI: Hủy bỏ booking vừa tạo để nhường slot cho người khác
+                console.error(">>> [PAYOS API ERROR]:", payosError?.response?.data || payosError.message || payosError);
+                if (t && !t.finished) await t.rollback();
                 return resolve({
                     errCode: 3,
                     errMessage: "Lỗi kết nối cổng thanh toán. Vui lòng thử lại!"
@@ -158,7 +155,7 @@ let postBookAppointmentService = (data) => {
 
         } catch (e) {
             console.log('>>> SYSTEM ERROR:', e);
-            if (t) await t.rollback();
+            if (t && !t.finished) await t.rollback();
             reject(e);
         }
     });
@@ -195,7 +192,7 @@ let postVerifyAppointmentService = async (infor) => {
                         appointment.statusId = 'S2';
                         await appointment.save();
                     }
-                    
+
                     return resolve({
                         errCode: 0,
                         errMessage: "OK"
@@ -396,14 +393,16 @@ let processPayOSWebhook = (webhookBody) => {
 
             // Lấy orderCode từ cấu trúc PayOS trả về
             const orderCode = verifiedData.orderCode;
-            
+
             if (webhookBody.code === "00") {
                 console.log(">>> [WEBHOOK] Payment Success for orderCode:", orderCode);
 
-                let booking = await db.Booking.findOne({
-                    where: {
-                        orderCode: String(orderCode),
-                        statusId: { [Op.in]: ['S1', 'S4'] }
+                console.log(">>> [WEBHOOK] Searching DB for orderCode:", String(orderCode));
+                // 2. Tìm và cập nhật trạng thái trong DB
+                let appointment = await db.Booking.findOne({
+                    where: { 
+                        orderCode: { [Op.like]: `%${orderCode}%` },
+                        statusId: 'S1' 
                     },
                     include: [
                         { model: db.User, as: 'patientBookingData', attributes: ['email', 'firstName', 'lastName'] },
@@ -516,13 +515,39 @@ let verifyPaymentStatusService = (orderCode) => {
             }
 
             const payosInstance = payOS?.default || payOS;
-            // 1. Gọi PayOS để lấy thông tin mới nhất của đơn hàng
-            const paymentInfo = await payosInstance.getPaymentLinkInformation(orderCode);
+            let paymentInfo;
 
-            if (paymentInfo && paymentInfo.status === "PAID") {
-                // 2. Nếu đã thanh toán, cập nhật DB
+            // Debug sâu hơn để tìm đúng tên hàm
+            if (payosInstance.paymentRequests) {
+                console.log(">>> [DEBUG] paymentRequests keys:", Object.keys(payosInstance.paymentRequests));
+            }
+
+            try {
+                if (payosInstance.paymentRequests && typeof payosInstance.paymentRequests.getPaymentLinkInformation === 'function') {
+                    paymentInfo = await payosInstance.paymentRequests.getPaymentLinkInformation(orderCode);
+                } else if (payosInstance.paymentRequests && typeof payosInstance.paymentRequests.get === 'function') {
+                    // Thử tên hàm rút gọn (thường thấy ở một số phiên bản)
+                    paymentInfo = await payosInstance.paymentRequests.get(orderCode);
+                } else if (typeof payosInstance.getPaymentLinkInformation === 'function') {
+                    paymentInfo = await payosInstance.getPaymentLinkInformation(orderCode);
+                } else {
+                    throw new Error("Cannot find getPaymentLinkInformation or get method in PayOS instance.");
+                }
+            } catch (error) {
+                console.error(">>> [VERIFY] PayOS API Error:", error.message);
+                return resolve({ errCode: -1, errMessage: error.message });
+            }
+
+            const currentStatus = (paymentInfo?.status || "").toUpperCase();
+            console.log(">>> [VERIFY] PayOS returned status (normalized):", currentStatus);
+
+            if (paymentInfo && (currentStatus === "PAID" || currentStatus === "COMPLETED")) {
+                console.log(">>> [VERIFY] Searching DB for orderCode:", String(orderCode));
                 let booking = await db.Booking.findOne({
-                    where: { orderCode: String(orderCode), statusId: 'S1' },
+                    where: { 
+                        orderCode: { [Op.like]: `%${orderCode}%` },
+                        statusId: 'S1' 
+                    },
                     include: [
                         { model: db.User, as: 'patientBookingData', attributes: ['email', 'firstName', 'lastName'] },
                         { model: db.User, as: 'doctorBookingData', attributes: ['firstName', 'lastName'] },
