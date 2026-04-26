@@ -1,5 +1,27 @@
 import { PERMISSIONS, PUBLIC_PATHS, ROLES } from '../config/permissions';
-
+import JWTAction from './JWTAction';
+const checkUserJWT = (req, res, next) => {
+    if (PUBLIC_PATHS.includes(req.path)) return next();
+    // 1. Lấy token từ header (Bearer token)
+    let tokenFromHeader = req.headers.authorization?.split(' ')[1];
+    if (tokenFromHeader) {
+        let decoded = JWTAction.verifyToken(tokenFromHeader);
+        if (decoded) {
+            req.user = decoded; // Lưu thông tin vào req để dùng cho bước sau
+            next();
+        } else {
+            return res.status(401).json({
+                errCode: -1,
+                message: 'Token không hợp lệ hoặc đã hết hạn!'
+            });
+        }
+    } else {
+        return res.status(401).json({
+            errCode: -1,
+            message: 'Bạn chưa đăng nhập (Thiếu Token)!'
+        });
+    }
+};
 const checkUserPermission = (req, res, next) => {
     const path = req.path;
     const user = req.user; // Đã lấy được từ verifyToken
@@ -25,6 +47,7 @@ const checkUserPermission = (req, res, next) => {
     });
 };
 
-module.exports = {
-    checkUserPermission: checkUserPermission
+export {
+    checkUserPermission,
+    checkUserJWT
 };

@@ -1,5 +1,5 @@
 
-import e from "express";
+import JWTAction from "../middleware/JWTAction";
 import db from "../../models/index"
 import bcrypt from "bcryptjs";
 const salt = bcrypt.genSaltSync(10);
@@ -54,16 +54,27 @@ let handleUserLogin = (email, password) => {
                     ],
                     raw: true
                 });
+
                 if (user && user.image) {
                     user.image = Buffer.from(user.image, 'base64').toString('binary');
                 }
+
                 if (user) {
                     let check = await bcrypt.compareSync(password, user.password);
                     if (check) {
+                        // TẠO TOKEN
+                        let payload = {
+                            id: user.id,
+                            email: user.email,
+                            roleId: user.roleId
+                        };
+                        let token = JWTAction.createJWT(payload);
+
                         userData.errCode = 0;
                         userData.errMessage = `OK`;
                         delete user.password;
                         userData.user = user;
+                        userData.token = token; // Gửi token về cho client
                     } else {
                         userData.errCode = 2;
                         userData.errMessage = `Wrong password!`;

@@ -66,11 +66,11 @@ class Login extends Component {
 
             if (res && res.errCode === 0) {
                 let user = res.userData;
-
+                let token = res.token;
+                if (token) {
+                    localStorage.setItem('token', token);
+                }
                 this.props.userLoginSuccess(user);
-
-                // 👉 redirect theo role
-                // 👉 redirect theo role
                 if (user.roleId === 'R1') {
                     this.props.navigate('/system/user-manage');
                 } else if (user.roleId === 'R2') {

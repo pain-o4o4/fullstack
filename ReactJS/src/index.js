@@ -10,6 +10,9 @@ import IntlProviderWrapper from "./hoc/IntlProviderWrapper";
 
 import { Provider } from 'react-redux';
 import reduxStore, { persistor } from './redux';
+import { injectStore } from './axios';
+
+injectStore(reduxStore);
 
 const renderApp = () => {
     const container = document.getElementById('root');

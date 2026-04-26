@@ -20,7 +20,8 @@ let handleLogin = async (req, res) => {
         return res.status(200).json({
             errCode: userData.errCode,
             message: userData.errMessage,
-            userData: userData.user ? userData.user : {}
+            userData: userData.user ? userData.user : {},
+            token: userData.token ? userData.token : ''
         });
 
     } catch (error) {
