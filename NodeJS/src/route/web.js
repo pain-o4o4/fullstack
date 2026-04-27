@@ -12,7 +12,7 @@ let router = express.Router()
 let initWebRoutes = (app) => {
 
     // ==========================================
-    // 🛡️ BẢO VỆ TỔNG THỂ (GLOBAL MIDDLEWARE)
+    // BẢO VỆ TỔNG THỂ (GLOBAL MIDDLEWARE)
     // ==========================================
     // Middleware này sẽ chặn ở CỔNG VÀO của toàn bộ các API.
     // Nếu là PUBLIC_PATHS -> Cho qua. Nếu không -> Bắt buộc kiểm tra Token & Quyền.
@@ -25,6 +25,7 @@ let initWebRoutes = (app) => {
     // Users
     router.post("/api/register", userController.createRegister);
     router.post('/api/login', userController.handleLogin);
+    router.post('/api/refresh-token', userController.handleRefreshToken);
     router.get("/api/get-all-users", userController.handleGetAllUsers);
     router.put("/api/edit-user", userController.handleEditUser);
     router.delete("/api/delete-user", userController.handleDeleteUser);
@@ -63,7 +64,7 @@ let initWebRoutes = (app) => {
     router.get('/api/get-all-appointments-by-id', patientController.getAllAppointmentsById);
     router.get('/api/get-detail-schedule-patient', patientController.getDetailSchedulePatient);
     router.post('/api/update-patient', patientController.postUpdatePatient);
-    
+
     // Webhook thanh toán (Luôn phải Public)
     router.post('/api/payos-webhook', patientController.handlePayOSWebhook);
     router.post('/api/verify-payment-status', patientController.handleVerifyPayment);

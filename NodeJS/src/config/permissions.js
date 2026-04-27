@@ -13,6 +13,7 @@ export const PUBLIC_PATHS = [
     // Auth & Utilities
     '/api/login',
     '/api/register',
+    '/api/refresh-token',
     '/api/allcode',
     
     // Xem thông tin (Trang chủ & Chi tiết)

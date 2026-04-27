@@ -16,12 +16,22 @@ let handleLogin = async (req, res) => {
         // 2. Gọi service xử lý
         let userData = await userService.handleUserLogin(email, password);
 
-        // 3. Trả về kết quả (Bỏ cặp dấu { } dư thừa ở đây)
+        // 3. Trả về kết quả
+        //  BẢO MẬT: Gửi Refresh Token qua Cookie HttpOnly
+        if (userData.refreshToken) {
+            res.cookie('refreshToken', userData.refreshToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production', // Chỉ dùng https khi lên server thật
+                sameSite: 'strict',
+                maxAge: 7 * 24 * 60 * 60 * 1000 // 7 ngày
+            });
+        }
+
         return res.status(200).json({
             errCode: userData.errCode,
             message: userData.errMessage,
             userData: userData.user ? userData.user : {},
-            token: userData.token ? userData.token : ''
+            token: userData.token ? userData.token : '' // Chỉ trả về Access Token trong JSON
         });
 
     } catch (error) {
@@ -115,6 +125,18 @@ let getAllCode = async (req, res) => {
         });
     }
 }
+let handleRefreshToken = async (req, res) => {
+    try {
+        let refreshToken = req.cookies.refreshToken;
+        if (!refreshToken) return res.status(401).json({ errCode: 1, message: 'Missing refresh token!' });
+        let response = await userService.handleRefreshTokenService(refreshToken);
+        return res.status(200).json(response);
+    } catch (error) {
+        console.error('Lỗi Refresh Token Controller:', error);
+        return res.status(500).json({ errCode: -1, message: 'Error from server...' });
+    }
+}
+
 export default {
     createRegister: createRegister,
     handleLogin: handleLogin,
@@ -122,5 +144,7 @@ export default {
     handleCreateNewUser: handleCreateNewUser,
     handleEditUser: handleEditUser,
     handleDeleteUser: handleDeleteUser,
-    getAllCode: getAllCode
+    getAllCode: getAllCode,
+    handleRefreshToken: handleRefreshToken
+
 };

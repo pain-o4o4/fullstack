@@ -69,12 +69,14 @@ let handleUserLogin = (email, password) => {
                             roleId: user.roleId
                         };
                         let token = JWTAction.createJWT(payload);
+                        let refreshToken = JWTAction.createRefreshToken(payload);
 
                         userData.errCode = 0;
                         userData.errMessage = `OK`;
                         delete user.password;
                         userData.user = user;
-                        userData.token = token; // Gửi token về cho client
+                        userData.token = token; // Access Token
+                        userData.refreshToken = refreshToken; // Refresh Token
                     } else {
                         userData.errCode = 2;
                         userData.errMessage = `Wrong password!`;
@@ -277,6 +279,36 @@ let getAllCodeService = (type) => {
     });
 };
 
+let handleRefreshTokenService = (token) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            // 1. Kiểm tra thẻ căn cước có thật không?
+            let decoded = JWTAction.verifyRefreshToken(token);
+            if (decoded) {
+                // 2. Nếu thật -> Tạo thẻ tạm mới (Access Token)
+                let payload = {
+                    id: decoded.id,
+                    email: decoded.email,
+                    roleId: decoded.roleId
+                };
+                let newAccessToken = JWTAction.createJWT(payload);
+
+                resolve({
+                    errCode: 0,
+                    newAccessToken: newAccessToken
+                });
+            } else {
+                resolve({
+                    errCode: -1,
+                    errMessage: "Refresh Token không hợp lệ hoặc đã hết hạn!"
+                });
+            }
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
+
 export default {
     createRegisterService: createRegisterService,
     handleUserLogin: handleUserLogin,
@@ -286,6 +318,6 @@ export default {
     deleteUserById: deleteUserById,
     updateUserData: updateUserData,
     getAllCodeService: getAllCodeService,
-    hashUserPassword: hashUserPassword
-    // postInforDoctorService: postInforDoctorService
+    hashUserPassword: hashUserPassword,
+    handleRefreshTokenService: handleRefreshTokenService
 };

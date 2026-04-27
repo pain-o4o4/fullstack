@@ -5,11 +5,13 @@ import initWebRoutes from "./route/web"
 import os from "os"
 import connectDB from "../config/connectDB"
 import cors from "cors"
+import cookieParser from "cookie-parser"
 require("dotenv").config()
 
 let app = express();
+app.use(cookieParser());
 app.use(cors({
-    origin: process.env.URL_REACT, // Ví dụ: http://localhost:3000
+    origin: process.env.URL_REACT,
     credentials: true
 }));
 
