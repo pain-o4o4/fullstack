@@ -30,11 +30,19 @@ let createHandbook = (data) => {
 let getAllHandbook = () => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await db.Handbook.findAll();
+            let data = await db.Handbook.findAll({
+                order: [['createdAt', 'DESC']]
+            });
             if (data && data.length > 0) {
                 data = data.map(item => {
                     if (item.image) {
-                        item.image = Buffer.from(item.image, 'base64').toString('binary');
+                        // If it starts with 'http' it's already a URL, don't decode
+                        const imgStr = item.image.toString();
+                        if (imgStr.startsWith('http')) {
+                            item.image = imgStr;
+                        } else {
+                            item.image = Buffer.from(item.image, 'base64').toString('binary');
+                        }
                     }
                     return item;
                 });
@@ -63,7 +71,12 @@ let getDetailHandbookById = (id) => {
                     where: { id: id }
                 });
                 if (data && data.image) {
-                    data.image = Buffer.from(data.image, 'base64').toString('binary');
+                    const imgStr = data.image.toString();
+                    if (!imgStr.startsWith('http')) {
+                        data.image = Buffer.from(data.image, 'base64').toString('binary');
+                    } else {
+                        data.image = imgStr;
+                    }
                 }
                 resolve({
                     errCode: 0,

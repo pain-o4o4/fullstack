@@ -9,6 +9,7 @@ import HomeHeader from '../../HomePage/HomeHeader';
 import ProfileDoctor from '../Doctor/ProfileDoctor';
 import ScheduleDoctor from '../Doctor/ScheduleDoctor';
 import ExtraInforDoctor from '../Doctor/ExtraInforDoctor';
+import CustomBreadcrumb from '../../../components/CustomBreadcrumb/CustomBreadcrumb';
 import _ from 'lodash';
 class DetailSpecialty extends Component {
     constructor(props) {
@@ -53,6 +54,13 @@ class DetailSpecialty extends Component {
             <React.Fragment>
                 <div className="detail-specialty-container">
                     <HomeHeader />
+                    <CustomBreadcrumb 
+                        items={[
+                            { label: <FormattedMessage id="homeheader.booking" />, link: '/select-service' },
+                            { label: <FormattedMessage id="homeheader.MedicalSpecialty" />, link: '/all-specialty' },
+                            { label: dataDetailSpecialty?.name || 'Chi tiết chuyên khoa' }
+                        ]} 
+                    />
                     <div className="detail-specialty-body">
                         {dataDetailSpecialty && dataDetailSpecialty.image && (
                             <div

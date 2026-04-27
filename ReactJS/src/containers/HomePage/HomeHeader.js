@@ -1,45 +1,31 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import './HomeHeader.scss';
 import { FormattedMessage } from 'react-intl';
-import icon_icons from '../../assets/images/icon_icons.svg';
-import search from '../../assets/images/search.svg';
-import user_login from '../../assets/images/user_login.svg';
-import translate from '../../assets/images/translate.svg';
 import { LANGUAGES } from '../../utils/constant';
-import ModalSearchHeader from './ModalSearchHeader.js';
+import './HomeHeader.scss';
 import { changeLanguageApp } from "../../store/actions";
 import { path } from '../../utils/constant';
 import { withRouter } from '../../components/Navigator';
 import UserMenuPopup from '../HomePage/SubMenuForUser/UserMenuPopup';
+import backgroundBanner from '../../assets/images/backgroundBanner.avif';
+
 class HomeHeader extends Component {
     constructor(props) {
         super(props);
         this.wrapperRef = React.createRef();
         this.state = {
-            isShowSearch: false,
             isOpenUserMenu: false,
         }
     }
+
     toggleUserMenu = () => {
         this.setState({ isOpenUserMenu: !this.state.isOpenUserMenu });
     }
-    toggleShowSearchModal = () => {
-        this.setState({
-            isShowSearch: !this.state.isShowSearch
-        });
+
+    changeLanguage = (language) => {
+        this.props.changeLanguageAppRedux(language);
     }
-    changeLanguage = () => {
-        let { language } = this.props;
-        let nextLanguage = language === 'vi' ? 'en' : 'vi';
-        this.props.changeLanguageAppRedux(nextLanguage);
-    }
-    // Hàm bật/tắt search
-    handleToggleSearch = () => {
-        this.setState({
-            isShowSearch: true
-        });
-    }
+
     componentDidMount() {
         document.addEventListener('mousedown', this.handleClickOutside);
     }
@@ -49,7 +35,6 @@ class HomeHeader extends Component {
     }
 
     handleClickOutside = (event) => {
-        // Thêm check this.wrapperRef.current để chắc chắn nó đã tồn tại
         if (this.wrapperRef && this.wrapperRef.current && !this.wrapperRef.current.contains(event.target)) {
             this.setState({ isOpenUserMenu: false });
         }
@@ -82,6 +67,7 @@ class HomeHeader extends Component {
             SETTINGS: path.SETTINGS,
             MY_BOOKING: path.MY_BOOKING,
             BOOKING_HISTORY: path.BOOKING_HISTORY,
+            SELECT_SERVICE: path.SELECT_SERVICE,
         };
 
         if (routeMap[type]) {
@@ -90,129 +76,120 @@ class HomeHeader extends Component {
             this.props.navigate('/home');
         }
     }
+
     render() {
-        let { language } = this.props;
-        console.log(">>> check props: ", this.props.userInfo);
         let { isLoggedIn, userInfo } = this.props;
+        let { isOpenUserMenu } = this.state;
+
         return (
             <React.Fragment>
-
-                <div className='home-header-container'>
-                    <div className='home-header-content'>
-                        <div className='left-content'>
-                            <span className='brand-name'
-                                onClick={() => this.handleViewList('HOME')}
-                            ><FormattedMessage id="homeheader.brand-name" defaultMessage="BookingCare" /></span>
+                <header className="hm-header">
+                    <div className="hm-header-pill">
+                        {/* Logo */}
+                        <div className="hm-header-logo" onClick={() => this.handleViewList('HOME')}>
+                            <div className="logo-icon">
+                                <span className="logo-dot dot-1"></span>
+                                <span className="logo-dot dot-2"></span>
+                                <span className="logo-dot dot-3"></span>
+                            </div>
+                            <span className="brand-name">BookingCare</span>
                         </div>
-                        <div className='center-content'>
-                            {this.state.isShowSearch ? (
-                                <ModalSearchHeader
-                                    toggleFromParent={this.toggleShowSearchModal}
-                                />
-                            ) : (
-                                <React.Fragment>
-                                    <div className="menu-content">
-                                        <div className='child-content'
-                                            onClick={() => this.handleViewList('SPECIALTY')}
-                                        >
-                                            <FormattedMessage id="homeheader.MedicalSpecialty" defaultMessage="Medical Specialty" />
-                                        </div>
-                                        <div className='child-content'
-                                            onClick={() => this.handleViewList('CLINIC')}
-                                        >
-                                            <FormattedMessage id="homeheader.MedicalFacility" defaultMessage="Medical Facility" />
-                                        </div>
-                                        <div className='child-content'
-                                            onClick={() => this.handleViewList('PHYSICIAN')}
-                                        >
-                                            <FormattedMessage id="homeheader.Physician" defaultMessage="Physician" />
-                                        </div>
-                                        <div className='child-content'
-                                            onClick={() => this.handleViewList('HANDBOOK')}
 
-                                        >
-                                            <FormattedMessage id="homeheader.Handbook" defaultMessage="Handbook" />
-                                        </div>
-                                    </div>
-                                </React.Fragment>
-                            )}
-                        </div>
-                        <div className="right-content">
+                        {/* Center Nav */}
+                        <nav className="hm-header-nav">
+                            <ul className="hm-nav-list">
+                                <li className="hm-nav-item" onClick={() => this.handleViewList('HOME')}>
+                                    <span className="nav-link">
+                                        <FormattedMessage id="homeheader.home" />
+                                    </span>
+                                </li>
+
+                                {/* Đặt lịch - Normal link */}
+                                <li className="hm-nav-item" onClick={() => this.handleViewList('SELECT_SERVICE')}>
+                                    <span className="nav-link">
+                                        <FormattedMessage id="homeheader.booking" />
+                                    </span>
+                                </li>
+
+                                <li className="hm-nav-item" onClick={() => this.handleViewList('HANDBOOK')}>
+                                    <span className="nav-link">
+                                        <FormattedMessage id="homeheader.handbook-nav" />
+                                    </span>
+                                </li>
+                            </ul>
+                        </nav>
+
+                        {/* Right Actions */}
+                        <div className="hm-header-actions">
+                            {/* <div className="language-switcher">
+                                <span className={this.props.language === LANGUAGES.VI ? "language-vi active" : "language-vi"}
+                                    onClick={() => this.changeLanguage(LANGUAGES.VI)}>VN</span>
+                                <span className={this.props.language === LANGUAGES.EN ? "language-en active" : "language-en"}
+                                    onClick={() => this.changeLanguage(LANGUAGES.EN)}>EN</span>
+                            </div> */}
+
                             <div className="user-menu-wrapper" ref={this.wrapperRef}>
-                                {!isLoggedIn ? <div className="login-group"
-                                    onClick={() => this.toggleUserMenu()}
-                                >
-                                    <span className="text-login">
-                                        <FormattedMessage id="header.login" defaultMessage="Log in" />
-                                    </span>
-                                </div> :
-                                    <span className='welcome'
-                                        onClick={() => this.toggleUserMenu()}
-                                    >
-                                        <span className="welcome-text">
-                                            <FormattedMessage id="homeheader.welcome" defaultMessage="Welcome, " />
-                                            {userInfo && userInfo.firstName ? userInfo.firstName : ''}
-                                        </span>
-                                        <img src={userInfo.image || icon_icons} className="icon-user" alt="User" />
-                                    </span>
-                                }
-                                {this.state.isOpenUserMenu && (
-                                    <UserMenuPopup
-                                        handleViewList={this.handleViewList}
-                                    />
+                                {!isLoggedIn ? (
+                                    <div className="nav-sign-in" onClick={() => this.handleViewList('LOGIN')}>
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                            <circle cx="8" cy="5" r="3" stroke="currentColor" strokeWidth="1.5" />
+                                            <path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                                        </svg>
+                                        <FormattedMessage id="homeheader.login" />
+                                    </div>
+                                ) : (
+                                    <div className="nav-sign-in" onClick={() => this.toggleUserMenu()}>
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                            <circle cx="8" cy="5" r="3" stroke="currentColor" strokeWidth="1.5" />
+                                            <path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                                        </svg>
+                                        {userInfo && userInfo.firstName ? userInfo.firstName : <FormattedMessage id="homeheader.account" />}
+                                    </div>
+                                )}
+                                {isOpenUserMenu && (
+                                    <UserMenuPopup handleViewList={this.handleViewList} />
                                 )}
                             </div>
-                            <div className="icon-btn" onClick={() => this.handleToggleSearch()}>
-                                <img src={search} className="icon-search" alt="icon-search" />
+
+                            <div className="hm-cta-btn" onClick={() => this.props.navigate('/contact')}>
+                                <FormattedMessage id="homeheader.contact" />
                             </div>
-                            {/* <div className="translate-wrapper" onClick={() => this.changeLanguage()}>
-                                <img src={translate} className="icon-translate" alt="Translate" />
-                            </div> */}
                         </div>
                     </div>
-                </div>
+                </header>
 
-                {this.props.isShowBanner === true && <div className="home-header-line">
-                    <div className="clinical-trial-section">
-                        <div className="clinical-trial-container">
-                            <div className="enrolling-badge">
-                                {language === LANGUAGES.VI ? "300 + nghiên cứu đang tích cực tuyển người tham gia" : "300+ studies actively enrolling"}
+                {this.props.isShowBanner === true && (
+                    <section className="hm-hero" id="strona-glowna">
+                        <div className="hm-hero-content">
+                            <div className="hm-hero-title">
+                                <FormattedMessage id="homeheader.hero-title-1" /> <br />
+                                <em><span className="hero-strong"><FormattedMessage id="homeheader.hero-title-2" /></span></em> <br />
+                                <FormattedMessage id="homeheader.hero-title-3" /> <br />
+                                <em><span className="hero-strong"><FormattedMessage id="homeheader.hero-title-4" /></span></em>
                             </div>
-                            <h1 className="main-title">
-                                {language === LANGUAGES.VI ? "Tìm kiếm phòng khám phù hợp" : "Find your perfect clinical trial match"}
-                            </h1>
-
-                            <p className="subtitle">
-                                {language === LANGUAGES.VI ? "Cùng hơn 2 triệu người định hình tương lai của chăm sóc sức khỏe" : "Join 2+ million people shaping the future of healthcare."}
-                            </p>
-                        </div>
-                    </div>
-                    {this.props.isShowBanner === false && <div className="welcome-container">
-                        <div className="services-grid">
-                            {[
-                                { icon: "https://img.icons8.com/color/96/doctor-male.png", title: "Search the service/<br />consultant" },
-                                { icon: "https://img.icons8.com/color/96/calendar.png", title: "Book an appointment" },
-                                { icon: "https://img.icons8.com/color/96/stethoscope.png", title: "Consult online/<br />Visit in-person" },
-                                { icon: "https://img.icons8.com/color/96/doctor-male.png", title: "Search the service/<br />consultant" },
-                                { icon: "https://img.icons8.com/color/96/calendar.png", title: "Book an appointment" },
-                                { icon: "https://img.icons8.com/color/96/stethoscope.png", title: "Consult online/<br />Visit in-person" }
-                            ].map((item, index) => (
-                                <div key={index} className="service-card">
-                                    <div className="icon-circle">
-                                        <img src={item.icon} alt="Service" />
-                                    </div>
-                                    <h3 dangerouslySetInnerHTML={{ __html: item.title }} />
+                            <div className="hm-hero-description">
+                                <FormattedMessage id="homeheader.hero-desc" />
+                            </div>
+                            <div className="hm-hero-button">
+                                <div className="hm-button" onClick={() => this.props.navigate('/contact')}>
+                                    <FormattedMessage id="homeheader.contact" />
                                 </div>
-                            ))}
+                            </div>
                         </div>
-
-                    </div>}
-                </div>}
-
+                        <div className="hm-hero-animation">
+                            <div className="hero-bg-placeholder"
+                                style={{
+                                    backgroundImage: `url(${backgroundBanner})`,
+                                    backgroundSize: 'cover',
+                                    backgroundPosition: 'center',
+                                }}
+                            ></div>
+                        </div>
+                    </section>
+                )}
             </React.Fragment>
         );
     }
-
 }
 
 const mapStateToProps = state => {
@@ -229,7 +206,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-// export default connect(mapStateToProps, mapDispatchToProps)(HomeHeader);
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(HomeHeader));
-
-{/* <img src={menu} className="menu-icon" alt="Menu" /> */ }

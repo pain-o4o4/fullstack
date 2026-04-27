@@ -1,7 +1,7 @@
 @use "sass:color";
 $base-size: 16px;
 $lh: 1.313;
-$fontmain: "Helvetica", -system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+$fontmain: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 $colormain: #0071ba;
 $colorsub: #bb8d09;
 $common-text-color: white;

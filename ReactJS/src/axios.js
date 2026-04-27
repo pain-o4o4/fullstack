@@ -65,7 +65,7 @@ instance.interceptors.response.use(
             isRefreshing = true;
 
             return new Promise(function (resolve, reject) {
-                // GỌI API ĐỔI THẺ MỚI
+                // GỌI API ĐỔI TOKEN MỚI
                 axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/refresh-token`, {}, { withCredentials: true })
                     .then(({ data }) => {
                         if (data && data.errCode === 0) {

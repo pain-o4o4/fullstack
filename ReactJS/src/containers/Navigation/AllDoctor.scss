@@ -1,83 +1,150 @@
+@import '../HomePage/HomePage.scss';
+
 .all-doctors-container {
-    background-color: #f5f5f7;
+    background: #ffffff;
     min-height: 100vh;
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+
+
 
     .all-doctors-body {
-        padding: 40px 20% 80px;
-
-        .title {
-            font-size: 28px;
-            font-weight: 700;
-            color: #1d1d1f;
-            letter-spacing: -0.5px;
-            margin-bottom: 35px;
-        }
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 160px 40px 120px;
 
         .doctors-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 32px;
+        }
 
-            .doctor-card {
-                background: #fff;
-                border-radius: 20px;
-                padding: 24px;
-                text-align: center;
-                cursor: pointer;
-                border: 1px solid #d2d2d7;
-                transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        .doctor-card {
+            background: #ffffff;
+            border-radius: 28px;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+            border: 1px solid #f2f2f7;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
 
-                &:hover {
-                    transform: translateY(-6px);
-                    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-                    border-color: #0071e3;
-                }
+            &:hover {
+                transform: translateY(-12px);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+                border-color: rgba($apple-blue, 0.3);
 
                 .avatar {
-                    width: 120px;
-                    height: 120px;
-                    border-radius: 50%;
-                    margin: 0 auto 20px;
-                    background-size: cover;
-                    background-position: center;
-                    border: 3px solid #e5e5ea;
+                    transform: scale(1.05);
+                    border-color: $apple-blue;
                 }
 
-                .info {
-                    .name {
-                        font-size: 17px;
-                        font-weight: 600;
-                        color: #1d1d1f;
-                        margin-bottom: 8px;
-                        height: 50px;
-                        overflow: hidden;
-                    }
-
-                    .specialty {
-                        font-size: 14px;
-                        color: #86868b;
-                        margin-bottom: 20px;
-                    }
-
-                    .btn-detail {
-                        background: #e8e8ed;
-                        color: #0071e3;
-                        border: none;
-                        padding: 8px 20px;
-                        border-radius: 18px;
-                        font-weight: 500;
-                        font-size: 13px;
-                        cursor: pointer;
-                        transition: all 0.2s;
-
-                        &:hover {
-                            background: #0071e3;
-                            color: #fff;
-                        }
+                .btn-detail-apple {
+                    background: $apple-blue;
+                    color: #fff;
+                    
+                    i {
+                        transform: translateX(4px);
                     }
                 }
             }
+
+            .card-top {
+                padding: 40px 0 20px;
+                background: #fafafa;
+                display: flex;
+                justify-content: center;
+
+                .avatar {
+                    width: 160px;
+                    height: 160px;
+                    border-radius: 50%;
+                    background-size: cover;
+                    background-position: center;
+                    border: 4px solid #fff;
+                    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+                    transition: all 0.4s ease;
+                }
+            }
+
+            .card-bottom {
+                padding: 24px;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+
+                .name {
+                    font-size: 20px;
+                    font-weight: 700;
+                    color: $apple-black;
+                    margin-bottom: 8px;
+                    text-align: center;
+                }
+
+                .specialty {
+                    font-size: 14px;
+                    color: $apple-blue;
+                    font-weight: 600;
+                    margin-bottom: 20px;
+                    text-align: center;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+
+                .doctor-meta {
+                    display: flex;
+                    justify-content: center;
+                    gap: 15px;
+                    margin-bottom: 24px;
+                    font-size: 13px;
+                    color: $text-secondary;
+
+                    span {
+                        display: flex;
+                        align-items: center;
+                        gap: 5px;
+                        
+                        i {
+                            font-size: 12px;
+                        }
+                    }
+                }
+
+                .btn-detail-apple {
+                    margin-top: auto;
+                    background: #f5f5f7;
+                    color: $apple-black;
+                    border: none;
+                    padding: 12px;
+                    border-radius: 14px;
+                    font-size: 14px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 8px;
+                    transition: all 0.3s ease;
+
+                    i {
+                        font-size: 12px;
+                        transition: transform 0.3s ease;
+                    }
+                }
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        .all-doctors-hero {
+            padding: 120px 24px 60px;
+            .hero-title {
+                font-size: 40px;
+            }
+        }
+
+        .all-doctors-body {
+            padding: 40px 24px 80px;
         }
     }
 }

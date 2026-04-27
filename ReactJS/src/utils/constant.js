@@ -12,12 +12,14 @@ export const path = {
     DETAIL_DOCTOR: '/detail-doctor/:id',
     DETAIL_SPECIALTY: '/detail-specialty/:id',
     DETAIL_CLINIC: '/detail-clinic/:id',
+    DETAIL_HANDBOOK: '/detail-handbook/:id',
     DOCTOR: '/doctor',
 
     ALL_CLINIC: '/all-clinic',
     ALL_DOCTOR: '/all-doctor',
     ALL_SPECIALTY: '/all-specialty',
     ALL_HANDBOOK: '/all-handbook',
+    SELECT_SERVICE: '/select-service',
 
     SETTINGS: '/system/patient-profile',
     MY_BOOKING: '/patient/my-booking',

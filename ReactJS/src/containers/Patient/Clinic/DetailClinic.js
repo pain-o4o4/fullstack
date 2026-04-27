@@ -9,6 +9,7 @@ import * as action from '../../../store/actions';
 import ProfileDoctor from '../Doctor/ProfileDoctor';
 import ScheduleDoctor from '../Doctor/ScheduleDoctor';
 import ExtraInforDoctor from '../Doctor/ExtraInforDoctor';
+import CustomBreadcrumb from '../../../components/CustomBreadcrumb/CustomBreadcrumb';
 import _ from 'lodash';
 
 class DetailClinic extends Component {
@@ -61,6 +62,13 @@ class DetailClinic extends Component {
         return (
             <div className="detail-clinic-container">
                 <HomeHeader />
+                <CustomBreadcrumb 
+                    items={[
+                        { label: <FormattedMessage id="homeheader.booking" />, link: '/select-service' },
+                        { label: <FormattedMessage id="homeheader.MedicalFacility" />, link: '/all-clinic' },
+                        { label: dataDetailClinic?.name || 'Chi tiết cơ sở y tế' }
+                    ]} 
+                />
                 <div className="detail-clinic-body">
                     {/* THÊM KHỐI BANNER NÀY VÀO */}
                     {dataDetailClinic && dataDetailClinic.image && (

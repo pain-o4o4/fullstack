@@ -1,6 +1,6 @@
 .popup-menu {
     top: 72px;
-    right: 12%;
+    // right: 2%;
     width: 280px;
     position: absolute;
     background: rgba(255, 255, 255, 0.8);
@@ -10,7 +10,7 @@
     border: 1px solid rgba(118, 118, 128, 0.12);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     z-index: 1000;
-    font-family: -system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
 
     .menu-header {
         // padding: px;

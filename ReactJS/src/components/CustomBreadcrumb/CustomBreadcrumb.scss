@@ -1,0 +1,59 @@
+.breadcrumb-container {
+    position: fixed;
+    top: 40px;
+    left: 0;
+    right: 0;
+    max-width: 1180px;
+    margin: 0 auto;
+    background: #f4f5f8;
+    z-index: 990;
+    padding: 44px 32px 0px;
+    border: none;
+    border-radius: 0 0 32px 32px;
+    box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.06);
+
+    animation: slideDownBreadcrumb 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transform-origin: top center;
+    display: flex;
+    justify-content: flex-start;
+
+    .breadcrumb {
+        font-size: 14px;
+        color: #4b5563;
+        display: flex;
+        align-items: center;
+
+        .home-link {
+            color: #0071e3;
+            font-weight: 500;
+            transition: color 0.2s;
+
+            &:hover {
+                color: #005bb5;
+            }
+        }
+
+        .separator {
+            margin: 0 10px;
+            color: #d1d5db;
+            font-size: 12px;
+        }
+
+        .current-page {
+            color: #4c40e6;
+            font-weight: 600;
+        }
+    }
+}
+
+@keyframes slideDownBreadcrumb {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

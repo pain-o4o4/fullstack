@@ -1,8 +1,9 @@
 .my-booking-container {
     background-color: #f5f5f7; // Màu nền đặc trưng của Apple
     min-height: 100vh;
+    padding-top: 120px; // Add this to clear the floating header
     padding-bottom: 50px;
-    font-family: -system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
 
     .my-booking-body {
         max-width: 1000px;

@@ -5,6 +5,8 @@ import _ from 'lodash';
 import './DetailHandbook.scss';
 import * as action from '../../../store/actions'
 import { withRouter } from '../../../components/Navigator';
+import CustomBreadcrumb from '../../../components/CustomBreadcrumb/CustomBreadcrumb';
+import { FormattedMessage } from 'react-intl';
 
 class DetailHandbook extends Component {
     constructor(props) {
@@ -52,18 +54,21 @@ class DetailHandbook extends Component {
             )
         }
 
+        const breadcrumbItems = [
+            { label: language === 'vi' ? 'Trang chủ' : 'Home', link: '/' },
+            { label: language === 'vi' ? 'Cẩm nang' : 'Handbook', link: '/all-handbook' },
+            { label: dataDetailHandbook.name }
+        ];
+
         return (
             <div className="detail-handbook-container">
-                <HomeHeader />
+                <HomeHeader isShowBanner={false} />
+                <CustomBreadcrumb items={breadcrumbItems} />
+                
                 <div className="detail-handbook-body">
                     <div className="handbook-hero" style={{ backgroundImage: `url(${dataDetailHandbook.image})` }}>
                         <div className="hero-overlay">
                             <div className="hero-content">
-                                <div className="breadcrumb">
-                                    <span onClick={() => this.props.navigate('/')}>{language === 'vi' ? 'Trang chủ' : 'Home'}</span>
-                                    <i className="fas fa-chevron-right"></i>
-                                    <span onClick={() => this.props.navigate('/all-handbook')}>{language === 'vi' ? 'Cẩm nang' : 'Handbook'}</span>
-                                </div>
                                 <h1 className="handbook-title">{dataDetailHandbook.name}</h1>
                                 <div className="handbook-meta-hero">
                                     <span className="category-tag">{language === 'vi' ? 'Sức khỏe' : 'Health'}</span>

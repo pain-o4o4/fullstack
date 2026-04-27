@@ -190,11 +190,17 @@ class BookingModal extends Component {
         });
     }
     handleConfirmBooking = async () => {
-        let { dataTimeModal } = this.props;
+        let { dataTimeModal, isLoggedIn } = this.props;
         let {
             selectedPayment, fullName, email, address, 
             birthday, phoneNumber, selectedGender, reason
         } = this.state;
+
+        if (!isLoggedIn) {
+            toast.warning(this.props.language === 'vi' ? "Vui lòng đăng nhập để thực hiện đặt lịch!" : "Please login to book an appointment!");
+            this.props.navigate(path.LOGIN);
+            return;
+        }
 
         // Regular Expressions
         const emailRe = /\S+@\S+\.\S+/;

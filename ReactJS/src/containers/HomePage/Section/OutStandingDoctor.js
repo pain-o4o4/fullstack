@@ -1,22 +1,37 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import './OutStandingDoctor.scss';
+// import './OutStandingDoctor.scss';
 import { FormattedMessage } from 'react-intl';
 import Slider from 'react-slick';
-import { OutStandingDoctorData } from './Data/OutStandingDoctorData';   // Đúng
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import * as actions from '../../../store/actions'
 import { LANGUAGES, path } from '../../../utils/constant'
 import { withRouter } from '../../../components/Navigator';
+import '../../Navigation/MavenSlider.scss';
+
+const DOT_COLORS = ['#00d1b2', '#34d399', '#818cf8', '#fbbf24', '#f472b6'];
+
 class OutStandingDoctor extends Component {
     constructor(props) {
         super(props);
+        this.scrollRef = React.createRef();
         this.state = {
             arrDoctors: []
         }
     }
 
+    scrollLeft = () => {
+        if (this.scrollRef.current) {
+            this.scrollRef.current.scrollBy({ left: -300, behavior: 'smooth' });
+        }
+    }
+
+    scrollRight = () => {
+        if (this.scrollRef.current) {
+            this.scrollRef.current.scrollBy({ left: 300, behavior: 'smooth' });
+        }
+    }
 
     componentDidMount() {
         this.props.loadTopDoctors();
@@ -44,22 +59,26 @@ class OutStandingDoctor extends Component {
 
         return (
             <React.Fragment>
-                <div className='section-OutStandingDoctor'>
+                <div className='section-maven'>
                     <div className='section-header'>
                         <span className='title-section'>
                             <FormattedMessage id="homepage.doctor" />
                         </span>
-                        <button className='btn-section'
-                            onClick={() => this.props.navigate && this.props.navigate(path.ALL_DOCTOR)}
-                        >
-                            <FormattedMessage id="homepage.more" />
-                        </button>
+                        <div className='header-actions'>
+                            <button className='btn-nav' onClick={this.scrollLeft}>&#10094;</button>
+                            <button className='btn-nav' onClick={this.scrollRight}>&#10095;</button>
+                            <button className='btn-section'
+                                onClick={() => this.props.navigate && this.props.navigate(path.ALL_DOCTOR)}
+                            >
+                                <FormattedMessage id="homepage.more" />
+                            </button>
+                        </div>
                     </div>
                     <div className='section-body'>
-                        <Slider {...this.props.settings}>
+                        <div className="maven-slider-wrapper" ref={this.scrollRef}>
                             {arrDoctors && arrDoctors.length > 0 &&
                                 arrDoctors.map((item, index) => {
-                                    // Xử lý ảnh — check if already data URL or needs prefix
+                                    // Handle image
                                     let imageUrl = '';
                                     if (item.image) {
                                         if (typeof item.image === 'string' && item.image.startsWith('data:')) {
@@ -69,33 +88,39 @@ class OutStandingDoctor extends Component {
                                         }
                                     }
 
-                                    // Hiển thị chức danh + tên
+                                    // Display name
                                     let nameVi = `${item.positionData.valueVi}, ${item.lastName} ${item.firstName}`;
                                     let nameEn = `${item.positionData.valueEn}, ${item.firstName} ${item.lastName}`;
+                                    let finalName = language === LANGUAGES.VI ? nameVi : nameEn;
+
+                                    // Rotate colors
+                                    let dotColor = DOT_COLORS[index % DOT_COLORS.length];
 
                                     return (
-                                        <div className='section-customize' key={index}
-                                            onClick={() => this.handleViewDetailDoctor(item)}>
-                                            <div className='customize-border'>
-                                                <div className='outer-bg'>
-                                                    <div className='bg-image'
-                                                        style={{ backgroundImage: `url(${imageUrl})` }}>
-                                                    </div>
-                                                </div>
-                                                <div className='position text-center'>
-                                                    <div className='section-name'>
-                                                        {language === LANGUAGES.VI ? nameVi : nameEn}
-                                                    </div>
-                                                    <div className='section-desc'>
+                                        <div className="maven-card" key={index} onClick={() => this.handleViewDetailDoctor(item)}>
+                                            <div className="maven-card-bg" style={{ backgroundImage: `url(${imageUrl})` }}></div>
+                                            <div className="maven-card-overlay"></div>
+
+                                            <div className="maven-card-indicator">
+                                                <span className="dot" style={{ backgroundColor: dotColor }}></span>
+                                            </div>
+
+                                            <div className="maven-card-content">
+                                                <h3 className="maven-card-title">{finalName}</h3>
+                                                <div className="maven-card-reveal">
+                                                    <p className="maven-card-desc">
                                                         <FormattedMessage id="homepage.medical-specialty" />
-                                                    </div>
+                                                    </p>
+                                                    <button className="maven-card-btn" style={{ backgroundColor: dotColor, color: '#fff' }}>
+                                                        Learn more
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
                                     )
                                 })
                             }
-                        </Slider>
+                        </div>
                     </div>
                 </div>
             </React.Fragment>

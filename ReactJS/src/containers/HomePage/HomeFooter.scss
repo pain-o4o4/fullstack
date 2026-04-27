@@ -1,0 +1,95 @@
+@import './HomePage.scss';
+
+.hm-footer {
+    background-color: #000000;
+    color: #ffffff;
+    padding: 80px 40px 40px;
+
+    .hm-footer-top {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 40px;
+        padding-bottom: 60px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+        @media (max-width: 992px) {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        @media (max-width: 576px) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .hm-footer-col {
+        .hm-footer-logo {
+            font-size: 24px;
+            margin-bottom: 24px;
+            color: $apple-blue;
+        }
+
+        .hm-footer-desc {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #a1a1a6;
+        }
+
+        .footer-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 24px;
+            letter-spacing: 1px;
+        }
+
+        .footer-text {
+            font-size: 16px;
+            color: #a1a1a6;
+            margin-bottom: 12px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 20px;
+            
+            a {
+                font-size: 20px;
+                color: #ffffff;
+                transition: color 0.2s;
+                
+                &:hover {
+                    color: $apple-blue;
+                }
+            }
+        }
+    }
+
+    .hm-footer-bottom {
+        max-width: 1200px;
+        margin: 40px auto 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 14px;
+        color: #86868b;
+
+        @media (max-width: 768px) {
+            flex-direction: column;
+            gap: 20px;
+            text-align: center;
+        }
+
+        .footer-legal {
+            display: flex;
+            gap: 30px;
+            
+            a {
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
+}

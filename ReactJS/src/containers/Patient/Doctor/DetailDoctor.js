@@ -9,6 +9,7 @@ import HomeHeader from '../../HomePage/HomeHeader';
 import * as action from '../../../store/actions'
 import ScheduleDoctor from './ScheduleDoctor'
 import ExtraInforDoctor from './ExtraInforDoctor'
+import CustomBreadcrumb from '../../../components/CustomBreadcrumb/CustomBreadcrumb';
 class DetailDoctor extends Component {
     constructor(props) {
         super(props);
@@ -62,20 +63,13 @@ class DetailDoctor extends Component {
         return (
             <React.Fragment>
                 <HomeHeader isShowBanner={false} />
-                <div className="breadcrumb-container">
-                    <div className="breadcrumb">
-                        <span
-                            className="home-link"
-                            onClick={() => this.props.navigate('/home')}
-                        >
-                            <FormattedMessage id="homepage.home" />
-                        </span>
-                        <span className="separator">›</span>
-                        <span className="current-page">
-                            <FormattedMessage id="homepage.detail-doctor" />
-                        </span>
-                    </div>
-                </div>
+                <CustomBreadcrumb 
+                    items={[
+                        { label: <FormattedMessage id="homeheader.booking" />, link: '/select-service' },
+                        { label: <FormattedMessage id="homeheader.Physician" />, link: '/all-doctor' },
+                        { label: <FormattedMessage id="homepage.detail-doctor" /> }
+                    ]} 
+                />
 
                 <div className='doctor-detail-container'>
                     <div className='intro-doctor'>

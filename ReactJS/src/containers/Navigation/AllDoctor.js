@@ -3,11 +3,13 @@ import { connect } from 'react-redux';
 import { withRouter } from '../../components/Navigator';
 import * as action from '../../store/actions';
 import HomeHeader from '../HomePage/HomeHeader';
+import HomeFooter from '../HomePage/HomeFooter';
+import CustomBreadcrumb from '../../components/CustomBreadcrumb/CustomBreadcrumb';
+import { FormattedMessage } from 'react-intl';
 import './AllDoctor.scss';
 
 class AllDoctor extends Component {
     componentDidMount() {
-        // Lấy danh sách bác sĩ nếu Redux chưa có
         if (!this.props.allDoctors || this.props.allDoctors.length === 0) {
             this.props.fetchAllDoctors();
         }
@@ -21,9 +23,17 @@ class AllDoctor extends Component {
         let { allDoctors, language } = this.props;
         return (
             <div className="all-doctors-container">
-                <HomeHeader />
+                <HomeHeader isShowBanner={false} />
+                <CustomBreadcrumb 
+                    items={[
+                        { label: <FormattedMessage id="homeheader.booking" />, link: '/select-service' },
+                        { label: <FormattedMessage id="homeheader.Physician" /> }
+                    ]} 
+                />
+
+
+
                 <div className="all-doctors-body">
-                    <div className="title">Đội ngũ bác sĩ chuyên gia</div>
                     <div className="doctors-grid">
                         {allDoctors && allDoctors.length > 0 &&
                             allDoctors.map((item, index) => {
@@ -31,17 +41,23 @@ class AllDoctor extends Component {
                                 let nameEn = `${item.positionData.valueEn}, ${item.firstName} ${item.lastName}`;
                                 return (
                                     <div key={index} className="doctor-card" onClick={() => this.handleViewDetailDoctor(item)}>
-                                        <div className="avatar"
-                                            style={{ backgroundImage: `url(${item.image})` }}>
+                                        <div className="card-top">
+                                            <div className="avatar"
+                                                style={{ backgroundImage: `url(${item.image})` }}>
+                                            </div>
                                         </div>
-                                        <div className="info">
+                                        <div className="card-bottom">
                                             <div className="name">
                                                 {language === 'vi' ? nameVi : nameEn}
                                             </div>
                                             <div className="specialty">
-                                                {item.Doctor_Infor && item.Doctor_Infor.specialtyData ? item.Doctor_Infor.specialtyData.name : ''}
+                                                {item.Doctor_Infor && item.Doctor_Infor.specialtyData ? item.Doctor_Infor.specialtyData.name : 'Chuyên gia y tế'}
                                             </div>
-                                            <button className="btn-detail">Xem thông tin</button>
+                                            <div className="doctor-meta">
+                                                <span className="experience"><i className="fas fa-stethoscope"></i> Tận tâm</span>
+                                                <span className="location"><i className="fas fa-map-marker-alt"></i> Hà Nội</span>
+                                            </div>
+                                            <button className="btn-detail-apple">Xem hồ sơ <i className="fas fa-arrow-right"></i></button>
                                         </div>
                                     </div>
                                 )
@@ -49,6 +65,8 @@ class AllDoctor extends Component {
                         }
                     </div>
                 </div>
+
+                <HomeFooter />
             </div>
         );
     }

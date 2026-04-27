@@ -1,48 +1,58 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { FormattedMessage } from 'react-intl';
+import './HomeFooter.scss';
+
 class HomeFooter extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-
-        }
-    }
     render() {
-
         return (
-            // let
-            <React.Fragment>
-                <div className="section-homefooter">
-                    <div className="footer-content">
-                        <p>
-                            <FormattedMessage id="homepage.footer-rights" />
-                            <a href="#!"> <FormattedMessage id="homepage.footer-terms" /></a> |
-                            <a href="#!"> <FormattedMessage id="homepage.footer-privacy" /></a>
-                        </p>
+            <footer className="hm-footer">
+                <div className="hm-footer-top">
+                    <div className="hm-footer-col">
+                        <div className="hm-footer-logo">
+                            <span className="logo-text">BookingCare</span>
+                        </div>
+                        <div className="hm-footer-desc">
+                            <FormattedMessage id="homefooter.desc" />
+                        </div>
+                    </div>
+                    <div className="hm-footer-col">
+                        <div className="footer-title"><FormattedMessage id="homefooter.address" /></div>
+                        <div className="footer-text">28 Thành Thái, Cầu Giấy, Hà Nội</div>
+                        <div className="footer-text">Tel: 024-7301-2468</div>
+                    </div>
+                    <div className="hm-footer-col">
+                        <div className="footer-title"><FormattedMessage id="homefooter.contact" /></div>
+                        <div className="footer-text">Email: support@bookingcare.vn</div>
+                        <div className="footer-text">Website: bookingcare.vn</div>
+                    </div>
+                    <div className="hm-footer-col">
+                        <div className="footer-title"><FormattedMessage id="homefooter.follow-us" /></div>
                         <div className="social-links">
-                            <a target="_blank" href="https://www.facebook.com/milah.o6o4/directory_links"><i className="fab fa-facebook-square"></i></a>
-                            <a target="_blank" href="https://www.instagram.com/pain.o4o4?fbclid=IwY2xjawQzdS9leHRuA2FlbQIxMABicmlkETFDRWZJNXhOMmU4MnBjYU16c3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHj0Et49carKwZLSL3GCzoX-5eaVl8rr7kntJqG6_5Vx3Eyv47maOdrwYaIJM_aem_PPPexNdm2TmlM3XqbtE5Xg"><i className="fab fa-youtube"></i></a>
+                            <a href="#!"><i className="fab fa-facebook"></i></a>
+                            <a href="#!"><i className="fab fa-linkedin"></i></a>
+                            <a href="#!"><i className="fab fa-instagram"></i></a>
                         </div>
                     </div>
                 </div>
-            </React.Fragment>
+                <div className="hm-footer-bottom">
+                    <div className="footer-copyright">
+                        <FormattedMessage id="homefooter.copyright" />
+                    </div>
+                    <div className="footer-legal">
+                        <a href="#!"><FormattedMessage id="homefooter.privacy" /></a>
+                        <a href="#!"><FormattedMessage id="homefooter.terms" /></a>
+                    </div>
+                </div>
+            </footer>
         );
     }
-
 }
 
 const mapStateToProps = state => {
     return {
-        isLoggedIn: state.user.isLoggedIn,
         language: state.app.language
     };
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(HomeFooter);
+export default connect(mapStateToProps)(HomeFooter);
