@@ -14,6 +14,7 @@
     "dev": "nodemon --exec babel-node src/server.js "
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@payos/node": "^2.0.5",
     "axios": "^1.15.0",
     "bcryptjs": "^2.4.3",
@@ -29,6 +30,7 @@
     "moment": "^2.30.1",
     "mysql2": "^3.9.7",
     "nodemailer": "^8.0.5",
+    "openai": "^6.34.0",
     "sequelize": "^6.37.3",
     "uuid": "^9.0.1",
     "vnpay": "^2.5.0"
