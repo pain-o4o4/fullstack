@@ -383,7 +383,6 @@ let getScheduleByDateService = (doctorId, date) => {
                 let queryDate = moment(+date).startOf('day').format('DD/MM/YYYY');
                 console.log(">>> Check queryDate thực tế Node dùng để tìm:", queryDate);
                 let dataSchedule = await db.Schedule.findAll({
-
                     where: {
                         doctorId: doctorId,
                         date: queryDate
@@ -403,6 +402,24 @@ let getScheduleByDateService = (doctorId, date) => {
                     raw: false,
                     nest: true,
                 });
+
+                // Logic mới: Kiểm tra từng khung giờ xem đã đầy (full) chưa
+                if (dataSchedule && dataSchedule.length > 0) {
+                    // Dùng Promise.all để chạy song song các câu query đếm cho nhanh
+                    await Promise.all(dataSchedule.map(async (item) => {
+                        let count = await db.Booking.count({
+                            where: {
+                                doctorId: doctorId,
+                                date: queryDate,
+                                timeType: item.timeType,
+                                statusId: { [Op.in]: ['S1', 'S2', 'S3'] }
+                            }
+                        });
+                        
+                        // Thêm thuộc tính ảo isFull để FE xử lý
+                        item.setDataValue('isFull', count >= item.maxNumber);
+                    }));
+                }
 
                 resolve({
                     errCode: 0,
@@ -633,33 +650,46 @@ let updateBookingStatus = (data) => {
                 appointment.statusId = data.statusId;
                 await appointment.save();
 
-                // If shifting to S3, send complete email
+                // Nếu chuyển sang S3 (Đã khám xong), gửi email kết quả
                 if (data.statusId === 'S3' && oldStatus !== 'S3') {
-                    if (data.email) {
-                        try {
+                    try {
+                        // Lấy email từ DB để không phụ thuộc vào dữ liệu Frontend gửi lên
+                        const bookingWithEmail = await db.Booking.findOne({
+                            where: { id: appointment.id },
+                            include: [
+                                {
+                                    model: db.User, as: 'patientBookingData',
+                                    attributes: ['email', 'firstName', 'lastName']
+                                }
+                            ],
+                            raw: false, nest: true
+                        });
+
+                        const receiverEmail = bookingWithEmail?.patientBookingData?.email || data.email;
+                        const patientName = data.patientName 
+                            || `${bookingWithEmail?.patientBookingData?.lastName || ''} ${bookingWithEmail?.patientBookingData?.firstName || ''}`.trim();
+
+                        if (receiverEmail) {
                             await emailService.sendRemedyEmail({
-                                receiverEmail: data.email,
-                                patientName: data.patientName || '',
+                                receiverEmail: receiverEmail,
+                                patientName: patientName,
                                 time: data.time || '',
                                 doctorName: data.doctorName || '',
                                 clinicName: data.clinicName || 'BookingCare',
                                 language: data.language || 'vi'
                             });
-                        } catch (e) {
-                            console.log("Email failed to send but booking updated: ", e);
+                            console.log(`>>> [Doctor] Remedy email sent to ${receiverEmail}`);
+                        } else {
+                            console.warn('>>> [Doctor] Cannot send remedy email: no receiver email found.');
                         }
+                    } catch (e) {
+                        console.error(">>> [Doctor] Remedy email failed (non-critical):", e.message);
                     }
                 }
 
-                resolve({
-                    errCode: 0,
-                    errMessage: "Update booking status successful!"
-                })
+                resolve({ errCode: 0, errMessage: "Update booking status successful!" })
             } else {
-                resolve({
-                    errCode: 2,
-                    errMessage: "Appointment not found!"
-                })
+                resolve({ errCode: 2, errMessage: "Appointment not found!" })
             }
         } catch (error) {
             console.log(error);

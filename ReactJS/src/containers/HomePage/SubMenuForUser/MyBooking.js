@@ -24,18 +24,23 @@ class MyBooking extends Component {
         const status = query.get('status');
         const orderCode = query.get('orderCode');
 
-        // Nếu quay về từ PayOS với trạng thái PAID
+        // Nếu quay về từ PayOS với trạng thái PAID -> verify trước
         if (status === 'PAID' && orderCode) {
             this.setState({ isVerifying: true });
-            let verifyRes = await verifyPaymentStatus(orderCode);
-            if (verifyRes && verifyRes.errCode === 0) {
-                toast.success(this.props.language === LANGUAGES.VI ? "Thanh toán thành công!" : "Payment successful!");
-                // Xóa query params để không verify lại khi F5
-                this.props.navigate('/patient/my-booking', { replace: true });
+            try {
+                let verifyRes = await verifyPaymentStatus(orderCode);
+                if (verifyRes && verifyRes.errCode === 0) {
+                    toast.success(this.props.language === LANGUAGES.VI ? "Thanh toán thành công!" : "Payment successful!");
+                }
+            } catch (e) {
+                console.error('Verify payment error:', e);
             }
+            // Xóa query params sau khi verify xong
+            this.props.navigate('/patient/my-booking', { replace: true });
             this.setState({ isVerifying: false });
         }
 
+        // Luôn load lại danh sách SAU KHI verify (hoặc nếu không cần verify)
         if (this.props.userInfo && this.props.userInfo.id) {
             let id = this.props.userInfo.id;
             let res = await getAllAppointmentsByIdService(id);

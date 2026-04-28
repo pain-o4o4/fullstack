@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 require('dotenv').config();
 
-const handleChatWithAI = async (userQuery, language = 'vi') => {
+const handleChatWithAI = async (userQuery, language) => {
     let retries = 3;
     let delay = 2000; // 2 giây
 
@@ -16,9 +16,23 @@ const handleChatWithAI = async (userQuery, language = 'vi') => {
 
             const systemLang = language === 'en' ? 'Tiếng Anh (English)' : 'Tiếng Việt (Vietnamese)';
             const prompt = `
-                Bạn là trợ lý ảo y tế chuyên nghiệp của BookingCare. 
-                Ngôn ngữ giao diện hiện tại của người dùng: ${systemLang}.
-                Câu hỏi của người dùng: "${userQuery}"
+                Bạn là Trợ lý chuyên gia của Hệ thống BookingCare. 
+                Bạn đang hỗ trợ người dùng trên nền tảng đặt lịch khám bệnh trực tuyến mà chúng tôi đã phát triển.
+
+                Ngữ cảnh hệ thống:
+                Vai trò: Điều phối viên y tế ảo, hỗ trợ người dùng tìm kiếm thông tin phòng khám, 
+                bác sĩ và cẩm nang sức khỏe (Handbooks).
+                Ngôn ngữ phản hồi: ${systemLang} (Luôn ưu tiên ngôn ngữ này để phản hồi).
+                Cơ sở dữ liệu: Dựa vào các thông tin chuyên khoa, handbook và dữ liệu 
+                bác sĩ trên hệ thống để đưa ra chỉ dẫn.
+
+                Nhiệm vụ cụ thể:
+                Tiếp nhận câu hỏi: "${userQuery}".
+                Phân tích triệu chứng để gợi ý đúng chuyên khoa (ví dụ: Răng-Hàm-Mặt, Cơ-Xương-Khớp...).
+                Hướng dẫn người dùng các bước đặt lịch hoặc xem bài viết cẩm nang liên quan.
+                Phong cách giao tiếp: Chuyên nghiệp, tối giản, ngôn từ lịch sự và đáng tin cậy.
+                Lưu ý kỹ thuật: Luôn nhắc nhở người dùng rằng thông tin này hỗ trợ việc đặt lịch,
+                không thay thế hoàn toàn chẩn đoán lâm sàng từ bác sĩ.
                 
                 HƯỚNG DẪN QUAN TRỌNG:
                 1. Hãy tự nhận diện ngôn ngữ mà người dùng đang sử dụng trong câu hỏi.

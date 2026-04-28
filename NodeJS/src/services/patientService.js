@@ -12,6 +12,82 @@ import { hashUserPassword } from './userService'
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE
 const URL_REACT = process.env.URL_REACT
 
+/**
+ * finalizeBookingPayment - Hàm dùng chung (Atomic) để:
+ * 1. Khóa dòng booking (LOCK.UPDATE) để tránh race condition
+ * 2. Cập nhật statusId S1 -> S2
+ * 3. Gửi email xác nhận một lần duy nhất
+ * 
+ * Được gọi bởi cả processPayOSWebhook và verifyPaymentStatusService.
+ * @param {number|string} orderCode 
+ * @returns {{ updated: boolean, errMessage?: string }}
+ */
+let finalizeBookingPayment = async (orderCode) => {
+    const t = await db.sequelize.transaction();
+    try {
+        const orderCodeNum = Number(orderCode);
+        const orderCodeStr = String(orderCode);
+        console.log(`>>> [finalize] Looking for orderCode: ${orderCodeStr} (num: ${orderCodeNum})`);
+
+        // Tìm với cả số và chuỗi để đảm bảo tương thích
+        let booking = await db.Booking.findOne({
+            where: {
+                [Op.or]: [
+                    { orderCode: orderCodeNum },
+                    { orderCode: orderCodeStr }
+                ],
+                statusId: 'S1'
+            },
+            include: [
+                { model: db.User, as: 'patientBookingData', attributes: ['email', 'firstName', 'lastName'] },
+                { model: db.User, as: 'doctorBookingData', attributes: ['firstName', 'lastName'] },
+                { model: db.Allcode, as: 'timeTypeDataPatient', attributes: ['valueVi'] }
+            ],
+            lock: t.LOCK.UPDATE,
+            transaction: t,
+            raw: false
+        });
+
+        console.log(`>>> [finalize] Booking found: ${booking ? `id=${booking.id} status=${booking.statusId}` : 'NOT FOUND'}`);
+
+        if (!booking) {
+            await t.rollback();
+            return { updated: false, errMessage: 'Booking not found or already processed.' };
+        }
+
+        // Cập nhật trạng thái
+        booking.statusId = 'S2';
+        await booking.save({ transaction: t });
+        await t.commit();
+
+        // Gửi email SAU KHI commit (không block transaction)
+        const receiverEmail = booking.patientBookingData?.email;
+        if (receiverEmail) {
+            try {
+                await emailService.sendSimpleEmail({
+                    receiverEmail: receiverEmail,
+                    patientName: `${booking.patientBookingData?.lastName || ''} ${booking.patientBookingData?.firstName || ''}`.trim() || 'Bệnh nhân',
+                    doctorName: `${booking.doctorBookingData?.lastName || ''} ${booking.doctorBookingData?.firstName || ''}`.trim(),
+                    time: booking.timeTypeDataPatient?.valueVi || '',
+                    clinicName: 'BookingCare 🏥',
+                    addressClinic: 'Hà Nội, Việt Nam',
+                    language: 'vi'
+                });
+                console.log(`>>> [finalizeBookingPayment] Email sent to ${receiverEmail}`);
+            } catch (emailErr) {
+                // Không throw - email fail không nên ảnh hưởng đến kết quả thanh toán
+                console.error('>>> [finalizeBookingPayment] Email failed:', emailErr.message);
+            }
+        }
+
+        return { updated: true };
+    } catch (e) {
+        if (t && !t.finished) await t.rollback();
+        console.error('>>> [finalizeBookingPayment] Error:', e.message);
+        return { updated: false, errMessage: e.message };
+    }
+};
+
 
 let buildUrlEmail = (doctorId, token) => {
     return `${process.env.URL_REACT}/verify-booking?doctorId=${doctorId}&token=${token}`;
@@ -91,7 +167,8 @@ let postBookAppointmentService = (data) => {
                         doctorId: data.doctorId,
                         date: formattedDate,
                         timeType: data.timeType,
-                        statusId: { [Op.ne]: 'S4' }
+                        // statusId: { [Op.ne]: 'S4' } // Hủy
+                        statusId: { [Op.in]: ['S1', 'S2', 'S3'] }
                     },
                     transaction: t
                 });
@@ -137,8 +214,12 @@ let postBookAppointmentService = (data) => {
 
 
             try {
-                // Sử dụng cấu trúc paymentRequests đã được xác nhận qua log
                 let paymentLinkRes = await payosInstance.paymentRequests.create(body);
+
+                // Guard: Kiểm tra checkoutUrl có hợp lệ không trước khi commit
+                if (!paymentLinkRes || !paymentLinkRes.checkoutUrl) {
+                    throw new Error('PayOS returned invalid response: missing checkoutUrl');
+                }
 
                 await t.commit();
                 return resolve({
@@ -183,10 +264,24 @@ let postVerifyAppointmentService = async (infor) => {
                     if (infor.status === 'CANCELLED') {
                         appointment.statusId = 'S4';
                         await appointment.save();
-                        return resolve({
-                            errCode: 0,
-                            errMessage: "CANCELLED"
-                        });
+
+                        // Hủy link thanh toán trên PayOS để không ai thanh toán được nữa
+                        if (appointment.orderCode) {
+                            try {
+                                const payosInstance = payOS?.default || payOS;
+                                let cancelFn = payosInstance?.paymentRequests?.cancel
+                                    || payosInstance?.cancelPaymentLink;
+                                if (typeof cancelFn === 'function') {
+                                    await cancelFn.call(payosInstance.paymentRequests || payosInstance, appointment.orderCode, 'Cancelled by user');
+                                    console.log(`>>> [CANCEL] PayOS link cancelled for orderCode: ${appointment.orderCode}`);
+                                }
+                            } catch (payosErr) {
+                                // Không throw - hủy PayOS thất bại không ảnh hưởng đến trạng thái DB
+                                console.warn('>>> [CANCEL] PayOS link cancellation failed (non-critical):', payosErr.message);
+                            }
+                        }
+
+                        return resolve({ errCode: 0, errMessage: "CANCELLED" });
                     }
 
                     if (appointment.statusId === 'S1') {
@@ -397,41 +492,11 @@ let processPayOSWebhook = (webhookBody) => {
 
             if (webhookBody.code === "00") {
                 console.log(">>> [WEBHOOK] Payment Success for orderCode:", orderCode);
-
-                console.log(">>> [WEBHOOK] Searching DB for orderCode:", String(orderCode));
-                // 2. Tìm và cập nhật trạng thái trong DB
-                let appointment = await db.Booking.findOne({
-                    where: {
-                        orderCode: { [Op.like]: `%${orderCode}%` },
-                        statusId: 'S1'
-                    },
-                    include: [
-                        { model: db.User, as: 'patientBookingData', attributes: ['email', 'firstName', 'lastName'] },
-                        { model: db.User, as: 'doctorBookingData', attributes: ['firstName', 'lastName'] },
-                        { model: db.Allcode, as: 'timeTypeDataPatient', attributes: ['valueVi'] }
-                    ],
-                    raw: false
-                });
-
-                if (booking) {
-                    booking.statusId = 'S2';
-                    await booking.save();
-
-                    const receiverEmail = booking.patientBookingData?.email;
-                    if (receiverEmail) {
-                        await emailService.sendSimpleEmail({
-                            receiverEmail: receiverEmail,
-                            patientName: `${booking.patientBookingData?.lastName || ''} ${booking.patientBookingData?.firstName || ''}`.trim() || "Bệnh nhân",
-                            doctorName: `${booking.doctorBookingData?.lastName || ''} ${booking.doctorBookingData?.firstName || ''}`.trim(),
-                            time: booking.timeTypeDataPatient?.valueVi || "",
-                            clinicName: "BookingCare 🏥",
-                            addressClinic: "Hà Nội, Việt Nam",
-                            language: 'vi'
-                        });
-                    }
-                    console.log(">>> [WEBHOOK] Booking status updated to S2.");
+                const result = await finalizeBookingPayment(orderCode);
+                if (result.updated) {
+                    console.log(">>> [WEBHOOK] Booking finalized and email sent for orderCode:", orderCode);
                 } else {
-                    console.log(">>> [WEBHOOK] Booking not found for orderCode:", orderCode);
+                    console.log(">>> [WEBHOOK] Booking not updated (possibly already processed):", result.errMessage);
                 }
             } else {
                 console.log(`>>> [WEBHOOK] Status not success. Code: ${webhookBody.code}`);
@@ -517,23 +582,15 @@ let verifyPaymentStatusService = (orderCode) => {
             }
 
             const payosInstance = payOS?.default || payOS;
-            let paymentInfo;
 
-            // Debug sâu hơn để tìm đúng tên hàm
-            if (payosInstance.paymentRequests) {
-                console.log(">>> [DEBUG] paymentRequests keys:", Object.keys(payosInstance.paymentRequests));
-            }
-            // payOS.getPaymentLinkInformation(orderCode)
+            let paymentInfo;
             try {
                 if (payosInstance.paymentRequests && typeof payosInstance.paymentRequests.getPaymentLinkInformation === 'function') {
                     paymentInfo = await payosInstance.paymentRequests.getPaymentLinkInformation(orderCode);
-                } else if (payosInstance.paymentRequests && typeof payosInstance.paymentRequests.get === 'function') {
-                    // Thử tên hàm rút gọn (thường thấy ở một số phiên bản)
-                    paymentInfo = await payosInstance.paymentRequests.get(orderCode);
                 } else if (typeof payosInstance.getPaymentLinkInformation === 'function') {
                     paymentInfo = await payosInstance.getPaymentLinkInformation(orderCode);
                 } else {
-                    throw new Error("Cannot find getPaymentLinkInformation or get method in PayOS instance.");
+                    throw new Error("Cannot find getPaymentLinkInformation method in PayOS instance.");
                 }
             } catch (error) {
                 console.error(">>> [VERIFY] PayOS API Error:", error.message);
@@ -541,52 +598,21 @@ let verifyPaymentStatusService = (orderCode) => {
             }
 
             const currentStatus = (paymentInfo?.status || "").toUpperCase();
-            console.log(">>> [VERIFY] PayOS returned status (normalized):", currentStatus);
+            console.log(">>> [VERIFY] PayOS returned status:", currentStatus, "for orderCode:", orderCode);
 
-            if (paymentInfo && (currentStatus === "PAID" || currentStatus === "COMPLETED")) {
-                console.log(">>> [VERIFY] Searching DB for orderCode:", String(orderCode));
-                let booking = await db.Booking.findOne({
-                    where: {
-                        orderCode: { [Op.like]: `%${orderCode}%` },
-                        statusId: 'S1'
-                    },
-                    include: [
-                        { model: db.User, as: 'patientBookingData', attributes: ['email', 'firstName', 'lastName'] },
-                        { model: db.User, as: 'doctorBookingData', attributes: ['firstName', 'lastName'] },
-                        { model: db.Allcode, as: 'timeTypeDataPatient', attributes: ['valueVi'] }
-                    ],
-                    raw: false
-                });
-
-                if (booking) {
-                    booking.statusId = 'S2';
-                    await booking.save();
-
-                    // 3. Gửi email xác nhận (tương tự webhook)
-                    const receiverEmail = booking.patientBookingData?.email;
-                    if (receiverEmail) {
-                        await emailService.sendSimpleEmail({
-                            receiverEmail: receiverEmail,
-                            patientName: `${booking.patientBookingData?.lastName || ''} ${booking.patientBookingData?.firstName || ''}`.trim(),
-                            doctorName: `${booking.doctorBookingData?.lastName || ''} ${booking.doctorBookingData?.firstName || ''}`.trim(),
-                            time: booking.timeTypeDataPatient?.valueVi || "",
-                            clinicName: "BookingCare 🏥",
-                            addressClinic: "Hà Nội, Việt Nam",
-                            language: 'vi'
-                        });
-                    }
-
-                    return resolve({
-                        errCode: 0,
-                        message: "Payment verified and updated successfully!"
-                    });
+            if (currentStatus === "PAID" || currentStatus === "COMPLETED") {
+                // Dùng hàm chung - tự động lock, tránh race condition và double email
+                const result = await finalizeBookingPayment(orderCode);
+                if (result.updated) {
+                    return resolve({ errCode: 0, message: "Payment verified and booking confirmed!" });
+                } else {
+                    // Không tìm thấy S1 nghĩa là đã được Webhook xử lý rồi - vẫn OK
+                    return resolve({ errCode: 0, message: "Payment confirmed (already processed by webhook)." });
                 }
             }
 
-            resolve({
-                errCode: 0,
-                message: "Payment not completed or already processed."
-            });
+            // Trả về trạng thái hiện tại cho Frontend biết
+            resolve({ errCode: 0, status: currentStatus, message: "Payment not yet completed." });
 
         } catch (e) {
             console.error(">>> Error in verifyPaymentStatusService:", e);

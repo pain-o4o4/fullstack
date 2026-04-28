@@ -164,9 +164,11 @@ class ScheduleDoctor extends Component {
                                             </div>
                                         )}
                                         <div className="time-grid">
-                                            {groupedTime[clinicId].map((item, index) => {
-                                                return (
-                                                    <button
+                                            {groupedTime[clinicId]
+                                                .filter(item => item.isFull !== true) // CHỈ HIỆN NHỮNG SLOT CHƯA ĐẦY
+                                                .map((item, index) => {
+                                                    return (
+                                                        <button
                                                         key={index}
                                                         className="time-slot-btn"
                                                         onMouseEnter={() => {
