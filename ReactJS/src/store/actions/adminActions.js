@@ -7,9 +7,11 @@ import {
     getAllSpecialtyService, getAllClinicService,
     getDetailClinicByIdService, getDetailSpecialtyByIdService,
     getAllAppointmentsByIdService, getAllHandbookService,
-    getDetailHandbookByIdService
+    getDetailHandbookByIdService, postChatWithAIService
 } from '../../services/userService';
 import { toast } from 'react-toastify';
+import { LANGUAGES } from '../../utils';
+
 export const fetchGenderStart = () => {
     return async (dispatch, getState) => {
         dispatch({
@@ -546,5 +548,70 @@ export const fetchDetailHandbookById = (id) => {
                 type: actionTypes.FETCH_DETAIL_HANDBOOK_FAILED
             });
         }
+    };
+};
+
+export const postChatWithAI = (userQuery) => {
+    return async (dispatch, getState) => {
+        try {
+            let currentHistory = getState().admin.chatHistory || [];
+            let newUserMsg = { role: 'user', content: userQuery };
+            let updatedHistoryWithUser = [...currentHistory, newUserMsg];
+
+            dispatch({
+                type: actionTypes.UPDATE_CHAT_HISTORY,
+                data: updatedHistoryWithUser
+            });
+
+            const language = getState().app.language;
+            let res = await postChatWithAIService({ 
+                userQuery: userQuery,
+                language: language 
+            });
+            
+            if (res && res.errCode === 0) {
+                let newAiMsg = { role: 'assistant', content: res.data };
+                let finalHistory = [...updatedHistoryWithUser, newAiMsg];
+
+                localStorage.setItem('CHAT_HISTORY', JSON.stringify(finalHistory));
+
+                dispatch({
+                    type: actionTypes.UPDATE_CHAT_HISTORY,
+                    data: finalHistory
+                });
+            } else {
+                const language = getState().app.language;
+                const errorMsgContent = language === LANGUAGES.VI 
+                    ? 'Hệ thống AI đang bận hoặc hết hạn mức. Vui lòng thử lại sau!' 
+                    : 'AI system is busy or quota exceeded. Please try again later!';
+                    
+                let errorMsg = { role: 'assistant', content: errorMsgContent };
+                dispatch({
+                    type: actionTypes.UPDATE_CHAT_HISTORY,
+                    data: [...updatedHistoryWithUser, errorMsg]
+                });
+            }
+        } catch (e) {
+            console.log('postChatWithAI error: ', e);
+            const language = getState().app.language;
+            const errorMsgContent = language === LANGUAGES.VI 
+                ? 'Đã có lỗi xảy ra khi kết nối tới AI.' 
+                : 'An error occurred while connecting to AI.';
+
+            let errorMsg = { role: 'assistant', content: errorMsgContent };
+            dispatch({
+                type: actionTypes.UPDATE_CHAT_HISTORY,
+                data: [...getState().admin.chatHistory, errorMsg]
+            });
+        }
+    };
+};
+//fe -> be -> store -> fe (khai bao kho chua cau tra loi chatwithai -khai bao cho no cai thang bao ve kho, cai thang bao ve ma di lay data tu cac xe container )
+export const clearChatHistory = () => {
+    return (dispatch) => {
+        localStorage.removeItem('CHAT_HISTORY');
+        dispatch({
+            type: actionTypes.CLEAR_CHAT_HISTORY
+        });
     };
 };

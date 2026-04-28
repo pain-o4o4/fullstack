@@ -20,7 +20,8 @@ const initialState = {
     detailClinic: {},
     detailSpecialty: {},
     detailAppointment: [],
-    bookingData: {}
+    bookingData: {},
+    chatHistory: JSON.parse(localStorage.getItem('CHAT_HISTORY')) || []
 }
 
 const adminReducer = (state = initialState, action = {}) => {
@@ -242,6 +243,21 @@ const adminReducer = (state = initialState, action = {}) => {
             return {
                 ...state,
                 detailHandbook: {}
+            }
+
+        case actionTypes.UPDATE_CHAT_HISTORY:
+            return {
+                ...state,
+                chatHistory: action.data
+            }
+        case actionTypes.CLEAR_CHAT_HISTORY:
+            return {
+                ...state,
+                chatHistory: []
+            }
+        case actionTypes.POST_CHAT_WITH_AI_FAIL:
+            return {
+                ...state
             }
 
         default:

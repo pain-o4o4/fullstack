@@ -405,5 +405,14 @@
         "message": "Tin nhắn",
         "message-placeholder": "Bạn cần chúng tôi hỗ trợ gì?",
         "send": "Gửi tin nhắn"
+    },
+    "chatbot": {
+        "title": "Trợ lý BookingCare",
+        "welcome": "Chào bạn! Tôi là trợ lý ảo của BookingCare. Tôi có thể giúp gì cho bạn?",
+        "placeholder": "Nhập câu hỏi...",
+        "clear-confirm": "Bạn có chắc chắn muốn xóa lịch sử cuộc trò chuyện này không?",
+        "error": "Hệ thống AI đang bận hoặc hết hạn mức. Vui lòng thử lại sau!",
+        "refresh-title": "Làm mới chat",
+        "typing": "Đang trả lời..."
     }
 }

@@ -7,6 +7,7 @@ import specialtyController from "../controller/specialtyController"
 import clinicController from "../controller/clinicController"
 import handbookController from "../controller/handbookController"
 import { checkUserJWT, checkUserPermission } from '../middleware/authMiddleware';
+import aiController from "../controller/aiController";
 let router = express.Router()
 
 let initWebRoutes = (app) => {
@@ -75,6 +76,9 @@ let initWebRoutes = (app) => {
     router.get('/api/get-detail-handbook-by-id', handbookController.getDetailHandbookById);
     router.delete('/api/delete-handbook', handbookController.deleteHandbook);
     router.put('/api/edit-handbook', handbookController.handleEditHandbook);
+
+    // AI
+    router.post('/api/chat-with-ai', aiController.postChatWithAI);
 
     return app.use("/", router)
 }

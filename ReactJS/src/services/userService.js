@@ -161,9 +161,14 @@ const verifyPaymentStatus = (orderCode) => {
     return axios.post('/api/verify-payment-status', { orderCode });
 }
 
+const postChatWithAIService = (data) => {
+    return axios.post('/api/chat-with-ai', data);
+}
+
 export {
     handleLoginApi,
     verifyPaymentStatus,
+    postChatWithAIService,
     createRegister,
     getAllUsers,
     createNewUsersService,

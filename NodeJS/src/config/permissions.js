@@ -15,7 +15,7 @@ export const PUBLIC_PATHS = [
     '/api/register',
     '/api/refresh-token',
     '/api/allcode',
-    
+
     // Xem thông tin (Trang chủ & Chi tiết)
     '/api/top-doctor-home',
     '/api/get-all-doctors',
@@ -23,20 +23,21 @@ export const PUBLIC_PATHS = [
     '/api/get-schedule-doctor-by-date',
     '/api/get-extra-infor-doctor-by-id',
     '/api/get-profile-doctor-by-id',
-    
+
     '/api/get-all-specialty',
     '/api/get-detail-specialty-by-id',
-    
+
     '/api/get-all-clinic',
     '/api/get-detail-clinic-by-id',
 
     '/api/get-handbook',
     '/api/get-detail-handbook-by-id',
-    
+
     // Luồng tương tác của khách vãng lai / webhook
     '/api/verify-book-appointment',
     '/api/payos-webhook',
-    '/api/verify-payment-status'
+    '/api/verify-payment-status',
+    '/api/chat-with-ai'
 ];
 
 // ==========================================
@@ -68,20 +69,23 @@ export const PERMISSIONS = {
         // Quản lý Cẩm nang
         '/api/create-new-handbook',
         '/api/delete-handbook',
-        '/api/edit-handbook'
+        '/api/edit-handbook',
+        '/api/chat-with-ai'
     ],
 
     [ROLES.DOCTOR]: [
         '/api/save-infor-doctor',
         '/api/bulk-create-schedule',
         '/api/get-list-patient-for-doctor',
-        '/api/update-booking-status'
+        '/api/update-booking-status',
+        '/api/chat-with-ai'
     ],
 
     [ROLES.PATIENT]: [
         '/api/patient-book-appointment',
         '/api/get-all-appointments-by-id',
         '/api/get-detail-schedule-patient',
-        '/api/update-patient'
+        '/api/update-patient',
+        '/api/chat-with-ai'
     ]
 };

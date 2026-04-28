@@ -40,6 +40,7 @@ import BookingHistory from './HomePage/SubMenuForUser/BookingHistory';
 import DetailSchedulePatient from './HomePage/SubMenuForUser/DetailSchedulePatient';
 import Payment from '../containers/Patient/Doctor/Modal/Payment';
 import ContactPage from './HomePage/ContactPage';
+import ChatBot from './ChatBot/ChatBot';
 
 class App extends Component {
     state = {
@@ -140,6 +141,7 @@ class App extends Component {
                             draggable
                             pauseOnHover
                         />
+                        <ChatBot />
                     </div>
                 </BrowserRouter>
             </Fragment>

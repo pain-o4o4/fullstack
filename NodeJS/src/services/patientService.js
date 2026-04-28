@@ -107,7 +107,7 @@ let postBookAppointmentService = (data) => {
                 const orderCode = Number(String(Date.now()).slice(-10));
                 let token = uuidv4();
                 appointment = await db.Booking.create({
-                    statusId: 'S1', 
+                    statusId: 'S1', // đợi thanh toansn
                     doctorId: data.doctorId,
                     patientId: data.patientId,
                     clinicId: data.clinicId,
@@ -135,11 +135,12 @@ let postBookAppointmentService = (data) => {
             let payosInstance = payOS;
             if (payOS && payOS.default) payosInstance = payOS.default;
 
+
             try {
                 // Sử dụng cấu trúc paymentRequests đã được xác nhận qua log
                 let paymentLinkRes = await payosInstance.paymentRequests.create(body);
-                
-                await t.commit(); 
+
+                await t.commit();
                 return resolve({
                     errCode: 0,
                     data: { checkoutUrl: paymentLinkRes.checkoutUrl, bookingId: appointment.id }
@@ -375,7 +376,7 @@ let getDetailSchedulePatient = async (bookingId) => {
         }
     });
 }
-
+//processPayOSWebhook 
 let processPayOSWebhook = (webhookBody) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -400,9 +401,9 @@ let processPayOSWebhook = (webhookBody) => {
                 console.log(">>> [WEBHOOK] Searching DB for orderCode:", String(orderCode));
                 // 2. Tìm và cập nhật trạng thái trong DB
                 let appointment = await db.Booking.findOne({
-                    where: { 
+                    where: {
                         orderCode: { [Op.like]: `%${orderCode}%` },
-                        statusId: 'S1' 
+                        statusId: 'S1'
                     },
                     include: [
                         { model: db.User, as: 'patientBookingData', attributes: ['email', 'firstName', 'lastName'] },
@@ -507,6 +508,7 @@ let postUpdatePatientService = (data) => {
         }
     });
 }
+//verifyPaymentStatusService api de kiem tra trang thai thanh toan
 let verifyPaymentStatusService = (orderCode) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -521,7 +523,7 @@ let verifyPaymentStatusService = (orderCode) => {
             if (payosInstance.paymentRequests) {
                 console.log(">>> [DEBUG] paymentRequests keys:", Object.keys(payosInstance.paymentRequests));
             }
-
+            // payOS.getPaymentLinkInformation(orderCode)
             try {
                 if (payosInstance.paymentRequests && typeof payosInstance.paymentRequests.getPaymentLinkInformation === 'function') {
                     paymentInfo = await payosInstance.paymentRequests.getPaymentLinkInformation(orderCode);
@@ -544,9 +546,9 @@ let verifyPaymentStatusService = (orderCode) => {
             if (paymentInfo && (currentStatus === "PAID" || currentStatus === "COMPLETED")) {
                 console.log(">>> [VERIFY] Searching DB for orderCode:", String(orderCode));
                 let booking = await db.Booking.findOne({
-                    where: { 
+                    where: {
                         orderCode: { [Op.like]: `%${orderCode}%` },
-                        statusId: 'S1' 
+                        statusId: 'S1'
                     },
                     include: [
                         { model: db.User, as: 'patientBookingData', attributes: ['email', 'firstName', 'lastName'] },
@@ -592,7 +594,19 @@ let verifyPaymentStatusService = (orderCode) => {
         }
     });
 };
+// nhan thong tin dat ve xem phim 
+//luu vao db trang thai chua thanh toan de giu cho ve xem phim
 
+// config payos
+// import service
+// taoj ordercode 1 taoj link thanh toan, 2 là xử lý db , 3 la cap nhap trang thai don hang trong , post di payos (/api/verify-payment-status)
+
+// api thong tin don hang /api/webhook/payos // chuyen trang thai cho thanh toan -> da thanh toan - gui email
+// api gui xac nhan thanh toan /api/verify-payment-status // // chuyen trang thai cho thanh toan -> da thanh toan - gui email
+
+// truong hop huy thanh toan tra ve component thong bao huy don hang
+
+// 
 export default {
     postBookAppointmentService,
     postVerifyAppointmentService,

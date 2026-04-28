@@ -405,5 +405,14 @@
         "message": "Message",
         "message-placeholder": "How can we help you?",
         "send": "Send Message"
+    },
+    "chatbot": {
+        "title": "BookingCare Assistant",
+        "welcome": "Hello! I am the BookingCare virtual assistant. How can I help you?",
+        "placeholder": "Type a question...",
+        "clear-confirm": "Are you sure you want to clear this chat history?",
+        "error": "AI system is busy or quota exceeded. Please try again later!",
+        "refresh-title": "Refresh chat",
+        "typing": "Typing..."
     }
 }
