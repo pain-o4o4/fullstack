@@ -15,7 +15,9 @@ class MyBooking extends Component {
         super(props);
         this.state = {
             listAppointments: [],
-            isVerifying: false
+            isVerifying: false,
+            currentPage: 1,
+            pageSize: 5
         }
     }
 
@@ -65,7 +67,7 @@ class MyBooking extends Component {
     }
 
     render() {
-        let { listAppointments } = this.state;
+        let { listAppointments, currentPage, pageSize } = this.state;
         let { language } = this.props;
 
         return (
@@ -81,20 +83,26 @@ class MyBooking extends Component {
                                 <tr>
                                     <th>STT</th>
                                     <th><FormattedMessage id="patient.my-booking.time" defaultMessage="Thời gian" /></th>
+                                    <th><FormattedMessage id="patient-detail.patient-name" defaultMessage="Bệnh nhân" /></th>
+                                    <th><FormattedMessage id="patient-profile.phone-place" defaultMessage="Số điện thoại" /></th>
                                     <th><FormattedMessage id="patient.my-booking.doctor" defaultMessage="Bác sĩ" /></th>
-                                    <th><FormattedMessage id="patient.my-booking.clinic" defaultMessage="Phòng khám" /></th>
+                                    <th><FormattedMessage id="schedule-doctor.reason" defaultMessage="Lý do" /></th>
                                     <th><FormattedMessage id="patient.my-booking.status" defaultMessage="Trạng thái" /></th>
                                     <th><FormattedMessage id="patient.my-booking.actions" defaultMessage="Thao tác" /></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {listAppointments && listAppointments.length > 0 ?
-                                    listAppointments.map((item, index) => {
-
+                                    listAppointments.slice((currentPage - 1) * pageSize, currentPage * pageSize).map((item, index) => {
+                                        const realIndex = (currentPage - 1) * pageSize + index + 1;
                                         let name = language === 'vi'
                                             ? `${item.doctorBookingData.lastName} ${item.doctorBookingData.firstName}`
                                             : `${item.doctorBookingData.firstName} ${item.doctorBookingData.lastName}`;
 
+
+                                        let patientName = item.patientBookingData
+                                            ? `${item.patientBookingData.lastName} ${item.patientBookingData.firstName}`
+                                            : 'N/A';
 
                                         let clinicName = item.doctorBookingData.doctorinforData
                                             ? item.doctorBookingData.doctorinforData.nameClinic
@@ -105,10 +113,12 @@ class MyBooking extends Component {
 
 
                                         let formattedDate = '';
-                                        if (moment(item.date, 'DD/MM/YYYY', true).isValid()) {
-                                            formattedDate = item.date;
-                                        } else {
-                                            formattedDate = moment(new Date(parseInt(item.date))).format('DD/MM/YYYY');
+                                        if (item.date) {
+                                            if (/^\d+$/.test(item.date)) {
+                                                formattedDate = moment(Number(item.date)).format('DD/MM/YYYY');
+                                            } else {
+                                                formattedDate = item.date;
+                                            }
                                         }
 
                                         return (
@@ -122,17 +132,25 @@ class MyBooking extends Component {
                                                     }
                                                 }}
                                             >
-                                                <td>{index + 1}</td>
+                                                <td>{realIndex}</td>
                                                 <td>
                                                     <div className="time-display">
                                                         {language === 'vi' ? item.timeTypeDataPatient.valueVi : item.timeTypeDataPatient.valueEn}
                                                     </div>
                                                     <div className="date-display">{formattedDate}</div>
                                                 </td>
-                                                <td className="doctor-name">{name}</td>
                                                 <td>
-                                                    <strong>{clinicName}</strong>
-                                                    <div className="clinic-address">{clinicAddress}</div>
+                                                    <div style={{ fontWeight: '600', color: '#1d1d1f' }}>{patientName}</div>
+                                                </td>
+                                                <td>{item.patientBookingData?.phonenumber || 'N/A'}</td>
+                                                <td>
+                                                    <div className="doctor-name">{name}</div>
+                                                    <div className="clinic-address">{clinicName}</div>
+                                                </td>
+                                                <td>
+                                                    <div style={{ fontSize: '13px', color: '#86868b', maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={item.reason}>
+                                                        {item.reason}
+                                                    </div>
                                                 </td>
                                                 <td>
                                                     <span className={`status-badge ${item.statusId}`}>
@@ -161,7 +179,7 @@ class MyBooking extends Component {
                                     })
                                     :
                                     <tr>
-                                        <td colSpan="6" className="text-center no-data">
+                                        <td colSpan="8" className="text-center no-data">
                                             <FormattedMessage id="patient.my-booking.no-data" defaultMessage="Bạn chưa có lịch hẹn nào." />
                                         </td>
                                     </tr>
@@ -169,6 +187,36 @@ class MyBooking extends Component {
                             </tbody>
                         </table>
                     </div>
+
+                    {listAppointments && listAppointments.length > pageSize &&
+                        <div className="pagination-container">
+                            <button 
+                                className="btn-pagination" 
+                                disabled={currentPage === 1}
+                                onClick={() => this.setState({ currentPage: currentPage - 1 })}
+                            >
+                                <i className="fas fa-chevron-left"></i>
+                            </button>
+                            
+                            {[...Array(Math.ceil(listAppointments.length / pageSize))].map((_, i) => (
+                                <button 
+                                    key={i}
+                                    className={`btn-pagination ${currentPage === i + 1 ? 'active' : ''}`}
+                                    onClick={() => this.setState({ currentPage: i + 1 })}
+                                >
+                                    {i + 1}
+                                </button>
+                            ))}
+
+                            <button 
+                                className="btn-pagination" 
+                                disabled={currentPage === Math.ceil(listAppointments.length / pageSize)}
+                                onClick={() => this.setState({ currentPage: currentPage + 1 })}
+                            >
+                                <i className="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    }
                 </div>
             </div>
         );

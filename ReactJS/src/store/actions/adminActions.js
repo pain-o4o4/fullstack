@@ -7,7 +7,8 @@ import {
     getAllSpecialtyService, getAllClinicService,
     getDetailClinicByIdService, getDetailSpecialtyByIdService,
     getAllAppointmentsByIdService, getAllHandbookService,
-    getDetailHandbookByIdService, postChatWithAIService
+    getDetailHandbookByIdService, postChatWithAIService,
+    getHistoryAppointmentByIdService
 } from '../../services/userService';
 import { toast } from 'react-toastify';
 import { LANGUAGES } from '../../utils';
@@ -511,6 +512,30 @@ export const getAllAppointmentsById = (id) => {
         }
     }
 }
+
+export const getHistoryAppointmentById = (id) => {
+    return async (dispatch, getState) => {
+        try {
+            let res = await getHistoryAppointmentByIdService(id);
+            if (res && res.errCode === 0) {
+                dispatch({
+                    type: actionTypes.FETCH_HISTORY_APPOINTMENT_SUCCESS,
+                    data: res.data
+                })
+            } else {
+                dispatch({
+                    type: actionTypes.FETCH_HISTORY_APPOINTMENT_FAILED,
+                })
+            }
+        } catch (e) {
+            console.log('FETCH_HISTORY_APPOINTMENT_FAILED: ', e)
+            dispatch({
+                type: actionTypes.FETCH_HISTORY_APPOINTMENT_FAILED,
+            })
+        }
+    }
+}
+
 // adminAction.js
 // adminAction.js
 export const saveBookingData = (data, callback) => {

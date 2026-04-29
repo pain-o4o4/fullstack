@@ -65,6 +65,7 @@ let initWebRoutes = (app) => {
     router.get('/api/get-all-appointments-by-id', patientController.getAllAppointmentsById);
     router.get('/api/get-detail-schedule-patient', patientController.getDetailSchedulePatient);
     router.post('/api/update-patient', patientController.postUpdatePatient);
+    router.get('/api/get-history-appointment-by-id', patientController.getHistoryAppointmentById);
 
     // Webhook thanh toán (Luôn phải Public)
     router.post('/api/payos-webhook', patientController.handlePayOSWebhook);

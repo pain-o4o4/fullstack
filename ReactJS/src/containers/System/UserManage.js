@@ -13,6 +13,7 @@ import {
 import ModalCreateUser from './manageSystemModal/ModalCreateUser';
 import './UserManage.scss';
 import icon_icons from '../../assets/images/icon_icons.svg';
+
 const decodeBase64Buffer = (imgObj) => {
     if (imgObj && imgObj.data) {
         let bytes = new Uint8Array(imgObj.data);
@@ -51,7 +52,10 @@ class UserManage extends Component {
             roleId: '',
             positionId: '',
             avatar: '',
-            previewImgURL: ''
+            previewImgURL: '',
+
+            currentPage: 1,
+            pageSize: 8
         };
     }
 
@@ -211,9 +215,9 @@ class UserManage extends Component {
     }
 
     render() {
-        let { arrUsers, isModalOpen, action, genderArr, roleArr, positionArr } = this.state;
+        let { arrUsers, isModalOpen, action, genderArr, roleArr, positionArr, currentPage, pageSize } = this.state;
         let { language } = this.props;
-
+        let displayUsers = arrUsers.slice((currentPage - 1) * pageSize, currentPage * pageSize);
         return (
             <div className="users-container">
                 <div className="header-section">
@@ -235,8 +239,8 @@ class UserManage extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {arrUsers && arrUsers.length > 0 ? (
-                                arrUsers.map((item, index) => {
+                            {displayUsers && displayUsers.length > 0 ? (
+                                displayUsers.map((item, index) => {
                                     let imageBase64 = decodeBase64Buffer(item.image);
 
                                     return (
@@ -276,8 +280,39 @@ class UserManage extends Component {
                             )}
                         </tbody>
                     </table>
-                </div>
 
+
+                </div>
+                {arrUsers && arrUsers.length > pageSize &&
+                    <div className="pagination-footer" >
+                        <button
+                            className="btn btn-primary"
+                            disabled={currentPage === 1}
+                            onClick={() => this.setState({ currentPage: currentPage - 1 })}
+                        >
+                            <i className="fas fa-chevron-left"></i>
+                        </button>
+
+                        {/* Tạo danh sách số trang */}
+                        {[...Array(Math.ceil(arrUsers.length / pageSize))].map((_, i) => (
+                            <button
+                                key={i}
+                                className={currentPage === i + 1 ? "btn btn-info active" : "btn btn-outline-info"}
+                                onClick={() => this.setState({ currentPage: i + 1 })}
+                            >
+                                {i + 1}
+                            </button>
+                        ))}
+
+                        <button
+                            className="btn btn-primary"
+                            disabled={currentPage === Math.ceil(arrUsers.length / pageSize)}
+                            onClick={() => this.setState({ currentPage: currentPage + 1 })}
+                        >
+                            <i className="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                }
                 {/* MODAL CẬP NHẬT/THÊM NGƯỜI DÙNG */}
                 <Modal isOpen={isModalOpen} toggle={this.resetFormState} className="user-modal" size="lg" centered>
                     <ModalHeader toggle={this.resetFormState}>
@@ -301,7 +336,7 @@ class UserManage extends Component {
                                     </label>
                                 </div>
                             </div>
-                            
+
                             <div className="input-group-apple">
                                 <label>Email <span className="text-danger">*</span></label>
                                 <input type="email" value={this.state.email}

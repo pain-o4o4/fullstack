@@ -342,7 +342,7 @@ let getAllAppointmentsByIdService = async (id) => {
                 let data = await db.Booking.findAll({
                     where: {
                         patientId: id,
-                        statusId: { [Op.in]: ['S1', 'S2', 'S3', 'S4', 'S5'] } // Fetch all types
+                        statusId: { [Op.in]: ['S1', 'S2'] } // Fetch all types
                     },
                     include: [
                         {
@@ -355,6 +355,14 @@ let getAllAppointmentsByIdService = async (id) => {
                                     as: 'doctorinforData',
                                     attributes: ['nameClinic', 'addressClinic']
                                 }
+                            ]
+                        },
+                        {
+                            model: db.User,
+                            as: 'patientBookingData',
+                            attributes: ['firstName', 'lastName', 'email', 'phonenumber', 'address', 'gender'],
+                            include: [
+                                { model: db.Allcode, as: 'genderData', attributes: ['valueVi', 'valueEn'] }
                             ]
                         },
                         {
@@ -373,6 +381,71 @@ let getAllAppointmentsByIdService = async (id) => {
                             attributes: ['name', 'address']
                         }
                     ],
+                    order: [['updatedAt', 'DESC']],
+                    raw: false,
+                    nest: true
+                });
+
+                resolve({
+                    errCode: 0,
+                    data: data
+                });
+            }
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+
+let getHistoryAppointmentByIdService = (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!id) {
+                resolve({ errCode: 1, errMessage: 'Missing required parameter!' });
+            } else {
+                let data = await db.Booking.findAll({
+                    where: {
+                        patientId: id,
+                        statusId: { [Op.in]: ['S3', 'S4', 'S5'] } // Lấy lịch sử: Đã khám, Đã hủy, Quá hạn
+                    },
+                    include: [
+                        {
+                            model: db.User,
+                            as: 'doctorBookingData',
+                            attributes: ['firstName', 'lastName'],
+                            include: [
+                                {
+                                    model: db.Doctor_infor,
+                                    as: 'doctorinforData',
+                                    attributes: ['nameClinic', 'addressClinic']
+                                }
+                            ]
+                        },
+                        {
+                            model: db.User,
+                            as: 'patientBookingData',
+                            attributes: ['firstName', 'lastName', 'email', 'phonenumber', 'address', 'gender'],
+                            include: [
+                                { model: db.Allcode, as: 'genderData', attributes: ['valueVi', 'valueEn'] }
+                            ]
+                        },
+                        {
+                            model: db.Allcode,
+                            as: 'timeTypeDataPatient',
+                            attributes: ['valueVi', 'valueEn']
+                        },
+                        {
+                            model: db.Allcode,
+                            as: 'statusData',
+                            attributes: ['valueVi', 'valueEn']
+                        },
+                        {
+                            model: db.Clinic,
+                            as: 'clinicBookingData',
+                            attributes: ['name', 'address']
+                        }
+                    ],
+                    order: [['updatedAt', 'DESC']], // Hiện lịch mới nhất lên đầu
                     raw: false,
                     nest: true
                 });
@@ -440,7 +513,7 @@ let getDetailSchedulePatient = async (bookingId) => {
                         {
                             model: db.User,
                             as: 'patientBookingData',
-                            attributes: ['firstName', 'lastName', 'email', 'phonenumber', 'address'],
+                            attributes: ['firstName', 'lastName', 'email', 'phonenumber', 'address', 'gender'],
                             include: [
                                 { model: db.Allcode, as: 'genderData', attributes: ['valueVi', 'valueEn'] }
                             ]
@@ -632,11 +705,32 @@ let verifyPaymentStatusService = (orderCode) => {
 
 // truong hop huy thanh toan tra ve component thong bao huy don hang
 
-// 
+//------------------------------------------------------------------------------------------ 
+{/*
+S1 (New): Lịch mới / Chờ thanh toán. Đây là trạng thái khi bệnh nhân vừa bấm đặt
+lịch nhưng chưa thanh toán qua PayOS hoặc chưa được bác sĩ xác nhận.
+
+S2 (Confirmed): Đã xác nhận / Đã thanh toán. Trạng thái này cho biết lịch hẹn đã hợp 
+lệ, tiền đã về túi (nếu thanh toán online) và bác sĩ đã sẵn sàng chờ khám.
+
+S3 (Done): Đã khám xong. Thường do bác sĩ bấm xác nhận sau khi bệnh nhân đã đến khám 
+thực tế tại phòng khám.
+
+S4 (Cancelled): Lịch đã hủy. Có thể do bệnh nhân tự hủy, hoặc do hệ thống tự hủy vì 
+quá 15 phút mà không thanh toán (như trong hàm Auto cleanup ở trên).
+
+S5 (Finished/Outdated): Lịch đã kết thúc (quá hạn). Đây là những lịch đã thanh toán 
+nhưng ngày khám đã trôi qua (ví dụ hôm nay là ngày 22 mà lịch khám là ngày 21). Hệ 
+thống tự chuyển sang S5 để tách biệt với các lịch đang chờ khám.
+
+Tóm lại luồng đi chuẩn sẽ là: S1 (Mới) -> S2 (Đã xác nhận) -> S3 (Đã khám) hoặc S5 
+(Hết hạn nếu quên khám). 
+*/}
 export default {
     postBookAppointmentService,
     postVerifyAppointmentService,
     getAllAppointmentsByIdService,
+    getHistoryAppointmentByIdService,
     processPayOSWebhook,
     postUpdatePatientService,
     getDetailSchedulePatient,

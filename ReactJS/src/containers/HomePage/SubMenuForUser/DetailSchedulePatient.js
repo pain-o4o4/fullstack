@@ -62,7 +62,14 @@ class DetailSchedulePatient extends Component {
         }
 
         let statusClass = detailBooking.statusId || '';
-        let dateStr = detailBooking.date ? moment(Number(detailBooking.date)).format('DD/MM/YYYY') : '';
+        let dateStr = '';
+        if (detailBooking.date) {
+            if (/^\d+$/.test(detailBooking.date)) {
+                dateStr = moment(Number(detailBooking.date)).format('DD/MM/YYYY');
+            } else {
+                dateStr = detailBooking.date;
+            }
+        }
 
         return (
             <div className="detail-schedule-container">
@@ -95,7 +102,7 @@ class DetailSchedulePatient extends Component {
                                     </span>
                                 </div>
                                 <div className="info-item">
-                                    <span className="label"><FormattedMessage id="patient.booking-modal.address" />:</span>
+                                    <span className="label"><FormattedMessage id="patient.my-booking.address" />:</span>
                                     <span className="value">
                                         {detailBooking.doctorBookingData?.doctorinforData?.addressClinic}
                                     </span>
@@ -105,9 +112,10 @@ class DetailSchedulePatient extends Component {
                             <div className="info-section">
                                 <h3 className="section-title"><FormattedMessage id="patient-detail.appointment-info" /></h3>
                                 <div className="info-item">
-                                    <span className="label"><FormattedMessage id="patient.booking-modal.birthday" />:</span>
+                                    <span className="label"><FormattedMessage id="manage-patient.date" />:</span>
                                     <span className="value">{dateStr}</span>
                                 </div>
+
                                 <div className="info-item">
                                     <span className="label"><FormattedMessage id="manage-patient.time" />:</span>
                                     <span className="value">
@@ -119,32 +127,7 @@ class DetailSchedulePatient extends Component {
                                     <span className="value">#{detailBooking.id}</span>
                                 </div>
                             </div>
-
-                            <div className="info-section">
-                                <h3 className="section-title"><FormattedMessage id="patient-detail.payment-info" /></h3>
-                                <div className="info-item">
-                                    <span className="label"><FormattedMessage id="patient-detail.price" />:</span>
-                                    <span className="value price">
-                                        {detailBooking.doctorBookingData?.doctorinforData?.priceTypeData ? 
-                                            (language === LANGUAGES.VI ? 
-                                                detailBooking.doctorBookingData.doctorinforData.priceTypeData.valueVi + ' VND' : 
-                                                detailBooking.doctorBookingData.doctorinforData.priceTypeData.valueEn + ' $') 
-                                            : <FormattedMessage id="patient-detail.not-found" />}
-                                    </span>
-                                </div>
-                                <div className="info-item">
-                                    <span className="label"><FormattedMessage id="patient-detail.payment-method" />:</span>
-                                    <span className="value">
-                                        {detailBooking.doctorBookingData?.doctorinforData?.paymentTypeData ? 
-                                            (language === LANGUAGES.VI ? 
-                                                detailBooking.doctorBookingData.doctorinforData.paymentTypeData.valueVi : 
-                                                detailBooking.doctorBookingData.doctorinforData.paymentTypeData.valueEn)
-                                            : <FormattedMessage id="patient-detail.not-found" />}
-                                    </span>
-                                </div>
-                            </div>
-
-                             <div className="info-section full-width">
+                            <div className="info-section full-width">
                                 <h3 className="section-title"><FormattedMessage id="patient-profile.name-label" /></h3>
                                 <div className="info-item">
                                     <span className="label"><FormattedMessage id="patient-detail.patient-name" />:</span>
@@ -158,7 +141,50 @@ class DetailSchedulePatient extends Component {
                                     <span className="label"><FormattedMessage id="patient-profile.phone-place" />:</span>
                                     <span className="value">{detailBooking.patientBookingData?.phonenumber}</span>
                                 </div>
+                                <div className="info-item">
+                                    <span className="label"><FormattedMessage id="patient.booking-modal.gender" defaultMessage="Giới tính" />:</span>
+                                    <span className="value">
+                                        {language === LANGUAGES.VI ? detailBooking.patientBookingData?.genderData?.valueVi : detailBooking.patientBookingData?.genderData?.valueEn}
+                                    </span>
+                                </div>
+                                {/* <div className="info-item">
+                                    <span className="label"><FormattedMessage id="patient.booking-modal.birthday" />:</span>
+                                    <span className="value">{dateStr}</span>
+                                </div> */}
+                                <div className="info-item">
+                                    <span className="label"><FormattedMessage id="patient.my-booking.address" />:</span>
+                                    <span className="value">{detailBooking.patientBookingData?.address}</span>
+                                </div>
+                                <div className="info-item full-width mt-2">
+                                    <span className="label"><FormattedMessage id="schedule-doctor.reason" />:</span>
+                                    <div className="value-reason">{detailBooking.reason}</div>
+                                </div>
                             </div>
+                            <div className="info-section">
+                                <h3 className="section-title"><FormattedMessage id="patient-detail.payment-info" /></h3>
+                                <div className="info-item">
+                                    <span className="label"><FormattedMessage id="patient-detail.price" />:</span>
+                                    <span className="value price">
+                                        {detailBooking.doctorBookingData?.doctorinforData?.priceTypeData ?
+                                            (language === LANGUAGES.VI ?
+                                                detailBooking.doctorBookingData.doctorinforData.priceTypeData.valueVi + ' VND' :
+                                                detailBooking.doctorBookingData.doctorinforData.priceTypeData.valueEn + ' $')
+                                            : <FormattedMessage id="patient-detail.not-found" />}
+                                    </span>
+                                </div>
+                                <div className="info-item">
+                                    <span className="label"><FormattedMessage id="patient-detail.payment-method" />:</span>
+                                    <span className="value">
+                                        {detailBooking.doctorBookingData?.doctorinforData?.paymentTypeData ?
+                                            (language === LANGUAGES.VI ?
+                                                detailBooking.doctorBookingData.doctorinforData.paymentTypeData.valueVi :
+                                                detailBooking.doctorBookingData.doctorinforData.paymentTypeData.valueEn)
+                                            : <FormattedMessage id="patient-detail.not-found" />}
+                                    </span>
+                                </div>
+                            </div>
+
+
                         </div>
 
                         {detailBooking.statusId === 'S1' && (

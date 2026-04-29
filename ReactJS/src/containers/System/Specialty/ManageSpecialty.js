@@ -19,7 +19,10 @@ class ManageSpecialty extends Component {
             arrSpecialties: [],
             isModalOpen: false,
             action: 'CREATE',
-            specialtyEdit: {}
+            specialtyEdit: {},
+
+            currentPage: 1,
+            pageSize: 6
         };
     }
 
@@ -110,8 +113,9 @@ class ManageSpecialty extends Component {
     }
 
     render() {
-        let { arrSpecialties, isModalOpen, action, specialtyEdit } = this.state;
+        let { arrSpecialties, isModalOpen, action, specialtyEdit, currentPage, pageSize } = this.state;
         let { language } = this.props;
+        let displaySpecialties = arrSpecialties.slice((currentPage - 1) * pageSize, currentPage * pageSize);
         return (
             <div className="specialty-management-container">
                 {this.state.isModalOpen && (
@@ -142,8 +146,8 @@ class ManageSpecialty extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {arrSpecialties && arrSpecialties.length > 0 ? (
-                                arrSpecialties.map((item, index) => {
+                            {displaySpecialties && displaySpecialties.length > 0 ? (
+                                displaySpecialties.map((item, index) => {
                                     return (
                                         <tr key={index}>
                                             <td>
@@ -182,7 +186,38 @@ class ManageSpecialty extends Component {
                         </tbody>
                     </table>
                 </div>
+                {arrSpecialties && arrSpecialties.length > pageSize &&
+                    <div className="pagination-footer">
+                        <button
+                            className="btn-pagination"
+                            disabled={currentPage === 1}
+                            onClick={() => this.setState({ currentPage: currentPage - 1 })}
+                        >
+                            <i className="fas fa-chevron-left"></i>
+                        </button>
+
+                        {[...Array(Math.ceil(arrSpecialties.length / pageSize))].map((_, i) => (
+                            <button
+                                key={i}
+                                className={currentPage === i + 1 ? "btn-pagination active" : "btn-pagination"}
+                                onClick={() => this.setState({ currentPage: i + 1 })}
+                            >
+                                {i + 1}
+                            </button>
+                        ))}
+
+                        <button
+                            className="btn-pagination"
+                            disabled={currentPage === Math.ceil(arrSpecialties.length / pageSize)}
+                            onClick={() => this.setState({ currentPage: currentPage + 1 })}
+                        >
+                            <i className="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                }
+
             </div>
+
         );
     }
 }

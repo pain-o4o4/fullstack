@@ -74,6 +74,9 @@ const postVerifyAppointmentService = (data) => {
 const getAllAppointmentsByIdService = (inputId) => {
     return axios.get(`/api/get-all-appointments-by-id?id=${inputId}`);
 }
+const getHistoryAppointmentByIdService = (inputId) => {
+    return axios.get(`/api/get-history-appointment-by-id?id=${inputId}`);
+}
 
 
 
@@ -204,5 +207,6 @@ export {
     getAllHandbookService,
     getDetailHandbookByIdService,
     deleteHandbookService,
-    editHandbookService
+    editHandbookService,
+    getHistoryAppointmentByIdService
 }

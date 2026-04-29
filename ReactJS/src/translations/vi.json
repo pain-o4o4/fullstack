@@ -322,7 +322,8 @@
             "confirmed": "Đã thanh toán",
             "done": "Đã khám",
             "cancelled": "Đã hủy",
-            "missed": "Lỡ hẹn"
+            "missed": "Lỡ hẹn",
+            "address": "Địa chỉ"
         }
     },
     "verify-email": {
@@ -348,6 +349,7 @@
         "reason": "Lý do",
         "actions": "Hành động",
         "btn-confirm": "Xác nhận kết thúc",
+        "date": "Ngày",
         "no-data": "Không có lịch khám nào trong ngày"
     },
     "patient-detail": {

@@ -21,7 +21,8 @@ const initialState = {
     detailSpecialty: {},
     detailAppointment: [],
     bookingData: {},
-    chatHistory: JSON.parse(localStorage.getItem('CHAT_HISTORY')) || []
+    chatHistory: JSON.parse(localStorage.getItem('CHAT_HISTORY')) || [],
+    historyAppointment: []
 }
 
 const adminReducer = (state = initialState, action = {}) => {
@@ -210,6 +211,17 @@ const adminReducer = (state = initialState, action = {}) => {
             return {
                 ...state,
                 detailAppointment: []
+            }
+
+        case actionTypes.FETCH_HISTORY_APPOINTMENT_SUCCESS:
+            return {
+                ...state,
+                historyAppointment: action.data
+            }
+        case actionTypes.FETCH_HISTORY_APPOINTMENT_FAILED:
+            return {
+                ...state,
+                historyAppointment: []
             }
 
         case actionTypes.SAVE_BOOKING_DATA_SUCCESS:

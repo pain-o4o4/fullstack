@@ -100,6 +100,25 @@ let handleVerifyPayment = async (req, res) => {
     }
 }
 
+let getHistoryAppointmentById = async (req, res) => {
+    try {
+        let idPatient = req.query.id
+        if (!idPatient) {
+            return res.status(200).json({
+                errCode: 1,
+                errMessage: 'Missing required parameter: id'
+            });
+        }
+        let response = await patientService.getHistoryAppointmentByIdService(idPatient);
+        return res.status(200).json(response);
+    } catch (error) {
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server',
+        });
+    }
+}
+
 export default {
     postBookAppointment,
     postVerifyAppointment,
@@ -107,5 +126,6 @@ export default {
     handlePayOSWebhook,
     postUpdatePatient: postUpdatePatient,
     getDetailSchedulePatient: getDetailSchedulePatient,
-    handleVerifyPayment: handleVerifyPayment
+    handleVerifyPayment: handleVerifyPayment,
+    getHistoryAppointmentById: getHistoryAppointmentById
 }

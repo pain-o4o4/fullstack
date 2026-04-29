@@ -94,12 +94,12 @@ class AllHandbook extends Component {
         return (
             <div className="handbook-page-wrapper">
                 <HomeHeader isShowBanner={false} />
-                <CustomBreadcrumb
+                {/* <CustomBreadcrumb
                     items={[
                         { label: <FormattedMessage id="homepage.home" />, link: '/home' },
                         { label: <FormattedMessage id="homeheader.Handbook" /> }
                     ]}
-                />
+                /> */}
 
                 <div className="hb-main-content">
                     {/* Hero Section: 1 featured left + 3 side right */}

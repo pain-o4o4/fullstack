@@ -19,7 +19,10 @@ class ManageClinic extends Component {
             arrClinics: [],
             isModalOpen: false,
             action: 'CREATE',
-            clinicEdit: {}
+            clinicEdit: {},
+
+            currentPage: 1,
+            pageSize: 6
         };
     }
 
@@ -110,8 +113,9 @@ class ManageClinic extends Component {
     }
 
     render() {
-        let { arrClinics, isModalOpen, action, clinicEdit } = this.state;
+        let { arrClinics, isModalOpen, action, clinicEdit, currentPage, pageSize } = this.state;
         let { language } = this.props;
+        let displayClinics = arrClinics.slice((currentPage - 1) * pageSize, currentPage * pageSize);
         return (
             <div className="clinic-management-container">
                 {isModalOpen && (
@@ -143,8 +147,8 @@ class ManageClinic extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {arrClinics && arrClinics.length > 0 ? (
-                                arrClinics.map((item, index) => {
+                            {displayClinics && displayClinics.length > 0 ? (
+                                displayClinics.map((item, index) => {
                                     return (
                                         <tr key={index}>
                                             <td>
@@ -188,6 +192,36 @@ class ManageClinic extends Component {
                         </tbody>
                     </table>
                 </div>
+                {arrClinics && arrClinics.length > pageSize &&
+                    <div className="pagination-footer">
+                        <button
+                            className="btn-pagination"
+                            disabled={currentPage === 1}
+                            onClick={() => this.setState({ currentPage: currentPage - 1 })}
+                        >
+                            <i className="fas fa-chevron-left"></i>
+                        </button>
+
+                        {[...Array(Math.ceil(arrClinics.length / pageSize))].map((_, i) => (
+                            <button
+                                key={i}
+                                className={currentPage === i + 1 ? "btn-pagination active" : "btn-pagination"}
+                                onClick={() => this.setState({ currentPage: i + 1 })}
+                            >
+                                {i + 1}
+                            </button>
+                        ))}
+
+                        <button
+                            className="btn-pagination"
+                            disabled={currentPage === Math.ceil(arrClinics.length / pageSize)}
+                            onClick={() => this.setState({ currentPage: currentPage + 1 })}
+                        >
+                            <i className="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                }
+
             </div>
         );
     }

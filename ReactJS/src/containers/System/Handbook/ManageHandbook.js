@@ -19,7 +19,10 @@ class ManageHandbook extends Component {
             arrHandbooks: [],
             isModalOpen: false,
             action: 'CREATE',
-            handbookEdit: {}
+            handbookEdit: {},
+
+            currentPage: 1,
+            pageSize: 6
         };
     }
 
@@ -110,10 +113,11 @@ class ManageHandbook extends Component {
     }
 
     render() {
-        let { arrHandbooks, isModalOpen, action, handbookEdit } = this.state;
+        let { arrHandbooks, isModalOpen, action, handbookEdit, currentPage, pageSize } = this.state;
+        let displayHandbooks = arrHandbooks.slice((currentPage - 1) * pageSize, currentPage * pageSize);
         return (
             <div className="specialty-management-container">
-                                {this.state.isModalOpen && (
+                {this.state.isModalOpen && (
                     <ModalManageHandbook
                         isOpen={this.state.isModalOpen}
                         toggleFromParent={this.toggleModal}
@@ -141,8 +145,8 @@ class ManageHandbook extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {arrHandbooks && arrHandbooks.length > 0 ? (
-                                arrHandbooks.map((item, index) => {
+                            {displayHandbooks && displayHandbooks.length > 0 ? (
+                                displayHandbooks.map((item, index) => {
                                     return (
                                         <tr key={index}>
                                             <td>
@@ -181,6 +185,36 @@ class ManageHandbook extends Component {
                         </tbody>
                     </table>
                 </div>
+                {arrHandbooks && arrHandbooks.length > pageSize &&
+                    <div className="pagination-footer">
+                        <button
+                            className="btn-pagination"
+                            disabled={currentPage === 1}
+                            onClick={() => this.setState({ currentPage: currentPage - 1 })}
+                        >
+                            <i className="fas fa-chevron-left"></i>
+                        </button>
+
+                        {[...Array(Math.ceil(arrHandbooks.length / pageSize))].map((_, i) => (
+                            <button
+                                key={i}
+                                className={currentPage === i + 1 ? "btn-pagination active" : "btn-pagination"}
+                                onClick={() => this.setState({ currentPage: i + 1 })}
+                            >
+                                {i + 1}
+                            </button>
+                        ))}
+
+                        <button
+                            className="btn-pagination"
+                            disabled={currentPage === Math.ceil(arrHandbooks.length / pageSize)}
+                            onClick={() => this.setState({ currentPage: currentPage + 1 })}
+                        >
+                            <i className="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                }
+
             </div>
         );
     }

@@ -322,7 +322,8 @@
             "confirmed": "Paid",
             "done": "Done",
             "cancelled": "Cancelled",
-            "missed": "Missed"
+            "missed": "Missed",
+            "address": "Address"
         }
     },
     "verify-email": {
@@ -348,6 +349,7 @@
         "reason": "Reason",
         "actions": "Actions",
         "btn-confirm": "Confirm End",
+        "date": "Date",
         "no-data": "No appointments today"
     },
     "patient-detail": {

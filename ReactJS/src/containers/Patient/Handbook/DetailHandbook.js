@@ -7,6 +7,7 @@ import * as action from '../../../store/actions'
 import { withRouter } from '../../../components/Navigator';
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/CustomBreadcrumb';
 import { FormattedMessage } from 'react-intl';
+import HomeFooter from '../../HomePage/HomeFooter';
 
 class DetailHandbook extends Component {
     constructor(props) {
@@ -17,14 +18,15 @@ class DetailHandbook extends Component {
     }
 
     async componentDidMount() {
-        console.log('>>> check props DetailHandbook:', this.props)
         if (this.props.params && this.props.params.id) {
             let id = this.props.params.id;
             this.props.getDetailHandbookById(id);
         }
+        // Lấy danh sách tất cả cẩm nang để làm phần gợi ý
+        this.props.fetchAllHandbooks();
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
+    async componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props.detailHandbook !== prevProps.detailHandbook) {
             let data = this.props.detailHandbook;
             if (data && data.image) {
@@ -35,6 +37,12 @@ class DetailHandbook extends Component {
             this.setState({
                 dataDetailHandbook: data
             })
+        }
+
+        // Khi bấm vào bài viết gợi ý (ID thay đổi) -> Cuộn lên đầu và fetch data mới
+        if (this.props.params.id !== prevProps.params.id) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            this.props.getDetailHandbookById(this.props.params.id);
         }
     }
 
@@ -64,7 +72,7 @@ class DetailHandbook extends Component {
             <div className="detail-handbook-container">
                 <HomeHeader isShowBanner={false} />
                 <CustomBreadcrumb items={breadcrumbItems} />
-                
+
                 <div className="detail-handbook-body">
                     <div className="handbook-hero" style={{ backgroundImage: `url(${dataDetailHandbook.image})` }}>
                         <div className="hero-overlay">
@@ -113,15 +121,65 @@ class DetailHandbook extends Component {
 
                         <aside className="article-sidebar">
                             <div className="sidebar-card">
-                                <h3>{language === 'vi' ? 'Cẩm nang liên quan' : 'Related Handbooks'}</h3>
-                                <div className="related-placeholder">
-                                    {/* Related items would go here */}
-                                    <p>{language === 'vi' ? 'Các bài viết tương tự sẽ hiển thị tại đây.' : 'Similar articles will appear here.'}</p>
+                                <h3>{language === 'vi' ? 'Cẩm nang mới nhất' : 'Latest Handbooks'}</h3>
+                                <div className="related-list">
+                                    {this.props.allHandbooks && this.props.allHandbooks.length > 0 &&
+                                        this.props.allHandbooks
+                                            .filter(item => item.id !== dataDetailHandbook.id)
+                                            .slice(0, 5)
+                                            .map((item, index) => {
+                                                return (
+                                                    <div key={index} className="related-item" onClick={() => this.props.navigate(`/detail-handbook/${item.id}`)}>
+                                                        <div className="related-img" style={{ backgroundImage: `url(${item.image})` }}></div>
+                                                        <div className="related-info">
+                                                            <h4>{item.name}</h4>
+                                                            <span><i className="far fa-calendar-alt"></i> 21/04/2026</span>
+                                                        </div>
+                                                    </div>
+                                                )
+                                            })
+                                    }
                                 </div>
                             </div>
                         </aside>
                     </div>
+
+                    {/* SUGGESTED SECTION AT BOTTOM */}
+                    <div className="suggested-handbooks">
+                        <div className="suggested-header">
+                            <h2>{language === 'vi' ? 'Có thể bạn quan tâm' : 'You might also like'}</h2>
+                            <button className="view-all-btn" onClick={() => this.props.navigate('/all-handbook')}>
+                                {language === 'vi' ? 'Xem tất cả' : 'View all'} <i className="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                        <div className="suggested-grid">
+                            {this.props.allHandbooks && this.props.allHandbooks.length > 0 &&
+                                this.props.allHandbooks
+                                    .filter(item => item.id !== dataDetailHandbook.id)
+                                    .sort(() => 0.5 - Math.random()) // Random bài viết
+                                    .slice(0, 4)
+                                    .map((item, index) => {
+                                        return (
+                                            <div key={index} className="suggested-card" onClick={() => this.props.navigate(`/detail-handbook/${item.id}`)}>
+                                                <div className="card-image" style={{ backgroundImage: `url(${item.image})` }}>
+                                                    <span className="card-tag">{language === 'vi' ? 'Sức khỏe' : 'Health'}</span>
+                                                </div>
+                                                <div className="card-body">
+                                                    <h3>{item.name}</h3>
+                                                    <p>{language === 'vi' ? 'Khám phá những kiến thức y khoa bổ ích giúp bạn bảo vệ sức khỏe mỗi ngày...' : 'Discover medical knowledge to protect your health every day...'}</p>
+                                                    <div className="card-footer">
+                                                        <span><i className="far fa-clock"></i> 5 min read</span>
+                                                        <i className="fas fa-chevron-right arrow-icon"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )
+                                    })
+                            }
+                        </div>
+                    </div>
                 </div>
+                <HomeFooter />
             </div>
         );
     }
@@ -130,13 +188,15 @@ class DetailHandbook extends Component {
 const mapStateToProps = state => {
     return {
         language: state.app.language,
-        detailHandbook: state.admin.detailHandbook
+        detailHandbook: state.admin.detailHandbook,
+        allHandbooks: state.admin.allHandbooks
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        getDetailHandbookById: (id) => dispatch(action.fetchDetailHandbookById(id))
+        getDetailHandbookById: (id) => dispatch(action.fetchDetailHandbookById(id)),
+        fetchAllHandbooks: () => dispatch(action.fetchAllHandbooks())
     };
 };
 

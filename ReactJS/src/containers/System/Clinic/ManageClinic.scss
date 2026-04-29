@@ -158,6 +158,59 @@
         }
     }
 
+    .pagination-footer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-top: 30px;
+        padding-bottom: 20px;
+
+        button {
+            min-width: 40px;
+            height: 40px;
+            padding: 0 12px;
+            border-radius: 12px;
+            border: 1px solid #d2d2d7;
+            background: white;
+            color: #1d1d1f;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+
+            &:hover:not(:disabled) {
+                background-color: #f5f5f7;
+                border-color: #86868b;
+                transform: translateY(-2px);
+            }
+
+            &.active {
+                background-color: #0071e3; // Màu xanh Apple
+                color: white;
+                border-color: #0071e3;
+                box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
+            }
+
+            &:disabled {
+                background-color: #f5f5f7;
+                color: #d2d2d7;
+                cursor: not-allowed;
+                border-color: #e1e1e7;
+            }
+
+            // Nút "Trước" và "Sau" rộng hơn chút
+            &:first-child,
+            &:last-child {
+                padding: 0 20px;
+                font-weight: 600;
+            }
+        }
+    }
+
     .actions-cell {
         display: flex;
         justify-content: flex-end;
