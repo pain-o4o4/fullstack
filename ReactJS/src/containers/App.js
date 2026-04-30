@@ -40,7 +40,7 @@ import MyBooking from './HomePage/SubMenuForUser/MyBooking';
 import BookingHistory from './HomePage/SubMenuForUser/BookingHistory';
 import DetailSchedulePatient from './HomePage/SubMenuForUser/DetailSchedulePatient';
 import Payment from '../containers/Patient/Doctor/Modal/Payment';
-import ContactPage from './HomePage/ContactPage';
+import AISupportPage from './HomePage/AISupportPage';
 import ChatBot from './ChatBot/ChatBot';
 
 class App extends Component {
@@ -126,7 +126,7 @@ class App extends Component {
                                     <Route path={path.ALL_DOCTOR} element={<AllDoctor />} />
                                     <Route path={path.ALL_HANDBOOK} element={<AllHandbook />} />
                                     <Route path={path.SELECT_SERVICE} element={<SelectService />} />
-                                    <Route path="/contact" element={<ContactPage />} />
+                                    <Route path={path.AI_SUPPORT} element={<AISupportPage />} />
 
 
                                 </Routes>

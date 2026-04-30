@@ -151,8 +151,8 @@ class HomeHeader extends Component {
                                 )}
                             </div>
 
-                            <div className="hm-cta-btn" onClick={() => this.props.navigate('/contact')}>
-                                <FormattedMessage id="homeheader.contact" />
+                            <div className="hm-cta-btn" onClick={() => this.props.navigate('/ai-support')}>
+                                <FormattedMessage id="homeheader.ai-support" />
                             </div>
                         </div>
                     </div>
@@ -171,8 +171,8 @@ class HomeHeader extends Component {
                                 <FormattedMessage id="homeheader.hero-desc" />
                             </div>
                             <div className="hm-hero-button">
-                                <div className="hm-button" onClick={() => this.props.navigate('/contact')}>
-                                    <FormattedMessage id="homeheader.contact" />
+                                <div className="hm-button" onClick={() => this.props.navigate('/ai-support')}>
+                                    <FormattedMessage id="homeheader.ai-support" />
                                 </div>
                             </div>
                         </div>

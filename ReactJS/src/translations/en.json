@@ -11,7 +11,7 @@
         "handbook-nav": "Handbook",
         "login": "Login",
         "account": "Account",
-        "contact": "Contact Now",
+        "ai-support": "AI Support",
         "hero-title-1": "where",
         "hero-title-2": "life",
         "hero-title-3": "meets",
@@ -392,8 +392,8 @@
         "privacy": "Privacy Policy",
         "terms": "Terms of Use"
     },
-    "contactpage": {
-        "title": "Contact",
+    "ai-support": {
+        "title": "AI Support",
         "subtitle": "Let's build the future of healthcare together.",
         "address": "Address",
         "address-value": "BookingCare Building, 28 Thanh Thai, Cau Giay, Hanoi",

@@ -11,7 +11,7 @@
         "handbook-nav": "Cẩm nang",
         "login": "Đăng nhập",
         "account": "Tài khoản",
-        "contact": "Liên hệ ngay",
+        "ai-support": "Hỗ trợ AI",
         "hero-title-1": "nơi",
         "hero-title-2": "cuộc sống",
         "hero-title-3": "hội tụ cùng",
@@ -392,8 +392,8 @@
         "privacy": "Chính sách bảo mật",
         "terms": "Điều khoản sử dụng"
     },
-    "contactpage": {
-        "title": "liên hệ",
+    "ai-support": {
+        "title": "Hỗ trợ AI",
         "subtitle": "Hãy cùng nhau xây dựng tương lai y tế.",
         "address": "Địa chỉ",
         "address-value": "Tòa nhà BookingCare, 28 Thành Thái, Cầu Giấy, Hà Nội",
