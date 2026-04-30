@@ -130,7 +130,37 @@ let getBodyHTMLEmailRemedy = (dataSend) => {
     return result;
 }
 
+let sendRegisterVerificationCodeEmail = async (dataSend) => {
+    let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        auth: {
+            user: process.env.EMAIL_APP,
+            pass: process.env.EMAIL_APP_PASSWORD,
+        },
+    });
+
+    await transporter.sendMail({
+        from: '"BookingCare 🏥" <64anhsden@gmail.com>',
+        to: dataSend.receiverEmail,
+        subject: "Ma xac thuc dang ky tai khoan",
+        html: `
+            <div style="font-family: Arial, sans-serif; color: #333;">
+                <h3>Xin chao!</h3>
+                <p>Ma xac thuc dang ky tai khoan cua ban la:</p>
+                <div style="font-size: 28px; font-weight: 700; letter-spacing: 4px; color: #1c246d;">
+                    ${dataSend.code}
+                </div>
+                <p>Ma co hieu luc trong ${dataSend.expireMinutes} phut.</p>
+                <p>Neu ban khong thuc hien thao tac nay, vui long bo qua email.</p>
+            </div>
+        `,
+    });
+}
+
 export default {
     sendSimpleEmail: sendSimpleEmail,
-    sendRemedyEmail: sendRemedyEmail
+    sendRemedyEmail: sendRemedyEmail,
+    sendRegisterVerificationCodeEmail: sendRegisterVerificationCodeEmail
 }

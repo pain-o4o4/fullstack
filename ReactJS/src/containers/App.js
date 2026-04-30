@@ -16,6 +16,7 @@ import { path } from '../utils'
 import Home from '../routes/Home';
 import Login from './Auth/Login';
 import Register from './Auth/Register.js';
+import RegisterVerify from './Auth/RegisterVerify.js';
 import System from '../routes/System';
 import HomePage from './HomePage/HomePage.js'
 import Doctor from '../routes/Doctor'
@@ -99,6 +100,7 @@ class App extends Component {
                                     {/* //check roleId */}
                                     <Route path={path.LOGIN} element={<UserIsNotAuthenticated><Login /></UserIsNotAuthenticated>} />
                                     <Route path={path.REGISTER} element={<UserIsNotAuthenticated><Register /></UserIsNotAuthenticated>} />
+                                    <Route path={path.REGISTER_VERIFY_OTP} element={<UserIsNotAuthenticated><RegisterVerify /></UserIsNotAuthenticated>} />
                                     <Route path={path.SYSTEM + '/*'} element={<UserIsAuthenticated><System /></UserIsAuthenticated>} />
                                     <Route path={path.DOCTOR + '/*'} element={<UserIsDoctor><Doctor /></UserIsDoctor>} />
 

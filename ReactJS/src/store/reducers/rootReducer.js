@@ -3,6 +3,7 @@ import { combineReducers } from 'redux';
 import appReducer from "./appReducer";
 import adminReducer from "./adminReducer";
 import userReducer from "./userReducer";
+import registerReducer from "./registerReducer";
 
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import storage from 'redux-persist/lib/storage';
@@ -16,8 +17,9 @@ const persistCommonConfig = {
 const userPersistConfig = {
     ...persistCommonConfig,
     key: 'user',
-    whitelist: ['isLoggedIn', 'userInfo']
+    whitelist: ['isLoggedIn', 'userInfo', 'email', 'isOtpStep', 'registrationSessionToken']
 };
+
 
 const appPersistConfig = {
     ...persistCommonConfig,
@@ -28,7 +30,7 @@ const appPersistConfig = {
 const rootReducer = combineReducers({
     user: persistReducer(userPersistConfig, userReducer),
     app: persistReducer(appPersistConfig, appReducer),
-    admin: adminReducer
+    admin: adminReducer,
 });
 
 export default rootReducer;

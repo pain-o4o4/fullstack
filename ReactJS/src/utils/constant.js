@@ -5,6 +5,7 @@ export const path = {
     HOMEPAGE: '/home',
     LOGIN: '/login',
     REGISTER: '/register',
+    REGISTER_VERIFY_OTP: '/register/verify-otp',
     LOG_OUT: '/logout',
     SYSTEM: '/system',
     // ADMIN: '/admin',

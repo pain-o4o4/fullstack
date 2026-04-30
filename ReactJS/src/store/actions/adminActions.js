@@ -589,11 +589,11 @@ export const postChatWithAI = (userQuery) => {
             });
 
             const language = getState().app.language;
-            let res = await postChatWithAIService({ 
+            let res = await postChatWithAIService({
                 userQuery: userQuery,
-                language: language 
+                language: language
             });
-            
+
             if (res && res.errCode === 0) {
                 let newAiMsg = { role: 'assistant', content: res.data };
                 let finalHistory = [...updatedHistoryWithUser, newAiMsg];
@@ -606,10 +606,10 @@ export const postChatWithAI = (userQuery) => {
                 });
             } else {
                 const language = getState().app.language;
-                const errorMsgContent = language === LANGUAGES.VI 
-                    ? 'Hệ thống AI đang bận hoặc hết hạn mức. Vui lòng thử lại sau!' 
+                const errorMsgContent = language === LANGUAGES.VI
+                    ? 'Hệ thống AI đang bận hoặc hết hạn mức. Vui lòng thử lại sau!'
                     : 'AI system is busy or quota exceeded. Please try again later!';
-                    
+
                 let errorMsg = { role: 'assistant', content: errorMsgContent };
                 dispatch({
                     type: actionTypes.UPDATE_CHAT_HISTORY,
@@ -619,8 +619,8 @@ export const postChatWithAI = (userQuery) => {
         } catch (e) {
             console.log('postChatWithAI error: ', e);
             const language = getState().app.language;
-            const errorMsgContent = language === LANGUAGES.VI 
-                ? 'Đã có lỗi xảy ra khi kết nối tới AI.' 
+            const errorMsgContent = language === LANGUAGES.VI
+                ? 'Đã có lỗi xảy ra khi kết nối tới AI.'
                 : 'An error occurred while connecting to AI.';
 
             let errorMsg = { role: 'assistant', content: errorMsgContent };

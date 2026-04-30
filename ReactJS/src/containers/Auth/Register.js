@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { createRegister } from '../../services/userService';
-import './Login.scss'; // Dùng chung scss cho đồng bộ
+import { initiateRegister } from '../../services/userService';
+import './Login.scss';
 import { FormattedMessage } from 'react-intl';
 import { toast } from 'react-toastify';
 import Select from 'react-select';
-import gender_icon from '../../assets/images/gender_icon.svg';
 import * as action from "../../store/actions";
 import { withRouter } from '../../components/Navigator';
 class Register extends Component {
@@ -67,7 +66,7 @@ class Register extends Component {
         if (!isValid) return;
 
         try {
-            let res = await createRegister({
+            let payload = {
                 email: this.state.email,
                 password: this.state.password,
                 firstName: this.state.firstName,
@@ -75,15 +74,21 @@ class Register extends Component {
                 address: this.state.address,
                 phonenumber: this.state.phonenumber,
                 gender: this.state.gender,
-                roleId: 'R3', // Mặc định là bệnh nhân khi đăng ký
-            });
+                roleId: 'R3',
+            };
+            let res = await initiateRegister(payload);
 
             if (res && res.errCode !== 0) {
                 toast.error(res.errMessage || res.message);
                 this.setState({ errMessage: res.errMessage || res.message });
             } else {
-                toast.success("Đăng ký tài khoản thành công!");
-                this.props.navigate('/login');
+                this.props.setRegisterSession({
+                    email: payload.email,
+                    registrationSessionToken: res.registrationSessionToken,
+                    draftData: payload
+                });
+                toast.success("Mã OTP đã được gửi. Vui lòng kiểm tra Gmail.");
+                this.props.navigate('/register/verify-otp');
             }
         } catch (e) {
             console.log(e);
@@ -138,7 +143,6 @@ class Register extends Component {
                                     value={this.state.email}
                                     onChange={(event) => this.handleOnChangeInput(event, 'email')} />
                             </div>
-
                             {/* Password */}
                             <div className="input">
                                 <input type="password" placeholder={language === 'vi' ? 'Mật khẩu' : 'Password'}
@@ -178,7 +182,7 @@ class Register extends Component {
 
                             <div className="error-message">{this.state.errMessage}</div>
 
-                             <div className="submit-container">
+                            <div className="submit-container">
                                 <button className="submit" onClick={this.handleRegister}>
                                     <FormattedMessage id="register.register-btn" />
                                 </button>
@@ -204,6 +208,7 @@ const mapStateToProps = state => {
 };
 const mapDispatchToProps = dispatch => ({
     fetchGenderStart: () => dispatch(action.fetchGenderStart()),
+    setRegisterSession: (payload) => dispatch(action.setRegisterSession(payload)),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Register));

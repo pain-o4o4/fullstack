@@ -3,8 +3,14 @@ import axios from '../axios';
 const handleLoginApi = (email, password) => {
     return axios.post('/api/login', { email, password });
 }
-const createRegister = (data) => {
-    return axios.post('/api/register', data);
+const initiateRegister = (data) => {
+    return axios.post('/api/register', { ...data, action: 'initiate' });
+}
+const verifyRegisterOtp = (email, verificationCode) => {
+    return axios.post('/api/register', { email, verificationCode, action: 'verify' });
+}
+const resendRegisterOtp = (email) => {
+    return axios.post('/api/register', { email, action: 'resend' });
 }
 const getAllUsers = (inputId) => {
     return axios.get(`/api/get-all-users?id=${inputId}`);
@@ -172,7 +178,9 @@ export {
     handleLoginApi,
     verifyPaymentStatus,
     postChatWithAIService,
-    createRegister,
+    initiateRegister,
+    verifyRegisterOtp,
+    resendRegisterOtp,
     getAllUsers,
     createNewUsersService,
     deleteUserService,

@@ -45,22 +45,43 @@ let handleLogin = async (req, res) => {
 }
 let createRegister = async (req, res) => {
     try {
-        if (!req.body.email || !req.body.password ||
-            !req.body.firstName || !req.body.lastName ||
-            !req.body.address || !req.body.phonenumber ||
-            !req.body.gender) {
-            return res.status(400).json({
-                errCode: 1,
-                message: 'Missing required parameters!'
-            });
+        const action = req.body.action;
+        if (action === 'initiate') {
+            let response = await userService.initiateRegisterService(req.body);
+            return res.status(200).json(response);
         }
-        else {
-            let message = await userService.createRegisterService(req.body);
-            return res.status(200).json(message);
+
+        if (action === 'resend') {
+            let response = await userService.resendRegisterVerificationCodeService(req.body.email);
+            return res.status(200).json(response);
         }
+
+        if (action === 'verify') {
+            if (!req.body.email || !req.body.verificationCode) {
+                return res.status(400).json({
+                    errCode: 1,
+                    message: 'Missing required parameters!'
+                });
+            }
+            let registerResponse = await userService.verifyRegisterService(req.body);
+            if (registerResponse.refreshToken) {
+                res.cookie('refreshToken', registerResponse.refreshToken, {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: 'strict',
+                    maxAge: 7 * 24 * 60 * 60 * 1000
+                });
+            }
+            return res.status(200).json(registerResponse);
+        }
+
+        return res.status(400).json({
+            errCode: 1,
+            errMessage: 'Invalid register action. Use initiate|verify|resend.'
+        });
     } catch (error) {
         console.log(error);
-        return res.status(200).json({
+        return res.status(500).json({
             errCode: -1,
             errMessage: 'Error from server',
             errPin: JSON.stringify(error)

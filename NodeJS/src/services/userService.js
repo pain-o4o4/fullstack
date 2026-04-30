@@ -2,43 +2,210 @@
 import JWTAction from "../middleware/JWTAction";
 import db from "../../models/index"
 import bcrypt from "bcryptjs";
-const salt = bcrypt.genSaltSync(10);
+import emailService from "./emailService";
+import jwt from "jsonwebtoken";
 
-let createRegisterService = (data) => {
+const REGISTER_OTP_EXPIRE_MS = 5 * 60 * 1000;
+const MAX_VERIFY_ATTEMPTS = 5;
+const MAX_RESEND_COUNT = 3;
+
+const generateVerificationCode = () => `${Math.floor(100000 + Math.random() * 900000)}`;
+const isValidEmailFormat = (email) => /\S+@\S+\.\S+/.test(email);
+const generateRegistrationSessionToken = (email) => jwt.sign(
+    { email, scope: "register-otp" },
+    process.env.JWT_REFRESH_SECRET,
+    { expiresIn: "30m" }
+);
+const removeRegistration = async (email) => db.Registration.destroy({ where: { email } });
+
+let initiateRegisterService = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let check = await checkUserEmail(data.email);
-            if (check === true) {
-                resolve({
-                    errCode: 1,
-                    errMessage: "The email is already in use. Please try another email!"
-                });
+            let normalizedEmail = (data.email || "").trim().toLowerCase();
+            if (!normalizedEmail || !data.password || !data.firstName || !data.lastName
+                || !data.address || !data.phonenumber || !data.gender) {
+                resolve({ errCode: 1, errMessage: "Missing required parameters!" });
+                return;
             }
-            else {
-                let hashPasswordFromBcrypt = await hashUserPassword(data.password);
-                await db.User.create({
-                    email: data.email,
+            if (!isValidEmailFormat(normalizedEmail)) {
+                resolve({ errCode: 2, errMessage: "Invalid email format!" });
+                return;
+            }
+
+            let existed = await checkUserEmail(normalizedEmail);
+            if (existed) {
+                resolve({ errCode: 3, errMessage: "The email is already in use. Please try another email!" });
+                return;
+            }
+
+            let code = generateVerificationCode();
+            let hashPasswordFromBcrypt = await hashUserPassword(data.password);
+            let currentOtp = await db.Registration.findOne({ where: { email: normalizedEmail } });
+
+            await db.Registration.upsert({
+                email: normalizedEmail,
+                code,
+                expiresAt: new Date(Date.now() + REGISTER_OTP_EXPIRE_MS),
+                attempts: 0,
+                resendCount: currentOtp ? currentOtp.resendCount : 0,
+                payload: JSON.stringify({
+                    email: normalizedEmail,
                     password: hashPasswordFromBcrypt,
                     firstName: data.firstName,
                     lastName: data.lastName,
                     address: data.address,
                     phonenumber: data.phonenumber,
                     gender: data.gender,
-                    image: data.avatar,
-                    roleId: 'R3',
-                    positionId: 'P0',
+                    image: data.avatar || null,
+                    roleId: "R3",
+                    positionId: "P0"
                 })
-                resolve({
-                    errCode: 0,
-                    errMessage: "Create new user successfully!"
-                });
+            });
+
+            await emailService.sendRegisterVerificationCodeEmail({
+                receiverEmail: normalizedEmail,
+                code,
+                expireMinutes: 5
+            });
+
+            resolve({
+                errCode: 0,
+                errMessage: "Verification code sent successfully!",
+                registrationSessionToken: generateRegistrationSessionToken(normalizedEmail)
+            });
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+let resendRegisterVerificationCodeService = (email) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let normalizedEmail = (email || "").trim().toLowerCase();
+            if (!normalizedEmail) {
+                resolve({ errCode: 1, errMessage: "Missing required parameter: email!" });
+                return;
             }
+
+            const otpRecord = await db.Registration.findOne({ where: { email: normalizedEmail } });
+            if (!otpRecord) {
+                resolve({ errCode: 2, errMessage: "Registration session not found. Please register again!" });
+                return;
+            }
+
+            if (otpRecord.resendCount >= MAX_RESEND_COUNT) {
+                await removeRegistration(normalizedEmail);
+                resolve({ errCode: 3, errMessage: "Resend limit exceeded. Please register again!" });
+                return;
+            }
+
+            const code = generateVerificationCode();
+            otpRecord.code = code;
+            otpRecord.expiresAt = new Date(Date.now() + REGISTER_OTP_EXPIRE_MS);
+            otpRecord.attempts = 0;
+            otpRecord.resendCount = otpRecord.resendCount + 1;
+            await otpRecord.save();
+
+            await emailService.sendRegisterVerificationCodeEmail({
+                receiverEmail: normalizedEmail,
+                code,
+                expireMinutes: 5
+            });
+
+            resolve({ errCode: 0, errMessage: "Verification code resent successfully!" });
         } catch (error) {
             reject(error)
         }
-
     })
 }
+
+let verifyRegisterService = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let normalizedEmail = (data.email || "").trim().toLowerCase();
+            const verificationCode = `${data.verificationCode || ""}`.trim();
+            if (!normalizedEmail || !verificationCode) {
+                resolve({ errCode: 1, errMessage: "Missing required parameters!" });
+                return;
+            }
+
+            const otpRecord = await db.Registration.findOne({ where: { email: normalizedEmail } });
+            if (!otpRecord) {
+                resolve({ errCode: 2, errMessage: "Verification session not found!" });
+                return;
+            }
+
+            if (new Date(otpRecord.expiresAt).getTime() < Date.now()) {
+                await removeRegistration(normalizedEmail);
+                resolve({ errCode: 3, errMessage: "Verification code has expired!" });
+                return;
+            }
+
+            if (otpRecord.attempts >= MAX_VERIFY_ATTEMPTS) {
+                await removeRegistration(normalizedEmail);
+                resolve({ errCode: 4, errMessage: "Too many failed attempts. Please register again!" });
+                return;
+            }
+
+            if (`${otpRecord.code}` !== verificationCode) {
+                otpRecord.attempts = otpRecord.attempts + 1;
+                await otpRecord.save();
+                resolve({
+                    errCode: 5,
+                    errMessage: "Verification code is incorrect!",
+                    attemptsLeft: Math.max(0, MAX_VERIFY_ATTEMPTS - otpRecord.attempts)
+                });
+                return;
+            }
+
+            const existedUser = await checkUserEmail(normalizedEmail);
+            if (existedUser) {
+                await removeRegistration(normalizedEmail);
+                resolve({ errCode: 6, errMessage: "The email is already in use. Please login instead." });
+                return;
+            }
+
+            const payload = JSON.parse(otpRecord.payload || "{}");
+            const createdUser = await db.User.create({
+                email: payload.email,
+                password: payload.password,
+                firstName: payload.firstName,
+                lastName: payload.lastName,
+                address: payload.address,
+                phonenumber: payload.phonenumber,
+                gender: payload.gender,
+                image: payload.image,
+                roleId: payload.roleId || "R3",
+                positionId: payload.positionId || "P0",
+                isVerified: true
+            });
+            await removeRegistration(normalizedEmail);
+
+            const jwtPayload = { id: createdUser.id, email: createdUser.email, roleId: createdUser.roleId };
+            resolve({
+                errCode: 0,
+                errMessage: "Register and verify account successfully!",
+                user: {
+                    id: createdUser.id,
+                    email: createdUser.email,
+                    roleId: createdUser.roleId,
+                    firstName: createdUser.firstName,
+                    lastName: createdUser.lastName,
+                    address: createdUser.address,
+                    phonenumber: createdUser.phonenumber,
+                    isVerified: true
+                },
+                token: JWTAction.createJWT(jwtPayload),
+                refreshToken: JWTAction.createRefreshToken(jwtPayload)
+            });
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+let createRegisterService = (data) => verifyRegisterService(data);
 let handleUserLogin = (email, password) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -50,7 +217,7 @@ let handleUserLogin = (email, password) => {
                     attributes: [
                         "id", "email", "roleId", "password",
                         "firstName", "lastName", "address",
-                        "image", "phonenumber"
+                        "image", "phonenumber", "isVerified"
                     ],
                     raw: true
                 });
@@ -60,6 +227,12 @@ let handleUserLogin = (email, password) => {
                 }
 
                 if (user) {
+                    if (user.roleId === 'R3' && user.isVerified === false) {
+                        userData.errCode = 4;
+                        userData.errMessage = `Account is not verified yet!`;
+                        resolve(userData);
+                        return;
+                    }
                     let check = await bcrypt.compareSync(password, user.password);
                     if (check) {
                         // TẠO TOKEN
@@ -175,8 +348,8 @@ let createNewUser = (data) => {
                     gender: data.gender,
                     image: data.avatar,
                     roleId: data.roleId,
-
                     positionId: data.positionId,
+                    isVerified: true
                 })
                 // console.log(">>> check data from service: ", data);
                 // console.log(">>> check hash password: ", hashPasswordFromBcrypt);
@@ -310,6 +483,9 @@ let handleRefreshTokenService = (token) => {
 };
 
 export default {
+    initiateRegisterService: initiateRegisterService,
+    resendRegisterVerificationCodeService: resendRegisterVerificationCodeService,
+    verifyRegisterService: verifyRegisterService,
     createRegisterService: createRegisterService,
     handleUserLogin: handleUserLogin,
     checkUserEmail: checkUserEmail,

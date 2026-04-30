@@ -39,6 +39,7 @@ module.exports = (sequelize, DataTypes) => {
     image: DataTypes.BLOB('long'),
     roleId: DataTypes.STRING,
     positionId: DataTypes.STRING,
+    isVerified: DataTypes.BOOLEAN,
   }, {
     sequelize,
     modelName: 'User',
