@@ -69,8 +69,11 @@ class Login extends Component {
                 let token = res.token;
                 if (token) {
                     localStorage.setItem('token', token);
+                    // localStorage.setItem('access_token', token);
+                    this.props.userLoginSuccess({ ...user, token });
+                } else {
+                    this.props.userLoginSuccess(user);
                 }
-                this.props.userLoginSuccess(user);
                 if (user.roleId === 'R1') {
                     this.props.navigate('/system/user-manage');
                 } else if (user.roleId === 'R2') {

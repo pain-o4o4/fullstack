@@ -71,9 +71,6 @@ const adminReducer = (state = initialState, action = {}) => {
                 roles: []
             }
 
-        // BUG FIX: removed duplicate CREATE_USER_SUCCESS/FAIL blocks.
-        // Previously the second block (lines 106-115) for editUser was dead
-        // code because JS switch already matched the first CREATE_USER_SUCCESS.
         case actionTypes.CREATE_USER_SUCCESS:
             return {
                 ...state,
@@ -85,8 +82,6 @@ const adminReducer = (state = initialState, action = {}) => {
                 editUser: []
             }
 
-        // BUG FIX: action dispatches FETCH_ALL_USERS_FAIL but reducer was
-        // listening for FETCH_ALL_USERS_FAILED (typo), so failure case never fired.
         case actionTypes.FETCH_ALL_USERS_SUCCESS:
             return {
                 ...state,
@@ -151,7 +146,7 @@ const adminReducer = (state = initialState, action = {}) => {
         case actionTypes.FETCH_REQUIRED_DOCTOR_INFOR_FAIL:
             return {
                 ...state,
-                allRequiredDoctorInfor: []
+                allRequiredDoctorInfor: {}
             }
 
         case actionTypes.FETCH_ALL_SPECIALTY_SUCCESS:
@@ -165,8 +160,6 @@ const adminReducer = (state = initialState, action = {}) => {
                 allSpecialties: []
             }
 
-        // BUG FIX: was directly mutating state (state.detailClinic = action.data)
-        // so React saw the same object reference and didn't re-render.
         case actionTypes.FETCH_DETAIL_CLINIC_SUCCESS:
             return {
                 ...state,
@@ -178,7 +171,6 @@ const adminReducer = (state = initialState, action = {}) => {
                 detailClinic: {}
             }
 
-        // BUG FIX: same direct mutation bug for detailSpecialty
         case actionTypes.FETCH_DETAIL_SPECIALTY_SUCCESS:
             return {
                 ...state,
@@ -200,17 +192,6 @@ const adminReducer = (state = initialState, action = {}) => {
             return {
                 ...state,
                 allClinics: []
-            }
-
-        case actionTypes.FETCH_DETAIL_APPOINTMENT_SUCCESS:
-            return {
-                ...state,
-                detailAppointment: action.data
-            }
-        case actionTypes.FETCH_DETAIL_APPOINTMENT_FAILD:
-            return {
-                ...state,
-                detailAppointment: []
             }
 
         case actionTypes.FETCH_HISTORY_APPOINTMENT_SUCCESS:
@@ -266,10 +247,6 @@ const adminReducer = (state = initialState, action = {}) => {
             return {
                 ...state,
                 chatHistory: []
-            }
-        case actionTypes.POST_CHAT_WITH_AI_FAIL:
-            return {
-                ...state
             }
 
         default:

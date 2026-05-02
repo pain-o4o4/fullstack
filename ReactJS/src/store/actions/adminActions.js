@@ -7,11 +7,12 @@ import {
     getAllSpecialtyService, getAllClinicService,
     getDetailClinicByIdService, getDetailSpecialtyByIdService,
     getAllAppointmentsByIdService, getAllHandbookService,
-    getDetailHandbookByIdService, postChatWithAIService,
-    getHistoryAppointmentByIdService
+    getDetailHandbookByIdService, getHistoryAppointmentByIdService,
+    postChatWithAIService
 } from '../../services/userService';
 import { toast } from 'react-toastify';
 import { LANGUAGES } from '../../utils';
+import { updateChatHistory, clearChatHistoryAction, postChatWithAIFail } from './chatActions';
 
 export const fetchGenderStart = () => {
     return async (dispatch, getState) => {
@@ -583,10 +584,7 @@ export const postChatWithAI = (userQuery) => {
             let newUserMsg = { role: 'user', content: userQuery };
             let updatedHistoryWithUser = [...currentHistory, newUserMsg];
 
-            dispatch({
-                type: actionTypes.UPDATE_CHAT_HISTORY,
-                data: updatedHistoryWithUser
-            });
+            dispatch(updateChatHistory(updatedHistoryWithUser));
 
             const language = getState().app.language;
             let res = await postChatWithAIService({
@@ -600,21 +598,14 @@ export const postChatWithAI = (userQuery) => {
 
                 localStorage.setItem('CHAT_HISTORY', JSON.stringify(finalHistory));
 
-                dispatch({
-                    type: actionTypes.UPDATE_CHAT_HISTORY,
-                    data: finalHistory
-                });
+                dispatch(updateChatHistory(finalHistory));
             } else {
-                const language = getState().app.language;
                 const errorMsgContent = language === LANGUAGES.VI
                     ? 'Hệ thống AI đang bận hoặc hết hạn mức. Vui lòng thử lại sau!'
                     : 'AI system is busy or quota exceeded. Please try again later!';
 
                 let errorMsg = { role: 'assistant', content: errorMsgContent };
-                dispatch({
-                    type: actionTypes.UPDATE_CHAT_HISTORY,
-                    data: [...updatedHistoryWithUser, errorMsg]
-                });
+                dispatch(updateChatHistory([...updatedHistoryWithUser, errorMsg]));
             }
         } catch (e) {
             console.log('postChatWithAI error: ', e);
@@ -624,19 +615,15 @@ export const postChatWithAI = (userQuery) => {
                 : 'An error occurred while connecting to AI.';
 
             let errorMsg = { role: 'assistant', content: errorMsgContent };
-            dispatch({
-                type: actionTypes.UPDATE_CHAT_HISTORY,
-                data: [...getState().admin.chatHistory, errorMsg]
-            });
+            dispatch(updateChatHistory([...getState().admin.chatHistory, errorMsg]));
+            dispatch(postChatWithAIFail(errorMsgContent));
         }
     };
 };
-//fe -> be -> store -> fe (khai bao kho chua cau tra loi chatwithai -khai bao cho no cai thang bao ve kho, cai thang bao ve ma di lay data tu cac xe container )
+
 export const clearChatHistory = () => {
     return (dispatch) => {
         localStorage.removeItem('CHAT_HISTORY');
-        dispatch({
-            type: actionTypes.CLEAR_CHAT_HISTORY
-        });
+        dispatch(clearChatHistoryAction());
     };
 };
