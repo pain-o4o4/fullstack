@@ -7,7 +7,7 @@ import connectDB from '../config/connectDB';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import http from 'http';
-import initSocket from './socket.js';
+import initSocket from './socket/init';
 
 require('dotenv').config();
 
@@ -15,11 +15,12 @@ require('dotenv').config();
 // 2. HTTP server được tạo từ Express --- Server - Express
 // 3. Socket.io được gắn vào HTTP server --- Socket - Server
 // 4. `io` được lưu lại để controller/service có thể dùng sau --- io - Server - App
-const app = express();
+
+const app = express(); /// const app= springboot app get post delete http ngầm định 3000
 app.use(cookieParser());
 app.use(cors({
     origin: process.env.URL_REACT,
-    credentials: true
+    credentials: true //  BẮT BUỘC: Để gửi/nhận Cookie từ Server
 }));
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));

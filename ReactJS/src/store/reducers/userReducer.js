@@ -22,6 +22,10 @@ const userReducer = (state = initialState, action = {}) => {
             };
         case actionTypes.USER_LOGIN_FAIL:
         case actionTypes.PROCESS_LOGOUT:
+            localStorage.removeItem('token');
+            // Lưu ý: refreshToken là HttpOnly Cookie, chỉ có thể xóa từ phía Server
+            // Việc xóa cookie được xử lý bởi API /api/logout trong axios.js
+
             return {
                 ...state,
                 isLoggedIn: false,
@@ -29,7 +33,7 @@ const userReducer = (state = initialState, action = {}) => {
                 email: '',
                 registrationSessionToken: '',
                 draftData: null,
-                isOtpStep: false
+                isOtpStep: false,
             };
         case actionTypes.UPDATE_USER_SUCCESS:
             return {

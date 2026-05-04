@@ -14,6 +14,7 @@ export const PUBLIC_PATHS = [
     '/api/login',
     '/api/register',
     '/api/refresh-token',
+    '/api/logout',
     '/api/allcode',
 
     // Xem thông tin (Trang chủ & Chi tiết)
@@ -37,7 +38,10 @@ export const PUBLIC_PATHS = [
     '/api/verify-book-appointment',
     '/api/payos-webhook',
     '/api/verify-payment-status',
-    '/api/chat-with-ai'
+    '/api/chat-with-ai',
+    '/api/get-chat-sessions',
+    '/api/get-chat-history',
+    '/api/save-chat-message'
 ];
 
 // ==========================================

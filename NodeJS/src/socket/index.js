@@ -1,13 +1,13 @@
-const registerSocketHandlers = (io, socket) => {
-    const userId = socket.user?.id;
+// ================================================================
+// Socket Module — Entry Point
+// ================================================================
+// File này là "cổng vào" duy nhất cho toàn bộ module socket.
+// Các file khác trong project chỉ cần import từ đây:
+//   import initSocket, { getIO } from './socket';
+//   import { getIO } from '../socket';
+// ================================================================
 
-    if (userId) {
-        socket.join(`user_room_${userId}`);
-    }
+import { initSocket, getIO } from './init';
 
-    socket.on('disconnect', () => {
-        // placeholder for status updates
-    });
-};
-
-export default registerSocketHandlers;
+export { initSocket, getIO };
+export default initSocket;

@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { FormattedMessage } from 'react-intl';
 import * as actions from "../../../store/actions";
+import { stopTimer } from '../../../auth/TokenRefreshManager';
+import axios from 'axios';
 import './UserMenuPopup.scss';
 
 class UserMenuPopup extends Component {
@@ -24,8 +26,17 @@ class UserMenuPopup extends Component {
     handleViewList = (page) => {
         this.props.handleViewList(page)
     }
+
+    // Xử lý đăng xuất: Dừng timer → Xóa cookie server → Dispatch logout
+    handleLogout = () => {
+        stopTimer();
+        localStorage.removeItem('token');
+        axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/logout`, {}, { withCredentials: true }).catch(() => {});
+        this.props.processLogout();
+    }
+
     render() {
-        const { isLoggedIn, userInfo, handleViewList, processLogout } = this.props;
+        const { isLoggedIn, userInfo, handleViewList } = this.props;
 
         return (
             <div className="popup-menu">
@@ -53,7 +64,7 @@ class UserMenuPopup extends Component {
 
                             <div className="divider"></div>
 
-                            <div className="menu-item logout" onClick={processLogout}>
+                            <div className="menu-item logout" onClick={this.handleLogout}>
                                 <i className="fas fa-sign-out-alt"></i>
                                 <span>Đăng xuất</span>
                             </div>

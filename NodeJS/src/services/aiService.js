@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 require('dotenv').config();
 
-const handleChatWithAI = async (userQuery, language) => {
+const handleChatWithAI = async (userQuery, language, history = [], io = null, userId = null, sessionId = null) => {
     let retries = 3;
     let delay = 2000; // 2 giây
 
@@ -15,7 +15,22 @@ const handleChatWithAI = async (userQuery, language) => {
             const model = genAI.getGenerativeModel({ model: modelName });
 
             const systemLang = language === 'en' ? 'Tiếng Anh (English)' : 'Tiếng Việt (Vietnamese)';
-            const prompt = `
+
+            // Format history for Gemini
+            // history: [{ role: 'user', content: '...' }, { role: 'assistant', content: '...' }]
+            const chatHistory = history.map(item => ({
+                role: item.role === 'assistant' ? 'model' : 'user',
+                parts: [{ text: item.content }],
+            }));
+
+            const chat = model.startChat({
+                history: chatHistory,
+                generationConfig: {
+                    maxOutputTokens: 1000,
+                },
+            });
+
+            const systemPrompt = `
                 Bạn là Trợ lý chuyên gia của Hệ thống BookingCare. 
                 Bạn đang hỗ trợ người dùng trên nền tảng đặt lịch khám bệnh trực tuyến mà chúng tôi đã phát triển.
 
@@ -27,23 +42,55 @@ const handleChatWithAI = async (userQuery, language) => {
                 bác sĩ trên hệ thống để đưa ra chỉ dẫn.
 
                 Nhiệm vụ cụ thể:
-                Tiếp nhận câu hỏi: "${userQuery}".
-                Phân tích triệu chứng để gợi ý đúng chuyên khoa (ví dụ: Răng-Hàm-Mặt, Cơ-Xương-Khớp...).
+                Tiếp nhận câu hỏi của người dùng và phân tích triệu chứng để gợi ý đúng chuyên khoa.
                 Hướng dẫn người dùng các bước đặt lịch hoặc xem bài viết cẩm nang liên quan.
                 Phong cách giao tiếp: Chuyên nghiệp, tối giản, ngôn từ lịch sự và đáng tin cậy.
                 Lưu ý kỹ thuật: Luôn nhắc nhở người dùng rằng thông tin này hỗ trợ việc đặt lịch,
                 không thay thế hoàn toàn chẩn đoán lâm sàng từ bác sĩ.
                 
                 HƯỚNG DẪN QUAN TRỌNG:
-                1. Hãy tự nhận diện ngôn ngữ mà người dùng đang sử dụng trong câu hỏi.
-                2. Phản hồi bằng chính ngôn ngữ đó để đảm bảo sự thân thiện và dễ hiểu.
-                3. Nếu câu hỏi quá ngắn hoặc không rõ ngôn ngữ, hãy sử dụng ${systemLang}.
-                4. Nội dung trả lời phải lịch sự, ngắn gọn và luôn khuyên bệnh nhân đi khám bác sĩ để có kết quả chính xác nhất.
+                1. Hãy tự nhận diện ngôn ngữ mà người dùng đang sử dụng.
+                2. Phản hồi bằng chính ngôn ngữ đó.
+                3. Nội dung trả lời phải lịch sự, ngắn gọn và luôn khuyên bệnh nhân đi khám bác sĩ.
             `;
 
-            const result = await model.generateContent(prompt);
-            const response = await result.response;
-            return response.text();
+            // We combine system prompt with user query for the first message or as instruction
+            const finalQuery = history.length === 0 ? `${systemPrompt}\n\nUser: ${userQuery}` : userQuery;
+
+            // Bắt đầu streaming
+            if (io && userId) {
+                // Báo cho frontend biết AI bắt đầu trả lời
+                io.to(`user_room_${userId}`).emit('ai_typing_start', { sessionId });
+
+                const result = await chat.sendMessageStream(finalQuery);
+                let fullResponseText = '';
+
+                for await (const chunk of result.stream) {
+                    const chunkText = chunk.text();
+                    fullResponseText += chunkText;
+
+                    // Phát luồng chunk về frontend
+                    io.to(`user_room_${userId}`).emit('ai_response_chunk', {
+                        sessionId,
+                        chunk: chunkText,
+                        isDone: false
+                    });
+                }
+
+                // Phát tín hiệu hoàn tất
+                io.to(`user_room_${userId}`).emit('ai_response_chunk', {
+                    sessionId,
+                    chunk: '',
+                    isDone: true
+                });
+
+                return fullResponseText;
+            } else {
+                // Rơi về chế độ không streaming nếu không có IO (ví dụ test)
+                const result = await chat.sendMessage(finalQuery);
+                const response = await result.response;
+                return response.text();
+            }
 
         } catch (error) {
             console.error(`>>> Lỗi Gemini (Lần ${i + 1}):`, error.message);
@@ -54,7 +101,7 @@ const handleChatWithAI = async (userQuery, language) => {
                 continue;
             }
 
-            return language === 'en' ? "The AI system is currently busy processing many requests. Please try again later!" : "Hiện tại hệ thống AI đang bận xử lý nhiều yêu cầu. Bạn vui lòng thử lại sau ít phút nhé!";
+            return "Lỗi từ Gemini: " + error.message;
         }
     }
 }

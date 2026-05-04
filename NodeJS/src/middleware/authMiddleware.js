@@ -8,6 +8,7 @@ const checkUserJWT = (req, res, next) => {
         let decoded = JWTAction.verifyToken(tokenFromHeader);
         if (decoded) {
             req.user = decoded; // Lưu thông tin vào req để dùng cho bước sau
+            // decoded {user: {id: '', roleId: ''}}
             next();
         } else {
             return res.status(401).json({

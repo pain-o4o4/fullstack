@@ -31,7 +31,6 @@ const verifyToken = (token) => {
         data = jwt.verify(token, key);
     } catch (e) {
         console.error('>>> verifyToken failed:', e.message);
-        throw e;
     }
     return data;
 };

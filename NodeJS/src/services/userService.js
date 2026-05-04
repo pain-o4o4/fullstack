@@ -392,7 +392,7 @@ let updateUserData = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
             if (!data.id || !data.roleId || !data.positionId || !data.gender) {
-                resolve({
+                return resolve({
                     errCode: 1,
                     errMessage: "Missing required parameters!"
                 });

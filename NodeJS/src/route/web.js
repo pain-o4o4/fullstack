@@ -6,6 +6,7 @@ import patientController from "../controller/patientController"
 import specialtyController from "../controller/specialtyController"
 import clinicController from "../controller/clinicController"
 import handbookController from "../controller/handbookController"
+import chatbotController from "../controller/chatbotController"
 import { checkUserJWT, checkUserPermission } from '../middleware/authMiddleware';
 import aiController from "../controller/aiController";
 let router = express.Router()
@@ -27,6 +28,7 @@ let initWebRoutes = (app) => {
     router.post("/api/register", userController.createRegister);
     router.post('/api/login', userController.handleLogin);
     router.post('/api/refresh-token', userController.handleRefreshToken);
+    router.post('/api/logout', userController.handleLogout);
     router.get("/api/get-all-users", userController.handleGetAllUsers);
     router.put("/api/edit-user", userController.handleEditUser);
     router.delete("/api/delete-user", userController.handleDeleteUser);
@@ -78,8 +80,11 @@ let initWebRoutes = (app) => {
     router.delete('/api/delete-handbook', handbookController.deleteHandbook);
     router.put('/api/edit-handbook', handbookController.handleEditHandbook);
 
-    // AI
+    // AI & Chatbot
     router.post('/api/chat-with-ai', aiController.postChatWithAI);
+    router.get('/api/get-chat-sessions', chatbotController.handleGetChatSessions);
+    router.get('/api/get-chat-history', chatbotController.handleGetChatHistory);
+    router.post('/api/save-chat-message', chatbotController.handleSaveMessage);
 
     return app.use("/", router)
 }

@@ -89,42 +89,55 @@ let createRegister = async (req, res) => {
     }
 }
 let handleGetAllUsers = async (req, res) => {
-    let id = req.query.id; // Lấy type từ query params
-    let users = await userService.getAllUsers(id);
-    return res.status(200).json({
-        errCode: 0,
-        message: 'Success',
-        users: users
-    });
+    try {
+        let id = req.query.id; // Lấy type từ query params
+        let users = await userService.getAllUsers(id);
+        return res.status(200).json({
+            errCode: 0,
+            message: 'Success',
+            users: users
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(200).json({ errCode: -1, errMessage: 'Error from server' });
+    }
 }
 
 let handleCreateNewUser = async (req, res) => {
-    let message = await userService.createNewUser(req.body);
-    console.log(message);
-    return res.status(200).json(message);
+    try {
+        let message = await userService.createNewUser(req.body);
+        console.log(message);
+        return res.status(200).json(message);
+    } catch (error) {
+        console.error(error);
+        return res.status(200).json({ errCode: -1, errMessage: 'Error from server' });
+    }
 }
 let handleEditUser = async (req, res) => {
-    let data = req.body;
-    let user = await userService.updateUserData(data);
-    return res.status(200).json({
-        errCode: 0,
-        message: 'Update user successfully!',
-        users: user
-    });
+    try {
+        let data = req.body;
+        let user = await userService.updateUserData(data);
+        return res.status(200).json(user); // Trả về nguyên đối tượng user từ service (có sẵn errCode)
+    } catch (error) {
+        console.error(error);
+        return res.status(200).json({ errCode: -1, errMessage: 'Error from server' });
+    }
 }
 let handleDeleteUser = async (req, res) => {
-    let id = req.body.id;
-    if (!id) {
-        return res.status(400).json({
-            errCode: 1,
-            message: 'Missing required parameters!'
-        });
+    try {
+        let id = req.body.id;
+        if (!id) {
+            return res.status(200).json({
+                errCode: 1,
+                errMessage: 'Missing required parameters!'
+            });
+        }
+        let message = await userService.deleteUserById(id);
+        return res.status(200).json(message);
+    } catch (error) {
+        console.error(error);
+        return res.status(200).json({ errCode: -1, errMessage: 'Error from server' });
     }
-    await userService.deleteUserById(id);
-    return res.status(200).json({
-        errCode: 0,
-        message: 'Delete user successfully!'
-    });
 }
 let getAllCode = async (req, res) => {
     try {
@@ -157,6 +170,22 @@ let handleRefreshToken = async (req, res) => {
         return res.status(500).json({ errCode: -1, message: 'Error from server...' });
     }
 }
+// Xóa HttpOnly Cookie (refreshToken) khi user đăng xuất
+// JavaScript phía client KHÔNG THỂ xóa httpOnly cookie,
+// nên việc này BẮT BUỘC phải được thực hiện từ phía server.
+let handleLogout = async (req, res) => {
+    try {
+        res.clearCookie('refreshToken', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict'
+        });
+        return res.status(200).json({ errCode: 0, message: 'Logged out successfully!' });
+    } catch (error) {
+        console.error('Logout error:', error);
+        return res.status(200).json({ errCode: -1, errMessage: 'Error from server' });
+    }
+}
 
 export default {
     createRegister: createRegister,
@@ -166,6 +195,7 @@ export default {
     handleEditUser: handleEditUser,
     handleDeleteUser: handleDeleteUser,
     getAllCode: getAllCode,
-    handleRefreshToken: handleRefreshToken
+    handleRefreshToken: handleRefreshToken,
+    handleLogout: handleLogout
 
 };

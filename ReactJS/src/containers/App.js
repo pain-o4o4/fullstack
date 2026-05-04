@@ -81,7 +81,7 @@ class App extends Component {
     }
 
     render() {
-        let { language } = this.props;
+        let { language, isLoggedIn } = this.props;
         if (!this.state.bootstrapped) {
             return null;
         }
@@ -126,7 +126,7 @@ class App extends Component {
                                     <Route path={path.ALL_DOCTOR} element={<AllDoctor />} />
                                     <Route path={path.ALL_HANDBOOK} element={<AllHandbook />} />
                                     <Route path={path.SELECT_SERVICE} element={<SelectService />} />
-                                    <Route path={path.AI_SUPPORT} element={<AISupportPage />} />
+                                    <Route path={path.AI_SUPPORT} element={<UserIsAuthenticated><AISupportPage /></UserIsAuthenticated>} />
 
 
                                 </Routes>
@@ -143,7 +143,7 @@ class App extends Component {
                             draggable
                             pauseOnHover
                         />
-                        <ChatBot />
+                        {isLoggedIn && <ChatBot />}
                     </div>
                 </BrowserRouter>
             </Fragment>

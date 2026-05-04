@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { verifyRegisterOtp, resendRegisterOtp } from '../../services/userService';
 import * as actions from "../../store/actions";
 import { withRouter } from '../../components/Navigator';
+import { startTimer } from '../../auth/TokenRefreshManager';
 import './Login.scss';
 
 class RegisterVerify extends Component {
@@ -36,8 +37,11 @@ class RegisterVerify extends Component {
             if (res && res.errCode === 0) {
                 if (res.token) {
                     localStorage.setItem('token', res.token);
+
+                    // Khởi động Silent Refresh Timer ngay sau khi đăng ký thành công
+                    startTimer(res.token);
                 }
-                this.props.userLoginSuccess(res.user);
+                this.props.userLoginSuccess({ ...res.user, token: res.token });
                 this.props.clearRegisterSession();
                 toast.success('Xác thực thành công. Chào mừng bạn!');
                 this.props.navigate('/home');

@@ -1,12 +1,12 @@
 import { Server } from 'socket.io';
-import socketAuthMiddleware from './socket/auth';
-import registerSocketHandlers from './socket';
+import socketAuthMiddleware from './auth';
+import registerSocketHandlers from './registerHandlers';
 
 let ioInstance = null;
-// - server.js gọi `initSocket(server)`
-// - socket.js tạo `new Server(...)`
-// - socket.js gắn middleware auth
-// - socket.js đăng ký sự kiện `connection`
+// - server.js gọi `initSocket(server)`
+// - init.js tạo `new Server(...)`
+// - init.js gắn middleware auth
+// - init.js đăng ký sự kiện `connection`
 export const initSocket = (httpServer) => {
     if (ioInstance) {
         return ioInstance;

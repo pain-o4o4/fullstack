@@ -1,8 +1,807 @@
-@import './HomePage.scss';
+// ============================================================
+// AI Support — Apple Design Language
+// SF Pro inspired · Glassmorphism · Liquid motion · Precision
+// ============================================================
 
-.ai-support-page {
-    background-color: #f5f7fa;
-    min-height: 100vh;
-    padding: 0 0 4rem 0;
-    height: 100%;
+// — Tokens
+$font-display : 'SF Pro Display',
+-apple-system,
+BlinkMacSystemFont,
+'Segoe UI',
+sans-serif;
+$font-text : 'SF Pro Text',
+-apple-system,
+BlinkMacSystemFont,
+'Segoe UI',
+sans-serif;
+$font-mono : 'SF Mono',
+'Fira Code',
+monospace;
+
+// Apple semantic palette
+$apple-blue : #007AFF;
+$apple-blue-dark: #0A84FF;
+$apple-gray-1 : #8E8E93;
+$apple-gray-2 : #636366;
+$apple-gray-3 : #48484A;
+$apple-gray-4 : #3A3A3C;
+$apple-gray-5 : #2C2C2E;
+$apple-gray-6 : #1C1C1E;
+
+$bg-primary : #ffffff;
+$bg-secondary : rgba(255, 255, 255, 0.72);
+$bg-tertiary : rgba(255, 255, 255, 0.55);
+$separator : rgba(60, 60, 67, 0.12);
+
+$text-primary : #1D1D1F;
+$text-secondary : #6E6E73;
+$text-tertiary : #AEAEB2;
+
+// Easing — Apple Motion
+$ease-apple : cubic-bezier(0.25, 0.46, 0.45, 0.94);
+$ease-spring : cubic-bezier(0.34, 1.56, 0.64, 1);
+$ease-decel : cubic-bezier(0.0, 0.0, 0.2, 1.0);
+
+// Radius
+$r-xs : 8px;
+$r-sm : 12px;
+$r-md : 16px;
+$r-lg : 20px;
+$r-xl : 26px;
+$r-pill: 999px;
+
+// ============================================================
+// Mixins
+// ============================================================
+
+@mixin glass($blur: 20px, $bg: $bg-secondary, $border: $separator) {
+    background: $bg;
+    backdrop-filter: blur($blur) saturate(180%);
+    -webkit-backdrop-filter: blur($blur) saturate(180%);
+    border: 0.5px solid $border;
+}
+
+@mixin focus-ring {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($apple-blue, 0.35);
+}
+
+@mixin smooth($props: all, $dur: 0.22s) {
+    transition: $props $dur $ease-apple;
+}
+
+// ============================================================
+// Root & Layout
+// ============================================================
+
+.ai-support-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: $bg-primary;
+    font-family: $font-text;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    // Subtle dot-grid background — Apple Vision feel
+    &::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image: radial-gradient(circle, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+        background-size: 28px 28px;
+        pointer-events: none;
+        z-index: 0;
+    }
+}
+
+.ai-support-content {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+// ============================================================
+// Sidebar
+// ============================================================
+
+.ai-sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 16px 12px;
+    gap: 12px;
+
+    @include glass(24px, rgba(255, 255, 255, 0.85), $separator);
+    border-right: 0.5px solid $separator;
+
+    // Slide-in animation
+    animation: sidebarIn 0.45s $ease-decel both;
+
+    @keyframes sidebarIn {
+        from {
+            opacity: 0;
+            transform: translateX(-16px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+}
+
+// New Chat Button — Apple primary style
+.new-chat-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 16px;
+    border-radius: $r-sm;
+    background: $apple-blue;
+    color: #fff;
+    font-family: $font-text;
+    font-size: 15px;
+    font-weight: 590;
+    letter-spacing: -0.2px;
+    border: none;
+    cursor: pointer;
+    @include smooth(transform box-shadow background);
+
+    i {
+        font-size: 13px;
+    }
+
+    &:hover {
+        background: darken($apple-blue, 5%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 16px rgba($apple-blue, 0.35);
+    }
+
+    &:active {
+        transform: scale(0.97) translateY(0);
+        box-shadow: none;
+    }
+
+    &:focus-visible {
+        @include focus-ring;
+    }
+}
+
+// Sessions list
+.sessions-list {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+    gap: 6px;
+}
+
+.session-group-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: $text-tertiary;
+    padding: 4px 8px;
+}
+
+.session-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: $r-xs;
+    cursor: pointer;
+    @include smooth(background);
+
+    i {
+        font-size: 14px;
+        color: $text-tertiary;
+        margin-top: 2px;
+        flex-shrink: 0;
+        @include smooth(color);
+    }
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.05);
+
+        i {
+            color: $apple-blue;
+        }
+    }
+
+    &.active {
+        background: rgba($apple-blue, 0.1);
+
+        i {
+            color: $apple-blue;
+        }
+
+        .session-text {
+            color: $text-primary;
+        }
+    }
+}
+
+.session-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden;
+}
+
+.session-text {
+    font-size: 14px;
+    font-weight: 400;
+    color: $text-secondary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    @include smooth(color);
+}
+
+.session-time {
+    font-size: 12px;
+    color: $text-tertiary;
+    font-variant-numeric: tabular-nums;
+}
+
+.no-sessions {
+    padding: 24px 12px;
+    font-size: 14px;
+    color: $text-tertiary;
+    text-align: center;
+}
+
+// ============================================================
+// Chat Main
+// ============================================================
+
+.ai-chat-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+// Chat Header — translucent, thin separator, Apple NavigationBar feel
+.chat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    height: 56px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 10;
+
+    @include glass(20px, rgba(255, 255, 255, 0.8), transparent);
+    border-bottom: 0.5px solid $separator;
+
+    animation: headerIn 0.35s $ease-decel both;
+
+    @keyframes headerIn {
+        from {
+            opacity: 0;
+            transform: translateY(-8px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
+
+.ai-title {
+    font-family: $font-display;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+    color: $text-primary;
+    cursor: pointer;
+    @include smooth(color);
+
+    &:hover {
+        color: $apple-blue;
+    }
+}
+
+.ai-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: $text-secondary;
+    font-weight: 400;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #34C759; // Apple green
+    box-shadow: 0 0 0 2px rgba(52, 199, 89, 0.28);
+
+    // Pulse animation
+    animation: pulse 2.4s ease-in-out infinite;
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            box-shadow: 0 0 0 2px rgba(52, 199, 89, 0.28);
+        }
+
+        50% {
+            box-shadow: 0 0 0 5px rgba(52, 199, 89, 0.08);
+        }
+    }
+}
+
+// ============================================================
+// Messages Area
+// ============================================================
+
+.chat-messages-area {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+.messages-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12% 24% 12% 24%;
+}
+
+// Welcome screen
+.chat-welcome {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 40px;
+    gap: 16px;
+    animation: welcomeIn 0.6s $ease-spring both;
+    animation-delay: 0.15s;
+
+    @keyframes welcomeIn {
+        from {
+            opacity: 0;
+            transform: translateY(24px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
+
+.welcome-icon {
+    font-size: 52px;
+    line-height: 1;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.12));
+}
+
+.chat-welcome h2 {
+    font-family: $font-display;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    color: $text-primary;
+    text-align: center;
+    margin: 0;
+}
+
+.chat-welcome p {
+    font-size: 15px;
+    color: $text-secondary;
+    text-align: center;
+    max-width: 380px;
+    line-height: 1.55;
+    margin: 0;
+}
+
+// ============================================================
+// Message Bubbles — iMessage inspired
+// ============================================================
+
+.message-bubble {
+    display: flex;
+    animation: bubbleIn 0.32s $ease-spring both;
+
+    @keyframes bubbleIn {
+        from {
+            opacity: 0;
+            transform: scale(0.92) translateY(8px);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    // User — right aligned, blue
+    &.user {
+        justify-content: flex-end;
+
+        .bubble-content {
+            margin: 3% 0%;
+            background: $apple-blue;
+            color: #fff;
+            border-radius: $r-xl $r-xl $r-xs $r-xl;
+            font-size: 15px;
+            line-height: 1.5;
+            max-width: 68%;
+            padding: 11px 15px;
+            box-shadow: 0 2px 12px rgba($apple-blue, 0.25);
+        }
+    }
+
+    // Assistant — left aligned, glass
+    &.assistant {
+        justify-content: flex-start;
+
+        .bubble-content {
+            @include glass(16px, $bg-secondary, $separator);
+            color: $text-primary;
+            border-radius: $r-xl $r-xl $r-xl $r-xs;
+            font-size: 15px;
+            line-height: 1.6;
+            max-width: 72%;
+            padding: 11px 15px;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+        }
+    }
+}
+
+// Typing indicator
+.typing .bubble-content {
+    padding: 14px 18px !important;
+}
+
+.typing-loader {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    span {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: $apple-gray-1;
+        display: inline-block;
+        animation: typingBounce 1.1s $ease-apple infinite;
+
+        &:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        &:nth-child(2) {
+            animation-delay: 0.16s;
+        }
+
+        &:nth-child(3) {
+            animation-delay: 0.32s;
+        }
+    }
+
+    @keyframes typingBounce {
+
+        0%,
+        60%,
+        100% {
+            transform: translateY(0);
+            opacity: 0.45;
+        }
+
+        30% {
+            transform: translateY(-5px);
+            opacity: 1;
+        }
+    }
+}
+
+// ============================================================
+// Input Area
+// ============================================================
+
+.chat-input-container {
+    flex-shrink: 0;
+    padding: 12px 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    @include glass(20px, rgba(255, 255, 255, 0.82), transparent);
+    border-top: 0.5px solid $separator;
+}
+
+.input-wrapper {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+
+    textarea {
+        flex: 1;
+        resize: none;
+        border: 0.5px solid $separator;
+        border-radius: $r-md;
+        padding: 12px 16px;
+        font-family: $font-text;
+        font-size: 15px;
+        line-height: 1.5;
+        color: $text-primary;
+        background: rgba(255, 255, 255, 0.85);
+        min-height: 46px;
+        max-height: 180px;
+        overflow-y: auto;
+        @include smooth(border-color box-shadow);
+
+        &::placeholder {
+            color: $text-tertiary;
+        }
+
+        &:focus {
+            outline: none;
+            border-color: rgba($apple-blue, 0.45);
+            box-shadow: 0 0 0 3px rgba($apple-blue, 0.12);
+            background: #fff;
+        }
+
+        &:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        // Custom scrollbar
+        &::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: $apple-gray-1;
+            border-radius: $r-pill;
+        }
+    }
+}
+
+.send-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: none;
+    background: $apple-blue;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    @include smooth(transform background box-shadow opacity);
+
+    i {
+        font-size: 14px;
+    }
+
+    &:hover:not(.disabled) {
+        background: darken($apple-blue, 6%);
+        transform: scale(1.07);
+        box-shadow: 0 4px 14px rgba($apple-blue, 0.38);
+    }
+
+    &:active:not(.disabled) {
+        transform: scale(0.94);
+        box-shadow: none;
+    }
+
+    &.disabled {
+        background: $apple-gray-1;
+        opacity: 0.45;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    &:focus-visible {
+        @include focus-ring;
+    }
+}
+
+.input-hint {
+    font-size: 12px;
+    color: $text-tertiary;
+    text-align: center;
+    letter-spacing: -0.1px;
+}
+
+// ============================================================
+// Custom Scrollbar (global in container)
+// ============================================================
+
+.ai-support-container {
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(0, 0, 0, 0.12) transparent;
+    }
+
+    *::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+    }
+
+    *::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    *::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.14);
+        border-radius: $r-pill;
+    }
+}
+
+// ============================================================
+// Dark Mode — SF on OLED
+// ============================================================
+
+@media (prefers-color-scheme: dark) {
+    $bg-primary : #000000;
+    $bg-secondary : rgba(28, 28, 30, 0.80);
+    $bg-tertiary : rgba(44, 44, 46, 0.72);
+    $separator : rgba(255, 255, 255, 0.10);
+    $text-primary : #F5F5F7;
+    $text-secondary : #8E8E93;
+    $text-tertiary : #636366;
+
+    .ai-support-container {
+        background: #000;
+
+        &::before {
+            background-image: radial-gradient(circle, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+        }
+    }
+
+    .ai-sidebar {
+        background: rgba(28, 28, 30, 0.78);
+        border-right-color: rgba(255, 255, 255, 0.09);
+    }
+
+    .chat-header {
+        background: rgba(0, 0, 0, 0.72);
+        border-bottom-color: rgba(255, 255, 255, 0.09);
+    }
+
+    .ai-title {
+        color: #F5F5F7;
+    }
+
+    .ai-title:hover {
+        color: $apple-blue-dark;
+    }
+
+    .session-item {
+        &:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        &.active {
+            background: rgba($apple-blue-dark, 0.16);
+        }
+    }
+
+    .session-text {
+        color: #8E8E93;
+    }
+
+    .message-bubble {
+        &.user .bubble-content {
+            background: $apple-blue-dark;
+            box-shadow: 0 2px 12px rgba($apple-blue-dark, 0.28);
+        }
+
+        &.assistant .bubble-content {
+            background: rgba(44, 44, 46, 0.82);
+            border-color: rgba(255, 255, 255, 0.09);
+            color: #F5F5F7;
+        }
+    }
+
+    .chat-input-container {
+        background: rgba(0, 0, 0, 0.72);
+        border-top-color: rgba(255, 255, 255, 0.09);
+    }
+
+    .input-wrapper textarea {
+        background: rgba(44, 44, 46, 0.88);
+        border-color: rgba(255, 255, 255, 0.10);
+        color: #F5F5F7;
+
+        &::placeholder {
+            color: #636366;
+        }
+
+        &:focus {
+            background: rgba(58, 58, 60, 0.95);
+            border-color: rgba($apple-blue-dark, 0.5);
+            box-shadow: 0 0 0 3px rgba($apple-blue-dark, 0.18);
+        }
+    }
+
+    .send-btn {
+        background: $apple-blue-dark;
+    }
+
+    .chat-welcome h2 {
+        color: #F5F5F7;
+    }
+
+    .chat-welcome p {
+        color: #8E8E93;
+    }
+
+    .input-hint {
+        color: #636366;
+    }
+}
+
+// ============================================================
+// Responsive — Tablet
+// ============================================================
+
+@media (max-width: 768px) {
+    .ai-sidebar {
+        width: 240px;
+    }
+
+    .messages-wrapper {
+        padding: 16px 12px 8px;
+    }
+
+    .message-bubble {
+
+        &.user .bubble-content,
+        &.assistant .bubble-content {
+            max-width: 86%;
+        }
+    }
+
+    .chat-input-container {
+        padding: 10px 12px 16px;
+    }
+}
+
+@media (max-width: 560px) {
+    .ai-sidebar {
+        display: none; // hide sidebar on mobile — add a hamburger toggle as needed
+    }
+
+    .ai-chat-main {
+        width: 100%;
+    }
+}
+
+// ============================================================
+// Accessibility — Motion preference
+// ============================================================
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
 }

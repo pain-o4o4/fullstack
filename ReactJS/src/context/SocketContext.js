@@ -70,10 +70,13 @@ class SocketProvider extends Component {
             return;
         }
 
-        // Kiểm tra hết hạn token
+        // Kiểm tra hết hạn token — CHỈ NGẮT SOCKET, KHÔNG LOGOUT
+        // Lý do: Axios interceptor sẽ tự refresh token khi gặp 401.
+        // Khi token mới được cập nhật vào Redux, componentDidUpdate sẽ
+        // phát hiện reduxToken thay đổi và tự động gọi lại manageSocketConnection()
+        // để kết nối lại socket với token mới.
         if (isTokenExpired(normalizedToken)) {
-            console.warn('[Socket] Token expired. Waiting for new session.');
-            this.props.socketTokenExpired();
+            console.warn('[Socket] Token expired. Disconnecting socket, waiting for refresh...');
             this.disconnectSocket();
             return;
         }
@@ -97,8 +100,11 @@ class SocketProvider extends Component {
             const message = `${error?.message || ''}`.toLowerCase();
             console.error('[Socket] Connect error:', error?.message);
 
+            // Khi socket bị lỗi token hết hạn, CHỈ NGẮT SOCKET.
+            // TokenRefreshManager hoặc Axios interceptor sẽ tự refresh token.
+            // Khi token mới cập nhật vào Redux → componentDidUpdate → reconnect.
             if (message.includes('token_expired') || message.includes('jwt expired')) {
-                this.props.socketTokenExpired();
+                console.warn('[Socket] Token expired on socket. Waiting for refresh...');
                 this.disconnectSocket();
             }
         };

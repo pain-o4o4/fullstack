@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import payOS from '../config/payos';
 import bcrypt from "bcryptjs";
 import { hashUserPassword } from './userService'
+import { getIO } from "../socket";
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE
 const URL_REACT = process.env.URL_REACT
 
@@ -59,6 +60,16 @@ let finalizeBookingPayment = async (orderCode) => {
         booking.statusId = 'S2';
         await booking.save({ transaction: t });
         await t.commit();
+
+        // === Bổ sung WebSocket báo cho Bác sĩ ===
+        const io = getIO();
+        if (io && booking.doctorId) {
+            io.to(`user_room_${booking.doctorId}`).emit('new_patient_booked', {
+                patientName: `${booking.patientBookingData?.lastName || ''} ${booking.patientBookingData?.firstName || ''}`.trim() || 'Bệnh nhân',
+                time: booking.timeTypeDataPatient?.valueVi || '',
+                message: 'Có bệnh nhân mới thanh toán và đặt lịch thành công!'
+            });
+        }
 
         // Gửi email SAU KHI commit (không block transaction)
         const receiverEmail = booking.patientBookingData?.email;

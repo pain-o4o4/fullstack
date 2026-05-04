@@ -1,8 +1,6 @@
 .select-service-container {
-    // padding-top: 160px; // Tăng padding đáng kể để nhường chỗ hoàn toàn cho Header Pill
     background-color: #f5f5f5;
     min-height: 100vh;
-    // padding-bottom: 60px;
 
     .select-service-banner {
         height: 100vh;
@@ -23,8 +21,14 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(126, 126, 126, 0.4); // Darker overlay for better text readability
+            background: rgba(126, 126, 126, 0.4);
             z-index: 1;
+            // Overlay sáng nhẹ khi hover vào banner
+            transition: background 0.4s ease;
+        }
+
+        &:hover::before {
+            background: rgba(126, 126, 126, 0.32);
         }
 
         .banner-content {
@@ -67,17 +71,28 @@
                 font-size: 16px;
                 font-weight: 700;
                 cursor: pointer;
-                transition: all 0.25s ease;
+                transition:
+                    background-color 0.25s ease,
+                    color 0.25s ease,
+                    transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+                    box-shadow 0.25s ease;
+
+                &:active {
+                    transform: scale(0.97) !important;
+                    box-shadow: none !important;
+                }
             }
 
             .btn-primary {
                 background-color: #ffffff;
-                color: #4c40e6; // Teladoc purple
+                color: #4c40e6;
                 border: 2px solid #ffffff;
 
                 &:hover {
                     background-color: transparent;
                     color: #ffffff;
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 24px rgba(255, 255, 255, 0.2);
                 }
             }
 
@@ -89,6 +104,8 @@
                 &:hover {
                     background-color: #ffffff;
                     color: #4c40e6;
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 24px rgba(255, 255, 255, 0.2);
                 }
             }
         }
@@ -106,6 +123,15 @@
             padding: 24px;
             border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            // Card lift khi hover
+            transition:
+                box-shadow 0.3s ease,
+                transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+            &:hover {
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.09);
+                transform: translateY(-2px);
+            }
 
             .section-header {
                 margin-bottom: 24px;
@@ -137,12 +163,24 @@
                         justify-content: center;
                         cursor: pointer;
                         font-size: 16px;
-                        transition: all 0.2s ease;
+                        transition:
+                            background 0.2s ease,
+                            color 0.2s ease,
+                            border-color 0.2s ease,
+                            transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+                            box-shadow 0.2s ease;
 
                         &:hover {
                             background: #f3f4f6;
                             color: #111827;
                             border-color: #d1d5db;
+                            transform: scale(1.1);
+                            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+                        }
+
+                        &:active {
+                            transform: scale(0.94);
+                            box-shadow: none;
                         }
                     }
 
@@ -156,10 +194,22 @@
                         font-weight: 600;
                         font-size: 14px;
                         text-transform: uppercase;
-                        transition: all 0.2s ease;
+                        transition:
+                            background 0.2s ease,
+                            color 0.2s ease,
+                            transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+                            box-shadow 0.2s ease;
 
                         &:hover {
-                            background: #e0eaff;
+                            background: #0071e3;
+                            color: #ffffff;
+                            transform: translateY(-1px);
+                            box-shadow: 0 4px 14px rgba(0, 113, 227, 0.28);
+                        }
+
+                        &:active {
+                            transform: scale(0.97) translateY(0);
+                            box-shadow: none;
                         }
                     }
                 }
@@ -179,5 +229,11 @@
 
     100% {
         transform: translateY(0px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition-duration: 0.01ms !important;
     }
 }

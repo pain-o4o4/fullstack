@@ -5,6 +5,7 @@ import _ from "lodash";
 import { Op } from 'sequelize';
 import moment from 'moment'
 import clinic from "../../models/clinic";
+import { getIO } from "../socket";
 // const { Op } = require('sequelize');
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE
 
@@ -649,6 +650,15 @@ let updateBookingStatus = (data) => {
                 let oldStatus = appointment.statusId;
                 appointment.statusId = data.statusId;
                 await appointment.save();
+
+                // === Bổ sung WebSocket báo cho Bệnh nhân ===
+                const io = getIO();
+                if (io && data.patientId) {
+                    io.to(`user_room_${data.patientId}`).emit('booking_status_updated', {
+                        statusId: data.statusId,
+                        message: data.statusId === 'S3' ? 'Lịch hẹn đã được bác sĩ xác nhận khám xong.' : 'Trạng thái lịch hẹn đã thay đổi.'
+                    });
+                }
 
                 // Nếu chuyển sang S3 (Đã khám xong), gửi email kết quả
                 if (data.statusId === 'S3' && oldStatus !== 'S3') {
