@@ -18,6 +18,8 @@ import axios from 'axios';
 // Axios interceptor 401 chỉ còn là "lưới an toàn" dự phòng.
 // ================================================================
 
+
+//Bộ đếm giờ (Timer) chủ động làm mới token ngầm  
 let store = null;
 let refreshTimerId = null;
 
@@ -138,7 +140,7 @@ const scheduleRefresh = (token) => {
 const handleForceLogout = () => {
     stopTimer();
     localStorage.removeItem('token');
-    axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/logout`, {}, { withCredentials: true }).catch(() => {});
+    axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/logout`, {}, { withCredentials: true }).catch(() => { });
     if (store) {
         store.dispatch({ type: 'PROCESS_LOGOUT' });
     }

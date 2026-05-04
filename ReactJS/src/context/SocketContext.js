@@ -5,6 +5,9 @@ import * as actions from '../store/actions';
 
 export const SocketContext = createContext(null);
 
+// Quản lý vòng đời kết nối WebSocket
+
+// Giải mã JWT để đọc thông tin
 const decodeJwtPayload = (token) => {
     try {
         const normalized = `${token || ''}`.replace(/^Bearer\s+/i, '').trim();
@@ -17,7 +20,7 @@ const decodeJwtPayload = (token) => {
         return null;
     }
 };
-
+// Hàm kiểm tra token đã hết hạn hay chưa
 const isTokenExpired = (token) => {
     const decoded = decodeJwtPayload(token);
     if (!decoded?.exp) return false;

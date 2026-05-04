@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { startTimer, stopTimer } from './TokenRefreshManager';
 
+// Cấu hình Axios + Interceptor bắt lỗi 401 + Logout
+
 let store;
 export const injectStore = (_store) => {
     store = _store;
@@ -133,7 +135,7 @@ const handleLogout = () => {
     localStorage.removeItem('token');
 
     // 3. Gọi server để xóa HttpOnly Cookie (refreshToken)
-    axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/logout`, {}, { withCredentials: true }).catch(() => {});
+    axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/logout`, {}, { withCredentials: true }).catch(() => { });
 
     // 4. Cập nhật Redux state
     if (store) {
