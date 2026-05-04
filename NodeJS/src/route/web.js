@@ -9,6 +9,9 @@ import handbookController from "../controller/handbookController"
 import chatbotController from "../controller/chatbotController"
 import { checkUserJWT, checkUserPermission } from '../middleware/authMiddleware';
 import aiController from "../controller/aiController";
+import searchController from "../controller/searchController";
+import { searchRateLimiter } from '../middleware/rateLimiter';
+import { validateSearch } from '../middleware/searchValidator';
 let router = express.Router()
 
 let initWebRoutes = (app) => {
@@ -23,6 +26,9 @@ let initWebRoutes = (app) => {
     // ==========================================
     // DANH SÁCH API (KHÔNG CẦN CHÈN MIDDLEWARE LẺ TẺ NỮA)
     // ==========================================
+
+    // Global Search
+    router.get('/api/search', searchRateLimiter, validateSearch, searchController.handleGlobalSearch);
 
     // Users
     router.post("/api/register", userController.createRegister);

@@ -8,6 +8,7 @@ import { path } from '../../utils/constant';
 import { withRouter } from '../../components/Navigator';
 import UserMenuPopup from '../HomePage/SubMenuForUser/UserMenuPopup';
 import backgroundBanner from '../../assets/images/backgroundBanner.avif';
+import GlobalSearch from '../../components/GlobalSearch/GlobalSearch';
 
 class HomeHeader extends Component {
     constructor(props) {
@@ -15,6 +16,7 @@ class HomeHeader extends Component {
         this.wrapperRef = React.createRef();
         this.state = {
             isOpenUserMenu: false,
+            isOpenSearch: false,
         }
     }
 
@@ -28,10 +30,20 @@ class HomeHeader extends Component {
 
     componentDidMount() {
         document.addEventListener('mousedown', this.handleClickOutside);
+        document.addEventListener('keydown', this.handleGlobalKeyDown);
     }
 
     componentWillUnmount() {
         document.removeEventListener('mousedown', this.handleClickOutside);
+        document.removeEventListener('keydown', this.handleGlobalKeyDown);
+    }
+
+    handleGlobalKeyDown = (event) => {
+        // Ctrl+K or Cmd+K
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+            event.preventDefault();
+            this.setState({ isOpenSearch: true });
+        }
     }
 
     handleClickOutside = (event) => {
@@ -77,9 +89,28 @@ class HomeHeader extends Component {
         }
     }
 
+    decodeBase64Buffer = (imgObj) => {
+        if (imgObj && imgObj.data) {
+            let bytes = new Uint8Array(imgObj.data);
+            let binary = '';
+            for (let i = 0; i < bytes.byteLength; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return binary;
+        } else if (typeof imgObj === 'string') {
+            return imgObj;
+        }
+        return '';
+    };
+
     render() {
         let { isLoggedIn, userInfo } = this.props;
-        let { isOpenUserMenu } = this.state;
+        let { isOpenUserMenu, isOpenSearch } = this.state;
+
+        let imageBase64 = '';
+        if (userInfo && userInfo.image) {
+            imageBase64 = this.decodeBase64Buffer(userInfo.image);
+        }
 
         return (
             <React.Fragment>
@@ -95,38 +126,45 @@ class HomeHeader extends Component {
                             <span className="brand-name">BookingCare</span>
                         </div>
 
-                        {/* Center Nav */}
-                        <nav className="hm-header-nav">
-                            <ul className="hm-nav-list">
-                                <li className="hm-nav-item" onClick={() => this.handleViewList('HOME')}>
-                                    <span className="nav-link">
-                                        <FormattedMessage id="homeheader.home" />
-                                    </span>
-                                </li>
+                        {isOpenSearch ? (
+                            <GlobalSearch
+                                isOpen={isOpenSearch}
+                                onClose={() => this.setState({ isOpenSearch: false })}
+                            />
+                        ) : (
+                            <nav className="hm-header-nav">
+                                <ul className="hm-nav-list">
+                                    <li className="hm-nav-item" onClick={() => this.handleViewList('HOME')}>
+                                        <span className="nav-link">
+                                            <FormattedMessage id="homeheader.home" />
+                                        </span>
+                                    </li>
 
-                                {/* Đặt lịch - Normal link */}
-                                <li className="hm-nav-item" onClick={() => this.handleViewList('SELECT_SERVICE')}>
-                                    <span className="nav-link">
-                                        <FormattedMessage id="homeheader.booking" />
-                                    </span>
-                                </li>
+                                    {/* Đặt lịch - Normal link */}
+                                    <li className="hm-nav-item" onClick={() => this.handleViewList('SELECT_SERVICE')}>
+                                        <span className="nav-link">
+                                            <FormattedMessage id="homeheader.booking" />
+                                        </span>
+                                    </li>
 
-                                <li className="hm-nav-item" onClick={() => this.handleViewList('HANDBOOK')}>
-                                    <span className="nav-link">
-                                        <FormattedMessage id="homeheader.handbook-nav" />
-                                    </span>
-                                </li>
-                            </ul>
-                        </nav>
+                                    <li className="hm-nav-item" onClick={() => this.handleViewList('HANDBOOK')}>
+                                        <span className="nav-link">
+                                            <FormattedMessage id="homeheader.handbook-nav" />
+                                        </span>
+                                    </li>
+
+                                    {/* Removed search trigger from here */}
+                                </ul>
+                            </nav>
+                        )}
 
                         {/* Right Actions */}
                         <div className="hm-header-actions">
-                            {/* <div className="language-switcher">
-                                <span className={this.props.language === LANGUAGES.VI ? "language-vi active" : "language-vi"}
-                                    onClick={() => this.changeLanguage(LANGUAGES.VI)}>VN</span>
-                                <span className={this.props.language === LANGUAGES.EN ? "language-en active" : "language-en"}
-                                    onClick={() => this.changeLanguage(LANGUAGES.EN)}>EN</span>
-                            </div> */}
+                            {!isOpenSearch && (
+                                <div className="nav-sign-in search-trigger" onClick={() => this.setState({ isOpenSearch: true })} style={{ padding: '9px', borderRadius: '50%' }}>
+                                    <i className="fas fa-search" style={{ fontSize: '16px', opacity: 0.7 }}></i>
+                                </div>
+                            )}
 
                             <div className="user-menu-wrapper" ref={this.wrapperRef}>
                                 {!isLoggedIn ? (
@@ -139,11 +177,15 @@ class HomeHeader extends Component {
                                     </div>
                                 ) : (
                                     <div className="nav-sign-in" onClick={() => this.toggleUserMenu()}>
-                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                            <circle cx="8" cy="5" r="3" stroke="currentColor" strokeWidth="1.5" />
-                                            <path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                                        </svg>
-                                        {userInfo && userInfo.firstName ? userInfo.firstName : <FormattedMessage id="homeheader.account" />}
+                                        {imageBase64 ? (
+                                            <img src={imageBase64} className="user-avatar" alt="Avatar" />
+                                        ) : (
+                                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                                <circle cx="8" cy="5" r="3" stroke="currentColor" strokeWidth="1.5" />
+                                                <path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                                            </svg>
+                                        )}
+                                        {/* {userInfo && userInfo.firstName ? userInfo.firstName : <FormattedMessage id="homeheader.account" />} */}
                                     </div>
                                 )}
                                 {isOpenUserMenu && (

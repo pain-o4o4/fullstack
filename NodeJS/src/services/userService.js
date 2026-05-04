@@ -217,7 +217,8 @@ let handleUserLogin = (email, password) => {
                     attributes: [
                         "id", "email", "roleId", "password",
                         "firstName", "lastName", "address",
-                        "image", "phonenumber", "isVerified"
+                        "image", "phonenumber", "isVerified",
+                        "gender", "positionId"
                     ],
                     raw: true
                 });

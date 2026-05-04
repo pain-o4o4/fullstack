@@ -60,9 +60,23 @@
                 border-radius: 50%;
                 background: $apple-blue;
 
-                &.dot-1 { width: 7px; height: 7px; opacity: 1; }
-                &.dot-2 { width: 9px; height: 9px; opacity: 0.7; }
-                &.dot-3 { width: 5px; height: 5px; opacity: 0.4; }
+                &.dot-1 {
+                    width: 7px;
+                    height: 7px;
+                    opacity: 1;
+                }
+
+                &.dot-2 {
+                    width: 9px;
+                    height: 9px;
+                    opacity: 0.7;
+                }
+
+                &.dot-3 {
+                    width: 5px;
+                    height: 5px;
+                    opacity: 0.4;
+                }
             }
         }
 
@@ -126,7 +140,7 @@
                 }
             }
 
-            &.active > .nav-link {
+            &.active>.nav-link {
                 background: #f3f4f6;
                 color: $apple-black;
 
@@ -183,7 +197,7 @@
             display: flex;
             align-items: center;
             gap: 7px;
-            padding: 9px 18px;
+            // padding: 9px 18px;
             border-radius: 24px;
             font-size: 14px;
             font-weight: 600;
@@ -192,12 +206,24 @@
             transition: background 0.2s ease;
             white-space: nowrap;
 
+
+
             &:hover {
                 background: #f3f4f6;
             }
 
             svg {
                 opacity: 0.7;
+            }
+
+            .user-avatar {
+                display: block;
+                padding: 0;
+                margin: 0;
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                object-fit: cover;
             }
         }
 
@@ -242,6 +268,7 @@
         opacity: 0;
         transform: translateX(-50%) translateY(-8px);
     }
+
     to {
         opacity: 1;
         transform: translateX(-50%) translateY(0);

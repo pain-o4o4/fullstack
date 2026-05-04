@@ -1,0 +1,163 @@
+.global-search-container {
+    width: 100%;
+    flex: 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    .search-header {
+        display: flex;
+        align-items: center;
+        background: #fff;
+        border: 2px dashed #0056b3; // dashed blue border like Mayo Clinic
+        border-radius: 30px;
+        padding: 0px 10px;
+        width: 100%;
+
+        .search-icon {
+            font-size: 16px;
+            color: #0056b3;
+            margin-right: 12px;
+        }
+
+        input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 15px;
+            padding: 6px 0;
+            background: transparent;
+
+            &::placeholder {
+                color: #888;
+            }
+        }
+
+        .loading-icon {
+            color: #0056b3;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        .close-btn {
+            background: transparent;
+            border: none;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #333;
+            font-size: 18px;
+            transition: color 0.2s;
+
+            &:hover {
+                color: #000;
+            }
+        }
+    }
+
+    .search-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        margin-top: 3%;
+    }
+
+    .search-results {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        max-height: 50vh;
+        overflow-y: auto;
+
+        /* Custom scrollbar */
+        &::-webkit-scrollbar {
+            display: none;
+        }
+
+        -ms-overflow-style: none;
+        /* IE and Edge */
+        scrollbar-width: none;
+        /* Firefox */
+
+        .empty-state {
+            padding: 40px 20px;
+            text-align: center;
+            color: #888;
+
+            i {
+                font-size: 40px;
+                margin-bottom: 15px;
+                color: #ddd;
+            }
+
+            p {
+                margin: 0;
+                font-size: 15px;
+            }
+        }
+
+        .error-state {
+            padding: 20px;
+            text-align: center;
+            color: #e74c3c;
+        }
+
+        .results-list {
+            padding: 10px 0;
+
+            .result-group {
+                margin-bottom: 10px;
+
+                .group-title {
+                    padding: 8px 20px;
+                    font-size: 12px;
+                    text-transform: uppercase;
+                    color: #999;
+                    font-weight: 600;
+                }
+
+                .result-item {
+                    display: flex;
+                    align-items: center;
+                    padding: 10px 20px;
+                    cursor: pointer;
+                    transition: background 0.2s;
+
+                    &:hover {
+                        background: #f0f8ff;
+                    }
+
+                    .item-img {
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 8px;
+                        background-position: center;
+                        background-size: cover;
+                        background-repeat: no-repeat;
+                        background-color: #eee;
+                        margin-right: 15px;
+                        flex-shrink: 0;
+
+                        &.doctor-img {
+                            border-radius: 50%;
+                        }
+                    }
+
+                    .item-info {
+                        flex: 1;
+
+                        .item-name {
+                            font-size: 15px;
+                            font-weight: 500;
+                            color: #333;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

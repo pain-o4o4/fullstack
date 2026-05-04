@@ -88,7 +88,7 @@ class PatientProfile extends Component {
                     <div className="info-card">
                         <div className="card-header">
                             <span className="card-title"><FormattedMessage id="patient-profile.name-label" /></span>
-                            <i class="fas fa-user" ></i>
+                            <i className="fas fa-user" ></i>
                         </div>
                         <div className="card-body form-group-row">
                             <input className="inline-input" value={this.state.lastName || ''} onChange={(e) => this.handleOnChangeInput(e, 'lastName')} placeholder={language === 'vi' ? "Họ" : "Last name"} />

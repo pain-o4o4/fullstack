@@ -173,7 +173,12 @@ const verifyPaymentStatus = (orderCode) => {
 const postChatWithAIService = (data) => {
     return axios.post('/api/chat-with-ai', data);
 }
-
+const searchGlobal = (keyword, signal) => {
+    return axios.get(`/api/search?q=${encodeURIComponent(keyword)}`, {
+        signal: signal,
+        timeout: 10000
+    });
+}
 export {
     handleLoginApi,
     verifyPaymentStatus,
@@ -216,5 +221,6 @@ export {
     getDetailHandbookByIdService,
     deleteHandbookService,
     editHandbookService,
-    getHistoryAppointmentByIdService
+    getHistoryAppointmentByIdService,
+    searchGlobal
 }

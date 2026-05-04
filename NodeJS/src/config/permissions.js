@@ -16,6 +16,7 @@ export const PUBLIC_PATHS = [
     '/api/refresh-token',
     '/api/logout',
     '/api/allcode',
+    '/api/search',
 
     // Xem thông tin (Trang chủ & Chi tiết)
     '/api/top-doctor-home',

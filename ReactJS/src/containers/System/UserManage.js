@@ -55,8 +55,10 @@ class UserManage extends Component {
             previewImgURL: '',
 
             currentPage: 1,
-            pageSize: 8
+            pageSize: 8,
+            quickEditUser: null
         };
+        this.fileInputRef = React.createRef();
     }
 
     async componentDidMount() {
@@ -113,6 +115,46 @@ class UserManage extends Component {
                 avatar: base64
             });
         }
+    }
+
+    handleQuickChangeAvatar = (user) => {
+        this.setState({ quickEditUser: user }, () => {
+            if (this.fileInputRef && this.fileInputRef.current) {
+                this.fileInputRef.current.click();
+            }
+        });
+    }
+
+    handleQuickUploadImage = async (event) => {
+        let { quickEditUser } = this.state;
+        let file = event.target.files[0];
+        if (file && quickEditUser) {
+            let base64 = await CommonUtils.getBase64(file);
+            let userData = {
+                id: quickEditUser.id,
+                email: quickEditUser.email,
+                password: 'HIDDEN_PASSWORD',
+                firstName: quickEditUser.firstName,
+                lastName: quickEditUser.lastName,
+                address: quickEditUser.address,
+                phonenumber: quickEditUser.phonenumber,
+                gender: quickEditUser.gender,
+                roleId: quickEditUser.roleId,
+                positionId: quickEditUser.positionId,
+                avatar: base64
+            };
+            try {
+                let res = await editUserService(userData);
+                if (res && res.errCode === 0) {
+                    await this.fetchAllData();
+                } else {
+                    alert(res.errMessage);
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        event.target.value = ''; // reset file input
     }
 
     resetFormState = () => {
@@ -227,6 +269,8 @@ class UserManage extends Component {
                         <FormattedMessage id="manage-user.add-user" defaultMessage="Thêm tài khoản" />
                     </button>
                 </div>
+                
+                <input type="file" hidden ref={this.fileInputRef} onChange={this.handleQuickUploadImage} accept="image/*" />
 
                 <div className="table-container">
                     <table>
@@ -247,7 +291,7 @@ class UserManage extends Component {
                                         <tr key={index}>
                                             <td>
                                                 <div className="user-info-cell">
-                                                    <div className="avatar-mini">
+                                                    <div className="avatar-mini" onClick={() => this.handleQuickChangeAvatar(item)} style={{ cursor: 'pointer' }} title="Change Avatar">
                                                         <img src={imageBase64 || 'https://static.vecteezy.com/system/resources/previews/026/625/600/non_2x/person-icon-symbol-design-illustration-vector.jpg'} alt="avatar" />
                                                     </div>
                                                     <div className="user-name-block">

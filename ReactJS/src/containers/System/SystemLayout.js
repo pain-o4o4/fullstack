@@ -9,6 +9,8 @@ import translate from '../../assets/images/translate.svg';
 import './SystemLayout.scss';
 import icon_icons from '../../assets/images/icon_icons.svg';
 import { CommonUtils } from '../../utils';
+import { editUserService, getAllUsers } from '../../services/userService';
+import { toast } from 'react-toastify';
 const decodeBase64Buffer = (imgObj) => {
     if (imgObj && imgObj.data) {
         let bytes = new Uint8Array(imgObj.data);
@@ -60,12 +62,39 @@ class SystemLayout extends Component {
         let file = data[0];
         if (file) {
             let base64 = await CommonUtils.getBase64(file);
-            let objectUrl = URL.createObjectURL(file);
-            this.setState({
-                previewImgURL: objectUrl,
+            let { userInfo } = this.props;
+
+            if (!userInfo) return;
+
+            let userData = {
+                id: userInfo.id,
+                email: userInfo.email,
+                password: 'HIDDEN_PASSWORD',
+                firstName: userInfo.firstName,
+                lastName: userInfo.lastName,
+                address: userInfo.address,
+                phonenumber: userInfo.phonenumber,
+                gender: userInfo.gender || 'M', // Fallback an toàn phòng khi chưa logout/login lại
+                roleId: userInfo.roleId || 'R1', // Fallback
+                positionId: userInfo.positionId || 'P0', // Fallback
                 avatar: base64
-            });
+            };
+
+            try {
+                let res = await editUserService(userData);
+                if (res && res.errCode === 0) {
+                    let updatedUserInfo = { ...userInfo, image: base64, gender: userData.gender, positionId: userData.positionId };
+                    this.props.updateUserSuccess(updatedUserInfo);
+                    toast.success("Cập nhật ảnh đại diện thành công!");
+                } else {
+                    toast.error(res.errMessage || "Lỗi cập nhật ảnh đại diện!");
+                }
+            } catch (error) {
+                console.log(error);
+                toast.error("Lỗi cập nhật ảnh đại diện!");
+            }
         }
+        event.target.value = ''; // Reset input
     }
     changeLanguage = () => {
         let { language } = this.props;
@@ -105,11 +134,13 @@ class SystemLayout extends Component {
                         {/* Sidebar */}
                         <aside className="sidebar">
                             <div className="user-profile-summary">
-                                <div className="avatar-circle"
-                                // onClick={() => this.('')}
-                                >
-                                    <img src={userInfo?.image || icon_icons} alt="avatar" />
-                                </div>
+                                <label htmlFor="upload-sys-avatar" className="avatar-circle" style={{ cursor: 'pointer', position: 'relative' }}>
+                                    <img src={userInfo && userInfo.image ? decodeBase64Buffer(userInfo.image) : icon_icons} alt="avatar" />
+                                    <div className="avatar-edit-overlay">
+                                        <i className="fas fa-camera"></i>
+                                    </div>
+                                </label>
+                                <input type="file" id="upload-sys-avatar" hidden accept="image/*" onChange={this.handleOnChangeImage} />
                                 <h2 className="user-name">
                                     <FormattedMessage id="system-layout.welcome" />, {userInfo?.lastName} {userInfo?.firstName}
                                 </h2>
@@ -169,6 +200,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     processLogout: () => dispatch(actions.processLogout()),
     changeLanguageAppRedux: (language) => dispatch(actions.changeLanguageApp(language)),
+    updateUserSuccess: (userInfo) => dispatch(actions.updateUserSuccess(userInfo))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SystemLayout);
