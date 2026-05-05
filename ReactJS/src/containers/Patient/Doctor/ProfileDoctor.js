@@ -92,19 +92,13 @@ class ProfileDoctor extends Component {
                                                 .description}</span>
                                         )}
                                     
-                                    {/* Multi-Clinic/Specialty Display */}
+                                    {/* Single Clinic Display */}
                                     <div className="multi-infor">
-                                        {dataProfile && dataProfile.doctorClinicSpecialtyData && dataProfile.doctorClinicSpecialtyData.length > 0 && (
-                                            <>
-                                                <div className="clinics">
-                                                    <i className="fas fa-hospital-alt"></i>
-                                                    {_.uniqBy(dataProfile.doctorClinicSpecialtyData.filter(i => i.clinicData), 'clinicId')
-                                                        .map((item, index) => (
-                                                            <span key={index} className="clinic-tag">{item.clinicData.name}{index < dataProfile.doctorClinicSpecialtyData.length - 1 ? ', ' : ''}</span>
-                                                        ))
-                                                    }
-                                                </div>
-                                            </>
+                                        {dataProfile && dataProfile.doctorinforData && dataProfile.doctorinforData.clinicData && (
+                                            <div className="clinics">
+                                                <i className="fas fa-hospital-alt"></i>
+                                                <span className="clinic-tag">{dataProfile.doctorinforData.clinicData.name}</span>
+                                            </div>
                                         )}
                                     </div>
                                 </>

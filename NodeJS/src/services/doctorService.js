@@ -109,6 +109,57 @@ let postInforDoctorService = (data) => {
                 });
             }
 
+            // === BLOCK: Kiểm tra xem có đổi Chuyên khoa / Bệnh viện không ===
+            let existingInfor = await db.Doctor_infor.findOne({
+                where: { doctorId: data.doctorId },
+                raw: true
+            });
+
+            const isChangingClinic = existingInfor && String(existingInfor.clinicId) !== String(data.clinicId);
+            const isChangingSpecialty = existingInfor && String(existingInfor.specialtyId) !== String(data.specialtyId);
+
+            if (isChangingClinic || isChangingSpecialty) {
+                // Lấy ngày hôm nay theo định dạng DD/MM/YYYY (đồng bộ với format Schedule)
+                const todayStr = moment().startOf('day').format('DD/MM/YYYY');
+
+                // Quét xem có Lịch hẹn nào TRONG TƯƠNG LAI với trạng thái S1 hoặc S2 không
+                const activeBookings = await db.Booking.findAll({
+                    where: {
+                        doctorId: data.doctorId,
+                        statusId: { [Op.in]: ['S1', 'S2'] }
+                    },
+                    raw: true
+                });
+
+                // Lọc ra những booking có ngày >= hôm nay
+                const futureActiveBookings = activeBookings.filter(b => {
+                    const bookingDate = b.date.includes('/') 
+                        ? moment(b.date, 'DD/MM/YYYY') 
+                        : moment(+b.date);
+                    return bookingDate.isSameOrAfter(moment().startOf('day'));
+                });
+
+                if (futureActiveBookings.length > 0) {
+                    return resolve({
+                        errCode: 3,
+                        errMessage: `Không thể thay đổi ${isChangingClinic ? 'Bệnh viện' : 'Chuyên khoa'} vì bác sĩ đang có ${futureActiveBookings.length} lịch hẹn bệnh nhân chờ khám. Vui lòng hoàn thành hoặc hủy các lịch hẹn này trước!`
+                    });
+                }
+
+                // Nếu không có active booking → Xóa các lịch khám rỗng trong tương lai
+                // để tránh lịch cũ trỏ về bệnh viện không còn phù hợp
+                if (isChangingClinic) {
+                    await db.Schedule.destroy({
+                        where: {
+                            doctorId: data.doctorId,
+                            date: { [Op.gte]: todayStr },
+                            currentNumber: { [Op.or]: [0, null] }
+                        }
+                    });
+                }
+            }
+            // === END BLOCK ===
+
             let doctorMarkdown = await db.Markdown.findOne({
                 where: { doctorId: data.doctorId },
                 raw: false
@@ -156,52 +207,6 @@ let postInforDoctorService = (data) => {
                     clinicId: data.clinicId,
                     count: data.maxNumber
                 });
-            }
-
-            // --- SYNC MANY-TO-MANY RELATIONSHIPS ---
-            let { specialtyIds, clinicIds } = data;
-            if (specialtyIds || clinicIds) {
-                // 1. Clear old associations
-                await db.doctor_clinic_specialty.destroy({
-                    where: { doctorId: data.doctorId }
-                });
-
-                // 2. Build new associations
-                // Strategy: Save all selected specialties and all selected clinics.
-                // We use combinations to ensure the doctor appears in all relevant searches.
-                let junctionData = [];
-                
-                // If we have specialties, link them to the primary clinic (or null)
-                if (specialtyIds && specialtyIds.length > 0) {
-                    specialtyIds.forEach(specId => {
-                        junctionData.push({
-                            doctorId: data.doctorId,
-                            specialtyId: specId,
-                            clinicId: data.clinicId || null
-                        });
-                    });
-                }
-
-                // If we have clinics, link them to the primary specialty (or null)
-                if (clinicIds && clinicIds.length > 0) {
-                    clinicIds.forEach(clinId => {
-                        // Avoid duplicates if primary specialty + primary clinic was already added
-                        if (!(clinId === data.clinicId && specialtyIds && specialtyIds.includes(data.specialtyId))) {
-                            junctionData.push({
-                                doctorId: data.doctorId,
-                                specialtyId: data.specialtyId || null,
-                                clinicId: clinId
-                            });
-                        }
-                    });
-                }
-
-                // Remove duplicates from junctionData just in case
-                junctionData = _.uniqWith(junctionData, _.isEqual);
-
-                if (junctionData.length > 0) {
-                    await db.doctor_clinic_specialty.bulkCreate(junctionData);
-                }
             }
 
             resolve({
@@ -255,15 +260,6 @@ let getDetailDoctorByIdService = (idInput) => {
                             { model: db.Clinic, as: "clinicData", attributes: ["name", "address"] },
                         ]
                     },
-                    // {
-                    //     model: db.doctor_clinic_specialty,
-                    //     as: 'doctorClinicSpecialtyData',
-                    //     attributes: ['specialtyId', 'clinicId'],
-                    //     include: [
-                    //         { model: db.Specialty, as: 'specialtyData', attributes: ['name', 'id'] },
-                    //         { model: db.Clinic, as: 'clinicData', attributes: ['name', 'id'] },
-                    //     ]
-                    // }
                 ],
                 raw: false,
                 nest: true,
@@ -293,23 +289,27 @@ let bulkCreateScheduleService = (data) => {
             }
 
             let schedule = data.arrSchedule;
-            let formattedDate = moment(+data.date).startOf('day').format('DD/MM/YYYY');
+
+            // === AUTO-FETCH: Lấy clinicId và maxNumber từ Doctor_infor ===
+            // Frontend không cần gửi clinicId nữa, Backend tự lấy
+            let doctorInfor = await db.Doctor_infor.findOne({
+                where: { doctorId: data.doctorId },
+                attributes: ['count', 'clinicId']
+            });
+
+            const autoClinicId = doctorInfor ? doctorInfor.clinicId : null;
+            const customMaxNumber = (doctorInfor && doctorInfor.count) ? doctorInfor.count : MAX_NUMBER_SCHEDULE;
+            // === END AUTO-FETCH ===
 
             if (schedule && schedule.length > 0) {
-                // Lấy thông tin maxNumber của bác sĩ từ bảng Doctor_infor
-                let doctorInfor = await db.Doctor_infor.findOne({
-                    where: { doctorId: data.doctorId },
-                    attributes: ['count']
-                });
-
-                let customMaxNumber = (doctorInfor && doctorInfor.count) ? doctorInfor.count : MAX_NUMBER_SCHEDULE;
-
                 schedule = schedule.map(item => {
                     item.maxNumber = customMaxNumber;
                     item.date = moment(+item.date).startOf('day').format('DD/MM/YYYY');
+                    item.clinicId = autoClinicId; // Gán bệnh viện cố định của bác sĩ
                     return item;
                 });
             }
+
             // 1. Get all unique dates from the schedule array
             let allDates = _.uniq(schedule.map(item => item.date));
 
@@ -319,9 +319,8 @@ let bulkCreateScheduleService = (data) => {
                 attributes: ['id', 'timeType', 'date', 'doctorId', 'maxNumber', 'clinicId', 'currentNumber']
             });
 
-            // 3. Identify slots to DELETE, UPDATE, or CREATE
-            // We should delete slots that are in 'existing' but not in the new 'schedule'
-            // UNLESS they already have bookings (currentNumber > 0)
+            // 3. Delete slots that are in 'existing' but NOT in the new 'schedule'
+            // and have no bookings (safe to remove)
             let toDelete = existing.filter(ex => {
                 return !schedule.some(s => s.timeType === ex.timeType && s.date === ex.date) && (!ex.currentNumber || ex.currentNumber === 0);
             });
@@ -332,33 +331,13 @@ let bulkCreateScheduleService = (data) => {
                 });
             }
 
-            // 4. Force all schedules (new and remaining) on these dates to the same clinicId
-            // This enforces the "One Clinic Per Day" rule
+            // 4. BulkCreate / Update the submitted schedule slots
             if (schedule && schedule.length > 0) {
-                // All items in schedule array have the same clinicId from the UI dropdown
-                const targetClinicId = schedule[0].clinicId;
-
-                // CRITICAL CHECK: If any existing schedule on these dates has bookings (currentNumber > 0)
-                // and the clinicId is DIFFERENT from targetClinicId, we must BLOCK this action.
-                let conflictingBooking = existing.find(ex => ex.currentNumber > 0 && ex.clinicId !== targetClinicId);
-                if (conflictingBooking) {
-                    return resolve({
-                        errCode: 2,
-                        errMessage: `Không thể đổi phòng khám vì đã có bệnh nhân đặt lịch tại bệnh viện cũ trong ngày này!`
-                    });
-                }
-
-                // Update ALL existing schedules for this doctor on these dates to the targetClinicId
-                await db.Schedule.update(
-                    { clinicId: targetClinicId },
-                    { where: { doctorId: data.doctorId, date: { [Op.in]: allDates } } }
-                );
-
-                // Now use bulkCreate with updateOnDuplicate for the rest
                 await db.Schedule.bulkCreate(schedule, {
                     updateOnDuplicate: ['maxNumber', 'clinicId']
                 });
             }
+
             resolve({
                 errCode: 0,
                 errMessage: 'Save infor schedule successfully!',
@@ -510,18 +489,10 @@ let getProfileDoctorById = (doctorId) => {
                                 { model: db.Allcode, as: "priceTypeData", attributes: ["valueEn", "valueVi"] },
                                 { model: db.Allcode, as: "provinceTypeData", attributes: ["valueEn", "valueVi"] },
                                 { model: db.Allcode, as: "paymentTypeData", attributes: ["valueEn", "valueVi"] },
+                                { model: db.Clinic, as: "clinicData", attributes: ["name", "address"] },
                             ]
 
                         }
-                        // {
-                        //     model: db.doctor_clinic_specialty,
-                        //     as: 'doctorClinicSpecialtyData',
-                        //     attributes: ['specialtyId', 'clinicId'],
-                        //     include: [
-                        //         { model: db.Specialty, as: 'specialtyData', attributes: ['name', 'id'] },
-                        //         { model: db.Clinic, as: 'clinicData', attributes: ['name', 'id'] },
-                        //     ]
-                        // }
                     ],
                     raw: false,
                     nest: true,

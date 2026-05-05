@@ -55,7 +55,10 @@ class AllHandbook extends Component {
 
     processData = (apiData) => {
         if (!apiData) return;
-        const formatted = apiData.map(item => ({
+        const filteredData = apiData.filter(item =>
+            item.name !== 'Chính sách bảo mật' && item.name !== 'Điều khoản sử dụng'
+        );
+        const formatted = filteredData.map(item => ({
             ...item,
             date: formatDate(item.createdAt, item.updatedAt),
             description: item.descriptionMarkdown

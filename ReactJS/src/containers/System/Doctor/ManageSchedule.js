@@ -19,15 +19,12 @@ class ManageSchedule extends Component {
             currentDate: '',
             listAllScheduleTime: [],
             resultBulk: [],
-            listClinics: [],
-            selectedClinic: null
         };
     }
 
     async componentDidMount() {
         this.props.fetchAllDoctors();
         this.props.fetchAllScheduleTime();
-        this.props.fetchAllClinics();
 
         // Lock doctor immediately if user is R2
         let { userInfo, language } = this.props;
@@ -53,11 +50,6 @@ class ManageSchedule extends Component {
         if (prevProps.allScheduleTime !== this.props.allScheduleTime) {
             let dataSelect = this.buildDataInput(this.props.allScheduleTime, 'TIME');
             this.setState({ listAllScheduleTime: dataSelect });
-        }
-
-        if (prevProps.allClinics !== this.props.allClinics) {
-            let dataSelect = this.buildDataInput(this.props.allClinics, 'CLINIC');
-            this.setState({ listClinics: dataSelect });
         }
 
         if (prevProps.language !== this.props.language) {
@@ -106,22 +98,7 @@ class ManageSchedule extends Component {
                         return { ...item, isSelected: isBooked };
                     });
 
-                    let newState = {
-                        listAllScheduleTime: updatedScheduleTime
-                    };
-
-                    // Auto-set the clinic if it exists in DB
-                    if (existingSchedules && existingSchedules.length > 0) {
-                        let firstClinic = existingSchedules[0].clinicData;
-                        if (firstClinic) {
-                            newState.selectedClinic = {
-                                label: firstClinic.name,
-                                value: firstClinic.id
-                            };
-                        }
-                    }
-
-                    this.setState(newState);
+                    this.setState({ listAllScheduleTime: updatedScheduleTime });
                 }
             } else {
                 toast.error("Không thể tải lịch trình bác sĩ!");
@@ -149,10 +126,7 @@ class ManageSchedule extends Component {
                     object.value = item.keyMap;
                     object.isSelected = false;
                 }
-                if (type === 'CLINIC') {
-                    object.label = item.name;
-                    object.value = item.id;
-                }
+
                 result.push(object);
             });
         }
@@ -167,9 +141,6 @@ class ManageSchedule extends Component {
         this.setState({ currentDate: date[0] });
     }
 
-    handleChangeClinic = (selectedClinic) => {
-        this.setState({ selectedClinic: selectedClinic });
-    }
 
     handleClickBtnTime = (time) => {
         let { listAllScheduleTime } = this.state;
@@ -199,11 +170,6 @@ class ManageSchedule extends Component {
             return;
         }
 
-        if (!this.state.selectedClinic) {
-            toast.error('Vui lòng chọn Phòng khám!');
-            return;
-        }
-
         if (listAllScheduleTime && listAllScheduleTime.length > 0) {
             let schedule = listAllScheduleTime.filter(item => item.isSelected === true);
             if (schedule && schedule.length >= 0) {
@@ -213,7 +179,7 @@ class ManageSchedule extends Component {
                     object.doctorId = selectedOption.value;
                     object.date = formartedDate;
                     object.timeType = item.value;
-                    object.clinicId = this.state.selectedClinic.value;
+                    // clinicId is automatically assigned by the backend from Doctor_infor
                     result.push(object);
                 });
             }
@@ -278,16 +244,6 @@ class ManageSchedule extends Component {
                                     placeholder={language === LANGUAGES.VI ? 'Chọn ngày...' : 'Select date...'}
                                 />
                             </div>
-                            <div className="input-group-apple">
-                                <label><FormattedMessage id='manage-schedule.choose-clinic' defaultMessage="Chọn Phòng Khám" /></label>
-                                <Select
-                                    value={this.state.selectedClinic}
-                                    onChange={this.handleChangeClinic}
-                                    options={this.state.listClinics}
-                                    placeholder={language === LANGUAGES.VI ? 'Chọn phòng khám...' : 'Select clinic...'}
-                                    classNamePrefix="react-select"
-                                />
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -337,7 +293,6 @@ const mapStateToProps = state => {
         language: state.app.language,
         allDoctors: state.admin.allDoctors,
         allScheduleTime: state.admin.allScheduleTime,
-        allClinics: state.admin.allClinics,
         userInfo: state.user.userInfo
     };
 };
@@ -346,7 +301,6 @@ const mapDispatchToProps = dispatch => {
     return {
         fetchAllDoctors: () => dispatch(action.fetchAllDoctors()),
         fetchAllScheduleTime: () => dispatch(action.fetchAllScheduleTime()),
-        fetchAllClinics: () => dispatch(action.fecthAllClinics()),
     };
 };
 

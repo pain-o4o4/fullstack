@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { FormattedMessage } from 'react-intl';
+import { Link } from 'react-router-dom';
+import { path } from '../../utils';
 import './HomeFooter.scss';
 
 class HomeFooter extends Component {
@@ -19,7 +21,7 @@ class HomeFooter extends Component {
                     <div className="hm-footer-col">
                         <div className="footer-title"><FormattedMessage id="homefooter.address" /></div>
                         <div className="footer-text">28 Thành Thái, Cầu Giấy, Hà Nội</div>
-                        <div className="footer-text">Tel: 024-7301-2468</div>
+                        <div className="footer-text">Tel: 096-6226-404</div>
                     </div>
                     <div className="hm-footer-col">
                         <div className="footer-title"><FormattedMessage id="homefooter.contact" /></div>
@@ -40,8 +42,8 @@ class HomeFooter extends Component {
                         <FormattedMessage id="homefooter.copyright" />
                     </div>
                     <div className="footer-legal">
-                        <a href="#!"><FormattedMessage id="homefooter.privacy" /></a>
-                        <a href="#!"><FormattedMessage id="homefooter.terms" /></a>
+                        <Link to={path.PRIVACY_POLICY}><FormattedMessage id="homefooter.privacy" defaultMessage="Chính sách bảo mật" /></Link>
+                        <Link to={path.TERMS_OF_USE}><FormattedMessage id="homefooter.terms" defaultMessage="Điều khoản sử dụng" /></Link>
                     </div>
                 </div>
             </footer>

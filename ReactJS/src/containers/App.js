@@ -42,6 +42,8 @@ import DetailSchedulePatient from './HomePage/SubMenuForUser/DetailSchedulePatie
 import Payment from '../containers/Patient/Doctor/Modal/Payment';
 import AISupportPage from './HomePage/AISupportPage';
 import ChatBot from './ChatBot/ChatBot';
+import PrivacyPolicy from './HomePage/Legal/PrivacyPolicy';
+import TermsOfUse from './HomePage/Legal/TermsOfUse';
 
 class App extends Component {
     state = {
@@ -127,6 +129,8 @@ class App extends Component {
                                     <Route path={path.ALL_HANDBOOK} element={<AllHandbook />} />
                                     <Route path={path.SELECT_SERVICE} element={<SelectService />} />
                                     <Route path={path.AI_SUPPORT} element={<UserIsAuthenticated><AISupportPage /></UserIsAuthenticated>} />
+                                    <Route path={path.PRIVACY_POLICY} element={<PrivacyPolicy />} />
+                                    <Route path={path.TERMS_OF_USE} element={<TermsOfUse />} />
 
 
                                 </Routes>

@@ -14,8 +14,11 @@ class HandBook extends Component {
     constructor(props) {
         super(props);
         this.scrollRef = React.createRef();
+        let handbooks = this.props.allHandbooks || [];
         this.state = {
-            dataHandbook: this.props.allHandbooks || []
+            dataHandbook: handbooks.filter(item =>
+                item.name !== 'Chính sách bảo mật' && item.name !== 'Điều khoản sử dụng'
+            )
         }
     }
 
@@ -39,8 +42,11 @@ class HandBook extends Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (prevProps.allHandbooks !== this.props.allHandbooks) {
+            let filteredData = (this.props.allHandbooks || []).filter(item =>
+                item.name !== 'Chính sách bảo mật' && item.name !== 'Điều khoản sử dụng'
+            );
             this.setState({
-                dataHandbook: this.props.allHandbooks
+                dataHandbook: filteredData
             })
         }
     }

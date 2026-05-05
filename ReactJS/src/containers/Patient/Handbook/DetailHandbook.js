@@ -125,7 +125,11 @@ class DetailHandbook extends Component {
                                 <div className="related-list">
                                     {this.props.allHandbooks && this.props.allHandbooks.length > 0 &&
                                         this.props.allHandbooks
-                                            .filter(item => item.id !== dataDetailHandbook.id)
+                                            .filter(item => 
+                                                item.id !== dataDetailHandbook.id && 
+                                                item.name !== 'Chính sách bảo mật' && 
+                                                item.name !== 'Điều khoản sử dụng'
+                                            )
                                             .slice(0, 5)
                                             .map((item, index) => {
                                                 return (
@@ -155,7 +159,11 @@ class DetailHandbook extends Component {
                         <div className="suggested-grid">
                             {this.props.allHandbooks && this.props.allHandbooks.length > 0 &&
                                 this.props.allHandbooks
-                                    .filter(item => item.id !== dataDetailHandbook.id)
+                                    .filter(item => 
+                                        item.id !== dataDetailHandbook.id && 
+                                        item.name !== 'Chính sách bảo mật' && 
+                                        item.name !== 'Điều khoản sử dụng'
+                                    )
                                     .sort(() => 0.5 - Math.random()) // Random bài viết
                                     .slice(0, 4)
                                     .map((item, index) => {

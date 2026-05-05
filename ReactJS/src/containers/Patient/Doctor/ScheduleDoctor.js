@@ -10,6 +10,7 @@ import calendar_icon from '../../../assets/images/calendar_icon.svg'
 import { FormattedMessage } from 'react-intl';
 import BookingModal from './Modal/BookingModal';
 import _ from 'lodash';
+import { toast } from 'react-toastify';
 
 class ScheduleDoctor extends Component {
     constructor(props) {
@@ -106,6 +107,18 @@ class ScheduleDoctor extends Component {
         }
     }
     handleClickSheduleTime = (time) => {
+        let { userInfo, isLoggedIn, language } = this.props;
+        
+        // Chặn bác sĩ đặt lịch
+        if (isLoggedIn && userInfo && userInfo.roleId === 'R2') {
+            toast.warning(
+                language === 'vi' 
+                ? 'Bác sĩ không thể đặt lịch khám bệnh!' 
+                : 'Doctors cannot book appointments!'
+            );
+            return;
+        }
+
         this.setState({
             isTheModalOpen: true,
             dataTimeModal: time

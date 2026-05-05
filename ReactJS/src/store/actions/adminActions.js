@@ -274,18 +274,19 @@ export const saveDetailDoctor = (data) => {
                 dispatch({
                     type: actionTypes.POST_DETAIL_DOCTORS_SUCCESS,
                 });
-                toast.success('Update detail doctor succeed!');
+                toast.success('Cập nhật thông tin bác sĩ thành công!');
                 dispatch(fetchAllDoctors());
                 dispatch(fecthAllSpecialties())
             } else {
                 dispatch({
                     type: actionTypes.POST_DETAIL_DOCTORS_FAIL
                 });
-                toast.error('Update detail doctor fail!');
+                // Hiện thị đúng errMessage từ server (VD: thông báo chặn khi đổi Bệnh viện)
+                toast.error(res?.errMessage || 'Cập nhật thông tin bác sĩ thất bại!');
             }
         } catch (e) {
             console.error('saveDetailDoctors error:', e);
-            toast.error('Update detail doctor fail!');
+            toast.error('Cập nhật thông tin bác sĩ thất bại!');
             dispatch({
                 type: actionTypes.POST_DETAIL_DOCTORS_FAIL
             });

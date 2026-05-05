@@ -22,6 +22,8 @@ export const path = {
     ALL_HANDBOOK: '/all-handbook',
     SELECT_SERVICE: '/select-service',
     AI_SUPPORT: '/ai-support',
+    PRIVACY_POLICY: '/privacy-policy',
+    TERMS_OF_USE: '/terms-of-use',
 
     SETTINGS: '/system/patient-profile',
     MY_BOOKING: '/patient/my-booking',
