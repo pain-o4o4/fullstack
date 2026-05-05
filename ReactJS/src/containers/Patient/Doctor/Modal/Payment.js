@@ -15,7 +15,8 @@ class Payment extends Component {
         this.state = {
             timeLeft: 900,
             bookingData: null,
-            isLoading: true
+            isLoading: true,
+            isProcessing: false // Thêm trạng thái xử lý thanh toán chống click đúp
         }
     }
 
@@ -182,9 +183,12 @@ class Payment extends Component {
     }
 
     handleConfirmPaid = async () => {
-        let { bookingData } = this.state;
+        let { bookingData, isProcessing } = this.state;
+        if (isProcessing) return; // Ngăn chặn tuyệt đối nếu đang xử lý
+        
         if (bookingData) {
             try {
+                this.setState({ isProcessing: true });
                 // Now calling postBookAppointment will actually get the PayOS link because record already exists
                 let res = await postBookAppointment(bookingData);
                 if (res && res.errCode === 0 && res.data && res.data.checkoutUrl) {
@@ -193,16 +197,18 @@ class Payment extends Component {
                     window.location.href = res.data.checkoutUrl;
                 } else {
                     toast.error(res.errMessage || "Error initializing payment!");
+                    this.setState({ isProcessing: false });
                 }
             } catch (e) {
                 console.log(e);
                 toast.error("Connection error!");
+                this.setState({ isProcessing: false });
             }
         }
     }
 
     render() {
-        let { timeLeft, bookingData, isLoading } = this.state;
+        let { timeLeft, bookingData, isLoading, isProcessing } = this.state;
         let { language } = this.props;
         let minutes = Math.floor(timeLeft / 60);
         let seconds = timeLeft % 60;
@@ -337,8 +343,20 @@ class Payment extends Component {
                                     <span className="total-amount-large">{bookingData?.priceId}</span>
                                     <span className="loan-info">Approx. {bookingData?.priceId} with 0% interest.</span>
                                 </div>
-                                <button className="btn-primary" onClick={this.handleConfirmPaid}>
-                                    <FormattedMessage id="payment-page.pay-now" />
+                                <button 
+                                    className="btn-primary" 
+                                    onClick={this.handleConfirmPaid}
+                                    disabled={isProcessing}
+                                    style={{
+                                        opacity: isProcessing ? 0.7 : 1,
+                                        cursor: isProcessing ? 'not-allowed' : 'pointer'
+                                    }}
+                                >
+                                    {isProcessing ? (
+                                        language === LANGUAGES.VI ? "Đang chuyển hướng..." : "Redirecting..."
+                                    ) : (
+                                        <FormattedMessage id="payment-page.pay-now" />
+                                    )}
                                 </button>
                             </div>
                         </div>

@@ -10,7 +10,12 @@ const searchAll = async (keyword) => {
                     roleId: 'R2', // Chỉ tìm trong Bác sĩ
                     [Op.or]: [
                         { firstName: { [Op.like]: `%${keyword}%` } },
-                        { lastName: { [Op.like]: `%${keyword}%` } }
+                        { lastName: { [Op.like]: `%${keyword}%` } },
+                        db.sequelize.where(
+                            db.sequelize.fn('concat', db.sequelize.col('lastName'), ' ', db.sequelize.col('firstName')),
+                            'LIKE',
+                            `%${keyword}%`
+                        )
                     ]
                 },
                 attributes: ['id', 'firstName', 'lastName', 'positionId', 'image'],

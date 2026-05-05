@@ -1,218 +1,246 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useDebouncedCallback } from 'use-debounce';
-import axios from 'axios'; // We use the instance if it exported 'isCancel', but axios.isCancel is on default axios
+import React, { Component, createRef } from 'react';
 import { searchGlobal } from '../../services/userService';
 import './GlobalSearch.scss';
-import { FormattedMessage } from 'react-intl';
-import { useNavigate } from 'react-router-dom';
+import { withRouter } from '../Navigator';
 
-const GlobalSearch = ({ isOpen, onClose }) => {
-    const navigate = useNavigate();
-    const [keyword, setKeyword] = useState('');
-    const [results, setResults] = useState({ doctors: [], clinics: [], specialties: [], handbooks: [] });
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState('');
+class GlobalSearch extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            keyword: '',
+            results: { doctors: [], clinics: [], specialties: [], handbooks: [] },
+            isLoading: false,
+            error: '',
+            searchedKeyword: '' // Lưu từ khóa thực tế đã gọi API xong
+        };
+        this.searchRef = createRef();
+        this.inputRef = createRef();
+        this.controllerRef = null;
+        this.debounceTimer = null;
+    }
 
-    const controllerRef = useRef(null);
-    const isComposingRef = useRef(false);
-    const searchRef = useRef(null);
-    const inputRef = useRef(null);
+    // ─── Lifecycle ─────────────────────────────────────────────────────────────
 
-    // Focus input when modal opens
-    useEffect(() => {
-        if (isOpen && inputRef.current) {
-            inputRef.current.focus();
-            document.body.style.overflow = 'hidden'; // Prevent scrolling
-        } else {
+    componentDidMount() {
+        document.addEventListener('mousedown', this.handleClickOutside);
+        document.addEventListener('keydown', this.handleKeyDown);
+    }
+
+    componentDidUpdate(prevProps) {
+        // Focus input khi mở
+        if (!prevProps.isOpen && this.props.isOpen) {
+            if (this.inputRef.current) this.inputRef.current.focus();
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Restore scroll khi đóng
+        if (prevProps.isOpen && !this.props.isOpen) {
             document.body.style.overflow = 'unset';
+            this.setState({
+                keyword: '',
+                results: { doctors: [], clinics: [], specialties: [], handbooks: [] },
+                isLoading: false,
+                error: '',
+                searchedKeyword: ''
+            });
         }
+    }
 
-        return () => { document.body.style.overflow = 'unset'; };
-    }, [isOpen]);
+    componentWillUnmount() {
+        document.removeEventListener('mousedown', this.handleClickOutside);
+        document.removeEventListener('keydown', this.handleKeyDown);
+        document.body.style.overflow = 'unset';
+        if (this.controllerRef) this.controllerRef.abort();
+        if (this.debounceTimer) clearTimeout(this.debounceTimer);
+    }
 
-    // Click outside to close
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (searchRef.current && !searchRef.current.contains(event.target)) {
-                onClose();
-            }
-        };
-        const handleKeyDown = (event) => {
-            if (event.key === 'Escape') {
-                onClose();
-            }
-        };
+    // ─── Event Handlers ────────────────────────────────────────────────────────
 
-        if (isOpen) {
-            document.addEventListener('mousedown', handleClickOutside);
-            document.addEventListener('keydown', handleKeyDown);
+    handleClickOutside = (event) => {
+        if (this.searchRef.current && !this.searchRef.current.contains(event.target)) {
+            this.props.onClose();
         }
+    };
 
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-            document.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [isOpen, onClose]);
+    handleKeyDown = (event) => {
+        if (event.key === 'Escape') this.props.onClose();
+    };
 
-    // Cleanup AbortController on unmount
-    useEffect(() => {
-        return () => {
-            if (controllerRef.current) controllerRef.current.abort();
-        };
-    }, []);
+    onChangeInput = (e) => {
+        const value = e.target.value;
+        this.setState({ keyword: value });
 
-    const handleSearch = useDebouncedCallback(async (kw) => {
+        if (value.trim().length >= 2) this.setState({ isLoading: true });
+        this.runDebouncedSearch(value);
+    };
+
+    runDebouncedSearch = (value) => {
+        if (this.debounceTimer) clearTimeout(this.debounceTimer);
+        this.debounceTimer = setTimeout(() => {
+            this.handleSearch(value);
+        }, 300);
+    };
+
+    handleSearch = async (kw) => {
         const trimmedKeyword = kw.trim();
         if (trimmedKeyword.length < 2) {
-            setResults({ doctors: [], clinics: [], specialties: [], handbooks: [] });
-            setIsLoading(false);
+            this.setState({
+                results: { doctors: [], clinics: [], specialties: [], handbooks: [] },
+                isLoading: false,
+                searchedKeyword: ''
+            });
             return;
         }
 
-        if (controllerRef.current) controllerRef.current.abort();
-        controllerRef.current = new AbortController();
+        if (this.controllerRef) this.controllerRef.abort();
+        this.controllerRef = new AbortController();
 
         try {
-            setIsLoading(true);
-            setError('');
-            const res = await searchGlobal(trimmedKeyword, controllerRef.current.signal);
+            this.setState({ isLoading: true, error: '' });
+            const res = await searchGlobal(trimmedKeyword, this.controllerRef.signal);
             if (res && res.errCode === 0) {
-                setResults(res.data);
+                // Lọc handbook ra khỏi kết quả tìm kiếm
+                const handbooks = (res.data.handbooks || []).filter(item =>
+                    item.name !== 'Chính sách bảo mật' && item.name !== 'Điều khoản sử dụng'
+                );
+                this.setState({
+                    results: { ...res.data, handbooks },
+                    isLoading: false,
+                    searchedKeyword: trimmedKeyword
+                });
             }
         } catch (err) {
-            if (axios.isCancel(err)) return; // Bị abort chủ động
-            setError('Có lỗi xảy ra, vui lòng thử lại.');
-        } finally {
-            setIsLoading(false);
-        }
-    }, 300);
-
-    const onChangeInput = (e) => {
-        const value = e.target.value;
-        setKeyword(value);
-        if (!isComposingRef.current) {
-            if (value.trim().length >= 2) setIsLoading(true);
-            handleSearch(value);
+            if (err && (err.name === 'AbortError' || err.name === 'CanceledError')) return;
+            this.setState({ error: 'Có lỗi xảy ra, vui lòng thử lại.', isLoading: false });
         }
     };
 
-    const handleResultClick = (type, item) => {
-        onClose();
+    handleResultClick = (type, item) => {
+        this.props.onClose();
         if (type === 'doctor') {
-            navigate(`/detail-doctor/${item.id}`);
+            this.props.navigate(`/detail-doctor/${item.id}`);
         } else if (type === 'clinic') {
-            navigate(`/detail-clinic/${item.id}`);
+            this.props.navigate(`/detail-clinic/${item.id}`);
         } else if (type === 'specialty') {
-            navigate(`/detail-specialty/${item.id}`);
+            this.props.navigate(`/detail-specialty/${item.id}`);
         } else if (type === 'handbook') {
-            navigate(`/detail-handbook/${item.id}`);
+            this.props.navigate(`/detail-handbook/${item.id}`);
         }
     };
 
-    if (!isOpen) return null;
+    // ─── Render ────────────────────────────────────────────────────────────────
 
-    const isEmpty = !isLoading && keyword.trim().length >= 2 &&
-        results.doctors.length === 0 &&
-        results.clinics.length === 0 &&
-        results.specialties.length === 0 &&
-        results.handbooks.length === 0;
+    render() {
+        const { isOpen, onClose } = this.props;
+        const { keyword, results, isLoading, error, searchedKeyword } = this.state;
 
-    return (
-        <div className="global-search-container" ref={searchRef}>
-            <div className="search-header">
-                <i className="fas fa-search search-icon"></i>
-                <input
-                    ref={inputRef}
-                    type="text"
-                    placeholder="Search by keyword or phrase"
-                    value={keyword}
-                    onChange={onChangeInput}
-                    onCompositionStart={() => isComposingRef.current = true}
-                    onCompositionEnd={(e) => {
-                        isComposingRef.current = false;
-                        onChangeInput(e);
-                    }}
-                />
-                {isLoading && <i className="fas fa-spinner fa-spin loading-icon"></i>}
-                <button className="close-btn" onClick={onClose}><i className="fas fa-times"></i></button>
-            </div>
+        if (!isOpen) return null;
 
-            {(error || isEmpty || (!isEmpty && keyword.trim().length >= 2)) && keyword.trim().length >= 2 && (
-                <div className="search-dropdown">
-                    <div className="search-results">
-                        {error && <div className="error-state">{error}</div>}
+        const isEmpty = !isLoading && 
+            keyword.trim().length >= 2 &&
+            keyword.trim().toLowerCase() === searchedKeyword.toLowerCase() && // Chỉ rỗng khi từ khóa gõ trùng khớp với từ khóa đã được API trả về kết quả
+            results.doctors.length === 0 &&
+            results.clinics.length === 0 &&
+            results.specialties.length === 0 &&
+            results.handbooks.length === 0;
 
-                        {isEmpty && !error && (
-                            <div className="empty-state">
-                                <i className="far fa-folder-open"></i>
-                                <p>Không tìm thấy kết quả cho "{keyword}"</p>
-                            </div>
-                        )}
+        const hasResults = !isEmpty && keyword.trim().length >= 2;
+        const showDropdown = keyword.trim().length >= 2;
 
-                        {!isEmpty && (
-                            <div className="results-list">
-                            {results.specialties.length > 0 && (
-                                <div className="result-group">
-                                    <div className="group-title">Chuyên khoa</div>
-                                    {results.specialties.map(item => (
-                                        <div key={item.id} className="result-item" onClick={() => handleResultClick('specialty', item)}>
-                                            <div className="item-img" style={{ backgroundImage: `url(${item.image})` }}></div>
-                                            <div className="item-info">
-                                                <div className="item-name">{item.name}</div>
-                                            </div>
-                                        </div>
-                                    ))}
+        return (
+            <div className="global-search-container" ref={this.searchRef}>
+                <div className="search-header">
+                    <i className="fas fa-search search-icon"></i>
+                    <input
+                        ref={this.inputRef}
+                        type="text"
+                        placeholder="Search by keyword or phrase"
+                        value={keyword}
+                        onChange={this.onChangeInput}
+                    />
+                    {isLoading && <i className="fas fa-spinner fa-spin loading-icon"></i>}
+                    <button className="close-btn" onClick={onClose}>
+                        <i className="fas fa-times"></i>
+                    </button>
+                </div>
+
+                {showDropdown && (
+                    <div className="search-dropdown">
+                        <div className="search-results">
+                            {error && <div className="error-state">{error}</div>}
+
+                            {isEmpty && !error && (
+                                <div className="empty-state">
+                                    <i className="far fa-folder-open"></i>
+                                    <p>Không tìm thấy kết quả cho "{keyword}"</p>
                                 </div>
                             )}
 
-                            {results.clinics.length > 0 && (
-                                <div className="result-group">
-                                    <div className="group-title">Phòng khám</div>
-                                    {results.clinics.map(item => (
-                                        <div key={item.id} className="result-item" onClick={() => handleResultClick('clinic', item)}>
-                                            <div className="item-img" style={{ backgroundImage: `url(${item.image})` }}></div>
-                                            <div className="item-info">
-                                                <div className="item-name">{item.name}</div>
-                                            </div>
+                            {hasResults && (
+                                <div className="results-list">
+                                    {results.specialties.length > 0 && (
+                                        <div className="result-group">
+                                            <div className="group-title">Chuyên khoa</div>
+                                            {results.specialties.map(item => (
+                                                <div key={item.id} className="result-item" onClick={() => this.handleResultClick('specialty', item)}>
+                                                    <div className="item-img" style={{ backgroundImage: `url(${item.image})` }}></div>
+                                                    <div className="item-info">
+                                                        <div className="item-name">{item.name}</div>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
-                                    ))}
-                                </div>
-                            )}
+                                    )}
 
-                            {results.doctors.length > 0 && (
-                                <div className="result-group">
-                                    <div className="group-title">Bác sĩ</div>
-                                    {results.doctors.map(item => (
-                                        <div key={item.id} className="result-item" onClick={() => handleResultClick('doctor', item)}>
-                                            <div className="item-img doctor-img" style={{ backgroundImage: `url(${item.image})` }}></div>
-                                            <div className="item-info">
-                                                <div className="item-name">{item.lastName} {item.firstName}</div>
-                                            </div>
+                                    {results.clinics.length > 0 && (
+                                        <div className="result-group">
+                                            <div className="group-title">Bệnh viện</div>
+                                            {results.clinics.map(item => (
+                                                <div key={item.id} className="result-item" onClick={() => this.handleResultClick('clinic', item)}>
+                                                    <div className="item-img" style={{ backgroundImage: `url(${item.image})` }}></div>
+                                                    <div className="item-info">
+                                                        <div className="item-name">{item.name}</div>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
-                                    ))}
-                                </div>
-                            )}
+                                    )}
 
-                            {results.handbooks.length > 0 && (
-                                <div className="result-group">
-                                    <div className="group-title">Cẩm nang</div>
-                                    {results.handbooks.map(item => (
-                                        <div key={item.id} className="result-item" onClick={() => handleResultClick('handbook', item)}>
-                                            <div className="item-img" style={{ backgroundImage: `url(${item.image})` }}></div>
-                                            <div className="item-info">
-                                                <div className="item-name">{item.name}</div>
-                                            </div>
+                                    {results.doctors.length > 0 && (
+                                        <div className="result-group">
+                                            <div className="group-title">Bác sĩ</div>
+                                            {results.doctors.map(item => (
+                                                <div key={item.id} className="result-item" onClick={() => this.handleResultClick('doctor', item)}>
+                                                    <div className="item-img doctor-img" style={{ backgroundImage: `url(${item.image})` }}></div>
+                                                    <div className="item-info">
+                                                        <div className="item-name">{item.lastName} {item.firstName}</div>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
-                                    ))}
+                                    )}
+
+                                    {results.handbooks.length > 0 && (
+                                        <div className="result-group">
+                                            <div className="group-title">Cẩm nang</div>
+                                            {results.handbooks.map(item => (
+                                                <div key={item.id} className="result-item" onClick={() => this.handleResultClick('handbook', item)}>
+                                                    <div className="item-img" style={{ backgroundImage: `url(${item.image})` }}></div>
+                                                    <div className="item-info">
+                                                        <div className="item-name">{item.name}</div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>
-                    )}
                     </div>
-                </div>
-            )}
-        </div>
-    );
-};
+                )}
+            </div>
+        );
+    }
+}
 
-export default GlobalSearch;
+export default withRouter(GlobalSearch);
