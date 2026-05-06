@@ -91,12 +91,12 @@ class ProfileDoctor extends Component {
                                             <span>{dataProfile.markdownData
                                                 .description}</span>
                                         )}
-                                    
+
                                     {/* Single Clinic Display */}
                                     <div className="multi-infor">
                                         {dataProfile && dataProfile.doctorinforData && dataProfile.doctorinforData.clinicData && (
                                             <div className="clinics">
-                                                <i className="fas fa-hospital-alt"></i>
+                                                {/* <i className="fas fa-hospital-alt"></i> */}
                                                 <span className="clinic-tag">{dataProfile.doctorinforData.clinicData.name}</span>
                                             </div>
                                         )}

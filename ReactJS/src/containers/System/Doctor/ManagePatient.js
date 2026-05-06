@@ -158,10 +158,14 @@ class ManagePatient extends Component {
                                                             fontSize: '13px'
                                                         }}
                                                     >
-                                                        <option value="S1">{language === 'vi' ? 'Chưa thanh toán' : 'Pending Payment'}</option>
+                                                        <option value="S1"
+                                                            disabled={true}
+                                                        >{language === 'vi' ? 'Chưa thanh toán' : 'Pending Payment'}</option>
                                                         <option value="S2">{language === 'vi' ? 'Đã thanh toán (Chờ khám)' : 'Paid (Waiting)'}</option>
-                                                        <option value="S3">{language === 'vi' ? 'Đã khám (Gửi Email)' : 'Completed (Send Mail)'}</option>
-                                                        <option value="S4">{language === 'vi' ? 'Đã hủy' : 'Cancelled'}</option>
+                                                        <option value="S3">{language === 'vi' ? 'Đã khám ' : 'Completed '}</option>
+                                                        <option value="S4"
+                                                            disabled={true}
+                                                        >{language === 'vi' ? 'Đã hủy' : 'Cancelled'}</option>
                                                         <option value="S5">{language === 'vi' ? 'Lỡ hẹn' : 'Missed'}</option>
                                                     </select>
                                                 </td>

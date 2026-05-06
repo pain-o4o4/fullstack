@@ -578,53 +578,53 @@ export const fetchDetailHandbookById = (id) => {
     };
 };
 
-export const postChatWithAI = (userQuery) => {
-    return async (dispatch, getState) => {
-        try {
-            let currentHistory = getState().admin.chatHistory || [];
-            let newUserMsg = { role: 'user', content: userQuery };
-            let updatedHistoryWithUser = [...currentHistory, newUserMsg];
+// export const postChatWithAI = (userQuery) => {
+//     return async (dispatch, getState) => {
+//         try {
+//             let currentHistory = getState().admin.chatHistory || [];
+//             let newUserMsg = { role: 'user', content: userQuery };
+//             let updatedHistoryWithUser = [...currentHistory, newUserMsg];
 
-            dispatch(updateChatHistory(updatedHistoryWithUser));
+//             dispatch(updateChatHistory(updatedHistoryWithUser));
 
-            const language = getState().app.language;
-            let res = await postChatWithAIService({
-                userQuery: userQuery,
-                language: language
-            });
+//             const language = getState().app.language;
+//             let res = await postChatWithAIService({
+//                 userQuery: userQuery,
+//                 language: language
+//             });
 
-            if (res && res.errCode === 0) {
-                let newAiMsg = { role: 'assistant', content: res.data };
-                let finalHistory = [...updatedHistoryWithUser, newAiMsg];
+//             if (res && res.errCode === 0) {
+//                 let newAiMsg = { role: 'assistant', content: res.data };
+//                 let finalHistory = [...updatedHistoryWithUser, newAiMsg];
 
-                localStorage.setItem('CHAT_HISTORY', JSON.stringify(finalHistory));
+//                 localStorage.setItem('CHAT_HISTORY', JSON.stringify(finalHistory));
 
-                dispatch(updateChatHistory(finalHistory));
-            } else {
-                const errorMsgContent = language === LANGUAGES.VI
-                    ? 'Hệ thống AI đang bận hoặc hết hạn mức. Vui lòng thử lại sau!'
-                    : 'AI system is busy or quota exceeded. Please try again later!';
+//                 dispatch(updateChatHistory(finalHistory));
+//             } else {
+//                 const errorMsgContent = language === LANGUAGES.VI
+//                     ? 'Hệ thống AI đang bận hoặc hết hạn mức. Vui lòng thử lại sau!'
+//                     : 'AI system is busy or quota exceeded. Please try again later!';
 
-                let errorMsg = { role: 'assistant', content: errorMsgContent };
-                dispatch(updateChatHistory([...updatedHistoryWithUser, errorMsg]));
-            }
-        } catch (e) {
-            console.log('postChatWithAI error: ', e);
-            const language = getState().app.language;
-            const errorMsgContent = language === LANGUAGES.VI
-                ? 'Đã có lỗi xảy ra khi kết nối tới AI.'
-                : 'An error occurred while connecting to AI.';
+//                 let errorMsg = { role: 'assistant', content: errorMsgContent };
+//                 dispatch(updateChatHistory([...updatedHistoryWithUser, errorMsg]));
+//             }
+//         } catch (e) {
+//             console.log('postChatWithAI error: ', e);
+//             const language = getState().app.language;
+//             const errorMsgContent = language === LANGUAGES.VI
+//                 ? 'Đã có lỗi xảy ra khi kết nối tới AI.'
+//                 : 'An error occurred while connecting to AI.';
 
-            let errorMsg = { role: 'assistant', content: errorMsgContent };
-            dispatch(updateChatHistory([...getState().admin.chatHistory, errorMsg]));
-            dispatch(postChatWithAIFail(errorMsgContent));
-        }
-    };
-};
+//             let errorMsg = { role: 'assistant', content: errorMsgContent };
+//             dispatch(updateChatHistory([...getState().admin.chatHistory, errorMsg]));
+//             dispatch(postChatWithAIFail(errorMsgContent));
+//         }
+//     };
+// };
 
-export const clearChatHistory = () => {
-    return (dispatch) => {
-        localStorage.removeItem('CHAT_HISTORY');
-        dispatch(clearChatHistoryAction());
-    };
-};
+// export const clearChatHistory = () => {
+//     return (dispatch) => {
+//         localStorage.removeItem('CHAT_HISTORY');
+//         dispatch(clearChatHistoryAction());
+//     };
+// };

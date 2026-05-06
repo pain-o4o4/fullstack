@@ -167,7 +167,10 @@ class AISupportPage extends Component {
     render() {
         const { language, chatSessions, navigate } = this.props;
         const { message, currentSessionId, isSending, localMessages } = this.state;
-
+        console.log('message:', message);
+        console.log('currentSessionId:', currentSessionId);
+        console.log('isSending:', isSending);
+        console.log('localMessages:', localMessages);
         return (
             <div className="ai-support-container">
                 {/* <HomeHeader isShowBanner={false} /> */}

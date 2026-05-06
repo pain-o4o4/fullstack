@@ -9,7 +9,6 @@ import passwordIcon from '../../assets/images/password.png';
 
 import { handleLoginApi } from '../../services/userService';
 import { withRouter } from '../../components/Navigator';
-import { startTimer } from '../../auth/TokenRefreshManager';
 
 class Login extends Component {
     state = {
@@ -70,13 +69,8 @@ class Login extends Component {
                 let token = res.token;
                 if (token) {
                     localStorage.setItem('token', token);
-                    this.props.userLoginSuccess({ ...user, token });
-
-                    // Khởi động Silent Refresh Timer ngay sau khi login
-                    startTimer(token);
-                } else {
-                    this.props.userLoginSuccess(user);
                 }
+                this.props.userLoginSuccess(user);
                 if (user.roleId === 'R1') {
                     this.props.navigate('/system/user-manage');
                 } else if (user.roleId === 'R2') {

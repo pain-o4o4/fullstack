@@ -21,7 +21,7 @@ const initialState = {
     detailSpecialty: {},
     detailAppointment: [],
     bookingData: {},
-    chatHistory: JSON.parse(localStorage.getItem('CHAT_HISTORY')) || [],
+    // chatHistory: JSON.parse(localStorage.getItem('CHAT_HISTORY')) || [],
     historyAppointment: [],
     chatSessions: [],
     dbChatHistory: []
@@ -240,16 +240,16 @@ const adminReducer = (state = initialState, action = {}) => {
                 detailHandbook: {}
             }
 
-        case actionTypes.UPDATE_CHAT_HISTORY:
-            return {
-                ...state,
-                chatHistory: action.data
-            }
-        case actionTypes.CLEAR_CHAT_HISTORY:
-            return {
-                ...state,
-                chatHistory: []
-            }
+        // case actionTypes.UPDATE_CHAT_HISTORY:
+        //     return {
+        //         ...state,
+        //         chatHistory: action.data
+        //     }
+        // case actionTypes.CLEAR_CHAT_HISTORY:
+        //     return {
+        //         ...state,
+        //         chatHistory: []
+        //     }
 
         case actionTypes.FETCH_CHAT_SESSIONS_SUCCESS:
             return {

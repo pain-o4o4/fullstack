@@ -24,7 +24,7 @@ const socketAuthMiddleware = (socket, next) => {
         }
 
         try {
-            const decoded = JWTAction.verifyToken(token);
+            const decoded = JWTAction.verifyTokenOrThrow(token);
             if (!decoded || !decoded.id) {
                 console.error('>>> Socket Auth Error: Invalid token', {
                     tokenPreview: token.slice(0, 16),

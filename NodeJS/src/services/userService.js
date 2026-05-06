@@ -217,8 +217,7 @@ let handleUserLogin = (email, password) => {
                     attributes: [
                         "id", "email", "roleId", "password",
                         "firstName", "lastName", "address",
-                        "image", "phonenumber", "isVerified",
-                        "gender", "positionId"
+                        "image", "phonenumber", "isVerified"
                     ],
                     raw: true
                 });
@@ -393,7 +392,7 @@ let updateUserData = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
             if (!data.id || !data.roleId || !data.positionId || !data.gender) {
-                return resolve({
+                resolve({
                     errCode: 1,
                     errMessage: "Missing required parameters!"
                 });

@@ -41,7 +41,7 @@ import BookingHistory from './HomePage/SubMenuForUser/BookingHistory';
 import DetailSchedulePatient from './HomePage/SubMenuForUser/DetailSchedulePatient';
 import Payment from '../containers/Patient/Doctor/Modal/Payment';
 import AISupportPage from './HomePage/AISupportPage';
-import ChatBot from './ChatBot/ChatBot';
+// import ChatBot from './ChatBot/ChatBot';
 import PrivacyPolicy from './HomePage/Legal/PrivacyPolicy';
 import TermsOfUse from './HomePage/Legal/TermsOfUse';
 
@@ -147,7 +147,7 @@ class App extends Component {
                             draggable
                             pauseOnHover
                         />
-                        {isLoggedIn && <ChatBot />}
+                        {/* {isLoggedIn && <ChatBot />} */}
                     </div>
                 </BrowserRouter>
             </Fragment>

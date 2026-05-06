@@ -133,8 +133,8 @@ let postInforDoctorService = (data) => {
 
                 // Lọc ra những booking có ngày >= hôm nay
                 const futureActiveBookings = activeBookings.filter(b => {
-                    const bookingDate = b.date.includes('/') 
-                        ? moment(b.date, 'DD/MM/YYYY') 
+                    const bookingDate = b.date.includes('/')
+                        ? moment(b.date, 'DD/MM/YYYY')
                         : moment(+b.date);
                     return bookingDate.isSameOrAfter(moment().startOf('day'));
                 });
@@ -395,7 +395,7 @@ let getScheduleByDateService = (doctorId, date) => {
                                 statusId: { [Op.in]: ['S1', 'S2', 'S3'] }
                             }
                         });
-                        
+
                         // Thêm thuộc tính ảo isFull để FE xử lý
                         item.setDataValue('isFull', count >= item.maxNumber);
                     }));
@@ -538,7 +538,7 @@ let getListPatientForDoctor = (doctorId, date) => {
             for (let booking of allActive) {
                 const createdAt = new Date(booking.createdAt).getTime();
                 // Parse date from DD/MM/YYYY format if necessary
-                const bookingDate = booking.date.includes('/') 
+                const bookingDate = booking.date.includes('/')
                     ? moment(booking.date, 'DD/MM/YYYY').valueOf()
                     : Number(booking.date);
 
@@ -601,10 +601,18 @@ let getListPatientForDoctor = (doctorId, date) => {
 let updateBookingStatus = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.doctorId || !data.patientId || !data.timeType || !data.date || !data.statusId) {
+            if (!data.doctorId || !data.patientId || !data.timeType || !data.date
+                || !data.statusId
+            ) {
                 return resolve({
                     errCode: 1,
                     errMessage: "Missing required parameters!"
+                })
+            }
+            if (data.statusId == 'S1' || data.statusId == 'S4') {
+                return resolve({
+                    errCode: 1,
+                    errMessage: "Không được update trạng thái này!"
                 })
             }
             let appointment = await db.Booking.findOne({
@@ -647,7 +655,7 @@ let updateBookingStatus = (data) => {
                         });
 
                         const receiverEmail = bookingWithEmail?.patientBookingData?.email || data.email;
-                        const patientName = data.patientName 
+                        const patientName = data.patientName
                             || `${bookingWithEmail?.patientBookingData?.lastName || ''} ${bookingWithEmail?.patientBookingData?.firstName || ''}`.trim();
 
                         if (receiverEmail) {

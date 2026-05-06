@@ -1,60 +1,52 @@
-import jwt from 'jsonwebtoken';
-require('dotenv').config();
-
-const resolveAccessSecret = () => process.env.JWT_SECRET || process.env.JWT_REFRESH_SECRET || '';
-const resolveRefreshSecret = () => process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET || '';
-
-if (!process.env.JWT_SECRET) {
-    console.warn('>>> JWT_SECRET is missing. Using fallback secret for access token verification.');
-}
-if (!process.env.JWT_REFRESH_SECRET) {
-    console.warn('>>> JWT_REFRESH_SECRET is missing. Using fallback secret for refresh token verification.');
-}
+import jwt from "jsonwebtoken";
+require("dotenv").config();
 
 const createJWT = (payload) => {
-    const key = resolveAccessSecret();
+    let key = process.env.JWT_SECRET;
     let token = null;
     try {
         token = jwt.sign(payload, key, {
             expiresIn: process.env.JWT_EXPIRES_IN
         });
     } catch (e) {
-        console.error('>>> createJWT failed:', e.message);
+        console.log(e);
     }
     return token;
 };
 
 const verifyToken = (token) => {
-    const key = resolveAccessSecret();
+    let key = process.env.JWT_SECRET;
     let data = null;
     try {
         data = jwt.verify(token, key);
     } catch (e) {
-        console.error('>>> verifyToken failed:', e.message);
+        // console.log(e);
     }
     return data;
 };
 
+// REFRESH TOKEN FUNCTIONS
+
 const createRefreshToken = (payload) => {
-    const key = resolveRefreshSecret();
+    let key = process.env.JWT_REFRESH_SECRET;
     let token = null;
     try {
         token = jwt.sign(payload, key, {
             expiresIn: process.env.JWT_REFRESH_EXPIRES_IN
         });
     } catch (e) {
-        console.error('>>> createRefreshToken failed:', e.message);
+        console.log(e);
     }
     return token;
 };
 
 const verifyRefreshToken = (token) => {
-    const key = resolveRefreshSecret();
+    let key = process.env.JWT_REFRESH_SECRET;
     let data = null;
     try {
         data = jwt.verify(token, key);
     } catch (e) {
-        console.error('>>> verifyRefreshToken failed:', e.message);
+        // console.log(e);
     }
     return data;
 };
