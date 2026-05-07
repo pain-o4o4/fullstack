@@ -3,9 +3,7 @@
     // right: 2%;
     width: 280px;
     position: absolute;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: #ffffff; // Solid white background
     border-radius: 18px;
     border: 1px solid rgba(118, 118, 128, 0.12);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);

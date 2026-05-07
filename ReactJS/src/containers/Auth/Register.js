@@ -39,7 +39,7 @@ class Register extends Component {
         for (let i = 0; i < arrInput.length; i++) {
             if (!this.state[arrInput[i]]) {
                 isValid = false;
-                toast.error(`Vui lòng không để trống: ${arrInput[i]}`);
+                console.log(`Vui lòng không để trống: ${arrInput[i]}`);
                 break;
             }
         }
@@ -47,13 +47,13 @@ class Register extends Component {
         if (isValid) {
             if (!re.test(this.state.email)) {
                 isValid = false;
-                toast.error("Định dạng Email không hợp lệ!");
+                console.log("Định dạng Email không hợp lệ!");
             } else if (this.state.password.length < 6) {
                 isValid = false;
-                toast.error("Mật khẩu phải có tối thiểu 6 ký tự!");
+                console.log("Mật khẩu phải có tối thiểu 6 ký tự!");
             } else if (!phoneRe.test(this.state.phonenumber)) {
                 isValid = false;
-                toast.error("Số điện thoại chỉ được chứa các chữ số!");
+                console.log("Số điện thoại chỉ được chứa các chữ số!");
             }
         }
 
@@ -79,7 +79,7 @@ class Register extends Component {
             let res = await initiateRegister(payload);
 
             if (res && res.errCode !== 0) {
-                toast.error(res.errMessage || res.message);
+                console.log(res.errMessage || res.message);
                 this.setState({ errMessage: res.errMessage || res.message });
             } else {
                 this.props.setRegisterSession({
@@ -87,7 +87,7 @@ class Register extends Component {
                     registrationSessionToken: res.registrationSessionToken,
                     draftData: payload
                 });
-                toast.success("Mã OTP đã được gửi. Vui lòng kiểm tra Gmail.");
+                console.log("Mã OTP đã được gửi. Vui lòng kiểm tra Gmail.");
                 this.props.navigate('/register/verify-otp');
             }
         } catch (e) {
@@ -122,14 +122,14 @@ class Register extends Component {
                         </div>
                         <div className="inputs">
                             {/* First Name - Last Name */}
-                            <div className="input-group-row" style={{ display: 'flex', gap: '10px' }}>
-                                <div className="input" style={{ width: '50%' }}>
+                            <div className="input-group-row">
+                                <div className="input">
                                     <input placeholder={language === 'vi' ? 'Tên' : 'First Name'}
                                         value={this.state.firstName}
                                         onChange={(event) => this.handleOnChangeInput(event, 'firstName')}
                                     />
                                 </div>
-                                <div className="input" style={{ width: '50%' }}>
+                                <div className="input">
                                     <input placeholder={language === 'vi' ? 'Họ' : 'Last Name'}
                                         value={this.state.lastName}
                                         onChange={(event) => this.handleOnChangeInput(event, 'lastName')}
@@ -150,17 +150,15 @@ class Register extends Component {
                                     onChange={(event) => this.handleOnChangeInput(event, 'password')} />
                             </div>
 
-                            <div style={{ display: 'flex', gap: '10px' }}>
+                            <div className="input-group-row">
                                 {/* Phone Number */}
-                                <div className="input"
-                                    style={{ width: '50%' }}>
+                                <div className="input">
                                     <input placeholder={language === 'vi' ? 'Số điện thoại' : 'Phone Number'}
                                         value={this.state.phonenumber}
                                         onChange={(event) => this.handleOnChangeInput(event, 'phonenumber')} />
                                 </div>
                                 {/* Gender */}
-                                <div className="input-gender"
-                                    style={{ width: '50%' }}>
+                                <div className="input-gender">
                                     {/* <img src={gender_icon} alt="Gender" /> */}
                                     <Select
                                         className="react-select-container"

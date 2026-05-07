@@ -52,7 +52,11 @@ const userReducer = (state = initialState, action = {}) => {
         case actionTypes.REGISTER_CLEAR_SESSION:
         case actionTypes.REGISTER_INITIATE_FAIL:
             return {
-                ...initialState
+                ...state,
+                email: "",
+                registrationSessionToken: "",
+                draftData: null,
+                isOtpStep: false
             };
         default:
             return state;

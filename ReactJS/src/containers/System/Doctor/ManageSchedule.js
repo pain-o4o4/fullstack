@@ -101,7 +101,7 @@ class ManageSchedule extends Component {
                     this.setState({ listAllScheduleTime: updatedScheduleTime });
                 }
             } else {
-                toast.error("Không thể tải lịch trình bác sĩ!");
+                console.log("Không thể tải lịch trình bác sĩ!");
             }
         } catch (e) {
             console.log(e);
@@ -159,14 +159,14 @@ class ManageSchedule extends Component {
         let { listAllScheduleTime, selectedOption, currentDate } = this.state;
         let result = [];
         if (!currentDate) {
-            toast.error('Vui lòng chọn ngày khám!');
+            console.log('Vui lòng chọn ngày khám!');
             return;
         }
 
         let formartedDate = new Date(currentDate).getTime();
 
         if (!selectedOption || _.isEmpty(selectedOption)) {
-            toast.error('Vui lòng chọn Bác sĩ!');
+            console.log('Vui lòng chọn Bác sĩ!');
             return;
         }
 
@@ -192,11 +192,11 @@ class ManageSchedule extends Component {
         });
 
         if (res && res.errCode === 0) {
-            toast.success("Lưu thông tin lịch khám thành công!");
+            console.log("Lưu thông tin lịch khám thành công!");
             this.setState({ resultBulk: result });
             await this.fetchExistingSchedules();
         } else {
-            toast.error("Lưu thông tin lịch khám thất bại!");
+            console.log("Lưu thông tin lịch khám thất bại!");
         }
     }
 
@@ -269,7 +269,7 @@ class ManageSchedule extends Component {
                                 )
                             })
                         ) : (
-                            <div style={{ color: '#86868b' }}>
+                            <div className="no-time-msg">
                                 <FormattedMessage id="manage-schedule.no-time" defaultMessage="Vui lòng chọn bác sĩ để xem khung giờ" />
                             </div>
                         )}

@@ -67,18 +67,18 @@ class ManageSpecialty extends Component {
                 let successMsg = this.state.action === 'CREATE'
                     ? (language === 'vi' ? "Thêm chuyên khoa thành công!" : "Specialty added successfully!")
                     : (language === 'vi' ? "Cập nhật chuyên khoa thành công!" : "Specialty updated successfully!");
-                toast.success(successMsg);
+                console.log(successMsg);
                 this.setState({
                     isModalOpen: false
                 });
                 await this.getAllSpecialties();
             } else {
-                toast.error(res?.errMessage || (language === 'vi' ? "Lỗi hệ thống!" : "System error!"));
+                console.log(res?.errMessage || (language === 'vi' ? "Lỗi hệ thống!" : "System error!"));
             }
         } catch (e) {
             console.log(e);
             let errorMsg = language === 'vi' ? "Lỗi kết nối Server!" : "Server connection error!";
-            toast.error(errorMsg);
+            console.log(errorMsg);
         }
     }
 
@@ -100,14 +100,14 @@ class ManageSpecialty extends Component {
             try {
                 let res = await deleteSpecialtyService(specialty.id);
                 if (res && res.errCode === 0) {
-                    toast.success(language === 'vi' ? "Xóa chuyên khoa thành công!" : "Specialty deleted successfully!");
+                    console.log(language === 'vi' ? "Xóa chuyên khoa thành công!" : "Specialty deleted successfully!");
                     await this.getAllSpecialties();
                 } else {
-                    toast.error(res?.errMessage || (language === 'vi' ? "Xóa thất bại!" : "Delete failed!"));
+                    console.log(res?.errMessage || (language === 'vi' ? "Xóa thất bại!" : "Delete failed!"));
                 }
             } catch (e) {
                 console.log(e);
-                toast.error(language === 'vi' ? "Lỗi từ server!" : "Server error!");
+                console.log(language === 'vi' ? "Lỗi từ server!" : "Server error!");
             }
         }
     }

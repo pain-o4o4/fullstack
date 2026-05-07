@@ -186,6 +186,13 @@
                 }
             }
         }
+        .no-time-msg {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #86868b;
+            padding: 20px;
+            font-size: 15px;
+        }
     }
 
     .action-footer {

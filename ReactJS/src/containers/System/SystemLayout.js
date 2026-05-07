@@ -85,13 +85,13 @@ class SystemLayout extends Component {
                 if (res && res.errCode === 0) {
                     let updatedUserInfo = { ...userInfo, image: base64, gender: userData.gender, positionId: userData.positionId };
                     this.props.updateUserSuccess(updatedUserInfo);
-                    toast.success("Cập nhật ảnh đại diện thành công!");
+                    console.log("Cập nhật ảnh đại diện thành công!");
                 } else {
-                    toast.error(res.errMessage || "Lỗi cập nhật ảnh đại diện!");
+                    console.log(res.errMessage || "Lỗi cập nhật ảnh đại diện!");
                 }
             } catch (error) {
                 console.log(error);
-                toast.error("Lỗi cập nhật ảnh đại diện!");
+                console.log("Lỗi cập nhật ảnh đại diện!");
             }
         }
         event.target.value = ''; // Reset input

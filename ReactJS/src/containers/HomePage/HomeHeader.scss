@@ -16,22 +16,22 @@
 
     .hm-header-pill {
         pointer-events: all;
-        max-width: 1180px;
+        max-width: 1200px; // Slightly wider
         margin: 0 auto;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 24px;
+        gap: 32px; // More space
 
-        background: rgba(255, 255, 255, 0.96);
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
-        border: 1px solid rgba(0, 0, 0, 0.06);
-        border-radius: 60px;
-        padding: 10px 10px 10px 28px;
+        background: rgba(255, 255, 255, 0.94);
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 20px; // Matching segmented bar style (rounded rectangle instead of extreme pill)
+        padding: 16px 20px 16px 36px; // LARGER (was 14px 16px 14px 32px)
         box-shadow:
-            0 4px 6px -1px rgba(0, 0, 0, 0.05),
-            0 10px 30px -5px rgba(0, 0, 0, 0.07);
+            0 8px 20px -4px rgba(0, 0, 0, 0.06),
+            0 20px 40px -10px rgba(0, 0, 0, 0.08);
         transition: box-shadow 0.3s ease;
 
         &:hover {
@@ -81,7 +81,7 @@
         }
 
         .brand-name {
-            font-size: 20px;
+            font-size: 22px; // LARGER
             font-weight: 800;
             color: $apple-black;
             letter-spacing: -0.5px;
@@ -119,9 +119,9 @@
                 display: flex;
                 align-items: center;
                 gap: 5px;
-                padding: 8px 16px;
+                padding: 10px 18px; // LARGER
                 border-radius: 24px;
-                font-size: 15px;
+                font-size: 18px; // LARGER
                 font-weight: 500;
                 color: #374151;
                 cursor: pointer;
@@ -193,46 +193,54 @@
             position: relative;
         }
 
+        .search-trigger {
+            padding: 9px;
+            border-radius: 50%;
+
+            .search-icon {
+                font-size: 16px;
+                opacity: 0.7;
+            }
+        }
+
         .nav-sign-in {
             display: flex;
             align-items: center;
             gap: 7px;
-            // padding: 9px 18px;
             border-radius: 24px;
-            font-size: 14px;
+            font-size: 18px;
             font-weight: 600;
             color: #374151;
             cursor: pointer;
             transition: background 0.2s ease;
             white-space: nowrap;
 
-
+            .auth-icon {
+                font-size: 20px;
+                opacity: 0.7;
+            }
 
             &:hover {
                 background: #f3f4f6;
-            }
-
-            svg {
-                opacity: 0.7;
             }
 
             .user-avatar {
                 display: block;
                 padding: 0;
                 margin: 0;
-                width: 30px;
-                height: 30px;
+                width: 34px;
+                height: 34px;
                 border-radius: 50%;
                 object-fit: cover;
             }
         }
 
         .hm-cta-btn {
-            padding: 10px 22px;
+            padding: 12px 26px; // LARGER
             background: $apple-blue;
             color: #ffffff;
-            border-radius: 24px;
-            font-size: 14px;
+            border-radius: 26px;
+            font-size: 18px; // LARGER
             font-weight: 700;
             cursor: pointer;
             white-space: nowrap;
@@ -248,6 +256,51 @@
 
             &:active {
                 transform: translateY(0);
+            }
+        }
+
+        // --- CHAT DOCTOR BUTTON (Pill-shape Glassmorphism) ---
+        .hm-chat-doctor-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            background: rgba(210, 210, 215, 0.4);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #374151;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+            letter-spacing: -0.1px;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+            border: 1px solid rgba(209, 209, 214, 0.5);
+
+            i {
+                font-size: 15px;
+                transition: transform 0.25s ease;
+            }
+
+            &:hover {
+                background: $apple-blue;
+                color: #ffffff;
+                border-color: transparent;
+                box-shadow: 0 4px 16px rgba($apple-blue, 0.35);
+                transform: translateY(-1px);
+
+                i {
+                    transform: scale(1.15) rotate(-5deg);
+                }
+            }
+
+            // Squishy click
+            &:active {
+                transform: scale(0.93);
+                box-shadow: none;
             }
         }
     }
@@ -276,95 +329,165 @@
 }
 
 // ============================================================
-// HERO SECTION
+// HERO SECTION — Clean Minimalist (365px height)
 // ============================================================
 .hm-hero {
-    min-height: 100vh;
+    height: 445px; // 365px content + 80px header padding
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: $light-bg;
-    padding-top: 80px;
     position: relative;
     overflow: hidden;
+    padding-top: 80px;
 
-    .hm-hero-animation {
+    // Background layer
+    .hm-hero-bg {
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
+        inset: 0;
+        z-index: 0;
 
-        .hero-bg-placeholder {
-            width: 100%;
-            height: 100%;
+        .hero-bg-image {
+            position: absolute;
+            inset: 0;
             background-size: cover;
-            background-position: center;
-            position: relative;
+            background-position: center top;
+            transition: transform 0.5s ease;
+        }
 
-            &::after {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(255, 255, 255, 0.7);
-            }
+        .hero-bg-overlay {
+            position: absolute;
+            inset: 0;
+            // Subtle bottom fade only — preserves text sharpness on the left
+            background: linear-gradient(to right,
+                    rgba(245, 247, 250, 0.55) 0%,
+                    rgba(245, 247, 250, 0.15) 50%,
+                    transparent 100%);
         }
     }
 
-    .hm-hero-content {
+    .hm-hero-inner {
         position: relative;
         z-index: 10;
-        text-align: center;
-        max-width: 800px;
-        padding: 0 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+        padding: 0 40px;
         display: flex;
-        flex-direction: column;
+        justify-content: center; // Đã đổi từ flex-start sang center
+        text-align: center;
+    }
+}
+
+.hm-hero-text {
+    max-width: 800px; // Tăng nhẹ max-width để chữ dàn đều khi căn giữa
+    display: flex;
+    flex-direction: column;
+    align-items: center; // Căn giữa các thành phần bên trong (badge, headline)
+
+    .hero-badge {
+        display: inline-flex;
         align-items: center;
+        gap: 8px;
+        background: rgba(#f3f4f6, 0.4);
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        padding: 4px 12px;
+        border-radius: 999px;
+        font-size: 15px;
+        font-weight: 600;
+        color: $apple-blue;
+        margin-bottom: 20px;
+        letter-spacing: -0.1px;
+        text-transform: uppercase;
 
-        .hm-hero-title {
-            font-size: 5vw;
-            line-height: 1.1;
-            letter-spacing: -1.5px;
-            color: $apple-black;
-            margin: 0 0 30px 0;
-            font-weight: 400;
-
-            em {
-                font-style: italic;
-                color: $apple-blue;
-            }
-
-            .hero-strong {
-                font-weight: 800;
-            }
-        }
-
-        .hm-hero-description {
-            font-size: 20px;
-            line-height: 1.6;
-            color: $text-secondary;
-            max-width: 600px;
-            margin-bottom: 40px;
-            font-weight: 500;
-        }
-
-        .hm-hero-button {
-            display: flex;
-            justify-content: center;
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            background: #34c759;
+            border-radius: 50%;
+            animation: badgePulse 2s infinite;
         }
     }
 
-    @media (max-width: 1024px) {
-        .hm-hero-content {
-            padding: 120px 24px 60px;
+    .hero-headline {
+        font-size: 62px;
+        font-weight: 800;
+        line-height: 1.1;
+        letter-spacing: -2px;
+        color: #ffffff;
+        margin: 0 0 32px;
+        text-transform: uppercase;
+        white-space: nowrap;
 
-            .hm-hero-title {
-                font-size: 50px;
-            }
+        .hero-accent {
+            background: $apple-blue;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
+
+        @media (max-width: 768px) {
+            font-size: 38px;
+        }
+    }
+}
+
+.hero-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.hero-cta-primary {
+    padding: 12px 28px;
+    background: $apple-blue;
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: -apple-system, sans-serif;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 14px rgba(0, 113, 227, 0.3);
+
+    &:hover {
+        background: darken(#0071e3, 6%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 113, 227, 0.4);
+    }
+}
+
+.hero-cta-secondary {
+    padding: 12px 24px;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    color: $apple-black;
+    border: 1.5px solid rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: -apple-system, sans-serif;
+    transition: all 0.22s ease;
+
+    &:hover {
+        background: white;
+        border-color: rgba(0, 0, 0, 0.2);
+        transform: translateY(-2px);
+    }
+}
+
+@keyframes badgePulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(0.9);
     }
 }

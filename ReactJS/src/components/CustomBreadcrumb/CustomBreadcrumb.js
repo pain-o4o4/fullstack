@@ -19,13 +19,12 @@ class CustomBreadcrumb extends Component {
                         return (
                             <React.Fragment key={index}>
                                 <span 
-                                    className={isLast ? "current-page" : "home-link"}
+                                    className={`${isLast ? "current-page" : "home-link"} ${item.link ? "clickable" : ""}`}
                                     onClick={() => this.handleNavigate(item.link)}
-                                    style={{ cursor: item.link ? 'pointer' : 'default' }}
                                 >
                                     {item.label}
                                 </span>
-                                {!isLast && <span className="separator">›</span>}
+                                {!isLast && <span className="separator"><i className="fas fa-chevron-right"></i></span>}
                             </React.Fragment>
                         )
                     })}

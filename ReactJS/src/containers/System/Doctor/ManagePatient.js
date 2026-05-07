@@ -74,10 +74,10 @@ class ManagePatient extends Component {
                 language: language
             });
             if (res && res.errCode === 0) {
-                toast.success(language === 'vi' ? 'Cập nhật trạng thái thành công!' : 'Status updated successfully!');
+                console.log(language === 'vi' ? 'Cập nhật trạng thái thành công!' : 'Status updated successfully!');
                 await this.getDataPatient();
             } else {
-                toast.error(language === 'vi' ? 'Lỗi cập nhật trạng thái' : 'Error updating status');
+                console.log(language === 'vi' ? 'Lỗi cập nhật trạng thái' : 'Error updating status');
             }
         }
     }
@@ -151,12 +151,6 @@ class ManagePatient extends Component {
                                                         className={`status-select pointer-select ${item.statusId}`}
                                                         value={item.statusId}
                                                         onChange={(e) => this.handleOnChangeStatus(e, item)}
-                                                        style={{
-                                                            padding: '6px 12px',
-                                                            borderRadius: '8px',
-                                                            border: '1px solid #d2d2d7',
-                                                            fontSize: '13px'
-                                                        }}
                                                     >
                                                         <option value="S1"
                                                             disabled={true}

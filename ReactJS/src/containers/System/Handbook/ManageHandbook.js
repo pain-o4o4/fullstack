@@ -67,18 +67,18 @@ class ManageHandbook extends Component {
                 let successMsg = this.state.action === 'CREATE'
                     ? (language === 'vi' ? "Thêm cẩm nang thành công!" : "Handbook added successfully!")
                     : (language === 'vi' ? "Cập nhật cẩm nang thành công!" : "Handbook updated successfully!");
-                toast.success(successMsg);
+                console.log(successMsg);
                 this.setState({
                     isModalOpen: false
                 });
                 await this.getAllHandbooks();
             } else {
-                toast.error(res?.errMessage || (language === 'vi' ? "Lỗi hệ thống!" : "System error!"));
+                console.log(res?.errMessage || (language === 'vi' ? "Lỗi hệ thống!" : "System error!"));
             }
         } catch (e) {
             console.log(e);
             let errorMsg = language === 'vi' ? "Lỗi kết nối Server!" : "Server connection error!";
-            toast.error(errorMsg);
+            console.log(errorMsg);
         }
     }
 
@@ -100,14 +100,14 @@ class ManageHandbook extends Component {
             try {
                 let res = await deleteHandbookService(handbook.id);
                 if (res && res.errCode === 0) {
-                    toast.success(language === 'vi' ? "Xóa cẩm nang thành công!" : "Handbook deleted successfully!");
+                    console.log(language === 'vi' ? "Xóa cẩm nang thành công!" : "Handbook deleted successfully!");
                     await this.getAllHandbooks();
                 } else {
-                    toast.error(res?.errMessage || (language === 'vi' ? "Xóa thất bại!" : "Delete failed!"));
+                    console.log(res?.errMessage || (language === 'vi' ? "Xóa thất bại!" : "Delete failed!"));
                 }
             } catch (e) {
                 console.log(e);
-                toast.error(language === 'vi' ? "Lỗi từ server!" : "Server error!");
+                console.log(language === 'vi' ? "Lỗi từ server!" : "Server error!");
             }
         }
     }

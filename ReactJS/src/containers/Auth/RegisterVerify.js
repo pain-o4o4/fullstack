@@ -43,7 +43,7 @@ class RegisterVerify extends Component {
                 }
                 this.props.userLoginSuccess({ ...res.user, token: res.token });
                 this.props.clearRegisterSession();
-                toast.success('Xác thực thành công. Chào mừng bạn!');
+                console.log('Xác thực thành công. Chào mừng bạn!');
                 this.props.navigate('/home');
                 return;
             }
@@ -61,7 +61,7 @@ class RegisterVerify extends Component {
         try {
             const res = await resendRegisterOtp(this.props.registerEmail);
             if (res && res.errCode === 0) {
-                toast.success('Đã gửi lại mã OTP. Vui lòng kiểm tra Gmail.');
+                console.log('Đã gửi lại mã OTP. Vui lòng kiểm tra Gmail.');
             } else {
                 this.setState({ errMessage: (res && (res.errMessage || res.message)) || 'Không thể gửi lại OTP.' });
             }

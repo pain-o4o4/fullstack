@@ -135,11 +135,11 @@ class AISupportPage extends Component {
             if (res && res.errCode === 0) {
                 // Thành công, không làm gì thêm vì socket (isDone) sẽ fetchHistory lại
             } else {
-                toast.error("Error from AI server");
+                console.log("Error from AI server");
             }
         } catch (e) {
             console.log(e);
-            toast.error("Failed to send message");
+            console.log("Failed to send message");
         } finally {
             this.setState({ isSending: false });
         }
@@ -187,7 +187,7 @@ class AISupportPage extends Component {
                             <div className="session-group-title">
                                 <FormattedMessage id="ai.history" defaultMessage="Recent Conversations" />
                             </div>
-                            <CustomScrollbars style={{ height: 'calc(100vh - 200px)' }}>
+                            <CustomScrollbars className="sessions-scrollbar">
                                 {chatSessions && chatSessions.length > 0 ? (
                                     chatSessions.map((session, index) => (
                                         <div
@@ -222,7 +222,7 @@ class AISupportPage extends Component {
                         </div>
 
                         <div className="chat-messages-area">
-                            <CustomScrollbars style={{ height: '100%', width: '100%' }}>
+                            <CustomScrollbars className="chat-messages-scrollbar">
                                 <div className="messages-wrapper">
                                     {localMessages && localMessages.length > 0 ? (
                                         localMessages.map((msg, index) => (
@@ -234,7 +234,9 @@ class AISupportPage extends Component {
                                         ))
                                     ) : (
                                         <div className="chat-welcome">
-                                            <div className="welcome-icon">🩺</div>
+                                            <div className="welcome-icon">
+                                                <i className="fas fa-stethoscope"></i>
+                                            </div>
                                             <h2>Xin chào! Tôi có thể giúp gì cho bạn?</h2>
                                             <p>Hãy đặt câu hỏi về triệu chứng, bác sĩ hoặc cách sử dụng hệ thống BookingCare.</p>
                                         </div>

@@ -51,9 +51,16 @@ const verifyRefreshToken = (token) => {
     return data;
 };
 
+const verifyTokenOrThrow = (token) => {
+    let key = process.env.JWT_SECRET;
+    // Let it throw so the caller can catch TokenExpiredError or JsonWebTokenError
+    return jwt.verify(token, key);
+};
+
 export default {
     createJWT,
     verifyToken,
+    verifyTokenOrThrow,
     createRefreshToken,
     verifyRefreshToken
 };

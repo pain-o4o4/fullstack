@@ -6,6 +6,12 @@ import './HomePage.scss';
 import HomeFooter from '../HomePage/HomeFooter';
 import { withRouter } from '../../components/Navigator';
 
+// HomeTabs
+import IntroTab from './HomeTabs/IntroTab';
+import BookingFlowTab from './HomeTabs/BookingFlowTab';
+import ClinicFlowTab from './HomeTabs/ClinicFlowTab';
+import PersonalDashboardTab from './HomeTabs/PersonalDashboardTab';
+
 // Import images
 import backgroundBanner from '../../assets/images/backgroundBanner.avif';
 import galleryMri from '../../assets/images/gallery_mri.png';
@@ -16,12 +22,58 @@ import galleryLogo from '../../assets/images/gallery_logo.png';
 import hmReachImg from '../../assets/images/hm_reach.png';
 import hmAboutImg from '../../assets/images/hm_about.png';
 
+const TAB_CONFIG = [
+    { id: 'intro', label: 'Khám phá' },
+    { id: 'booking', label: 'Quy trình' },
+    { id: 'clinic', label: 'Tiện ích' },
+    { id: 'personal', label: 'Hệ sinh thái' },
+];
+
 class HomePage extends Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            activeTab: 'intro',
+        };
+        this.pillRef = React.createRef();
+        this.tabRefs = {};
+    }
+
+    handleTabChange = (tabId) => {
+        this.setState({ activeTab: tabId });
+    }
+
     render() {
+        const { activeTab } = this.state;
         return (
             <div className="hm-page-container">
                 <HomeHeader isShowBanner={true} />
+
+                {/* ============ SEGMENTED CONTROL BAR + TABS ============ */}
+                <section className="hm-tabs-section">
+                    <div className="hm-tabs-container">
+                        <div className="hm-segmented-bar">
+                            {TAB_CONFIG.map(tab => (
+                                <button
+                                    key={tab.id}
+                                    id={`tab-btn-${tab.id}`}
+                                    className={`hm-tab-btn ${activeTab === tab.id ? 'active' : ''}`}
+                                    onClick={() => this.handleTabChange(tab.id)}
+                                >
+                                    {tab.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="hm-tab-content">
+                            {activeTab === 'intro' && <IntroTab />}
+                            {activeTab === 'booking' && <BookingFlowTab />}
+                            {activeTab === 'clinic' && <ClinicFlowTab />}
+                            {activeTab === 'personal' && <PersonalDashboardTab />}
+                        </div>
+                    </div>
+                </section>
 
                 {/* 1. Medicine Banner */}
                 <section className="hm-medicine-banner">

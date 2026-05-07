@@ -31,7 +31,7 @@ class UserMenuPopup extends Component {
     handleLogout = () => {
         stopTimer();
         localStorage.removeItem('token');
-        axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/logout`, {}, { withCredentials: true }).catch(() => {});
+        axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/logout`, {}, { withCredentials: true }).catch(() => { });
         this.props.processLogout();
     }
 
@@ -64,6 +64,21 @@ class UserMenuPopup extends Component {
 
                             <div className="divider"></div>
 
+                            <div className="menu-item" onClick={() => handleViewList('AI_SUPPORT')}>
+                                <i className="fas fa-robot"></i>
+                                <span>Trợ lý AI</span>
+                            </div>
+                            <div className="menu-item" onClick={() => handleViewList('PRIVACY_POLICY')}>
+                                <i className="fas fa-user-shield"></i>
+                                <span>Chính sách bảo mật</span>
+                            </div>
+                            <div className="menu-item" onClick={() => handleViewList('TERMS_OF_USE')}>
+                                <i className="fas fa-file-contract"></i>
+                                <span>Điều khoản sử dụng</span>
+                            </div>
+
+                            <div className="divider"></div>
+
                             <div className="menu-item logout" onClick={this.handleLogout}>
                                 <i className="fas fa-sign-out-alt"></i>
                                 <span>Đăng xuất</span>
@@ -74,11 +89,26 @@ class UserMenuPopup extends Component {
                     <div className="menu-body">
                         <div className="menu-item" onClick={() => handleViewList('LOGIN')}>
                             <i className="fas fa-sign-in-alt"></i>
-                            <span>Đăng nhập (Log In)</span>
+                            <span>Đăng nhập</span>
                         </div>
                         <div className="menu-item" onClick={() => handleViewList('REGISTER')}>
                             <i className="fas fa-user-plus"></i>
-                            <span>Đăng ký (Sign Up)</span>
+                            <span>Đăng ký</span>
+                        </div>
+
+                        <div className="divider"></div>
+
+                        <div className="menu-item" onClick={() => handleViewList('AI_SUPPORT')}>
+                            <i className="fas fa-robot"></i>
+                            <span>Trợ lý AI</span>
+                        </div>
+                        <div className="menu-item" onClick={() => handleViewList('PRIVACY_POLICY')}>
+                            <i className="fas fa-user-shield"></i>
+                            <span>Chính sách bảo mật</span>
+                        </div>
+                        <div className="menu-item" onClick={() => handleViewList('TERMS_OF_USE')}>
+                            <i className="fas fa-file-contract"></i>
+                            <span>Điều khoản sử dụng</span>
                         </div>
                     </div>
                 )}

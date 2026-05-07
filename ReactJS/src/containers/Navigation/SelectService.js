@@ -11,6 +11,7 @@ import HandBook from '../HomePage/Section/HandBook';
 import './SelectService.scss';
 import bannerService from '../../assets/images/bannerService.png'
 import CustomBreadcrumb from '../../components/CustomBreadcrumb/CustomBreadcrumb';
+import backgroundBanner from '../../assets/images/backgroundBanner.avif';
 
 class SelectService extends Component {
     render() {
@@ -57,7 +58,7 @@ class SelectService extends Component {
                 {/* <CustomBreadcrumb items={breadcrumbItems} /> */}
 
                 <div className="select-service-banner"
-                    style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${bannerService})` }}
+                    style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${backgroundBanner})` }}
                 >
                     <div className="banner-content">
                         <h1 className="banner-title">

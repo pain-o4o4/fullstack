@@ -32,7 +32,7 @@ class MyBooking extends Component {
             try {
                 let verifyRes = await verifyPaymentStatus(orderCode);
                 if (verifyRes && verifyRes.errCode === 0) {
-                    toast.success(this.props.language === LANGUAGES.VI ? "Thanh toán thành công!" : "Payment successful!");
+                    console.log(this.props.language === LANGUAGES.VI ? "Thanh toán thành công!" : "Payment successful!");
                 }
             } catch (e) {
                 console.error('Verify payment error:', e);
@@ -122,8 +122,8 @@ class MyBooking extends Component {
                                         }
 
                                         return (
-                                            <tr key={index} 
-                                                className={`pointer-row status-${item.statusId}`} 
+                                            <tr key={index}
+                                                className={`pointer-row status-${item.statusId}`}
                                                 onClick={() => {
                                                     if (item.statusId === 'S1') {
                                                         this.props.navigate(`/patient/payment?bookingId=${item.id}`);
@@ -154,22 +154,22 @@ class MyBooking extends Component {
                                                 </td>
                                                 <td>
                                                     <span className={`status-badge ${item.statusId}`}>
-                                                        {item.statusId === 'S1' ? <FormattedMessage id="patient.my-booking.pending" /> : 
-                                                         item.statusId === 'S2' ? <FormattedMessage id="patient.my-booking.confirmed" /> :
-                                                         item.statusId === 'S3' ? <FormattedMessage id="patient.my-booking.done" /> :
-                                                         item.statusId === 'S4' ? <FormattedMessage id="patient.my-booking.cancelled" /> :
-                                                         item.statusId === 'S5' ? <FormattedMessage id="patient.my-booking.missed" /> :
-                                                         (language === 'vi' ? item.statusData.valueVi : item.statusData.valueEn)
+                                                        {item.statusId === 'S1' ? <FormattedMessage id="patient.my-booking.pending" /> :
+                                                            item.statusId === 'S2' ? <FormattedMessage id="patient.my-booking.confirmed" /> :
+                                                                item.statusId === 'S3' ? <FormattedMessage id="patient.my-booking.done" /> :
+                                                                    item.statusId === 'S4' ? <FormattedMessage id="patient.my-booking.cancelled" /> :
+                                                                        item.statusId === 'S5' ? <FormattedMessage id="patient.my-booking.missed" /> :
+                                                                            (language === 'vi' ? item.statusData.valueVi : item.statusData.valueEn)
                                                         }
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    {item.statusId === 'S1' ? 
-                                                        <span className="text-primary" style={{fontWeight: '600', cursor: 'pointer'}}>
+                                                    {item.statusId === 'S1' ?
+                                                        <span className="text-primary" style={{ fontWeight: '600', cursor: 'pointer' }}>
                                                             {language === 'vi' ? 'Thanh toán ngay \u2192' : 'Pay now \u2192'}
-                                                        </span> 
-                                                        : 
-                                                        <span className="text-secondary" style={{cursor: 'pointer'}}>
+                                                        </span>
+                                                        :
+                                                        <span className="text-secondary" style={{ cursor: 'pointer' }}>
                                                             {language === 'vi' ? 'Xem chi tiết \u2192' : 'View details \u2192'}
                                                         </span>
                                                     }
@@ -190,16 +190,16 @@ class MyBooking extends Component {
 
                     {listAppointments && listAppointments.length > pageSize &&
                         <div className="pagination-container">
-                            <button 
-                                className="btn-pagination" 
+                            <button
+                                className="btn-pagination"
                                 disabled={currentPage === 1}
                                 onClick={() => this.setState({ currentPage: currentPage - 1 })}
                             >
                                 <i className="fas fa-chevron-left"></i>
                             </button>
-                            
+
                             {[...Array(Math.ceil(listAppointments.length / pageSize))].map((_, i) => (
-                                <button 
+                                <button
                                     key={i}
                                     className={`btn-pagination ${currentPage === i + 1 ? 'active' : ''}`}
                                     onClick={() => this.setState({ currentPage: i + 1 })}
@@ -208,8 +208,8 @@ class MyBooking extends Component {
                                 </button>
                             ))}
 
-                            <button 
-                                className="btn-pagination" 
+                            <button
+                                className="btn-pagination"
                                 disabled={currentPage === Math.ceil(listAppointments.length / pageSize)}
                                 onClick={() => this.setState({ currentPage: currentPage + 1 })}
                             >

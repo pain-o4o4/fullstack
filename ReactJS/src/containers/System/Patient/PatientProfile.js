@@ -59,7 +59,7 @@ class PatientProfile extends Component {
     handleSaveSettings = async () => {
         let { language } = this.props;
         if (!this.state.firstName || !this.state.lastName) {
-            toast.error(language === 'vi' ? "Vui lòng nhập đầy đủ Họ và Tên!" : "Please enter both First and Last Name!");
+            console.log(language === 'vi' ? "Vui lòng nhập đầy đủ Họ và Tên!" : "Please enter both First and Last Name!");
             return;
         }
 
@@ -69,7 +69,7 @@ class PatientProfile extends Component {
             this.setState({ password: '' });
             this.props.updateUserSuccess(this.state);
         } else {
-            toast.error(language === 'vi' ? "Cập nhật thông tin thất bại!" : "Failed to update information!");
+            console.log(language === 'vi' ? "Cập nhật thông tin thất bại!" : "Failed to update information!");
         }
     }
 

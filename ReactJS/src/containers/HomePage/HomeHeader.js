@@ -9,6 +9,8 @@ import { withRouter } from '../../components/Navigator';
 import UserMenuPopup from '../HomePage/SubMenuForUser/UserMenuPopup';
 import backgroundBanner from '../../assets/images/backgroundBanner.avif';
 import GlobalSearch from '../../components/GlobalSearch/GlobalSearch';
+import DoctorChatDrawer from './DoctorChatDrawer';
+import bannerService from '../../assets/images/bannerService.png'
 
 class HomeHeader extends Component {
     constructor(props) {
@@ -17,6 +19,7 @@ class HomeHeader extends Component {
         this.state = {
             isOpenUserMenu: false,
             isOpenSearch: false,
+            isOpenDoctorChat: false,
         }
     }
 
@@ -80,6 +83,9 @@ class HomeHeader extends Component {
             MY_BOOKING: path.MY_BOOKING,
             BOOKING_HISTORY: path.BOOKING_HISTORY,
             SELECT_SERVICE: path.SELECT_SERVICE,
+            AI_SUPPORT: path.AI_SUPPORT,
+            PRIVACY_POLICY: path.PRIVACY_POLICY,
+            TERMS_OF_USE: path.TERMS_OF_USE,
         };
 
         if (routeMap[type]) {
@@ -161,18 +167,15 @@ class HomeHeader extends Component {
                         {/* Right Actions */}
                         <div className="hm-header-actions">
                             {!isOpenSearch && (
-                                <div className="nav-sign-in search-trigger" onClick={() => this.setState({ isOpenSearch: true })} style={{ padding: '9px', borderRadius: '50%' }}>
-                                    <i className="fas fa-search" style={{ fontSize: '16px', opacity: 0.7 }}></i>
+                                <div className="nav-sign-in search-trigger" onClick={() => this.setState({ isOpenSearch: true })}>
+                                    <i className="fas fa-search search-icon"></i>
                                 </div>
                             )}
 
                             <div className="user-menu-wrapper" ref={this.wrapperRef}>
                                 {!isLoggedIn ? (
                                     <div className="nav-sign-in" onClick={() => this.handleViewList('LOGIN')}>
-                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                            <circle cx="8" cy="5" r="3" stroke="currentColor" strokeWidth="1.5" />
-                                            <path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                                        </svg>
+                                        <i className="fas fa-user-circle auth-icon"></i>
                                         <FormattedMessage id="homeheader.login" />
                                     </div>
                                 ) : (
@@ -180,10 +183,7 @@ class HomeHeader extends Component {
                                         {imageBase64 ? (
                                             <img src={imageBase64} className="user-avatar" alt="Avatar" />
                                         ) : (
-                                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                                <circle cx="8" cy="5" r="3" stroke="currentColor" strokeWidth="1.5" />
-                                                <path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                                            </svg>
+                                            <i className="fas fa-user-circle auth-icon"></i>
                                         )}
                                         {/* {userInfo && userInfo.firstName ? userInfo.firstName : <FormattedMessage id="homeheader.account" />} */}
                                     </div>
@@ -193,42 +193,62 @@ class HomeHeader extends Component {
                                 )}
                             </div>
 
-                            <div className="hm-cta-btn" onClick={() => this.props.navigate('/ai-support')}>
-                                <FormattedMessage id="homeheader.ai-support" />
-                            </div>
+                            <button
+                                id="btn-chat-doctor"
+                                className="hm-chat-doctor-btn"
+                                onClick={() => this.setState({ isOpenDoctorChat: true })}
+                            >
+                                <i className="far fa-comments"></i>
+                                <span>Chat Bác sĩ</span>
+                            </button>
                         </div>
                     </div>
                 </header>
 
                 {this.props.isShowBanner === true && (
                     <section className="hm-hero" id="strona-glowna">
-                        <div className="hm-hero-content">
-                            <div className="hm-hero-title">
-                                <FormattedMessage id="homeheader.hero-title-1" /> <br />
-                                <em><span className="hero-strong"><FormattedMessage id="homeheader.hero-title-2" /></span></em> <br />
-                                <FormattedMessage id="homeheader.hero-title-3" /> <br />
-                                <em><span className="hero-strong"><FormattedMessage id="homeheader.hero-title-4" /></span></em>
-                            </div>
-                            <div className="hm-hero-description">
-                                <FormattedMessage id="homeheader.hero-desc" />
-                            </div>
-                            <div className="hm-hero-button">
-                                <div className="hm-button" onClick={() => this.props.navigate('/ai-support')}>
-                                    <FormattedMessage id="homeheader.ai-support" />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="hm-hero-animation">
-                            <div className="hero-bg-placeholder"
+                        <div className="hm-hero-bg">
+                            <div className="hero-bg-image"
                                 style={{
-                                    backgroundImage: `url(${backgroundBanner})`,
-                                    backgroundSize: 'cover',
-                                    backgroundPosition: 'center',
+                                    backgroundImage: `url(${bannerService})`,
                                 }}
                             ></div>
+                            <div className="hero-bg-overlay"></div>
+                        </div>
+
+                        <div className="hm-hero-inner">
+                            <div className="hm-hero-text">
+                                <div className="hero-badge">
+                                    <span className="badge-dot"></span>
+                                    Nền tảng Y tế Số #1 Việt Nam
+                                </div>
+                                <h1 className="hero-headline">
+                                    Chăm sóc sức khỏe
+                                    <span className="hero-accent"> thông minh.</span>
+                                </h1>
+                                {/* <div className="hero-actions">
+                                    <button
+                                        className="hero-cta-primary"
+                                        onClick={() => this.props.navigate('/select-service')}
+                                    >
+                                        Đặt lịch ngay
+                                    </button>
+                                    <button
+                                        className="hero-cta-secondary"
+                                        onClick={() => this.props.navigate('/ai-support')}
+                                    >
+                                        Tư vấn AI
+                                    </button>
+                                </div> */}
+                            </div>
                         </div>
                     </section>
                 )}
+                <DoctorChatDrawer
+                    isOpen={this.state.isOpenDoctorChat}
+                    onClose={() => this.setState({ isOpenDoctorChat: false })}
+                />
+
             </React.Fragment>
         );
     }

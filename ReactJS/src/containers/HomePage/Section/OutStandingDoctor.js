@@ -65,8 +65,8 @@ class OutStandingDoctor extends Component {
                             <FormattedMessage id="homepage.doctor" />
                         </span>
                         <div className='header-actions'>
-                            <button className='btn-nav' onClick={this.scrollLeft}>&#10094;</button>
-                            <button className='btn-nav' onClick={this.scrollRight}>&#10095;</button>
+                            <button className='btn-nav' onClick={this.scrollLeft}><i className="fas fa-chevron-left"></i></button>
+                            <button className='btn-nav' onClick={this.scrollRight}><i className="fas fa-chevron-right"></i></button>
                             <button className='btn-section'
                                 onClick={() => this.props.navigate && this.props.navigate(path.ALL_DOCTOR)}
                             >

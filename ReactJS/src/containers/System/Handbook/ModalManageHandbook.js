@@ -67,7 +67,7 @@ class ModalManageHandbook extends Component {
     handleSave = () => {
         let { language } = this.props;
         if (!this.state.name || !this.state.imageBase64 || !this.state.descriptionMarkdown) {
-            toast.error(language === 'vi' ? "Vui lòng nhập đầy đủ thông tin!" : "Missing required parameters!");
+            console.log(language === 'vi' ? "Vui lòng nhập đầy đủ thông tin!" : "Missing required parameters!");
             return;
         }
         this.props.saveHandbook(this.state);
@@ -80,7 +80,7 @@ class ModalManageHandbook extends Component {
                 <ModalHeader toggle={() => toggleFromParent()}>
                     {action === 'CREATE'
                         ? <FormattedMessage id="admin.manage-handbook.title" />
-                        : <FormattedMessage id="admin.manage-handbook.title" /> 
+                        : <FormattedMessage id="admin.manage-handbook.title" />
                     }
                 </ModalHeader>
                 <ModalBody>

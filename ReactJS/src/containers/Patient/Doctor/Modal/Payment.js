@@ -8,6 +8,7 @@ import { FormattedMessage } from 'react-intl';
 import { LANGUAGES } from '../../../../utils';
 import _ from 'lodash';
 import './Payment.scss';
+import FaceIDModal from './FaceIDModal';
 
 class Payment extends Component {
     constructor(props) {
@@ -16,7 +17,9 @@ class Payment extends Component {
             timeLeft: 900,
             bookingData: null,
             isLoading: true,
-            isProcessing: false // Thêm trạng thái xử lý thanh toán chống click đúp
+            isProcessing: false,
+            showFaceId: false,
+            pendingCheckoutUrl: null,
         }
     }
 
@@ -44,7 +47,7 @@ class Payment extends Component {
             if (bookingId) {
                 await this.fetchBookingDetails(bookingId);
             } else {
-                toast.error(this.props.language === LANGUAGES.VI ? "Không tìm thấy thông tin đơn hàng!" : "Order information not found!");
+                console.log(this.props.language === LANGUAGES.VI ? "Không tìm thấy thông tin đơn hàng!" : "Order information not found!");
                 this.props.navigate('/home');
             }
         }
@@ -64,7 +67,7 @@ class Payment extends Component {
             } else {
                 // If backend fails (e.g. PayOS error), the record might or might not be saved 
                 // but we at least show the summary from state
-                toast.error(this.props.language === LANGUAGES.VI
+                console.log(this.props.language === LANGUAGES.VI
                     ? "Lưu lịch hẹn thất bại hoặc lỗi cổng thanh toán!"
                     : "Failed to save appointment or payment gateway error!");
             }
@@ -126,14 +129,14 @@ class Payment extends Component {
                     this.startTimer(data.id);
                 });
             } else {
-                toast.error(this.props.language === LANGUAGES.VI ? "Không tìm thấy dữ liệu đặt lịch!" : "Booking data not found!");
+                console.log(this.props.language === LANGUAGES.VI ? "Không tìm thấy dữ liệu đặt lịch!" : "Booking data not found!");
                 this.setState({ isLoading: false });
                 this.props.navigate('/home');
             }
         } catch (e) {
             console.error(e);
             this.setState({ isLoading: false });
-            toast.error("Error fetching booking details!");
+            console.log("Error fetching booking details!");
         }
     }
 
@@ -154,7 +157,7 @@ class Payment extends Component {
                 // Force reload logic
                 window.location.reload();
             } else {
-                toast.error("Error regenerating session.");
+                console.log("Error regenerating session.");
                 this.props.navigate('/home');
             }
         } catch (e) {
@@ -178,37 +181,53 @@ class Payment extends Component {
 
     handleTimeout = (bookingId) => {
         if (bookingId) localStorage.removeItem(`payment_expiry_${bookingId}`);
-        toast.error(this.props.language === LANGUAGES.VI ? "Hết thời gian thanh toán!" : "Payment timeout!");
+        console.log(this.props.language === LANGUAGES.VI ? "Hết thời gian thanh toán!" : "Payment timeout!");
         this.props.navigate('/home');
     }
 
     handleConfirmPaid = async () => {
         let { bookingData, isProcessing } = this.state;
-        if (isProcessing) return; // Ngăn chặn tuyệt đối nếu đang xử lý
-        
+        if (isProcessing) return;
+
         if (bookingData) {
             try {
                 this.setState({ isProcessing: true });
-                // Now calling postBookAppointment will actually get the PayOS link because record already exists
                 let res = await postBookAppointment(bookingData);
                 if (res && res.errCode === 0 && res.data && res.data.checkoutUrl) {
-                    // Clear timer since user is proceeding to gateway
                     localStorage.removeItem(`payment_expiry_${bookingData.bookingId}`);
-                    window.location.href = res.data.checkoutUrl;
+                    // Show FaceID before redirecting
+                    this.setState({
+                        showFaceId: true,
+                        pendingCheckoutUrl: res.data.checkoutUrl,
+                        isProcessing: false,
+                    });
                 } else {
-                    toast.error(res.errMessage || "Error initializing payment!");
+                    console.log(res.errMessage || "Error initializing payment!");
                     this.setState({ isProcessing: false });
                 }
             } catch (e) {
                 console.log(e);
-                toast.error("Connection error!");
+                console.log("Connection error!");
                 this.setState({ isProcessing: false });
             }
         }
     }
 
+    handleFaceSuccess = () => {
+        const { pendingCheckoutUrl } = this.state;
+        this.setState({ showFaceId: false });
+        if (pendingCheckoutUrl) {
+            window.location.href = pendingCheckoutUrl;
+        }
+    }
+
+    handleFaceCancel = () => {
+        this.setState({ showFaceId: false, pendingCheckoutUrl: null });
+        toast.info(this.props.language === LANGUAGES.VI ? 'Đã hủy xác thực.' : 'Authentication cancelled.');
+    }
+
     render() {
-        let { timeLeft, bookingData, isLoading, isProcessing } = this.state;
+        let { timeLeft, bookingData, isLoading, isProcessing, showFaceId } = this.state;
         let { language } = this.props;
         let minutes = Math.floor(timeLeft / 60);
         let seconds = timeLeft % 60;
@@ -343,14 +362,10 @@ class Payment extends Component {
                                     <span className="total-amount-large">{bookingData?.priceId}</span>
                                     <span className="loan-info">Approx. {bookingData?.priceId} with 0% interest.</span>
                                 </div>
-                                <button 
-                                    className="btn-primary" 
+                                <button
+                                    className={`btn-primary ${isProcessing ? 'processing' : ''}`}
                                     onClick={this.handleConfirmPaid}
                                     disabled={isProcessing}
-                                    style={{
-                                        opacity: isProcessing ? 0.7 : 1,
-                                        cursor: isProcessing ? 'not-allowed' : 'pointer'
-                                    }}
                                 >
                                     {isProcessing ? (
                                         language === LANGUAGES.VI ? "Đang chuyển hướng..." : "Redirecting..."
@@ -362,6 +377,13 @@ class Payment extends Component {
                         </div>
                     </div>
                 </div>
+                {showFaceId && (
+                    <FaceIDModal
+                        amount={bookingData?.priceId}
+                        onSuccess={this.handleFaceSuccess}
+                        onCancel={this.handleFaceCancel}
+                    />
+                )}
             </React.Fragment>
         );
     }

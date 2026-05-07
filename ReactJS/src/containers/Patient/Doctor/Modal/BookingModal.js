@@ -192,7 +192,7 @@ class BookingModal extends Component {
     handleConfirmBooking = async () => {
         let { dataTimeModal, isLoggedIn } = this.props;
         let {
-            selectedPayment, fullName, email, address, 
+            selectedPayment, fullName, email, address,
             birthday, phoneNumber, selectedGender, reason
         } = this.state;
 
@@ -207,22 +207,22 @@ class BookingModal extends Component {
         const phoneRe = /^\d+$/;
 
         if (!fullName || !email || !address || !phoneNumber || !selectedGender || !selectedPayment || !birthday || !reason) {
-            toast.error("Vui lòng điền đầy đủ các thông tin bắt buộc!");
+            console.log("Vui lòng điền đầy đủ các thông tin bắt buộc!");
             return;
         }
 
         if (!emailRe.test(email)) {
-            toast.error("Định dạng Email không hợp lệ!");
+            console.log("Định dạng Email không hợp lệ!");
             return;
         }
 
         if (!phoneRe.test(phoneNumber)) {
-            toast.error("Số điện thoại chỉ được chứa các chữ số!");
+            console.log("Số điện thoại chỉ được chứa các chữ số!");
             return;
         }
 
         if (reason.length < 10) {
-            toast.error("Vui lòng mô tả lý do khám chi tiết hơn (tối thiểu 10 ký tự)!");
+            console.log("Vui lòng mô tả lý do khám chi tiết hơn (tối thiểu 10 ký tự)!");
             return;
         }
 

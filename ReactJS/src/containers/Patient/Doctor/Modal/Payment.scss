@@ -320,6 +320,11 @@
                     &:active {
                         background: #006edb;
                     }
+
+                    &.processing {
+                        opacity: 0.7;
+                        cursor: not-allowed;
+                    }
                 }
 
                 .bookmark-btn {

@@ -155,6 +155,17 @@
             tr:hover td {
                 background: rgba(0, 0, 0, 0.01);
             }
+
+            .no-data-msg {
+                color: #86868b;
+                font-size: 15px;
+
+                .no-data-icon {
+                    display: block;
+                    font-size: 24px;
+                    margin-bottom: 10px;
+                }
+            }
         }
     }
 

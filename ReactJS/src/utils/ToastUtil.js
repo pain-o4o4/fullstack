@@ -55,7 +55,7 @@ class ToastUtil {
                 message = error.errorMessage
             }
         }
-        toast.error(<CustomToast titleId={title} message={message} messageId={messageId} time={new Date()} />, {
+        console.log(<CustomToast titleId={title} message={message} messageId={messageId} time={new Date()} />, {
             position: toast.POSITION.BOTTOM_RIGHT,
             pauseOnHover: true,
             autoClose: autoCloseDelay
@@ -72,7 +72,7 @@ class ToastUtil {
 
         switch (type) {
             case TYPE_SUCCESS:
-                toast.success(content, options);
+                console.log(content, options);
                 break;
             case TYPE_INFO:
                 toast.info(content, options);
@@ -81,7 +81,7 @@ class ToastUtil {
                 toast.warn(content, options);
                 break;
             case TYPE_ERROR:
-                toast.error(content, options);
+                console.log(content, options);
                 break;
             default:
                 break;

@@ -7,6 +7,100 @@ $text-secondary: #86868b;
 $light-bg: #fffdf9;
 $border-color: rgba(0, 0, 0, 0.05);
 
+// ============================================================
+// SEGMENTED CONTROL BAR & TABS SECTION
+// ============================================================
+.hm-tabs-section {
+    background: #f5f5f7;
+    padding: 20px 32px 40px; // Added 60px top padding to separate from banner
+
+    @media (max-width: 768px) {
+        padding: 40px 16px 48px;
+    }
+}
+
+.hm-tabs-container {
+    max-width: 1180px;
+    margin: 0 auto;
+}
+
+// iOS-style Segmented Control — centered and more prominent
+.hm-segmented-bar {
+    display: flex;
+    gap: 4px;
+    background: rgba(118, 118, 128, 0.12);
+    border-radius: 14px; // Slightly more rounded
+    padding: 4px;
+    margin: 0 auto 48px; // CENTERED
+    width: fit-content;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+
+    @media (max-width: 768px) {
+        width: 100%;
+    }
+}
+
+.hm-tab-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 32px; // LARGER
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    cursor: pointer;
+    font-size: 15px; // LARGER
+    font-weight: 500;
+    color: #1d1d1f;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+    letter-spacing: -0.15px;
+    position: relative;
+    opacity: 0.55;
+
+    &:hover:not(.active) {
+        opacity: 0.75;
+    }
+
+    &.active {
+        background: #ffffff;
+        opacity: 1;
+        font-weight: 600;
+        box-shadow:
+            0 2px 6px rgba(0, 0, 0, 0.1),
+            0 0 0 0.5px rgba(0, 0, 0, 0.04);
+    }
+
+    // Squishy click
+    &:active {
+        transform: scale(0.97);
+    }
+
+    @media (max-width: 768px) {
+        flex: 1;
+        font-size: 13px;
+        padding: 8px 12px;
+    }
+}
+
+.hm-tab-content {
+    animation: tabFadeIn 0.25s ease;
+}
+
+@keyframes tabFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
 @mixin glassmorphism {
     background: rgba(255, 255, 255, 0.72);
     backdrop-filter: blur(20px);
