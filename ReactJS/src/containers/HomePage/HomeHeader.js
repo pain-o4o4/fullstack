@@ -9,7 +9,7 @@ import { withRouter } from '../../components/Navigator';
 import UserMenuPopup from '../HomePage/SubMenuForUser/UserMenuPopup';
 import backgroundBanner from '../../assets/images/backgroundBanner.avif';
 import GlobalSearch from '../../components/GlobalSearch/GlobalSearch';
-import DoctorChatDrawer from './DoctorChatDrawer';
+import DoctorChat from './DoctorChat';
 import bannerService from '../../assets/images/bannerService.png'
 
 class HomeHeader extends Component {
@@ -244,7 +244,7 @@ class HomeHeader extends Component {
                         </div>
                     </section>
                 )}
-                <DoctorChatDrawer
+                <DoctorChat
                     isOpen={this.state.isOpenDoctorChat}
                     onClose={() => this.setState({ isOpenDoctorChat: false })}
                 />

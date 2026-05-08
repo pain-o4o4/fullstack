@@ -3,11 +3,12 @@ import { connect } from 'react-redux';
 import * as actions from '../../store/actions';
 import { sendMessageApi, getMessagesApi, getChatHistorySidebarApi, searchUsersForChatApi } from '../../services/userService';
 import { toast } from 'react-toastify';
-import './DoctorChatDrawer.scss';
+import { CommonUtils } from '../../utils';
+import './DoctorChat.scss';
 
 const MOCK_CHAT = [];
 
-class DoctorChatDrawer extends Component {
+class DoctorChat extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -18,7 +19,9 @@ class DoctorChatDrawer extends Component {
             isSearching: false,
             searchQuery: '',
             chatHistory: [],
-            searchResult: []
+            searchResult: [],
+            selectedImage: '',
+            previewImage: ''
         };
         this.messagesEndRef = React.createRef();
         this.socketRegistered = false;
@@ -53,10 +56,7 @@ class DoctorChatDrawer extends Component {
             let doctors = this.props.allDoctors;
             if (doctors && doctors.length > 0) {
                 this.setState({
-                    listDoctors: doctors,
-                    selectedDoctor: doctors[0]
-                }, () => {
-                    if (this.props.isOpen) this.loadMessages();
+                    listDoctors: doctors
                 })
             }
         }
@@ -138,22 +138,38 @@ class DoctorChatDrawer extends Component {
     }
 
     handleSend = async () => {
-        const { inputText, selectedDoctor } = this.state;
+        const { inputText, selectedDoctor, selectedImage } = this.state;
         const { userInfo } = this.props;
-        if (!inputText.trim() || !selectedDoctor || !userInfo) return;
+        if ((!inputText.trim() && !selectedImage) || !selectedDoctor || !userInfo) return;
 
         let res = await sendMessageApi({
             senderId: userInfo.id,
             receiverId: selectedDoctor.id,
-            text: inputText.trim()
+            text: inputText.trim(),
+            image: selectedImage
         });
 
         if (res && res.errCode === 0) {
             this.setState({
                 inputText: '',
+                selectedImage: '',
+                previewImage: ''
             }, this.scrollToBottom);
         } else if (res && res.errCode === 2) {
             toast.error(res.errMessage);
+        }
+    }
+
+    handleOnChangeImage = async (event) => {
+        let data = event.target.files;
+        let file = data[0];
+        if (file) {
+            let base64 = await CommonUtils.getBase64(file);
+            let objectUrl = URL.createObjectURL(file);
+            this.setState({
+                selectedImage: base64,
+                previewImage: objectUrl
+            });
         }
     }
 
@@ -170,38 +186,13 @@ class DoctorChatDrawer extends Component {
 
     handleKeyDown = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
+            if (e.nativeEvent.isComposing) return; // Tránh gửi 2 lần khi gõ tiếng Việt
             e.preventDefault();
             this.handleSend();
         }
     }
 
-    renderAvatar = (image) => {
-        if (!image) return '';
 
-        let processedImage = image;
-        // Xử lý đối tượng Buffer thô từ Sequelize/Redux {type: 'Buffer', data: [...]}
-        if (image.data && Array.isArray(image.data)) {
-            let binary = '';
-            let bytes = new Uint8Array(image.data);
-            for (let i = 0; i < bytes.byteLength; i++) {
-                binary += String.fromCharCode(bytes[i]);
-            }
-            processedImage = binary;
-        }
-
-        // Nếu đã là chuỗi base64 hoàn chỉnh có tiền tố
-        if (typeof processedImage === 'string' && processedImage.startsWith('data:')) {
-            return processedImage;
-        }
-
-        try {
-            // Nếu là chuỗi binary, chuyển sang base64
-            return `data:image/jpeg;base64,${btoa(processedImage)}`;
-        } catch (e) {
-            // Nếu không thể btoa (có thể đã là base64 nhưng thiếu tiền tố)
-            return `data:image/jpeg;base64,${processedImage}`;
-        }
-    }
 
     render() {
         const { isOpen, onClose, userInfo } = this.props;
@@ -267,7 +258,7 @@ class DoctorChatDrawer extends Component {
                                         >
                                             <div className="dcd-doc-avatar-wrap">
                                                 {d.image ? (
-                                                    <div className="dcd-doc-avatar" style={{ backgroundImage: `url(${this.renderAvatar(d.image)})` }}></div>
+                                                    <div className="dcd-doc-avatar" style={{ backgroundImage: `url(${d.image})` }}></div>
                                                 ) : (
                                                     <div className="dcd-doc-avatar dcd-avatar-none">
                                                         <i className="fas fa-user"></i>
@@ -295,7 +286,7 @@ class DoctorChatDrawer extends Component {
                                         >
                                             <div className="dcd-doc-avatar-wrap">
                                                 {chat.avatar ? (
-                                                    <div className="dcd-doc-avatar" style={{ backgroundImage: `url(${this.renderAvatar(chat.avatar)})` }}></div>
+                                                    <div className="dcd-doc-avatar" style={{ backgroundImage: `url(${chat.avatar})` }}></div>
                                                 ) : (
                                                     <div className="dcd-doc-avatar dcd-avatar-none">
                                                         <i className="fas fa-user"></i>
@@ -325,7 +316,7 @@ class DoctorChatDrawer extends Component {
                                 <>
                                     <div className="dcd-chat-doctor-bar">
                                         {selectedDoctor.image ? (
-                                            <div className="dcd-mini-avatar" style={{ backgroundImage: `url(${this.renderAvatar(selectedDoctor.image)})` }}></div>
+                                            <div className="dcd-mini-avatar" style={{ backgroundImage: `url(${selectedDoctor.image})` }}></div>
                                         ) : (
                                             <div className="dcd-mini-avatar dcd-avatar-none">
                                                 <i className="fas fa-user"></i>
@@ -347,7 +338,12 @@ class DoctorChatDrawer extends Component {
                                                     <div className="dcd-system-msg">{msg.text}</div>
                                                 ) : (
                                                     <div className="dcd-bubble">
-                                                        <span className="dcd-text">{msg.text}</span>
+                                                        {msg.image && (
+                                                            <div className="dcd-msg-image-wrap">
+                                                                <img src={msg.image} alt="Sent" className="dcd-msg-image" />
+                                                            </div>
+                                                        )}
+                                                        {msg.text && <span className="dcd-text">{msg.text}</span>}
                                                         <span className="dcd-time">{msg.time}</span>
                                                     </div>
                                                 )}
@@ -358,14 +354,33 @@ class DoctorChatDrawer extends Component {
 
                                     <div className="dcd-input-bar">
                                         <input
-                                            type="text"
-                                            className="dcd-input"
-                                            placeholder="Nhắn tin cho bác sĩ..."
-                                            value={inputText}
-                                            onChange={e => this.setState({ inputText: e.target.value })}
-                                            onKeyDown={this.handleKeyDown}
+                                            type="file"
+                                            id="chatImage"
+                                            hidden
+                                            onChange={(e) => this.handleOnChangeImage(e)}
                                         />
-                                        <button className="dcd-send-btn" onClick={this.handleSend}>
+                                        <label htmlFor="chatImage" className="dcd-add-btn">
+                                            <i className="fas fa-plus-circle"></i>
+                                        </label>
+
+                                        <div className="dcd-input-container">
+                                            {this.state.previewImage && (
+                                                <div className="dcd-preview-wrap">
+                                                    <img src={this.state.previewImage} alt="Preview" />
+                                                    <i className="fas fa-times-circle" onClick={() => this.setState({ selectedImage: '', previewImage: '' })}></i>
+                                                </div>
+                                            )}
+                                            <input
+                                                type="text"
+                                                className="dcd-input"
+                                                placeholder="Nhắn tin cho bác sĩ..."
+                                                value={inputText}
+                                                onChange={e => this.setState({ inputText: e.target.value })}
+                                                onKeyDown={this.handleKeyDown}
+                                            />
+                                        </div>
+
+                                        <button className="dcd-send-btn" onClick={this.handleSend} disabled={!inputText.trim() && !this.state.selectedImage}>
                                             <i className="fas fa-paper-plane"></i>
                                         </button>
                                     </div>
@@ -395,4 +410,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(DoctorChatDrawer);
+export default connect(mapStateToProps, mapDispatchToProps)(DoctorChat);

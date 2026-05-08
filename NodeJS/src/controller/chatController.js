@@ -3,19 +3,20 @@ import chatService from "../services/chatService";
 let handleSendMessage = async (req, res) => {
     try {
         let info = await chatService.sendMessage(req.body);
-        
+
         if (info && info.errCode === 0) {
             let io = req.app.get('io');
             if (io) {
-                // Gửi tin nhắn tới người nhận
-                io.to(`user_room_${req.body.receiverId}`).emit('receive_message', info.data);
-                
+                let plainMessage = info.data.get({ plain: true });
+                // Gửi tin nhắn tới người nhận nguyên bản để không bị lỗi hiển thị
+                io.to(`user_room_${req.body.receiverId}`).emit('receive_message', plainMessage);
+
                 // Yêu cầu cả 2 bên cập nhật lại lịch sử đoạn chat ở sidebar
                 io.to(`user_room_${req.body.senderId}`).emit('update_chat_history');
                 io.to(`user_room_${req.body.receiverId}`).emit('update_chat_history');
             }
         }
-        
+
         return res.status(200).json(info);
     } catch (e) {
         console.log(e);

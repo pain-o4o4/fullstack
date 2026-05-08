@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   Message.init({
     senderId: DataTypes.INTEGER,
     receiverId: DataTypes.INTEGER,
+    image: DataTypes.BLOB('long'),
     text: DataTypes.TEXT
   }, {
     sequelize,

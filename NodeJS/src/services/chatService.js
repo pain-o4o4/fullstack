@@ -4,7 +4,7 @@ import { Op } from 'sequelize';
 let sendMessage = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.senderId || !data.receiverId || !data.text) {
+            if (!data.senderId || !data.receiverId || (!data.text && !data.image)) {
                 resolve({
                     errCode: 1,
                     errMessage: 'Missing required parameters!'
@@ -45,7 +45,8 @@ let sendMessage = (data) => {
                 let newMessage = await db.Message.create({
                     senderId: data.senderId,
                     receiverId: data.receiverId,
-                    text: data.text
+                    text: data.text || '',
+                    image: data.image || null
                 });
 
                 resolve({
@@ -76,8 +77,22 @@ let getMessages = (senderId, receiverId) => {
                             { senderId: receiverId, receiverId: senderId }
                         ]
                     },
-                    order: [['createdAt', 'ASC']]
+                    order: [['createdAt', 'ASC']],
+                    raw: true
                 });
+
+                // Chuyển đổi dữ liệu ảnh sang chuẩn binary của dự án
+                if (messages && messages.length > 0) {
+                    messages = messages.map(item => {
+                        if (item.image) {
+                            // item.image = Buffer.from(item.image.toString(), 'base64').toString('binary');
+                            item.image = Buffer.from(item.image, 'base64').toString('binary');
+
+                        }
+                        return item;
+                    });
+                }
+
                 resolve({
                     errCode: 0,
                     data: messages
@@ -98,27 +113,31 @@ let getChatHistorySidebar = (userId) => {
                     errMessage: 'Missing required parameters!'
                 });
             } else {
-                // 1. Lấy tất cả tin nhắn liên quan đến userId này
+                let currentUserId = Number(userId);
+                console.log(">>> check sidebar for userId:", currentUserId);
+
+                // 1. Lấy tất cả tin nhắn liên quan đến userId này (Dùng currentUserId để chuẩn kiểu Number)
                 let messages = await db.Message.findAll({
                     where: {
                         [Op.or]: [
-                            { senderId: userId },
-                            { receiverId: userId }
+                            { senderId: currentUserId },
+                            { receiverId: currentUserId }
                         ]
                     },
                     order: [['createdAt', 'DESC']],
                     raw: true
                 });
+                console.log(">>> Found messages count:", messages.length);
 
                 // 2. Lọc ra danh sách các đối tác chat duy nhất và tin nhắn mới nhất
                 let chatPartners = [];
                 let partnerIds = new Set();
 
                 for (let msg of messages) {
-                    let partnerId = msg.senderId === parseInt(userId) ? msg.receiverId : msg.senderId;
+                    let partnerId = Number(msg.senderId) === currentUserId ? Number(msg.receiverId) : Number(msg.senderId);
                     if (!partnerIds.has(partnerId)) {
                         partnerIds.add(partnerId);
-                        
+
                         // Lấy thông tin đối tác
                         let partnerInfo = await db.User.findOne({
                             where: { id: partnerId },
@@ -129,7 +148,9 @@ let getChatHistorySidebar = (userId) => {
                         if (partnerInfo) {
                             let imageBinary = '';
                             if (partnerInfo.image) {
-                                imageBinary = Buffer.from(partnerInfo.image.toString(), 'base64').toString('binary');
+                                // imageBinary = Buffer.from(partnerInfo.image.toString(), 'base64').toString('binary');
+                                // imageBinary = Buffer.from(partnerInfo.image, 'base64').toString('binary');
+                                imageBinary = Buffer.from(partnerInfo.image, 'base64').toString('binary'); //cmnn
                             }
                             chatPartners.push({
                                 partner_id: partnerId,
@@ -212,7 +233,9 @@ let searchUsersForChat = (userId, query) => {
                 if (results && results.length > 0) {
                     results = results.map(item => {
                         if (item.image) {
-                            item.image = Buffer.from(item.image.toString(), 'base64').toString('binary');
+                            item.image = Buffer.from(item.image, 'base64').toString('binary'); //cmnn
+                            // imageBinary = Buffer.from(partnerInfo.image, 'base64').toString('binary');
+
                         }
                         return item;
                     });

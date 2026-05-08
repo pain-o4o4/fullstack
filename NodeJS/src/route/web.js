@@ -8,7 +8,6 @@ import clinicController from "../controller/clinicController"
 import handbookController from "../controller/handbookController"
 import chatbotController from "../controller/chatbotController"
 import { checkUserJWT, checkUserPermission } from '../middleware/authMiddleware';
-import aiController from "../controller/aiController";
 import searchController from "../controller/searchController";
 import { searchRateLimiter } from '../middleware/rateLimiter';
 import { validateSearch } from '../middleware/searchValidator';
@@ -96,7 +95,7 @@ let initWebRoutes = (app) => {
     router.put('/api/edit-handbook', handbookController.handleEditHandbook);
 
     // AI & Chatbot
-    router.post('/api/chat-with-ai', aiController.postChatWithAI);
+    router.post('/api/chat-with-ai', chatbotController.handleChatWithAI);
     router.get('/api/get-chat-sessions', chatbotController.handleGetChatSessions);
     router.get('/api/get-chat-history', chatbotController.handleGetChatHistory);
     router.post('/api/save-chat-message', chatbotController.handleSaveMessage);
