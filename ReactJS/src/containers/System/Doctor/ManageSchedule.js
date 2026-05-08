@@ -9,6 +9,7 @@ import DatePicker from '../../../components/Input/DatePicker';
 import { toast } from 'react-toastify';
 import _ from 'lodash';
 import { bulkCreateScheduleService, getScheduleByDate } from '../../../services/userService'
+import { withSocket } from '../../../hoc/withSocket';
 
 class ManageSchedule extends Component {
     constructor(props) {
@@ -38,6 +39,27 @@ class ManageSchedule extends Component {
                     label: language === LANGUAGES.VI ? labelVi : labelEn
                 }
             });
+        }
+
+        // Lắng nghe sự kiện đồng bộ dữ liệu từ server
+        if (this.props.socket) {
+            this.props.socket.on('system_data_changed', this.handleSystemDataChanged);
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.props.socket) {
+            this.props.socket.off('system_data_changed', this.handleSystemDataChanged);
+        }
+    }
+
+    handleSystemDataChanged = (data) => {
+        // Reload schedule nếu có thay đổi liên quan đến SCHEDULE hoặc BOOKING (có người đặt)
+        if (data && (data.entity === 'SCHEDULE' || data.entity === 'BOOKING')) {
+            console.log('[Socket] Reloading schedule data due to remote change...', data);
+            if (this.state.selectedOption && this.state.selectedOption.value && this.state.currentDate) {
+                this.fetchExistingSchedules();
+            }
         }
     }
 
@@ -304,4 +326,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ManageSchedule);
+export default withSocket(connect(mapStateToProps, mapDispatchToProps)(ManageSchedule));

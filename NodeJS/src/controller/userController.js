@@ -196,6 +196,6 @@ export default {
     handleDeleteUser: handleDeleteUser,
     getAllCode: getAllCode,
     handleRefreshToken: handleRefreshToken,
-    handleLogout: handleLogout
+    handleLogout: handleLogout,
 
 };

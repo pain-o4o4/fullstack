@@ -142,8 +142,10 @@ const handleLogout = () => {
         store.dispatch({ type: 'PROCESS_LOGOUT' });
     }
 
-    // 5. Chuyển về trang login
-    window.location.href = '/login';
+    // 5. Ngừng force redirect bằng window.location ở đây!
+    // React Router và HOC (UserIsAuthenticated) sẽ tự động redirect
+    // người dùng nếu họ đang ở trang yêu cầu quyền (VD: /system),
+    // và sẽ cho phép họ ở lại nếu họ đang ở trang public (VD: /home).
 };
 
 export default instance;

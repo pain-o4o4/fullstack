@@ -179,6 +179,26 @@ const searchGlobal = (keyword, signal) => {
         timeout: 10000
     });
 }
+const getSystemStatisticsService = () => {
+    return axios.get('/api/get-system-statistics');
+}
+
+const sendMessageApi = (data) => {
+    return axios.post('/api/send-message', data);
+}
+
+const getMessagesApi = (senderId, receiverId) => {
+    return axios.get(`/api/get-messages?senderId=${senderId}&receiverId=${receiverId}`);
+}
+
+const getChatHistorySidebarApi = (userId) => {
+    return axios.get(`/api/get-chat-history-sidebar?userId=${userId}`);
+}
+
+const searchUsersForChatApi = (userId, query) => {
+    return axios.get(`/api/search-users-for-chat?userId=${userId}&query=${query}`);
+}
+
 export {
     handleLoginApi,
     verifyPaymentStatus,
@@ -222,5 +242,10 @@ export {
     deleteHandbookService,
     editHandbookService,
     getHistoryAppointmentByIdService,
-    searchGlobal
+    searchGlobal,
+    getSystemStatisticsService,
+    sendMessageApi,
+    getMessagesApi,
+    getChatHistorySidebarApi,
+    searchUsersForChatApi
 }

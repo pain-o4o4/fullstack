@@ -11,7 +11,7 @@ import HandBook from '../HomePage/Section/HandBook';
 import './SelectService.scss';
 import bannerService from '../../assets/images/bannerService.png'
 import CustomBreadcrumb from '../../components/CustomBreadcrumb/CustomBreadcrumb';
-import backgroundBanner from '../../assets/images/backgroundBanner.avif';
+import backgroundBanner from '../../assets/images/premium_medical_banner.png';
 
 class SelectService extends Component {
     render() {
@@ -57,9 +57,8 @@ class SelectService extends Component {
                 <HomeHeader isShowBanner={false} />
                 {/* <CustomBreadcrumb items={breadcrumbItems} /> */}
 
-                <div className="select-service-banner"
-                    style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${backgroundBanner})` }}
-                >
+                <div className="select-service-banner">
+                    <img src={backgroundBanner} alt="Banner" className="banner-img" />
                     <div className="banner-content">
                         <h1 className="banner-title">
                             <FormattedMessage id="select-service.title" />
@@ -67,14 +66,14 @@ class SelectService extends Component {
                         <p className="banner-desc">
                             <FormattedMessage id="select-service.desc" />
                         </p>
-                        <div className="banner-actions">
-                            {/* <button className="btn-primary">
+                        {/* <div className="banner-actions">
+                            <button className="btn-primary">
                                 <FormattedMessage id="select-service.get-care" />
                             </button>
                             <button className="btn-secondary">
                                 <FormattedMessage id="select-service.no-insurance" />
-                            </button> */}
-                        </div>
+                            </button>
+                        </div> */}
                     </div>
                 </div>
 

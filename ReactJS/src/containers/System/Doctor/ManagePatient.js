@@ -5,6 +5,7 @@ import DatePicker from '../../../components/Input/DatePicker';
 import { getListPatientForDoctor, updateBookingStatus } from '../../../services/userService';
 import moment from 'moment';
 import { toast } from 'react-toastify';
+import { withSocket } from '../../../hoc/withSocket';
 import '../Specialty/ManageSpecialty.scss'; // Reuse Apple Table
 import './ManagePatient.scss';
 
@@ -19,6 +20,25 @@ class ManagePatient extends Component {
 
     async componentDidMount() {
         this.getDataPatient();
+
+        // Lắng nghe sự kiện đồng bộ dữ liệu từ server
+        if (this.props.socket) {
+            this.props.socket.on('system_data_changed', this.handleSystemDataChanged);
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.props.socket) {
+            this.props.socket.off('system_data_changed', this.handleSystemDataChanged);
+        }
+    }
+
+    handleSystemDataChanged = (data) => {
+        // Chỉ reload nếu entity liên quan đến BOOKING (bệnh nhân đặt lịch / thanh toán thành công)
+        if (data && data.entity === 'BOOKING') {
+            console.log('[Socket] Reloading patient data due to remote change...', data);
+            this.getDataPatient();
+        }
     }
 
     getDataPatient = async () => {
@@ -193,4 +213,4 @@ const mapDispatchToProps = dispatch => {
     return {};
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ManagePatient);
+export default withSocket(connect(mapStateToProps, mapDispatchToProps)(ManagePatient));

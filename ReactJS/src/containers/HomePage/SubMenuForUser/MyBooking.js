@@ -9,6 +9,7 @@ import { LANGUAGES } from '../../../utils';
 import './MyBooking.scss'
 import { getAllAppointmentsByIdService, verifyPaymentStatus } from '../../../services/userService'
 import { toast } from 'react-toastify';
+import { withSocket } from '../../../hoc/withSocket';
 
 class MyBooking extends Component {
     constructor(props) {
@@ -43,6 +44,27 @@ class MyBooking extends Component {
         }
 
         // Luôn load lại danh sách SAU KHI verify (hoặc nếu không cần verify)
+        this.fetchAppointments();
+
+        if (this.props.socket) {
+            this.props.socket.on('system_data_changed', this.handleSystemDataChanged);
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.props.socket) {
+            this.props.socket.off('system_data_changed', this.handleSystemDataChanged);
+        }
+    }
+
+    handleSystemDataChanged = (data) => {
+        if (data && data.entity === 'BOOKING') {
+            console.log('[Socket] Reloading patient appointments due to remote change...', data);
+            this.fetchAppointments();
+        }
+    }
+
+    fetchAppointments = async () => {
         if (this.props.userInfo && this.props.userInfo.id) {
             let id = this.props.userInfo.id;
             let res = await getAllAppointmentsByIdService(id);
@@ -56,7 +78,7 @@ class MyBooking extends Component {
 
     async componentDidUpdate(prevProps, prevState, snapshot) {
         if (prevProps.userInfo !== this.props.userInfo && this.props.userInfo && this.props.userInfo.id) {
-            await getAllAppointmentsByIdService(this.props.userInfo.id);
+            this.fetchAppointments();
         }
 
         if (prevProps.detailAppointment !== this.props.detailAppointment) {
@@ -237,4 +259,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(MyBooking));
+export default withSocket(withRouter(connect(mapStateToProps, mapDispatchToProps)(MyBooking)));

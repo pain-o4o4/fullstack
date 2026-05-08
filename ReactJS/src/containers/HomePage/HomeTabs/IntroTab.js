@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from '../../../components/Navigator';
-import { getAllDoctorsService, getAllClinicService, getAllUsers, getAllCodeService } from '../../../services/userService';
+import { getSystemStatisticsService } from '../../../services/userService';
 import './IntroTab.scss';
 
 
@@ -10,9 +10,9 @@ class IntroTab extends Component {
         super(props);
         this.cardRefs = [];
         this.state = {
-            numDoctors: 5000,
-            numClinics: 50,
-            numUsers: 200000,
+            numDoctors: 0,
+            numClinics: 0,
+            numUsers: 0,
             satisfaction: 99,
             listProvinces: ['HN', 'ĐN', 'HCM', 'HP', 'CT']
         };
@@ -20,64 +20,16 @@ class IntroTab extends Component {
 
     async componentDidMount() {
         try {
-            let [resDoctors, resClinics, resUsers, resProvinces] = await Promise.all([
-                getAllDoctorsService(),
-                getAllClinicService(),
-                getAllUsers('ALL'),
-                getAllCodeService('PROVINCE')
-            ]);
+            let res = await getSystemStatisticsService();
 
-            if (resDoctors && resDoctors.errCode === 0) {
-                this.setState({ numDoctors: resDoctors.data.length });
-            }
-
-            if (resClinics && resClinics.errCode === 0) {
-                this.setState({ numClinics: resClinics.data.length });
-            }
-
-            if (resUsers && resUsers.errCode === 0) {
-                this.setState({ numUsers: resUsers.users.length });
-            }
-
-            if (resProvinces && resProvinces.errCode === 0 && resClinics && resClinics.errCode === 0) {
-                const clinics = resClinics.data;
-                const provincesData = resProvinces.data;
-
-                // Lọc và đếm số lượng phòng khám thực tế ở từng tỉnh
-                let provinces = provincesData.map(prov => {
-                    let searchKeywords = [prov.valueVi];
-                    if (prov.valueVi === 'Hồ Chí Minh') searchKeywords.push('TP.HCM', 'HCM', 'Hồ Chí Minh');
-                    if (prov.valueVi === 'Hà Nội') searchKeywords.push('HN', 'Hà Nội');
-                    if (prov.valueVi === 'Đà Nẵng') searchKeywords.push('ĐN', 'Đà Nẵng');
-
-                    let count = clinics.filter(c => {
-                        if (!c.address) return false;
-                        return searchKeywords.some(kw => c.address.includes(kw));
-                    }).length;
-
-                    let label = prov.valueVi;
-                    if (label === 'Hồ Chí Minh') label = 'HCM';
-                    else if (label === 'Hà Nội') label = 'HN';
-                    else if (label === 'Đà Nẵng') label = 'ĐN';
-                    else if (label === 'Cần Thơ') label = 'CT';
-                    else if (label === 'Hải Phòng') label = 'HP';
-                    else {
-                        // Lấy các chữ cái đầu tiên (Ví dụ: Bình Dương -> BD)
-                        label = label.split(' ').map(w => w.charAt(0)).join('').toUpperCase();
-                    }
-
-                    return {
-                        id: prov.keyMap,
-                        label: label,
-                        fullName: prov.valueVi,
-                        count: count
-                    };
-                })
-                    .filter(p => p.count > 0)
-                    .sort((a, b) => b.count - a.count)
-                    .slice(0, 6);
-
-                this.setState({ listProvinces: provinces });
+            if (res && res.errCode === 0) {
+                const { numDoctors, numClinics, numUsers, provinceStats } = res.data;
+                this.setState({
+                    numDoctors,
+                    numClinics,
+                    numUsers,
+                    listProvinces: provinceStats
+                });
             }
         } catch (e) {
             console.error(e);
@@ -108,7 +60,7 @@ class IntroTab extends Component {
 
     render() {
         const { numDoctors, numClinics, numUsers, satisfaction, listProvinces } = this.state;
-
+        console.log("tổng", numDoctors, numClinics, numUsers)
         const dynamicFeatures = [
             {
                 tag: '24/7',

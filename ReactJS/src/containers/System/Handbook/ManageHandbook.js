@@ -9,8 +9,8 @@ import {
 } from '../../../services/userService';
 import ModalManageHandbook from './ModalManageHandbook';
 import './ManageHandbook.scss';
-import { toast } from 'react-toastify';
 import { withRouter } from '../../../components/Navigator';
+import { withSocket } from '../../../hoc/withSocket';
 
 class ManageHandbook extends Component {
     constructor(props) {
@@ -28,6 +28,23 @@ class ManageHandbook extends Component {
 
     async componentDidMount() {
         await this.getAllHandbooks();
+
+        if (this.props.socket) {
+            this.props.socket.on('system_data_changed', this.handleSystemDataChanged);
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.props.socket) {
+            this.props.socket.off('system_data_changed', this.handleSystemDataChanged);
+        }
+    }
+
+    handleSystemDataChanged = (data) => {
+        if (data && data.entity === 'HANDBOOK') {
+            console.log('[Socket] Reloading handbook data due to remote change...', data);
+            this.getAllHandbooks();
+        }
     }
 
     getAllHandbooks = async () => {
@@ -226,4 +243,4 @@ const mapStateToProps = state => {
     };
 };
 
-export default withRouter(connect(mapStateToProps, null)(ManageHandbook));
+export default withSocket(withRouter(connect(mapStateToProps, null)(ManageHandbook)));

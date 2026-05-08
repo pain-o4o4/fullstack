@@ -14,13 +14,10 @@ const socketAuthMiddleware = (socket, next) => {
         const rawToken = socket.handshake?.auth?.token;
         const token = `${rawToken || ''}`.replace(/^Bearer\s+/i, '').trim();
 
-        if (!token) {
-            console.error('>>> Socket Auth Error: Missing token', {
-                authKeys: Object.keys(socket.handshake?.auth || {}),
-                queryKeys: Object.keys(socket.handshake?.query || {}),
-                headerHasAuthorization: Boolean(socket.handshake?.headers?.authorization)
-            });
-            return next(new Error('TOKEN_MISSING'));
+        if (!token || token.toLowerCase() === 'guest') {
+            socket.user = { roleId: 'GUEST', id: 'guest_' + Math.random().toString(36).substr(2, 9) };
+            socket.authToken = null;
+            return next();
         }
 
         try {

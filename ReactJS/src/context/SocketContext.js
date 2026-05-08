@@ -67,9 +67,35 @@ class SocketProvider extends Component {
         const { isLoggedIn, reduxToken } = this.props;
         const normalizedToken = `${reduxToken || ''}`.replace(/^Bearer\s+/i, '').trim();
 
-        // Nếu không login hoặc không có token -> Ngắt kết nối
+        // Nếu không login hoặc không có token -> Cho phép kết nối với tư cách là Guest (vãng lai)
+        // để có thể nhận các sự kiện realtime (vd: system_data_changed)
         if (!isLoggedIn || !normalizedToken) {
-            this.disconnectSocket();
+            console.log('[Socket] Connecting as Guest...');
+            const guestClient = getSocketClient('');
+            this.socketRef = guestClient;
+            
+            const handleGuestConnect = () => {
+                this.props.socketConnect();
+                this.props.socketSetInstance(guestClient);
+                console.log('[Socket] Guest Connected:', guestClient.id);
+            };
+
+            const handleGuestDisconnect = () => {
+                this.props.socketDisconnect();
+            };
+
+            guestClient.removeAllListeners();
+            guestClient.auth = { token: 'Bearer guest' }; // Đẩy token giả lên để server biết
+            guestClient.on('connect', handleGuestConnect);
+            guestClient.on('disconnect', handleGuestDisconnect);
+
+            if (!guestClient.connected) {
+                guestClient.connect();
+            } else {
+                handleGuestConnect();
+            }
+
+            this.setState({ socket: guestClient });
             return;
         }
 

@@ -1,37 +1,31 @@
 .select-service-container {
     background-color: #f5f5f5;
-    min-height: 100vh;
+    min-height: 60vh;
 
     .select-service-banner {
-        height: 100vh;
-        background-size: cover;
-        background-position: center;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
+        width: 100%;
+        height: 550px;
         position: relative;
         overflow: hidden;
         margin-bottom: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-        &::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(126, 126, 126, 0.4);
-            z-index: 1;
-            // Overlay sáng nhẹ khi hover vào banner
-            transition: background 0.4s ease;
-        }
-
-        &:hover::before {
-            background: rgba(126, 126, 126, 0.32);
+        .banner-img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            object-position: center 47%;
+            /* Nhích ảnh lên một chút để lấy phần trung tâm đẹp hơn */
         }
 
         .banner-content {
+            position: absolute;
+            top: 56%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             max-width: 1000px;
             width: 100%;
             padding: 0 20px;
@@ -39,16 +33,22 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            text-align: center;
+
+            h1 {
+                text-transform: uppercase;
+            }
         }
 
         .banner-title {
             font-family: "Georgia", "Times New Roman", serif;
-            font-size: 72px;
+            font-size: 48px;
             font-weight: 400;
             color: #ffffff;
             margin-bottom: 24px;
             line-height: 1.1;
             letter-spacing: -1px;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
 
         .banner-desc {
@@ -58,6 +58,7 @@
             max-width: 700px;
             margin: 0 auto 40px auto;
             font-weight: 500;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
         }
 
         .banner-actions {

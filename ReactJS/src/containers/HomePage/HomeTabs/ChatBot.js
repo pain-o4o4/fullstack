@@ -129,7 +129,12 @@ class ChatBot extends Component {
             });
 
             if (res && res.errCode === 0) {
-                // Done
+                // Nếu không có kết nối Socket hoặc là khách vãng lai, sử dụng luôn data từ HTTP response
+                if (!this.props.socket || !userInfo) {
+                    this.setState(prevState => ({
+                        localMessages: [...prevState.localMessages, { role: 'assistant', content: res.data }]
+                    }), () => this.scrollToBottom());
+                }
             } else {
                 console.log("Lỗi từ máy chủ AI");
             }

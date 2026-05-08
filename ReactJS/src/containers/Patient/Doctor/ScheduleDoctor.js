@@ -11,6 +11,7 @@ import { FormattedMessage } from 'react-intl';
 import BookingModal from './Modal/BookingModal';
 import _ from 'lodash';
 import { toast } from 'react-toastify';
+import { withSocket } from '../../../hoc/withSocket';
 
 class ScheduleDoctor extends Component {
     constructor(props) {
@@ -21,8 +22,8 @@ class ScheduleDoctor extends Component {
             allTime: [],
             allAvalabelTime: [],
             isTheModalOpen: false,
-
-            dataTimeModal: {}
+            dataTimeModal: {},
+            currentDate: null
         }
     }
     // 1. Tạo một hàm riêng để build mảng ngày
@@ -56,6 +57,7 @@ class ScheduleDoctor extends Component {
         if (this.props.params && this.props.params.id) {
             let doctorId = this.props.params.id;
             let today = allDay[0].value;
+            this.setState({ currentDate: today });
 
             let res = await getScheduleByDate(doctorId, today);
             if (res && res.errCode === 0) {
@@ -65,6 +67,33 @@ class ScheduleDoctor extends Component {
                 // Mặc định chọn clinic đầu tiên nếu có dữ liệu
                 if (res.data && res.data.length > 0 && res.data[0].clinicData) {
                     this.props.handleClinicSelection(res.data[0].clinicData);
+                }
+            }
+        }
+
+        // Lắng nghe sự kiện đồng bộ từ Socket
+        if (this.props.socket) {
+            this.props.socket.on('system_data_changed', this.handleSystemDataChanged);
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.props.socket) {
+            this.props.socket.off('system_data_changed', this.handleSystemDataChanged);
+        }
+    }
+
+    handleSystemDataChanged = async (data) => {
+        // Cập nhật lại lịch khám nếu có ai đó vừa đặt lịch hoặc bác sĩ cập nhật lịch
+        if (data && (data.entity === 'BOOKING' || data.entity === 'SCHEDULE')) {
+            console.log('[Socket] Reloading schedule data...', data);
+            if (this.props.params && this.props.params.id && this.state.currentDate) {
+                let doctorId = this.props.params.id;
+                let res = await getScheduleByDate(doctorId, this.state.currentDate);
+                if (res && res.errCode === 0) {
+                    this.setState({
+                        allAvalabelTime: res.data ? res.data : []
+                    });
                 }
             }
         }
@@ -80,6 +109,7 @@ class ScheduleDoctor extends Component {
         if (this.props.params && prevProps.params && this.props.params.id !== prevProps.params.id) {
             let doctorId = this.props.params.id;
             let today = this.state.allDay[0].value;
+            this.setState({ currentDate: today });
             let res = await getScheduleByDate(doctorId, today);
             if (res && res.errCode === 0) {
                 this.setState({
@@ -95,6 +125,7 @@ class ScheduleDoctor extends Component {
         if (this.props.params && this.props.params.id) {
             let doctorId = this.props.params.id;
             let date = e.target.value;
+            this.setState({ currentDate: date });
             let res = await getScheduleByDate(doctorId, date);
 
             this.setState({
@@ -243,4 +274,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 // import { withRouter } from 'react-router'; // hoặc 'react-router-dom'
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ScheduleDoctor));
+export default withRouter(withSocket(connect(mapStateToProps, mapDispatchToProps)(ScheduleDoctor)));

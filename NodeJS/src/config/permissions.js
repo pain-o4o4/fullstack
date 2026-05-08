@@ -42,7 +42,8 @@ export const PUBLIC_PATHS = [
     '/api/chat-with-ai',
     '/api/get-chat-sessions',
     '/api/get-chat-history',
-    '/api/save-chat-message'
+    '/api/save-chat-message',
+    '/api/get-system-statistics'
 ];
 
 // ==========================================
@@ -75,7 +76,11 @@ export const PERMISSIONS = {
         '/api/create-new-handbook',
         '/api/delete-handbook',
         '/api/edit-handbook',
-        '/api/chat-with-ai'
+        '/api/chat-with-ai',
+        '/api/send-message',
+        '/api/get-messages',
+        '/api/get-chat-history-sidebar',
+        '/api/search-users-for-chat'
     ],
 
     [ROLES.DOCTOR]: [
@@ -83,14 +88,23 @@ export const PERMISSIONS = {
         '/api/bulk-create-schedule',
         '/api/get-list-patient-for-doctor',
         '/api/update-booking-status',
-        '/api/chat-with-ai'
+        '/api/chat-with-ai',
+        '/api/send-message',
+        '/api/get-messages',
+        '/api/get-chat-history-sidebar',
+        '/api/search-users-for-chat'
     ],
 
     [ROLES.PATIENT]: [
         '/api/patient-book-appointment',
         '/api/get-all-appointments-by-id',
+        '/api/get-history-appointment-by-id',
         '/api/get-detail-schedule-patient',
         '/api/update-patient',
-        '/api/chat-with-ai'
+        '/api/chat-with-ai',
+        '/api/send-message',
+        '/api/get-messages',
+        '/api/get-chat-history-sidebar',
+        '/api/search-users-for-chat'
     ]
 };

@@ -332,7 +332,7 @@
 // HERO SECTION — Clean Minimalist (365px height)
 // ============================================================
 .hm-hero {
-    height: 445px; // 365px content + 80px header padding
+    height: 545px; // 365px content + 80px header padding
     display: flex;
     align-items: center;
     justify-content: center;
@@ -350,7 +350,10 @@
             position: absolute;
             inset: 0;
             background-size: cover;
-            background-position: center top;
+
+            /* Căn giữa: Ngang (center) và Dọc (center) */
+            background-position: 50% 40%;
+
             transition: transform 0.5s ease;
         }
 

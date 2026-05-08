@@ -128,12 +128,21 @@ class AISupportPage extends Component {
             let res = await axios.post('/api/chat-with-ai', {
                 userQuery: userMsgContent,
                 language: language,
-                userId: userInfo.id,
+                userId: userInfo ? userInfo.id : null,
                 sessionId: currentSessionId
             });
 
             if (res && res.errCode === 0) {
-                // Thành công, không làm gì thêm vì socket (isDone) sẽ fetchHistory lại
+                // Thành công, nếu socket không khả dụng hoặc là guest, sử dụng data trả về từ HTTP
+                if (!this.props.socket || !userInfo) {
+                    this.setState(prevState => ({
+                        localMessages: [...prevState.localMessages, { role: 'assistant', content: res.data }]
+                    }), () => {
+                        if (userInfo && userInfo.id) {
+                            this.props.fetchHistory(userInfo.id, currentSessionId);
+                        }
+                    });
+                }
             } else {
                 console.log("Error from AI server");
             }
@@ -148,7 +157,9 @@ class AISupportPage extends Component {
     handleSelectSession = (sessionId) => {
         const { userInfo } = this.props;
         this.setState({ currentSessionId: sessionId });
-        this.props.fetchHistory(userInfo.id, sessionId);
+        if (userInfo && userInfo.id) {
+            this.props.fetchHistory(userInfo.id, sessionId);
+        }
     }
 
     handleNewChat = () => {

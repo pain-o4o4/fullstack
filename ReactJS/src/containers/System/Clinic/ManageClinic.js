@@ -8,8 +8,8 @@ import {
     editClinicService
 } from '../../../services/userService';
 import ModalManageClinic from '../manageSystemModal/ModalManageClinic';
-import { toast } from 'react-toastify';
 import { withRouter } from '../../../components/Navigator';
+import { withSocket } from '../../../hoc/withSocket';
 import './ManageClinic.scss';
 
 class ManageClinic extends Component {
@@ -28,6 +28,23 @@ class ManageClinic extends Component {
 
     async componentDidMount() {
         await this.getAllClinics();
+
+        if (this.props.socket) {
+            this.props.socket.on('system_data_changed', this.handleSystemDataChanged);
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.props.socket) {
+            this.props.socket.off('system_data_changed', this.handleSystemDataChanged);
+        }
+    }
+
+    handleSystemDataChanged = (data) => {
+        if (data && data.entity === 'CLINIC') {
+            console.log('[Socket] Reloading clinic data due to remote change...', data);
+            this.getAllClinics();
+        }
     }
 
     getAllClinics = async () => {
@@ -233,4 +250,4 @@ const mapStateToProps = state => {
     };
 };
 
-export default withRouter(connect(mapStateToProps, null)(ManageClinic));
+export default withSocket(withRouter(connect(mapStateToProps, null)(ManageClinic)));

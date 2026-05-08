@@ -9,8 +9,8 @@ import {
 } from '../../../services/userService';
 import ModalManageSpecialty from '../manageSystemModal/ModalManageSpecialty';
 import './ManageSpecialty.scss';
-import { toast } from 'react-toastify';
 import { withRouter } from '../../../components/Navigator';
+import { withSocket } from '../../../hoc/withSocket';
 
 class ManageSpecialty extends Component {
     constructor(props) {
@@ -28,6 +28,23 @@ class ManageSpecialty extends Component {
 
     async componentDidMount() {
         await this.getAllSpecialties();
+
+        if (this.props.socket) {
+            this.props.socket.on('system_data_changed', this.handleSystemDataChanged);
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.props.socket) {
+            this.props.socket.off('system_data_changed', this.handleSystemDataChanged);
+        }
+    }
+
+    handleSystemDataChanged = (data) => {
+        if (data && data.entity === 'SPECIALTY') {
+            console.log('[Socket] Reloading specialty data due to remote change...', data);
+            this.getAllSpecialties();
+        }
     }
 
     getAllSpecialties = async () => {
@@ -228,4 +245,4 @@ const mapStateToProps = state => {
     };
 };
 
-export default withRouter(connect(mapStateToProps, null)(ManageSpecialty));
+export default withSocket(withRouter(connect(mapStateToProps, null)(ManageSpecialty)));

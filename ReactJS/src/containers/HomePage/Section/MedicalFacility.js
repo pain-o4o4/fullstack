@@ -81,8 +81,8 @@ class MedicalFacility extends Component {
                         <FormattedMessage id="homepage.clinic" />
                     </span>
                     <div className='header-actions'>
-                        <button className='btn-nav' onClick={this.scrollLeft}><i className="fas fa-chevron-left"></i></button>
-                        <button className='btn-nav' onClick={this.scrollRight}><i className="fas fa-chevron-right"></i></button>
+                        <button className='btn-nav' onClick={this.scrollLeft}>&#10094;</button>
+                        <button className='btn-nav' onClick={this.scrollRight}>&#10095;</button>
                         <button className='btn-section'
                             onClick={() => this.props.navigate && this.props.navigate(path.ALL_CLINIC)}
                         >
@@ -93,35 +93,35 @@ class MedicalFacility extends Component {
 
                 <div className='section-body'>
                     <div className="maven-slider-wrapper" ref={this.scrollRef}>
-                            {this.state.dataClinics && this.state.dataClinics.length > 0 &&
-                                this.state.dataClinics.map((item, index) => {
-                                    let dotColor = DOT_COLORS[index % DOT_COLORS.length];
+                        {this.state.dataClinics && this.state.dataClinics.length > 0 &&
+                            this.state.dataClinics.map((item, index) => {
+                                let dotColor = DOT_COLORS[index % DOT_COLORS.length];
 
-                                    return (
-                                        <div className="maven-card" key={index} onClick={() => this.handleViewDetailClinic(item)}>
-                                            <div className="maven-card-bg" style={{ backgroundImage: `url(${item.image})` }}></div>
-                                            <div className="maven-card-overlay"></div>
-                                            
-                                            <div className="maven-card-indicator">
-                                                <span className="dot" style={{ backgroundColor: dotColor }}></span>
-                                            </div>
-                                            
-                                            <div className="maven-card-content">
-                                                <h3 className="maven-card-title">{item.name}</h3>
-                                                <div className="maven-card-reveal">
-                                                    <p className="maven-card-desc">
-                                                        {item.address}
-                                                    </p>
-                                                    <button className="maven-card-btn" style={{ backgroundColor: dotColor, color: '#fff' }}>
-                                                        Learn more
-                                                    </button>
-                                                </div>
+                                return (
+                                    <div className="maven-card" key={index} onClick={() => this.handleViewDetailClinic(item)}>
+                                        <div className="maven-card-bg" style={{ backgroundImage: `url(${item.image})` }}></div>
+                                        <div className="maven-card-overlay"></div>
+
+                                        <div className="maven-card-indicator">
+                                            <span className="dot" style={{ backgroundColor: dotColor }}></span>
+                                        </div>
+
+                                        <div className="maven-card-content">
+                                            <h3 className="maven-card-title">{item.name}</h3>
+                                            <div className="maven-card-reveal">
+                                                <p className="maven-card-desc">
+                                                    {item.address}
+                                                </p>
+                                                <button className="maven-card-btn" style={{ backgroundColor: dotColor, color: '#fff' }}>
+                                                    Learn more
+                                                </button>
                                             </div>
                                         </div>
-                                    );
-                                })}
-                        </div>
+                                    </div>
+                                );
+                            })}
                     </div>
+                </div>
             </div>
         );
     }

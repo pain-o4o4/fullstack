@@ -12,6 +12,9 @@ import aiController from "../controller/aiController";
 import searchController from "../controller/searchController";
 import { searchRateLimiter } from '../middleware/rateLimiter';
 import { validateSearch } from '../middleware/searchValidator';
+import socketSyncMiddleware from '../middleware/socketSyncMiddleware';
+import systemController from "../controller/systemController";
+import chatController from "../controller/chatController";
 let router = express.Router()
 
 let initWebRoutes = (app) => {
@@ -22,6 +25,12 @@ let initWebRoutes = (app) => {
     // Middleware này sẽ chặn ở CỔNG VÀO của toàn bộ các API.
     // Nếu là PUBLIC_PATHS -> Cho qua. Nếu không -> Bắt buộc kiểm tra Token & Quyền.
     router.all('*', checkUserJWT, checkUserPermission);
+
+    // ==========================================
+    // GLOBAL WEBSOCKET SYNC MIDDLEWARE
+    // ==========================================
+    // Bắt mọi request POST/PUT/DELETE thành công để phát sự kiện socket
+    router.use(socketSyncMiddleware);
 
     // ==========================================
     // DANH SÁCH API (KHÔNG CẦN CHÈN MIDDLEWARE LẺ TẺ NỮA)
@@ -91,6 +100,15 @@ let initWebRoutes = (app) => {
     router.get('/api/get-chat-sessions', chatbotController.handleGetChatSessions);
     router.get('/api/get-chat-history', chatbotController.handleGetChatHistory);
     router.post('/api/save-chat-message', chatbotController.handleSaveMessage);
+    
+    // Chat
+    router.post('/api/send-message', chatController.handleSendMessage);
+    router.get('/api/get-messages', chatController.handleGetMessages);
+    router.get('/api/get-chat-history-sidebar', chatController.handleGetChatHistorySidebar);
+    router.get('/api/search-users-for-chat', chatController.handleSearchUsersForChat);
+
+    // System
+    router.get('/api/get-system-statistics', systemController.getSystemStatistics);
 
     return app.use("/", router)
 }
