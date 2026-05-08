@@ -105,6 +105,8 @@ let initWebRoutes = (app) => {
     router.get('/api/get-messages', chatController.handleGetMessages);
     router.get('/api/get-chat-history-sidebar', chatController.handleGetChatHistorySidebar);
     router.get('/api/search-users-for-chat', chatController.handleSearchUsersForChat);
+    router.post('/api/delete-conversation', chatController.handleDeleteConversation);
+    router.post('/api/mark-messages-as-read', chatController.handleMarkMessagesAsRead);
 
     // System
     router.get('/api/get-system-statistics', systemController.getSystemStatistics);

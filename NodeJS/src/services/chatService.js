@@ -46,7 +46,8 @@ let sendMessage = (data) => {
                     senderId: data.senderId,
                     receiverId: data.receiverId,
                     text: data.text || '',
-                    image: data.image || null
+                    image: data.image || null,
+                    isRead: false
                 });
 
                 resolve({
@@ -152,13 +153,23 @@ let getChatHistorySidebar = (userId) => {
                                 // imageBinary = Buffer.from(partnerInfo.image, 'base64').toString('binary');
                                 imageBinary = Buffer.from(partnerInfo.image, 'base64').toString('binary'); //cmnn
                             }
+                            // Đếm số tin nhắn chưa đọc từ đối tác này gửi cho currentUserId
+                            let unreadCount = await db.Message.count({
+                                where: {
+                                    senderId: partnerId,
+                                    receiverId: currentUserId,
+                                    isRead: false
+                                }
+                            });
+
                             chatPartners.push({
                                 partner_id: partnerId,
                                 text: msg.text,
                                 createdAt: msg.createdAt,
                                 firstName: partnerInfo.firstName,
                                 lastName: partnerInfo.lastName,
-                                image: imageBinary
+                                image: imageBinary,
+                                unreadCount: unreadCount
                             });
                         }
                     }
@@ -252,9 +263,66 @@ let searchUsersForChat = (userId, query) => {
     });
 };
 
+let deleteConversation = (userId, partnerId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!userId || !partnerId) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing required parameters!'
+                });
+            } else {
+                await db.Message.destroy({
+                    where: {
+                        [Op.or]: [
+                            { senderId: userId, receiverId: partnerId },
+                            { senderId: partnerId, receiverId: userId }
+                        ]
+                    }
+                });
+                resolve({
+                    errCode: 0,
+                    errMessage: 'Delete conversation succeed!'
+                });
+            }
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
+
+let markMessagesAsRead = (userId, partnerId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!userId || !partnerId) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing required parameters!'
+                });
+            } else {
+                await db.Message.update({ isRead: true }, {
+                    where: {
+                        senderId: partnerId,
+                        receiverId: userId,
+                        isRead: false
+                    }
+                });
+                resolve({
+                    errCode: 0,
+                    errMessage: 'Mark messages as read succeed!'
+                });
+            }
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
+
 export default {
     sendMessage: sendMessage,
     getMessages: getMessages,
     getChatHistorySidebar: getChatHistorySidebar,
-    searchUsersForChat: searchUsersForChat
+    searchUsersForChat: searchUsersForChat,
+    deleteConversation: deleteConversation,
+    markMessagesAsRead: markMessagesAsRead
 };

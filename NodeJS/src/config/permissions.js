@@ -80,7 +80,9 @@ export const PERMISSIONS = {
         '/api/send-message',
         '/api/get-messages',
         '/api/get-chat-history-sidebar',
-        '/api/search-users-for-chat'
+        '/api/search-users-for-chat',
+        '/api/delete-conversation',
+        '/api/mark-messages-as-read'
     ],
 
     [ROLES.DOCTOR]: [
@@ -92,7 +94,9 @@ export const PERMISSIONS = {
         '/api/send-message',
         '/api/get-messages',
         '/api/get-chat-history-sidebar',
-        '/api/search-users-for-chat'
+        '/api/search-users-for-chat',
+        '/api/delete-conversation',
+        '/api/mark-messages-as-read'
     ],
 
     [ROLES.PATIENT]: [
@@ -105,6 +109,8 @@ export const PERMISSIONS = {
         '/api/send-message',
         '/api/get-messages',
         '/api/get-chat-history-sidebar',
-        '/api/search-users-for-chat'
+        '/api/search-users-for-chat',
+        '/api/delete-conversation',
+        '/api/mark-messages-as-read'
     ]
 };

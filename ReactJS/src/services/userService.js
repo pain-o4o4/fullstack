@@ -199,6 +199,14 @@ const searchUsersForChatApi = (userId, query) => {
     return axios.get(`/api/search-users-for-chat?userId=${userId}&query=${query}`);
 }
 
+const deleteConversationApi = (data) => {
+    return axios.post('/api/delete-conversation', data);
+}
+
+const markMessagesAsReadApi = (data) => {
+    return axios.post('/api/mark-messages-as-read', data);
+}
+
 export {
     handleLoginApi,
     verifyPaymentStatus,
@@ -247,5 +255,7 @@ export {
     sendMessageApi,
     getMessagesApi,
     getChatHistorySidebarApi,
-    searchUsersForChatApi
+    searchUsersForChatApi,
+    deleteConversationApi,
+    markMessagesAsReadApi
 }

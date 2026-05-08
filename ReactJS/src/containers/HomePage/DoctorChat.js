@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../store/actions';
-import { sendMessageApi, getMessagesApi, getChatHistorySidebarApi, searchUsersForChatApi } from '../../services/userService';
+import { sendMessageApi, getMessagesApi, getChatHistorySidebarApi, searchUsersForChatApi, deleteConversationApi, markMessagesAsReadApi } from '../../services/userService';
 import { toast } from 'react-toastify';
 import { CommonUtils } from '../../utils';
 import './DoctorChat.scss';
@@ -21,7 +21,9 @@ class DoctorChat extends Component {
             chatHistory: [],
             searchResult: [],
             selectedImage: '',
-            previewImage: ''
+            previewImage: '',
+            showConfirmDelete: false,
+            partnerIdToDelete: null
         };
         this.messagesEndRef = React.createRef();
         this.socketRegistered = false;
@@ -132,9 +134,17 @@ class DoctorChat extends Component {
         }
     }
 
-    handleSelectDoctor = (doctor) => {
-        this.setState({ selectedDoctor: doctor });
-        setTimeout(this.scrollToBottom, 100);
+    handleSelectDoctor = async (doctor) => {
+        this.setState({ selectedDoctor: doctor }, async () => {
+            this.scrollToBottom();
+            // Đánh dấu đã đọc khi chọn bác sĩ
+            if (this.props.userInfo?.id) {
+                await markMessagesAsReadApi({
+                    userId: this.props.userInfo.id,
+                    partnerId: doctor.id
+                });
+            }
+        });
     }
 
     handleSend = async () => {
@@ -170,6 +180,7 @@ class DoctorChat extends Component {
                 selectedImage: base64,
                 previewImage: objectUrl
             });
+            event.target.value = null;
         }
     }
 
@@ -193,6 +204,43 @@ class DoctorChat extends Component {
     }
 
 
+
+    confirmDelete = (e, partnerId) => {
+        e.stopPropagation();
+        this.setState({
+            showConfirmDelete: true,
+            partnerIdToDelete: partnerId
+        });
+    }
+
+    cancelDelete = () => {
+        this.setState({
+            showConfirmDelete: false,
+            partnerIdToDelete: null
+        });
+    }
+
+    handleDeleteConversation = async () => {
+        const { partnerIdToDelete } = this.state;
+        const { userInfo } = this.props;
+        if (partnerIdToDelete && userInfo?.id) {
+            let res = await deleteConversationApi({
+                userId: userInfo.id,
+                partnerId: partnerIdToDelete
+            });
+            if (res && res.errCode === 0) {
+                this.setState(prevState => ({
+                    chatHistory: prevState.chatHistory.filter(item => item.id !== partnerIdToDelete),
+                    showConfirmDelete: false,
+                    partnerIdToDelete: null,
+                    selectedDoctor: prevState.selectedDoctor?.id === partnerIdToDelete ? null : prevState.selectedDoctor
+                }));
+                toast.success("Đã xóa cuộc trò chuyện");
+            } else {
+                toast.error("Lỗi khi xóa cuộc trò chuyện");
+            }
+        }
+    }
 
     render() {
         const { isOpen, onClose, userInfo } = this.props;
@@ -295,15 +343,21 @@ class DoctorChat extends Component {
                                                 {chat.online && <span className="dcd-online-dot online"></span>}
                                             </div>
                                             <div className="dcd-history-info">
-                                                <div className="dcd-history-name">{chat.name}</div>
+                                                <div className={`dcd-history-name ${chat.unreadCount > 0 ? 'unread' : ''}`}>{chat.name}</div>
                                                 <div className="dcd-history-lastmsg">
-                                                    <span className="msg-text">{chat.lastMsg}</span>
+                                                    <span className={`msg-text ${chat.unreadCount > 0 ? 'unread' : ''}`}>{chat.lastMsg}</span>
                                                     <span className="msg-time"> · {chat.time}</span>
                                                 </div>
                                             </div>
                                             <div className="dcd-history-status">
-                                                {chat.unread && <span className="unread-dot"></span>}
-                                                {chat.isMuted && <i className="fas fa-volume-mute mute-icon"></i>}
+                                                {chat.unreadCount > 0 && <span className="unread-badge">{chat.unreadCount}</span>}
+                                                <button 
+                                                    className="dcd-delete-chat-btn"
+                                                    onClick={(e) => this.confirmDelete(e, chat.id)}
+                                                    title="Xóa cuộc trò chuyện"
+                                                >
+                                                    <i className="fas fa-trash-alt"></i>
+                                                </button>
                                             </div>
                                         </div>
                                     ))
@@ -332,23 +386,39 @@ class DoctorChat extends Component {
                                     </div>
 
                                     <div className="dcd-messages">
-                                        {messages.map(msg => (
-                                            <div key={msg.id} className={`dcd-msg dcd-msg--${msg.type}`}>
-                                                {msg.type === 'system' ? (
-                                                    <div className="dcd-system-msg">{msg.text}</div>
-                                                ) : (
-                                                    <div className="dcd-bubble">
-                                                        {msg.image && (
-                                                            <div className="dcd-msg-image-wrap">
-                                                                <img src={msg.image} alt="Sent" className="dcd-msg-image" />
-                                                            </div>
-                                                        )}
-                                                        {msg.text && <span className="dcd-text">{msg.text}</span>}
-                                                        <span className="dcd-time">{msg.time}</span>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        ))}
+                                        {messages.map((msg, index) => {
+                                            const isLastSent = msg.senderId === userInfo.id && 
+                                                              index === [...messages].reverse().findIndex(m => m.senderId === userInfo.id);
+                                            // Chỗ này tôi dùng mưu mẹo một chút để tìm index cuối cùng của tin nhắn mình gửi
+                                            let lastSentIndex = -1;
+                                            for(let i = messages.length - 1; i >= 0; i--) {
+                                                if(messages[i].senderId === userInfo.id) {
+                                                    lastSentIndex = i;
+                                                    break;
+                                                }
+                                            }
+
+                                            return (
+                                                <div key={msg.id} className={`dcd-msg dcd-msg--${msg.type}`}>
+                                                    {msg.type === 'system' ? (
+                                                        <div className="dcd-system-msg">{msg.text}</div>
+                                                    ) : (
+                                                        <div className="dcd-bubble">
+                                                            {msg.image && (
+                                                                <div className="dcd-msg-image-wrap">
+                                                                    <img src={msg.image} alt="Sent" className="dcd-msg-image" />
+                                                                </div>
+                                                            )}
+                                                            {msg.text && <span className="dcd-text">{msg.text}</span>}
+                                                            <span className="dcd-time">{msg.time}</span>
+                                                        </div>
+                                                    )}
+                                                    {index === lastSentIndex && msg.isRead && (
+                                                        <div className="dcd-seen-status">Đã xem</div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
                                         <div ref={this.messagesEndRef} />
                                     </div>
 
@@ -387,6 +457,19 @@ class DoctorChat extends Component {
                                 </>
                             ) : (
                                 <div className="dcd-no-chat">Chọn một bác sĩ để bắt đầu tư vấn</div>
+                            )}
+
+                            {this.state.showConfirmDelete && (
+                                <div className="dcd-confirm-popup">
+                                    <div className="popup-title">Xóa cuộc trò chuyện?</div>
+                                    <div className="popup-desc">
+                                        Mọi tin nhắn trong cuộc hội thoại này sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác.
+                                    </div>
+                                    <div className="popup-actions">
+                                        <button onClick={this.cancelDelete}>Hủy</button>
+                                        <button className="btn-delete" onClick={this.handleDeleteConversation}>Xóa</button>
+                                    </div>
+                                </div>
                             )}
                         </div>
                     </div>
