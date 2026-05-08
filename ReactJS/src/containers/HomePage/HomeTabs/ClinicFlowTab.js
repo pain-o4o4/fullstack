@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { withRouter } from '../../../components/Navigator';
 import { getAllClinicService } from '../../../services/userService';
 import ExaminationPackages from './ExaminationPackages';
-import DoctorChat from './DoctorChat';
+import DoctorMiniChat from './DoctorMiniChat';
 import ChatBot from './ChatBot';
 import './ClinicFlowTab.scss';
 
@@ -89,7 +89,7 @@ class ClinicFlowTab extends Component {
             case 'PACKAGES':
                 return <ExaminationPackages onBack={() => this.setState({ activeView: 'MAIN' })} />;
             case 'DOCTOR_CHAT':
-                return <DoctorChat onBack={() => this.setState({ activeView: 'MAIN' })} />;
+                return <DoctorMiniChat onBack={() => this.setState({ activeView: 'MAIN' })} />;
             case 'AI_CHAT':
                 return <ChatBot onBack={() => this.setState({ activeView: 'MAIN' })} />;
             default:
@@ -114,16 +114,16 @@ class ClinicFlowTab extends Component {
 
                         <div className="cf-utilities-grid">
                             {UTILITIES.map((util) => (
-                                <div 
-                                    key={util.id} 
-                                    className="cf-util-card" 
+                                <div
+                                    key={util.id}
+                                    className="cf-util-card"
                                     style={{ '--accent': util.accent }}
                                     onClick={() => this.handleCardClick(util.action)}
                                 >
                                     <div className="util-tag">{util.tag}</div>
                                     <h3 className="util-title">{util.title}</h3>
                                     <p className="util-desc">{util.desc}</p>
-                                    
+
                                     <div className="util-visual">
                                         <div className="util-shape"></div>
                                     </div>

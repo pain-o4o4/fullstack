@@ -469,6 +469,7 @@
         opacity: 0;
         transform: translate(-50%, -45%) scale(1.05);
     }
+
     to {
         opacity: 1;
         transform: translate(-50%, -50%) scale(1);
@@ -479,15 +480,20 @@
     font-size: 11px;
     color: #8e8e93;
     text-align: right;
-    margin-top: 2px;
+    margin-top: 5px;
     margin-right: 4px;
     font-weight: 500;
     animation: fadeInStatus 0.3s ease;
 }
 
 @keyframes fadeInStatus {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 .dcd-doc-item {
@@ -623,9 +629,10 @@
 
 .dcd-msg {
     display: flex;
+    flex-direction: column;
 
     &--doctor {
-        justify-content: flex-start;
+        align-items: flex-start;
 
         .dcd-bubble {
             background: #f2f2f7; // iMessage grey
@@ -635,7 +642,7 @@
     }
 
     &--patient {
-        justify-content: flex-end;
+        align-items: flex-end;
 
         .dcd-bubble {
             background: #0071e3; // iMessage blue
@@ -646,7 +653,7 @@
     }
 
     &--system {
-        justify-content: center;
+        align-items: center;
     }
 }
 

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { getAllDoctorsService } from '../../../services/userService';
-import './DoctorChat.scss';
+import './DoctorMiniChat.scss';
 
-class DoctorChat extends Component {
+class DoctorMiniChat extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -43,8 +43,8 @@ class DoctorChat extends Component {
                         <div className="sidebar-title">Bác sĩ sẵn sàng</div>
                         <div className="doctor-list">
                             {listDoctors.map((doc) => (
-                                <div 
-                                    key={doc.id} 
+                                <div
+                                    key={doc.id}
                                     className={`doctor-item ${selectedDoctor?.id === doc.id ? 'active' : ''}`}
                                     onClick={() => this.setState({ selectedDoctor: doc })}
                                 >
@@ -91,4 +91,4 @@ class DoctorChat extends Component {
     }
 }
 
-export default DoctorChat;
+export default DoctorMiniChat;
