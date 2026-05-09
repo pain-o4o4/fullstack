@@ -199,9 +199,37 @@ const handleChatWithAI = async (userQuery, language, history = [], io = null, us
     }
 }
 
+const deleteChatSession = (userId, sessionId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!userId || !sessionId) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing required parameters'
+                });
+            } else {
+                await db.Chatbot.destroy({
+                    where: { userId: userId, sessionId: sessionId }
+                });
+                resolve({
+                    errCode: 0,
+                    errMessage: 'Chat session deleted'
+                });
+            }
+        } catch (e) {
+            console.log(e);
+            resolve({
+                errCode: -1,
+                errMessage: 'Error from service: ' + e.message
+            });
+        }
+    });
+};
+
 export default {
     saveMessage,
     getChatSessions,
     getChatHistory,
-    handleChatWithAI
+    handleChatWithAI,
+    deleteChatSession
 };

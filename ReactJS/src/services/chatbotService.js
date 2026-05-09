@@ -12,8 +12,13 @@ const saveChatMessage = (data) => {
     return axios.post('/api/save-chat-message', data);
 }
 
+const deleteChatSessionApi = (data) => {
+    return axios.post('/api/delete-chat-session', data);
+}
+
 export {
     getChatSessions,
     getChatHistory,
-    saveChatMessage
+    saveChatMessage,
+    deleteChatSessionApi
 };

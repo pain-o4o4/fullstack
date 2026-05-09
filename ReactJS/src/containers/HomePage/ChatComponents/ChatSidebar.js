@@ -8,8 +8,6 @@ class ChatSidebar extends Component {
         super(props);
         this.state = {
             isMenuOpen: false,
-            showDeleteConfirm: false,
-            deleteType: 'multiple' // 'multiple' hoặc 'all'
         };
         this.menuRef = React.createRef();
     }
@@ -32,9 +30,6 @@ class ChatSidebar extends Component {
         this.setState({ isMenuOpen: false });
         if (type === 'HIDE') this.props.onToggleSidebar();
         if (type === 'SELECT') this.props.onToggleSelectMode();
-        if (type === 'DELETE_ALL') {
-            this.setState({ showDeleteConfirm: true, deleteType: 'all' });
-        }
     }
 
     render() {
@@ -60,7 +55,7 @@ class ChatSidebar extends Component {
             selectedSessions,
             onToggleSelectMode,
             onSelectSessionForDelete,
-            onDeleteMultiple,
+            onConfirmDeleteMultiple,
             onDeleteAll
         } = this.props;
 
@@ -114,7 +109,7 @@ class ChatSidebar extends Component {
                                     if (selectedSessions.length === 0) {
                                         onToggleSelectMode();
                                     } else {
-                                        this.setState({ showDeleteConfirm: true, deleteType: 'multiple' });
+                                        onConfirmDeleteMultiple();
                                     }
                                 }}
                             >
@@ -217,6 +212,15 @@ class ChatSidebar extends Component {
                                             <span className="msg-time"> · {moment(session.createdAt).fromNow()}</span>
                                         </div>
                                     </div>
+                                    <div className="dcd-history-status">
+                                        <button
+                                            className="dcd-delete-chat-btn"
+                                            onClick={(e) => onConfirmDelete(e, session.sessionId)}
+                                            title="Xóa phiên hỏi đáp"
+                                        >
+                                            <i className="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             ))
                         ) : (
@@ -281,29 +285,7 @@ class ChatSidebar extends Component {
                     )}
                 </div>
 
-                {showDeleteConfirm && (
-                    <div className="dcd-confirm-popup sidebar-popup">
-                        <div className="popup-title">
-                            {deleteType === 'all' ? 'Xóa toàn bộ lịch sử?' : `Xóa ${selectedSessions.length} mục đã chọn?`}
-                        </div>
-                        <div className="popup-desc">
-                            Hành động này sẽ xóa vĩnh viễn các cuộc hội thoại này và không thể hoàn tác.
-                        </div>
-                        <div className="popup-actions">
-                            <button onClick={() => this.setState({ showDeleteConfirm: false })}>Hủy</button>
-                            <button
-                                className="btn-delete"
-                                onClick={() => {
-                                    if (deleteType === 'all') onDeleteAll();
-                                    else onDeleteMultiple();
-                                    this.setState({ showDeleteConfirm: false });
-                                }}
-                            >
-                                Xác nhận xóa
-                            </button>
-                        </div>
-                    </div>
-                )}
+                {/* Đã chuyển sang Popup trung tâm ở DoctorChat */}
             </div>
         );
     }

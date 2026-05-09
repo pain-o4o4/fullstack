@@ -194,9 +194,14 @@ class ChatBox extends Component {
 
                 {showConfirmDelete && (
                     <div className="dcd-confirm-popup">
-                        <div className="popup-title">Xóa cuộc trò chuyện?</div>
+                        <div className="popup-title">
+                            {this.props.deleteType === 'single' ? 'Xóa cuộc trò chuyện?' : `Xóa ${this.props.selectedCount} cuộc hội thoại?`}
+                        </div>
                         <div className="popup-desc">
-                            Mọi tin nhắn trong cuộc hội thoại này sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác.
+                            {this.props.deleteType === 'single'
+                                ? 'Mọi tin nhắn trong cuộc hội thoại này sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác.'
+                                : `Bạn có chắc chắn muốn xóa vĩnh viễn ${this.props.selectedCount} cuộc trò chuyện đã chọn? Hành động này không thể hoàn tác.`
+                            }
                         </div>
                         <div className="popup-actions">
                             <button onClick={onCancelDelete}>Hủy</button>

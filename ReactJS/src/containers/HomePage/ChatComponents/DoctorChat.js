@@ -7,6 +7,7 @@ import { CommonUtils } from '../../../utils';
 import './DoctorChat.scss';
 import ChatSidebar from './ChatSidebar';
 import ChatBox from './ChatBox';
+import { getChatSessions, getChatHistory, saveChatMessage, deleteChatSessionApi } from '../../../services/chatbotService';
 import axios from '../../../auth/axiosInstance';
 import moment from 'moment';
 
@@ -38,6 +39,8 @@ class DoctorChat extends Component {
             isSidebarHidden: false,
             isSelectMode: false,
             selectedSessions: [], // Chứa ID của các phiên cần xóa
+            deleteType: 'single', // 'single' hoặc 'multiple'
+            aiSessionsLocal: [] // Lưu trữ local để render tức thì khi xóa
         };
         this.messagesEndRef = React.createRef();
         this.socketRegistered = false;
@@ -97,6 +100,10 @@ class DoctorChat extends Component {
             }, this.scrollToBottom);
         }
 
+        if (prevProps.chatSessions !== this.props.chatSessions) {
+            this.setState({ aiSessionsLocal: this.props.chatSessions || [] });
+        }
+
         if (prevProps.allDoctors !== this.props.allDoctors) {
             let doctors = this.props.allDoctors;
             if (doctors && doctors.length > 0) {
@@ -147,7 +154,7 @@ class DoctorChat extends Component {
             const { userInfo } = this.props;
             // Lấy state trực tiếp từ instance để đảm bảo luôn là giá trị mới nhất
             const currentSelectedDoctor = this.state.selectedDoctor;
-            
+
             const sId = Number(data.senderId);
             const rId = Number(data.receiverId);
             const curSelectedId = Number(currentSelectedDoctor?.id);
@@ -157,7 +164,7 @@ class DoctorChat extends Component {
 
             // Logic: Tin nhắn thuộc về phiên chat đang mở (Dù là mình gửi hay họ gửi)
             const isMatch = curSelectedId && (
-                (sId === curSelectedId && rId === curUserId) || 
+                (sId === curSelectedId && rId === curUserId) ||
                 (sId === curUserId && rId === curSelectedId)
             );
 
@@ -292,8 +299,8 @@ class DoctorChat extends Component {
         if (selectedDoctor && userInfo && userInfo.id) {
             let res = await getMessagesApi(userInfo.id, selectedDoctor.id);
             if (res && res.errCode === 0) {
-                console.log("LOG LOAD MSGS:", { 
-                    firstMsgSenderId: res.data[0]?.senderId, 
+                console.log("LOG LOAD MSGS:", {
+                    firstMsgSenderId: res.data[0]?.senderId,
                     currentUserId: userInfo.id,
                     isMatch: res.data[0]?.senderId === userInfo.id
                 });
@@ -497,44 +504,97 @@ class DoctorChat extends Component {
     }
 
     confirmDelete = (e, partnerId) => {
-        e.stopPropagation();
+        if (e) e.stopPropagation();
         this.setState({
             showConfirmDelete: true,
-            partnerIdToDelete: partnerId
+            partnerIdToDelete: partnerId,
+            deleteType: 'single'
         });
+    }
+
+    confirmDeleteMultiple = () => {
+        const { selectedSessions } = this.state;
+        if (selectedSessions.length > 0) {
+            this.setState({
+                showConfirmDelete: true,
+                deleteType: 'multiple'
+            });
+        }
     }
 
     cancelDelete = () => {
         this.setState({
             showConfirmDelete: false,
-            partnerIdToDelete: null
+            partnerIdToDelete: null,
+            // deleteType: 'single' // Giữ nguyên để tránh flash text
         });
     }
 
-    handleDeleteConversation = async () => {
-        const { partnerIdToDelete } = this.state;
+    // Hàm hợp nhất để thực hiện xóa (nhận mảng các ID)
+    handleExecuteDelete = async (idsToDelete) => {
         const { userInfo } = this.props;
-        if (partnerIdToDelete && userInfo?.id) {
-            let res = await deleteConversationApi({
-                userId: userInfo.id,
-                partnerId: partnerIdToDelete
-            });
-            if (res && res.errCode === 0) {
-                this.setState(prevState => ({
-                    chatHistory: prevState.chatHistory.filter(item => item.id !== partnerIdToDelete),
-                    showConfirmDelete: false,
-                    partnerIdToDelete: null,
-                    selectedDoctor: prevState.selectedDoctor?.id === partnerIdToDelete ? null : prevState.selectedDoctor
-                }));
-                toast.success("Đã xóa cuộc trò chuyện");
-            } else {
-                toast.error("Lỗi khi xóa cuộc trò chuyện");
+        if (!idsToDelete || idsToDelete.length === 0 || !userInfo?.id) return;
+
+        try {
+            // Hiển thị loading nếu cần
+            toast.info(`Đang xử lý xóa ${idsToDelete.length} mục...`);
+
+            // Loop xóa (theo logic API hiện tại của sếp)
+            for (const id of idsToDelete) {
+                if (this.state.filterTab === 'AISUPPORT') {
+                    // Xóa Session AI
+                    await deleteChatSessionApi({
+                        userId: userInfo.id,
+                        sessionId: id
+                    });
+                } else {
+                    // Xóa hội thoại người-người
+                    await deleteConversationApi({
+                        userId: userInfo.id,
+                        partnerId: id
+                    });
+                }
             }
+
+            this.setState(prevState => ({
+                chatHistory: prevState.chatHistory.filter(item => !idsToDelete.includes(item.id)),
+                aiSessionsLocal: prevState.aiSessionsLocal.filter(session => !idsToDelete.includes(session.sessionId)),
+                isSelectMode: false,
+                selectedSessions: [],
+                showConfirmDelete: false,
+                partnerIdToDelete: null,
+                selectedDoctor: idsToDelete.includes(prevState.selectedDoctor?.id) ? null : prevState.selectedDoctor
+            }));
+
+            this.loadChatHistory();
+            if (this.state.filterTab === 'AISUPPORT') {
+                this.props.fetchChatSessions(userInfo.id);
+            }
+            toast.success(`Đã xóa thành công ${idsToDelete.length} cuộc hội thoại`);
+        } catch (error) {
+            console.error("Lỗi khi xóa:", error);
+            toast.error("Có lỗi xảy ra khi thực hiện xóa");
+        }
+    }
+
+    handleDeleteConversation = async () => {
+        const { partnerIdToDelete, selectedSessions, deleteType } = this.state;
+        if (deleteType === 'single') {
+            await this.handleExecuteDelete([partnerIdToDelete]);
+        } else {
+            await this.handleExecuteDelete(selectedSessions);
         }
     }
 
     handleToggleSidebar = () => {
-        this.setState({ isSidebarHidden: !this.state.isSidebarHidden });
+        const { isSidebarHidden, selectedDoctor } = this.state;
+
+        // Nếu chuẩn bị ẩn (isSidebarHidden đang false) mà chưa chọn ai thì chặn lại
+        if (!isSidebarHidden && !selectedDoctor) {
+            return;
+        }
+
+        this.setState({ isSidebarHidden: !isSidebarHidden });
     }
 
     handleToggleSelectMode = () => {
@@ -553,28 +613,6 @@ class DoctorChat extends Component {
                 return { selectedSessions: [...selectedSessions, sessionId] };
             }
         });
-    }
-
-    handleDeleteMultiple = async () => {
-        const { selectedSessions } = this.state;
-        const { userInfo } = this.props;
-        if (selectedSessions.length > 0 && userInfo?.id) {
-            // Thực hiện xóa hàng loạt (Giả sử gọi API xóa từng cái hoặc sếp có API xóa list)
-            // Ở đây tôi dùng vòng lặp để xóa từng cái theo logic cũ của sếp cho an toàn
-            for (const partnerId of selectedSessions) {
-                await deleteConversationApi({
-                    userId: userInfo.id,
-                    partnerId: partnerId
-                });
-            }
-            this.setState({
-                isSelectMode: false,
-                selectedSessions: [],
-                selectedDoctor: selectedSessions.includes(this.state.selectedDoctor?.id) ? null : this.state.selectedDoctor
-            });
-            this.loadChatHistory();
-            toast.success(`Đã xóa ${selectedSessions.length} cuộc hội thoại`);
-        }
     }
 
     handleDeleteAllSessions = () => {
@@ -628,7 +666,7 @@ class DoctorChat extends Component {
                                 isSearching={this.state.isSearching}
                                 searchResult={this.state.searchResult}
                                 filterTab={this.state.filterTab}
-                                aiSessions={this.props.chatSessions}
+                                aiSessions={this.state.aiSessionsLocal}
                                 onNewAIChat={this.handleNewAIChat}
                                 onSearchFocus={() => {
                                     this.setState({ isSearching: true });
@@ -645,7 +683,7 @@ class DoctorChat extends Component {
                                 onToggleSidebar={this.handleToggleSidebar}
                                 onToggleSelectMode={this.handleToggleSelectMode}
                                 onSelectSessionForDelete={this.handleSelectSessionForDelete}
-                                onDeleteMultiple={this.handleDeleteMultiple}
+                                onConfirmDeleteMultiple={this.confirmDeleteMultiple}
                                 onDeleteAll={this.handleDeleteAllSessions}
                             />
                         )}
@@ -672,8 +710,11 @@ class DoctorChat extends Component {
                             handleSend={this.handleSend}
                             onClearImage={() => this.setState({ selectedImage: '', previewImage: '' })}
                             showConfirmDelete={this.state.showConfirmDelete}
+                            deleteType={this.state.deleteType}
+                            selectedCount={this.state.selectedSessions.length}
                             onCancelDelete={this.cancelDelete}
                             onConfirmDeleteConversation={this.handleDeleteConversation}
+                            onConfirmDeleteMultiple={this.confirmDeleteMultiple}
                         />
                     </div>
                 </div>

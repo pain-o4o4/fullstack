@@ -113,9 +113,30 @@ const handleChatWithAI = async (req, res) => {
     }
 };
 
+const handleDeleteChatSession = async (req, res) => {
+    try {
+        let { userId, sessionId } = req.body;
+        if (!userId || !sessionId) {
+            return res.status(200).json({
+                errCode: 1,
+                errMessage: 'Missing required parameters'
+            });
+        }
+        let data = await chatbotService.deleteChatSession(userId, sessionId);
+        return res.status(200).json(data);
+    } catch (e) {
+        console.log(e);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server'
+        });
+    }
+};
+
 export default {
     handleGetChatSessions,
     handleGetChatHistory,
     handleSaveMessage,
-    handleChatWithAI
+    handleChatWithAI,
+    handleDeleteChatSession
 };

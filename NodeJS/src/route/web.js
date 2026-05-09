@@ -99,6 +99,7 @@ let initWebRoutes = (app) => {
     router.get('/api/get-chat-sessions', chatbotController.handleGetChatSessions);
     router.get('/api/get-chat-history', chatbotController.handleGetChatHistory);
     router.post('/api/save-chat-message', chatbotController.handleSaveMessage);
+    router.post('/api/delete-chat-session', chatbotController.handleDeleteChatSession);
     
     // Chat
     router.post('/api/send-message', chatController.handleSendMessage);
