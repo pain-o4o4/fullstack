@@ -318,11 +318,91 @@ let markMessagesAsRead = (userId, partnerId) => {
     });
 };
 
+let getQuickReplies = (doctorId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!doctorId) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing required parameters!'
+                });
+            } else {
+                let data = await db.QuickReply.findAll({
+                    where: { doctorId: doctorId },
+                    raw: true
+                });
+                resolve({
+                    errCode: 0,
+                    data: data
+                });
+            }
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
+
+let saveQuickReply = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.doctorId || !data.content) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing required parameters!'
+                });
+            } else {
+                if (data.id) {
+                    await db.QuickReply.update({ content: data.content }, {
+                        where: { id: data.id, doctorId: data.doctorId }
+                    });
+                } else {
+                    await db.QuickReply.create({
+                        doctorId: data.doctorId,
+                        content: data.content
+                    });
+                }
+                resolve({
+                    errCode: 0,
+                    errMessage: 'Save quick reply succeed!'
+                });
+            }
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
+
+let deleteQuickReply = (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!id) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing required parameters!'
+                });
+            } else {
+                await db.QuickReply.destroy({
+                    where: { id: id }
+                });
+                resolve({
+                    errCode: 0,
+                    errMessage: 'Delete quick reply succeed!'
+                });
+            }
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
+
 export default {
     sendMessage: sendMessage,
     getMessages: getMessages,
     getChatHistorySidebar: getChatHistorySidebar,
     searchUsersForChat: searchUsersForChat,
     deleteConversation: deleteConversation,
-    markMessagesAsRead: markMessagesAsRead
+    markMessagesAsRead: markMessagesAsRead,
+    getQuickReplies: getQuickReplies,
+    saveQuickReply: saveQuickReply,
+    deleteQuickReply: deleteQuickReply
 };

@@ -82,7 +82,10 @@ export const PERMISSIONS = {
         '/api/get-chat-history-sidebar',
         '/api/search-users-for-chat',
         '/api/delete-conversation',
-        '/api/mark-messages-as-read'
+        '/api/mark-messages-as-read',
+        '/api/get-quick-replies',
+        '/api/save-quick-reply',
+        '/api/delete-quick-reply'
     ],
 
     [ROLES.DOCTOR]: [
@@ -96,7 +99,10 @@ export const PERMISSIONS = {
         '/api/get-chat-history-sidebar',
         '/api/search-users-for-chat',
         '/api/delete-conversation',
-        '/api/mark-messages-as-read'
+        '/api/mark-messages-as-read',
+        '/api/get-quick-replies',
+        '/api/save-quick-reply',
+        '/api/delete-quick-reply'
     ],
 
     [ROLES.PATIENT]: [

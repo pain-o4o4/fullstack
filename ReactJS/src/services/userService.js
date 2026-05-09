@@ -199,6 +199,18 @@ const searchUsersForChatApi = (userId, query) => {
     return axios.get(`/api/search-users-for-chat?userId=${userId}&query=${query}`);
 }
 
+const getQuickRepliesApi = (doctorId) => {
+    return axios.get(`/api/get-quick-replies?doctorId=${doctorId}`);
+}
+
+const saveQuickReplyApi = (data) => {
+    return axios.post('/api/save-quick-reply', data);
+}
+
+const deleteQuickReplyApi = (id) => {
+    return axios.delete('/api/delete-quick-reply', { data: { id } });
+}
+
 const deleteConversationApi = (data) => {
     return axios.post('/api/delete-conversation', data);
 }
@@ -257,5 +269,8 @@ export {
     getChatHistorySidebarApi,
     searchUsersForChatApi,
     deleteConversationApi,
-    markMessagesAsReadApi
+    markMessagesAsReadApi,
+    getQuickRepliesApi,
+    saveQuickReplyApi,
+    deleteQuickReplyApi
 }

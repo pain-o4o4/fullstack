@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { withRouter } from '../../../../components/Navigator';
 import HomeHeader from '../../../HomePage/HomeHeader';
-import { postBookAppointment, getDetailSchedulePatient } from '../../../../services/userService';
+import { postBookAppointment, getDetailSchedulePatient, sendMessageApi } from '../../../../services/userService';
 import { toast } from 'react-toastify';
 import { FormattedMessage } from 'react-intl';
 import { LANGUAGES } from '../../../../utils';
@@ -192,6 +192,15 @@ class Payment extends Component {
                 let res = await postBookAppointment(bookingData);
                 if (res && res.errCode === 0 && res.data && res.data.checkoutUrl) {
                     localStorage.removeItem(`payment_expiry_${bookingData.bookingId}`);
+                    
+                    // Tự động gửi tin nhắn chào mừng từ bác sĩ
+                    await sendMessageApi({
+                        senderId: bookingData.doctorId,
+                        receiverId: bookingData.patientId,
+                        text: `Chào bạn, tôi đã nhận được lịch hẹn của bạn vào lúc ${bookingData.timeLabel} ngày ${bookingData.date}. Hẹn gặp bạn nhé!`,
+                        type: 'text'
+                    });
+
                     window.location.href = res.data.checkoutUrl;
                 } else {
                     console.log(res.errMessage || "Error initializing payment!");

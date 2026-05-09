@@ -107,6 +107,9 @@ let initWebRoutes = (app) => {
     router.get('/api/search-users-for-chat', chatController.handleSearchUsersForChat);
     router.post('/api/delete-conversation', chatController.handleDeleteConversation);
     router.post('/api/mark-messages-as-read', chatController.handleMarkMessagesAsRead);
+    router.get('/api/get-quick-replies', chatController.handleGetQuickReplies);
+    router.post('/api/save-quick-reply', chatController.handleSaveQuickReply);
+    router.delete('/api/delete-quick-reply', chatController.handleDeleteQuickReply);
 
     // System
     router.get('/api/get-system-statistics', systemController.getSystemStatistics);

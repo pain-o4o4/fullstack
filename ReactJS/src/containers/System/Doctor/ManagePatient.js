@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { FormattedMessage } from 'react-intl';
 import DatePicker from '../../../components/Input/DatePicker';
-import { getListPatientForDoctor, updateBookingStatus } from '../../../services/userService';
+import { getListPatientForDoctor, updateBookingStatus, sendMessageApi } from '../../../services/userService';
 import moment from 'moment';
 import { toast } from 'react-toastify';
 import { withSocket } from '../../../hoc/withSocket';
@@ -95,6 +95,19 @@ class ManagePatient extends Component {
             });
             if (res && res.errCode === 0) {
                 console.log(language === 'vi' ? 'Cập nhật trạng thái thành công!' : 'Status updated successfully!');
+                
+                // Nếu chuyển sang trạng thái "Đã khám" (S3), tự động gửi tin nhắn cảm ơn
+                if (newStatus === 'S3') {
+                    await sendMessageApi({
+                        senderId: item.doctorId,
+                        receiverId: item.patientId,
+                        text: language === 'vi' 
+                            ? 'Chào bạn, cuộc khám bệnh đã hoàn tất. Cảm ơn bạn đã tin tưởng. Chúc bạn mau khỏe và hãy tuân thủ đúng đơn thuốc nhé!'
+                            : 'Hello, your appointment is completed. Thank you for your trust. Get well soon and follow your prescription!',
+                        type: 'text'
+                    });
+                }
+
                 await this.getDataPatient();
             } else {
                 console.log(language === 'vi' ? 'Lỗi cập nhật trạng thái' : 'Error updating status');

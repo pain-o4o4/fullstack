@@ -1,0 +1,162 @@
+// ChatActionsMenu.scss — Messenger Style
+.dcd-action-hub {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .dcd-add-btn {
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #0071e3;
+        font-size: 24px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: none;
+        border: none;
+        outline: none;
+
+        &:hover {
+            transform: scale(1.1);
+        }
+
+        &.active {
+            transform: rotate(180deg);
+            color: #8e8e93;
+        }
+    }
+
+    .dcd-action-menu-popover {
+        position: absolute;
+        bottom: 50px;
+        left: 0;
+        width: 280px;
+        background: #ffffff; // FULLY OPAQUE
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        z-index: 1000;
+        animation: messengerFadeIn 0.2s ease-out;
+
+        .menu-main {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; // LABEL LEFT, ICON RIGHT
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: background 0.1s;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05); // DIVIDERS
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            &:hover {
+                background: #f5f5f5;
+            }
+
+            &:active {
+                background: #eeeeee;
+            }
+
+            .item-label {
+                font-size: 16px;
+                font-weight: 500;
+                color: #050505;
+                flex: 1;
+                text-align: left;
+            }
+
+            .item-icon-wrap {
+                color: #0084ff; // Messenger Blue
+                font-size: 18px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-left: 12px;
+            }
+
+            // Apple Switch inside Messenger style menu
+            .apple-switch {
+                width: 40px;
+                height: 22px;
+                background: #e4e6eb;
+                border-radius: 11px;
+                position: relative;
+                transition: background 0.3s;
+
+                .switch-handle {
+                    position: absolute;
+                    top: 2px;
+                    left: 2px;
+                    width: 18px;
+                    height: 18px;
+                    background: white;
+                    border-radius: 50%;
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+                    transition: transform 0.3s;
+                }
+
+                &.on {
+                    background: #0084ff;
+                    .switch-handle {
+                        transform: translateX(18px);
+                    }
+                }
+            }
+        }
+
+        // Quick Replies
+        .menu-quick-replies {
+            .quick-header {
+                display: flex;
+                align-items: center;
+                padding: 14px 16px;
+                background: #fff;
+                border-bottom: 1px solid rgba(0,0,0,0.1);
+                color: #0084ff;
+                font-weight: 600;
+                cursor: pointer;
+
+                i { margin-right: 10px; }
+
+                &:hover { background: #f5f5f5; }
+            }
+
+            .quick-list {
+                max-height: 300px;
+                overflow-y: auto;
+
+                .quick-item {
+                    padding: 14px 16px;
+                    font-size: 15px;
+                    color: #050505;
+                    border-bottom: 1px solid rgba(0,0,0,0.05);
+                    cursor: pointer;
+
+                    &:hover { background: #f5f5f5; color: #0084ff; }
+                }
+            }
+        }
+    }
+}
+
+@keyframes messengerFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}

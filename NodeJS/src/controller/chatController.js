@@ -118,11 +118,53 @@ let handleMarkMessagesAsRead = async (req, res) => {
     }
 };
 
+let handleGetQuickReplies = async (req, res) => {
+    try {
+        let info = await chatService.getQuickReplies(req.query.doctorId);
+        return res.status(200).json(info);
+    } catch (e) {
+        console.log(e);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server'
+        });
+    }
+};
+
+let handleSaveQuickReply = async (req, res) => {
+    try {
+        let info = await chatService.saveQuickReply(req.body);
+        return res.status(200).json(info);
+    } catch (e) {
+        console.log(e);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server'
+        });
+    }
+};
+
+let handleDeleteQuickReply = async (req, res) => {
+    try {
+        let info = await chatService.deleteQuickReply(req.body.id);
+        return res.status(200).json(info);
+    } catch (e) {
+        console.log(e);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server'
+        });
+    }
+};
+
 export default {
     handleSendMessage: handleSendMessage,
     handleGetMessages: handleGetMessages,
     handleGetChatHistorySidebar: handleGetChatHistorySidebar,
     handleSearchUsersForChat: handleSearchUsersForChat,
     handleDeleteConversation: handleDeleteConversation,
-    handleMarkMessagesAsRead: handleMarkMessagesAsRead
+    handleMarkMessagesAsRead: handleMarkMessagesAsRead,
+    handleGetQuickReplies: handleGetQuickReplies,
+    handleSaveQuickReply: handleSaveQuickReply,
+    handleDeleteQuickReply: handleDeleteQuickReply
 };
