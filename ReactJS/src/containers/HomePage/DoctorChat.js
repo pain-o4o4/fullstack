@@ -38,6 +38,7 @@ class DoctorChat extends Component {
         if (socket) {
             socket.off('receive_message');
             socket.off('update_chat_history');
+            socket.off('messages_marked_as_read');
         }
     }
 
@@ -82,6 +83,17 @@ class DoctorChat extends Component {
                         time: new Date(data.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
                     }]
                 }), this.scrollToBottom);
+            }
+        });
+
+        socket.on('messages_marked_as_read', (data) => {
+            const { selectedDoctor } = this.state;
+            if (selectedDoctor && Number(data.readerId) === Number(selectedDoctor.id)) {
+                this.setState(prevState => ({
+                    messages: prevState.messages.map(msg => 
+                        Number(msg.receiverId) === Number(data.readerId) ? { ...msg, isRead: 1 } : msg
+                    )
+                }));
             }
         });
 
@@ -134,16 +146,29 @@ class DoctorChat extends Component {
         }
     }
 
+    handleMarkAsRead = async () => {
+        const { selectedDoctor } = this.state;
+        const { userInfo, socket } = this.props;
+        if (selectedDoctor && userInfo?.id && socket) {
+            // 1. Gọi API lưu vào DB
+            await markMessagesAsReadApi({
+                userId: userInfo.id,
+                partnerId: selectedDoctor.id
+            });
+            // 2. Bắn Socket báo cho đối phương
+            socket.emit('mark_as_read', {
+                readerId: userInfo.id,
+                partnerId: selectedDoctor.id
+            });
+            // 3. Cập nhật local để mất badge unread (nếu cần)
+            this.loadChatHistory();
+        }
+    }
+
     handleSelectDoctor = async (doctor) => {
         this.setState({ selectedDoctor: doctor }, async () => {
             this.scrollToBottom();
-            // Đánh dấu đã đọc khi chọn bác sĩ
-            if (this.props.userInfo?.id) {
-                await markMessagesAsReadApi({
-                    userId: this.props.userInfo.id,
-                    partnerId: doctor.id
-                });
-            }
+            await this.handleMarkAsRead();
         });
     }
 
@@ -378,14 +403,14 @@ class DoctorChat extends Component {
                                         )}
                                         <div>
                                             <div className="dcd-chat-doctor-name">{selectedDoctor.lastName} {selectedDoctor.firstName}</div>
-                                            <div classNamedcd-chat-doctor-spec="">
+                                            <div className="dcd-chat-doctor-spec">
                                                 {selectedDoctor.positionData?.valueVi}
                                             </div>
                                         </div>
                                         <span className="dcd-status-badge online">● Trực tuyến</span>
                                     </div>
 
-                                    <div className="dcd-messages">
+                                    <div className="dcd-messages" onClick={this.handleMarkAsRead}>
                                         {messages.map((msg, index) => {
                                             const isLastSent = msg.senderId === userInfo.id && 
                                                               index === [...messages].reverse().findIndex(m => m.senderId === userInfo.id);
@@ -413,7 +438,7 @@ class DoctorChat extends Component {
                                                             <span className="dcd-time">{msg.time}</span>
                                                         </div>
                                                     )}
-                                                    {index === lastSentIndex && msg.isRead && (
+                                                    {index === lastSentIndex && !!msg.isRead && (
                                                         <div className="dcd-seen-status">Đã xem</div>
                                                     )}
                                                 </div>
@@ -440,14 +465,16 @@ class DoctorChat extends Component {
                                                     <i className="fas fa-times-circle" onClick={() => this.setState({ selectedImage: '', previewImage: '' })}></i>
                                                 </div>
                                             )}
-                                            <input
-                                                type="text"
-                                                className="dcd-input"
-                                                placeholder="Nhắn tin cho bác sĩ..."
-                                                value={inputText}
-                                                onChange={e => this.setState({ inputText: e.target.value })}
-                                                onKeyDown={this.handleKeyDown}
-                                            />
+                                                <input
+                                                    type="text"
+                                                    className="dcd-input"
+                                                    placeholder="Nhắn tin cho bác sĩ..."
+                                                    value={inputText}
+                                                    onChange={e => this.setState({ inputText: e.target.value })}
+                                                    onKeyDown={this.handleKeyDown}
+                                                    onFocus={this.handleMarkAsRead}
+                                                    onClick={this.handleMarkAsRead}
+                                                />
                                         </div>
 
                                         <button className="dcd-send-btn" onClick={this.handleSend} disabled={!inputText.trim() && !this.state.selectedImage}>
