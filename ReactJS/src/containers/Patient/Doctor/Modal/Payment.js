@@ -8,7 +8,6 @@ import { FormattedMessage } from 'react-intl';
 import { LANGUAGES } from '../../../../utils';
 import _ from 'lodash';
 import './Payment.scss';
-import FaceIDModal from './FaceIDModal';
 
 class Payment extends Component {
     constructor(props) {
@@ -18,8 +17,6 @@ class Payment extends Component {
             bookingData: null,
             isLoading: true,
             isProcessing: false,
-            showFaceId: false,
-            pendingCheckoutUrl: null,
         }
     }
 
@@ -195,12 +192,7 @@ class Payment extends Component {
                 let res = await postBookAppointment(bookingData);
                 if (res && res.errCode === 0 && res.data && res.data.checkoutUrl) {
                     localStorage.removeItem(`payment_expiry_${bookingData.bookingId}`);
-                    // Show FaceID before redirecting
-                    this.setState({
-                        showFaceId: true,
-                        pendingCheckoutUrl: res.data.checkoutUrl,
-                        isProcessing: false,
-                    });
+                    window.location.href = res.data.checkoutUrl;
                 } else {
                     console.log(res.errMessage || "Error initializing payment!");
                     this.setState({ isProcessing: false });
@@ -213,21 +205,8 @@ class Payment extends Component {
         }
     }
 
-    handleFaceSuccess = () => {
-        const { pendingCheckoutUrl } = this.state;
-        this.setState({ showFaceId: false });
-        if (pendingCheckoutUrl) {
-            window.location.href = pendingCheckoutUrl;
-        }
-    }
-
-    handleFaceCancel = () => {
-        this.setState({ showFaceId: false, pendingCheckoutUrl: null });
-        toast.info(this.props.language === LANGUAGES.VI ? 'Đã hủy xác thực.' : 'Authentication cancelled.');
-    }
-
     render() {
-        let { timeLeft, bookingData, isLoading, isProcessing, showFaceId } = this.state;
+        let { timeLeft, bookingData, isLoading, isProcessing } = this.state;
         let { language } = this.props;
         let minutes = Math.floor(timeLeft / 60);
         let seconds = timeLeft % 60;
@@ -377,13 +356,6 @@ class Payment extends Component {
                         </div>
                     </div>
                 </div>
-                {showFaceId && (
-                    <FaceIDModal
-                        amount={bookingData?.priceId}
-                        onSuccess={this.handleFaceSuccess}
-                        onCancel={this.handleFaceCancel}
-                    />
-                )}
             </React.Fragment>
         );
     }

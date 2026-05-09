@@ -230,8 +230,16 @@ class DoctorChat extends Component {
         const { userInfo } = this.props;
         if (userInfo && userInfo.id) {
             let res = await searchUsersForChatApi(userInfo.id, query);
-            if (res && res.errCode === 0) {
-                this.setState({ searchResult: res.data });
+            if (res && res.errCode === 0 && res.data) {
+                // Lọc trùng lặp dựa trên ID (đề phòng backend chưa group by)
+                const seen = new Set();
+                const uniqueResults = res.data.filter(item => {
+                    const id = item.id || item.partner_id;
+                    if (seen.has(id)) return false;
+                    seen.add(id);
+                    return true;
+                });
+                this.setState({ searchResult: uniqueResults });
             }
         }
     }
@@ -433,10 +441,7 @@ class DoctorChat extends Component {
                                     </div>
 
                                     <div className="dcd-messages" onClick={this.handleMarkAsRead}>
-                                        {messages.map((msg, index) => {
-                                            const isLastSent = msg.senderId === userInfo.id &&
-                                                index === [...messages].reverse().findIndex(m => m.senderId === userInfo.id);
-                                            // Chỗ này tôi dùng mưu mẹo một chút để tìm index cuối cùng của tin nhắn mình gửi
+                                        {(() => {
                                             let lastSentIndex = -1;
                                             for (let i = messages.length - 1; i >= 0; i--) {
                                                 if (messages[i].senderId === userInfo.id) {
@@ -444,8 +449,7 @@ class DoctorChat extends Component {
                                                     break;
                                                 }
                                             }
-
-                                            return (
+                                            return messages.map((msg, index) => (
                                                 <div key={msg.id} className={`dcd-msg dcd-msg--${msg.type}`}>
                                                     {msg.type === 'system' ? (
                                                         <div className="dcd-system-msg">{msg.text}</div>
@@ -464,10 +468,11 @@ class DoctorChat extends Component {
                                                         <div className="dcd-seen-status">Đã xem</div>
                                                     )}
                                                 </div>
-                                            );
-                                        })}
-                                        <div ref={this.messagesEndRef} />
-                                    </div>
+                                            )
+                                        );
+                                    })()}
+                                    <div ref={this.messagesEndRef} />
+                                </div>
 
                                     <div className="dcd-input-bar">
                                         <input
