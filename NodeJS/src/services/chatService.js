@@ -47,7 +47,9 @@ let sendMessage = (data) => {
                     receiverId: data.receiverId,
                     text: data.text || '',
                     image: data.image || null,
-                    isRead: false
+                    isRead: 0,
+                    deletedBySender: false,
+                    deletedByReceiver: false
                 });
 
                 resolve({
@@ -74,8 +76,16 @@ let getMessages = (senderId, receiverId) => {
                 let messages = await db.Message.findAll({
                     where: {
                         [Op.or]: [
-                            { senderId: senderId, receiverId: receiverId },
-                            { senderId: receiverId, receiverId: senderId }
+                            { 
+                                senderId: senderId, 
+                                receiverId: receiverId,
+                                deletedBySender: false 
+                            },
+                            { 
+                                senderId: receiverId, 
+                                receiverId: senderId,
+                                deletedByReceiver: false 
+                            }
                         ]
                     },
                     order: [['createdAt', 'ASC']],
@@ -121,8 +131,8 @@ let getChatHistorySidebar = (userId) => {
                 let messages = await db.Message.findAll({
                     where: {
                         [Op.or]: [
-                            { senderId: currentUserId },
-                            { receiverId: currentUserId }
+                            { senderId: currentUserId, deletedBySender: false },
+                            { receiverId: currentUserId, deletedByReceiver: false }
                         ]
                     },
                     order: [['createdAt', 'DESC']],
@@ -272,13 +282,13 @@ let deleteConversation = (userId, partnerId) => {
                     errMessage: 'Missing required parameters!'
                 });
             } else {
-                await db.Message.destroy({
-                    where: {
-                        [Op.or]: [
-                            { senderId: userId, receiverId: partnerId },
-                            { senderId: partnerId, receiverId: userId }
-                        ]
-                    }
+                // Cập nhật các tin nhắn mình gửi: set deletedBySender = true
+                await db.Message.update({ deletedBySender: true }, {
+                    where: { senderId: userId, receiverId: partnerId }
+                });
+                // Cập nhật các tin nhắn mình nhận: set deletedByReceiver = true
+                await db.Message.update({ deletedByReceiver: true }, {
+                    where: { senderId: partnerId, receiverId: userId }
                 });
                 resolve({
                     errCode: 0,
@@ -300,11 +310,11 @@ let markMessagesAsRead = (userId, partnerId) => {
                     errMessage: 'Missing required parameters!'
                 });
             } else {
-                await db.Message.update({ isRead: true }, {
+                await db.Message.update({ isRead: 1 }, {
                     where: {
                         senderId: partnerId,
                         receiverId: userId,
-                        isRead: false
+                        isRead: 0
                     }
                 });
                 resolve({

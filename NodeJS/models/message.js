@@ -18,7 +18,10 @@ module.exports = (sequelize, DataTypes) => {
     receiverId: DataTypes.INTEGER,
     image: DataTypes.BLOB('long'),
     text: DataTypes.TEXT,
-    isRead: DataTypes.BOOLEAN
+    text: DataTypes.TEXT,
+    isRead: DataTypes.BOOLEAN,
+    deletedBySender: DataTypes.BOOLEAN,
+    deletedByReceiver: DataTypes.BOOLEAN
   }, {
     sequelize,
     modelName: 'Message',

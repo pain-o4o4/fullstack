@@ -307,6 +307,7 @@ class DoctorChat extends Component {
                 this.setState({
                     messages: res.data.map(m => ({
                         ...m,
+                        isRead: Number(m.isRead),
                         type: Number(m.senderId) === Number(userInfo.id) ? 'patient' : 'doctor',
                         time: new Date(m.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
                     }))
@@ -568,7 +569,7 @@ class DoctorChat extends Component {
 
             this.loadChatHistory();
             if (this.state.filterTab === 'AISUPPORT') {
-                this.props.fetchChatSessions(userInfo.id);
+                this.props.fetchAISessions(userInfo.id);
             }
             toast.success(`Đã xóa thành công ${idsToDelete.length} cuộc hội thoại`);
         } catch (error) {

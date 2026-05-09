@@ -24,6 +24,10 @@ module.exports = {
                 type: Sequelize.TEXT,
                 allowNull: false
             },
+            deletedByUser: {
+                type: Sequelize.BOOLEAN,
+                defaultValue: false
+            },
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE

@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
         sessionId: DataTypes.STRING,
         role: DataTypes.STRING,
         content: DataTypes.TEXT,
+        deletedByUser: DataTypes.BOOLEAN,
     }, {
         sequelize,
         modelName: 'Chatbot',

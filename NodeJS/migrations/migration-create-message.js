@@ -25,6 +25,14 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         defaultValue: false
       },
+      deletedBySender: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+      },
+      deletedByReceiver: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

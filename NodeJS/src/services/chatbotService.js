@@ -15,7 +15,8 @@ const saveMessage = (data) => {
                     userId: data.userId,
                     sessionId: data.sessionId,
                     role: data.role,
-                    content: data.content
+                    content: data.content,
+                    deletedByUser: false
                 });
                 resolve({
                     errCode: 0,
@@ -42,7 +43,10 @@ const getChatSessions = (userId) => {
                 });
             } else {
                 let sessions = await db.Chatbot.findAll({
-                    where: { userId: userId },
+                    where: { 
+                        userId: userId,
+                        deletedByUser: false 
+                    },
                     attributes: ['sessionId', 'createdAt', 'content'],
                     order: [['createdAt', 'DESC']],
                 });
@@ -85,7 +89,11 @@ const getChatHistory = (userId, sessionId) => {
                 });
             } else {
                 let history = await db.Chatbot.findAll({
-                    where: { userId: userId, sessionId: sessionId },
+                    where: { 
+                        userId: userId, 
+                        sessionId: sessionId,
+                        deletedByUser: false
+                    },
                     order: [['createdAt', 'ASC']]
                 });
                 resolve({
@@ -208,7 +216,7 @@ const deleteChatSession = (userId, sessionId) => {
                     errMessage: 'Missing required parameters'
                 });
             } else {
-                await db.Chatbot.destroy({
+                await db.Chatbot.update({ deletedByUser: true }, {
                     where: { userId: userId, sessionId: sessionId }
                 });
                 resolve({
