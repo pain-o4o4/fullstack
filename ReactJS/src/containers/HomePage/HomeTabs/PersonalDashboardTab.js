@@ -4,6 +4,7 @@ import { withRouter } from '../../../components/Navigator';
 import { toast } from 'react-toastify';
 import { getAllAppointmentsByIdService } from '../../../services/userService';
 import moment from 'moment';
+import * as actions from "../../../store/actions";
 import './PersonalDashboardTab.scss';
 
 class PersonalDashboardTab extends Component {
@@ -70,7 +71,7 @@ class PersonalDashboardTab extends Component {
     }
 
     handleComingSoon = (feature) => {
-        toast.info(`🚀 "${feature}" sắp ra mắt. Hãy đón chờ!`, {
+        toast.info(` "${feature}" sắp ra mắt. Hãy đón chờ!`, {
             autoClose: 3000,
         });
     }
@@ -232,15 +233,23 @@ class PersonalDashboardTab extends Component {
                                 <span>Đặt lịch khám mới</span>
                                 <span className="action-arrow"><i className="fas fa-arrow-right"></i></span>
                             </div>
+                            <div className="pdt-action-item" onClick={() => this.props.openChatWithTab('DOCTOR')}>
+                                <span>Chat Bác sĩ</span>
+                                <span className="action-arrow"><i className="fas fa-arrow-right"></i></span>
+                            </div>
+                            <div className="pdt-action-item" onClick={() => this.props.openChatWithTab('AISUPPORT')}>
+                                <span>Chat với AI</span>
+                                <span className="action-arrow"><i className="fas fa-arrow-right"></i></span>
+                            </div>
                         </div>
                     </div>
 
                     {/* Card 4: AI Promo */}
-                    <div className="pdt-health-card pdt-ai-promo" onClick={() => navigate('/ai-support')}>
+                    <div className="pdt-health-card pdt-ai-promo" onClick={() => this.props.openChatWithTab('AISUPPORT')}>
                         <div className="pdt-ai-badge">Gemini AI Premium</div>
                         <h3>Phân tích dữ liệu y tế thông minh</h3>
                         <p>Sử dụng AI để phân tích xu hướng sức khỏe từ lịch sử khám bệnh của bạn.</p>
-                        <button className="pdt-ai-btn" onClick={(e) => { e.stopPropagation(); navigate('/ai-support'); }}>
+                        <button className="pdt-ai-btn" onClick={(e) => { e.stopPropagation(); this.props.openChatWithTab('AISUPPORT'); }}>
                             Thử ngay <i className="fas fa-arrow-right"></i>
                         </button>
                     </div>
@@ -255,4 +264,10 @@ const mapStateToProps = state => ({
     userInfo: state.user.userInfo,
 });
 
-export default withRouter(connect(mapStateToProps)(PersonalDashboardTab));
+const mapDispatchToProps = dispatch => {
+    return {
+        openChatWithTab: (tab) => dispatch(actions.openChatWithTab(tab))
+    };
+};
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(PersonalDashboardTab));

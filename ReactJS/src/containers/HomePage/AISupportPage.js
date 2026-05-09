@@ -5,10 +5,18 @@ import { withRouter } from '../../components/Navigator';
 import { withSocket } from '../../hoc/withSocket';
 import './AISupportPage.scss';
 import * as actions from "../../store/actions";
+import MarkdownIt from 'markdown-it';
 import CustomScrollbars from '../../components/CustomScrollbars';
 import axios from '../../auth/axiosInstance';
 import { toast } from 'react-toastify';
 import moment from 'moment';
+
+const mdParser = new MarkdownIt({
+    html: false,
+    linkify: true,
+    typographer: true,
+    breaks: true
+});
 
 class AISupportPage extends Component {
     constructor(props) {
@@ -238,9 +246,10 @@ class AISupportPage extends Component {
                                     {localMessages && localMessages.length > 0 ? (
                                         localMessages.map((msg, index) => (
                                             <div key={index} className={`message-bubble ${msg.role}`}>
-                                                <div className="bubble-content">
-                                                    {msg.content}
-                                                </div>
+                                                <div 
+                                                    className="bubble-content markdown-content"
+                                                    dangerouslySetInnerHTML={{ __html: mdParser.render(msg.content) }}
+                                                />
                                             </div>
                                         ))
                                     ) : (

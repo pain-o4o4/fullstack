@@ -26,7 +26,16 @@ class ChatActionsMenu extends Component {
     }
 
     toggleMenu = () => {
-        this.setState({ isOpen: !this.state.isOpen, showQuickReplies: false });
+        const { userInfo, onSendImage } = this.props;
+        // R1: Admin, R2: Doctor, R3: Patient
+        const isStaff = userInfo?.roleId === 'R1' || userInfo?.roleId === 'R2';
+
+        if (isStaff) {
+            this.setState({ isOpen: !this.state.isOpen, showQuickReplies: false });
+        } else {
+            // Bệnh nhân click thì chọn ảnh luôn
+            onSendImage();
+        }
     }
 
     handleAction = (actionType) => {
@@ -44,7 +53,9 @@ class ChatActionsMenu extends Component {
 
     render() {
         const { isOpen, showQuickReplies } = this.state;
-        const { onSelectQuickReply, isAutoReplyActive, quickReplies } = this.props;
+        const { onSelectQuickReply, isAutoReplyActive, quickReplies, filterTab } = this.props;
+
+        if (filterTab === 'AISUPPORT') return null;
 
         // Ưu tiên lấy từ DB, nếu trống dùng mẫu mặc định
         const displayReplies = (quickReplies && quickReplies.length > 0)

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { withRouter } from '../../../components/Navigator';
 import { getSystemStatisticsService } from '../../../services/userService';
+import * as actions from "../../../store/actions";
 import './IntroTab.scss';
-
-
 
 class IntroTab extends Component {
     constructor(props) {
@@ -145,7 +145,7 @@ class IntroTab extends Component {
                             ref={el => this.cardRefs[i] = feat.isAI ? null : el}
                             onMouseMove={feat.isAI ? undefined : e => this.handleMouseMove(e, i)}
                             onMouseLeave={feat.isAI ? undefined : () => this.handleMouseLeave(i)}
-                            onClick={feat.isAI ? () => this.props.navigate('/ai-support') : undefined}
+                            onClick={feat.isAI ? () => this.props.openChatWithTab('AISUPPORT') : undefined}
                             title={feat.isAI ? 'Mở trợ lý AI Gemini' : undefined}
                         >
                             <div className="feat-tag">
@@ -186,4 +186,10 @@ class IntroTab extends Component {
     }
 }
 
-export default withRouter(IntroTab);
+const mapDispatchToProps = dispatch => {
+    return {
+        openChatWithTab: (tab) => dispatch(actions.openChatWithTab(tab))
+    };
+};
+
+export default withRouter(connect(null, mapDispatchToProps)(IntroTab));

@@ -12,3 +12,12 @@ export const changeLanguageApp = (language) => ({
     type: actionTypes.CHANGE_LANGUAGE,
     language
 })
+
+export const toggleChat = () => ({
+    type: actionTypes.TOGGLE_CHAT
+})
+
+export const openChatWithTab = (tab) => ({
+    type: actionTypes.OPEN_CHAT_WITH_TAB,
+    tab
+})

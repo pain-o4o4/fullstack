@@ -9,7 +9,15 @@ import CustomScrollbars from '../../../components/CustomScrollbars';
 import { withSocket } from '../../../hoc/withSocket';
 import axios from '../../../auth/axiosInstance';
 import { toast } from 'react-toastify';
+import MarkdownIt from 'markdown-it';
 import './ChatBot.scss';
+
+const mdParser = new MarkdownIt({
+    html: false,
+    linkify: true,
+    typographer: true,
+    breaks: true
+});
 
 class ChatBot extends Component {
     constructor(props) {
@@ -240,7 +248,10 @@ class ChatBot extends Component {
                         <div className="cb-messages" ref={this.messagesContainerRef}>
                             {displayMessages.map((msg, index) => (
                                 <div key={index} className={`cb-message ${msg.role}`}>
-                                    <div className="cb-bubble">{msg.content}</div>
+                                    <div 
+                                        className="cb-bubble markdown-content"
+                                        dangerouslySetInnerHTML={{ __html: mdParser.render(msg.content) }}
+                                    />
                                 </div>
                             ))}
                             {isSending && (

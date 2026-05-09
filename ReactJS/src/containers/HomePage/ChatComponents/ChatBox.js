@@ -1,6 +1,14 @@
 import React, { Component } from 'react';
 import './ChatBox.scss';
 import ChatActionsMenu from './ChatActionsMenu';
+import MarkdownIt from 'markdown-it';
+
+const mdParser = new MarkdownIt({
+    html: false,
+    linkify: true,
+    typographer: true,
+    breaks: true
+});
 
 class ChatBox extends Component {
     componentDidUpdate(prevProps) {
@@ -10,7 +18,10 @@ class ChatBox extends Component {
     }
 
     render() {
-        let {
+        const {
+            isSidebarHidden,
+            onToggleSidebar,
+            filterTab,
             selectedDoctor,
             userInfo,
             messages,
@@ -18,6 +29,7 @@ class ChatBox extends Component {
             previewImage,
             isAutoReplyActive,
             quickReplies,
+            isAITyping,
             messagesEndRef,
             onMarkAsRead,
             handleOnChangeImage,
@@ -32,25 +44,43 @@ class ChatBox extends Component {
             onConfirmDeleteConversation
         } = this.props;
 
+        const isAIMode = selectedDoctor?.isAI;
+
         return (
             <div className="dcd-chat-area">
                 {selectedDoctor ? (
                     <>
-                        <div className="dcd-chat-doctor-bar">
-                            {selectedDoctor.image ? (
-                                <div className="dcd-mini-avatar" style={{ backgroundImage: `url(${selectedDoctor.image})` }}></div>
-                            ) : (
-                                <div className="dcd-mini-avatar dcd-avatar-none">
-                                    <i className="fas fa-user"></i>
+                        <div className="dcd-chat-header">
+                            <div className="dcd-header-info">
+                                {isSidebarHidden && (
+                                    <button
+                                        className="dcd-action-btn show-sidebar-btn"
+                                        onClick={onToggleSidebar}
+                                        title="Hiện danh sách"
+                                    >
+                                        <i className="fas fa-indent"></i>
+                                    </button>
+                                )}
+                                <div className="dcd-header-avatar-wrap">
+                                    {isAIMode ? (
+                                        <div className="dcd-header-avatar-placeholder ai"><i className="fas fa-robot"></i></div>
+                                    ) : selectedDoctor.image ? (
+                                        <div className="dcd-header-avatar" style={{ backgroundImage: `url(${selectedDoctor.image})` }}></div>
+                                    ) : (
+                                        <div className="dcd-header-avatar-placeholder"><i className="fas fa-user-md"></i></div>
+                                    )}
+                                    <span className="dcd-status-dot online"></span>
                                 </div>
-                            )}
-                            <div>
-                                <div className="dcd-chat-doctor-name">{selectedDoctor.lastName} {selectedDoctor.firstName}</div>
-                                <div className="dcd-chat-doctor-spec">
-                                    {selectedDoctor.positionData?.valueVi}
+                                <div className="dcd-header-text">
+                                    <div className="dcd-header-name">{isAIMode ? 'AI Support Assistant' : `${selectedDoctor.lastName} ${selectedDoctor.firstName}`}</div>
+                                    <div className="dcd-header-status">{isAIMode ? 'Sẵn sàng hỗ trợ 24/7' : 'Đang trực tuyến'}</div>
                                 </div>
                             </div>
-                            <span className="dcd-status-badge online">● Trực tuyến</span>
+                            <div className="dcd-header-actions">
+                                <button className="dcd-action-btn"><i className="fas fa-phone-alt"></i></button>
+                                <button className="dcd-action-btn"><i className="fas fa-video"></i></button>
+                                <button className="dcd-action-btn"><i className="fas fa-info-circle"></i></button>
+                            </div>
                         </div>
 
                         <div className="dcd-messages" onClick={onMarkAsRead}>
@@ -62,26 +92,52 @@ class ChatBox extends Component {
                                         break;
                                     }
                                 }
-                                return messages.map((msg, index) => (
-                                    <div key={msg.id} className={`dcd-msg dcd-msg--${msg.type}`}>
-                                        {msg.type === 'system' ? (
-                                            <div className="dcd-system-msg">{msg.text}</div>
-                                        ) : (
-                                            <div className="dcd-bubble">
-                                                {msg.image && (
-                                                    <div className="dcd-msg-image-wrap">
-                                                        <img src={msg.image} alt="Sent" className="dcd-msg-image" />
+                                return (
+                                    <>
+                                        {messages.map((msg, index) => (
+                                            <div key={msg.id} className={`dcd-msg dcd-msg--${msg.type}`}>
+                                                {msg.type === 'system' ? (
+                                                    <div className="dcd-system-msg">{msg.text}</div>
+                                                ) : (
+                                                    <div className="dcd-bubble">
+                                                        {msg.isTyping ? (
+                                                            <div className="dcd-typing-indicator">
+                                                                <span></span><span></span><span></span>
+                                                            </div>
+                                                        ) : (
+                                                            <>
+                                                                {msg.image && (
+                                                                    <div className="dcd-msg-image-wrap">
+                                                                        <img src={msg.image} alt="Sent" className="dcd-msg-image" />
+                                                                    </div>
+                                                                )}
+                                                                {msg.text && (
+                                                                    <div
+                                                                        className="dcd-text markdown-content"
+                                                                        dangerouslySetInnerHTML={{ __html: mdParser.render(msg.text) }}
+                                                                    />
+                                                                )}
+                                                                <span className="dcd-time">{msg.time}</span>
+                                                            </>
+                                                        )}
                                                     </div>
                                                 )}
-                                                {msg.text && <span className="dcd-text">{msg.text}</span>}
-                                                <span className="dcd-time">{msg.time}</span>
+                                                {index === lastSentIndex && Number(msg.isRead) === 1 && !isAIMode && (
+                                                    <div className="dcd-seen-status">Đã xem</div>
+                                                )}
+                                            </div>
+                                        ))}
+                                        {isAITyping && (
+                                            <div className="dcd-msg dcd-msg--doctor">
+                                                <div className="dcd-bubble">
+                                                    <div className="dcd-typing-indicator">
+                                                        <span></span><span></span><span></span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         )}
-                                        {index === lastSentIndex && Number(msg.isRead) === 1 && (
-                                            <div className="dcd-seen-status">Đã xem</div>
-                                        )}
-                                    </div>
-                                ));
+                                    </>
+                                );
                             })()}
                             <div ref={messagesEndRef} />
                         </div>
@@ -95,6 +151,8 @@ class ChatBox extends Component {
                             />
 
                             <ChatActionsMenu
+                                userInfo={userInfo}
+                                filterTab={this.props.filterTab}
                                 onSendImage={() => document.getElementById('chatImage').click()}
                                 onSelectQuickReply={handleSelectQuickReply}
                                 onToggleAutoReply={handleToggleAutoReply}

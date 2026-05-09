@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { FormattedMessage } from 'react-intl';
 import { LANGUAGES } from '../../utils/constant';
 import './HomeHeader.scss';
+import * as actions from "../../store/actions";
 import { changeLanguageApp } from "../../store/actions";
 import { path } from '../../utils/constant';
 import { withRouter } from '../../components/Navigator';
@@ -87,6 +88,11 @@ class HomeHeader extends Component {
             PRIVACY_POLICY: path.PRIVACY_POLICY,
             TERMS_OF_USE: path.TERMS_OF_USE,
         };
+
+        if (type === 'AI_SUPPORT') {
+            this.props.navigate(path.AI_SUPPORT);
+            return;
+        }
 
         if (routeMap[type]) {
             navigate(routeMap[type]);
@@ -196,7 +202,7 @@ class HomeHeader extends Component {
                             <button
                                 id="btn-chat-doctor"
                                 className="hm-chat-doctor-btn"
-                                onClick={() => this.setState({ isOpenDoctorChat: true })}
+                                onClick={() => this.props.toggleChat()}
                             >
                                 <i className="far fa-comments"></i>
                                 <span>Chat Bác sĩ</span>
@@ -226,27 +232,21 @@ class HomeHeader extends Component {
                                     Chăm sóc sức khỏe
                                     <span className="hero-accent"> thông minh.</span>
                                 </h1>
-                                {/* <div className="hero-actions">
+                                <div className="hero-actions">
                                     <button
-                                        className="hero-cta-primary"
-                                        onClick={() => this.props.navigate('/select-service')}
-                                    >
-                                        Đặt lịch ngay
-                                    </button>
-                                    <button
-                                        className="hero-cta-secondary"
-                                        onClick={() => this.props.navigate('/ai-support')}
+                                        className="hero-cta-secondary ai-btn-special"
+                                        onClick={() => this.props.openChatWithTab('AISUPPORT')}
                                     >
                                         Tư vấn AI
                                     </button>
-                                </div> */}
+                                </div>
                             </div>
                         </div>
                     </section>
                 )}
                 <DoctorChat
-                    isOpen={this.state.isOpenDoctorChat}
-                    onClose={() => this.setState({ isOpenDoctorChat: false })}
+                    isOpen={this.props.isOpenDoctorChat}
+                    onClose={() => this.props.toggleChat()}
                 />
 
             </React.Fragment>
@@ -258,13 +258,17 @@ const mapStateToProps = state => {
     return {
         isLoggedIn: state.user.isLoggedIn,
         language: state.app.language,
-        userInfo: state.user.userInfo
+        userInfo: state.user.userInfo,
+        isOpenDoctorChat: state.app.isOpenDoctorChat,
+        doctorChatTab: state.app.doctorChatTab
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        changeLanguageAppRedux: (language) => dispatch(changeLanguageApp(language))
+        changeLanguageAppRedux: (language) => dispatch(actions.changeLanguageApp(language)),
+        toggleChat: () => dispatch(actions.toggleChat()),
+        openChatWithTab: (tab) => dispatch(actions.openChatWithTab(tab))
     };
 };
 
