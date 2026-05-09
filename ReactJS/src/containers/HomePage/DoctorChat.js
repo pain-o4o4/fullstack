@@ -22,6 +22,7 @@ class DoctorChat extends Component {
             searchResult: [],
             selectedImage: '',
             previewImage: '',
+            filterTab: 'ALL',
             showConfirmDelete: false,
             partnerIdToDelete: null
         };
@@ -75,23 +76,37 @@ class DoctorChat extends Component {
             const { userInfo } = this.props;
 
             // Nếu tin nhắn thuộc cuộc hội thoại đang mở
-            if (selectedDoctor && (data.senderId === selectedDoctor.id || data.receiverId === selectedDoctor.id)) {
-                this.setState(prevState => ({
-                    messages: [...prevState.messages, {
-                        ...data,
-                        type: data.senderId === userInfo.id ? 'patient' : 'doctor',
-                        time: new Date(data.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
-                    }]
-                }), this.scrollToBottom);
+            const senderId = Number(data.senderId);
+            const receiverId = Number(data.receiverId);
+            const currentSelectedId = Number(selectedDoctor?.id);
+            const currentUserId = Number(userInfo?.id);
+
+            if (currentSelectedId && (senderId === currentSelectedId || receiverId === currentSelectedId)) {
+                // Tránh trùng lặp tin nhắn nếu Server có cơ chế echo
+                this.setState(prevState => {
+                    const isExist = prevState.messages.some(m => Number(m.id) === Number(data.id));
+                    if (isExist) return null;
+
+                    return {
+                        messages: [...prevState.messages, {
+                            ...data,
+                            type: senderId === currentUserId ? 'patient' : 'doctor',
+                            time: new Date(data.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+                        }]
+                    };
+                }, this.scrollToBottom);
             }
         });
 
         socket.on('messages_marked_as_read', (data) => {
             const { selectedDoctor } = this.state;
-            if (selectedDoctor && Number(data.readerId) === Number(selectedDoctor.id)) {
+            const readerId = Number(data.readerId);
+            const currentSelectedId = Number(selectedDoctor?.id);
+
+            if (currentSelectedId && readerId === currentSelectedId) {
                 this.setState(prevState => ({
-                    messages: prevState.messages.map(msg => 
-                        Number(msg.receiverId) === Number(data.readerId) ? { ...msg, isRead: 1 } : msg
+                    messages: prevState.messages.map(msg =>
+                        Number(msg.receiverId) === readerId ? { ...msg, isRead: 1 } : msg
                     )
                 }));
             }
@@ -116,6 +131,7 @@ class DoctorChat extends Component {
                         lastMsg: item.text,
                         time: new Date(item.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
                         avatar: item.image, // Base64 image from DB
+                        unreadCount: item.unreadCount || 0,
                         online: true, // Tạm thời để true
                     }))
                 });
@@ -286,7 +302,7 @@ class DoctorChat extends Component {
                                 <h2 className="dcd-sidebar-title">Đoạn chat</h2>
                                 <div className="dcd-sidebar-actions">
                                     <button className="dcd-action-btn"><i className="fas fa-ellipsis-h"></i></button>
-                                    <button className="dcd-action-btn"><i className="fas fa-edit"></i></button>
+                                    {/* <button className="dcd-action-btn"><i className="fas fa-edit"></i></button> */}
                                 </div>
                             </div>
 
@@ -311,9 +327,9 @@ class DoctorChat extends Component {
 
                             {!this.state.isSearching && (
                                 <div className="dcd-filter-tabs">
-                                    <span className="tab active">Tất cả</span>
-                                    <span className="tab">Chưa đọc</span>
-                                    <span className="tab">Nhóm</span>
+                                    <span className={`tab ${this.state.filterTab === 'ALL' ? 'active' : ''}`} onClick={() => this.setState({ filterTab: 'ALL' })}>Tất cả</span>
+                                    <span className={`tab ${this.state.filterTab === 'READ' ? 'active' : ''}`} onClick={() => this.setState({ filterTab: 'READ' })}>Đã đọc</span>
+                                    <span className={`tab ${this.state.filterTab === 'UNREAD' ? 'active' : ''}`} onClick={() => this.setState({ filterTab: 'UNREAD' })}>Chưa đọc</span>
                                 </div>
                             )}
 
@@ -346,46 +362,52 @@ class DoctorChat extends Component {
                                     ))
                                 ) : (
                                     // History Mode: Show Recent Chats
-                                    this.state.chatHistory.map(chat => (
-                                        <div
-                                            key={chat.id}
-                                            className={`dcd-chat-history-item ${selectedDoctor && selectedDoctor.id === chat.id ? 'active' : ''}`}
-                                            onClick={() => this.handleSelectDoctor({
-                                                id: chat.id,
-                                                firstName: chat.name.split(' ').pop(),
-                                                lastName: chat.name.split(' ').slice(0, -1).join(' '),
-                                                image: chat.avatar
-                                            })}
-                                        >
-                                            <div className="dcd-doc-avatar-wrap">
-                                                {chat.avatar ? (
-                                                    <div className="dcd-doc-avatar" style={{ backgroundImage: `url(${chat.avatar})` }}></div>
-                                                ) : (
-                                                    <div className="dcd-doc-avatar dcd-avatar-none">
-                                                        <i className="fas fa-user"></i>
+                                    this.state.chatHistory
+                                        .filter(chat => {
+                                            if (this.state.filterTab === 'READ') return (chat.unreadCount || 0) === 0;
+                                            if (this.state.filterTab === 'UNREAD') return (chat.unreadCount || 0) > 0;
+                                            return true;
+                                        })
+                                        .map(chat => (
+                                            <div
+                                                key={chat.id}
+                                                className={`dcd-chat-history-item ${selectedDoctor && selectedDoctor.id === chat.id ? 'active' : ''}`}
+                                                onClick={() => this.handleSelectDoctor({
+                                                    id: chat.id,
+                                                    firstName: chat.name.split(' ').pop(),
+                                                    lastName: chat.name.split(' ').slice(0, -1).join(' '),
+                                                    image: chat.avatar
+                                                })}
+                                            >
+                                                <div className="dcd-doc-avatar-wrap">
+                                                    {chat.avatar ? (
+                                                        <div className="dcd-doc-avatar" style={{ backgroundImage: `url(${chat.avatar})` }}></div>
+                                                    ) : (
+                                                        <div className="dcd-doc-avatar dcd-avatar-none">
+                                                            <i className="fas fa-user"></i>
+                                                        </div>
+                                                    )}
+                                                    {chat.online && <span className="dcd-online-dot online"></span>}
+                                                </div>
+                                                <div className="dcd-history-info">
+                                                    <div className={`dcd-history-name ${chat.unreadCount > 0 ? 'unread' : ''}`}>{chat.name}</div>
+                                                    <div className="dcd-history-lastmsg">
+                                                        <span className={`msg-text ${chat.unreadCount > 0 ? 'unread' : ''}`}>{chat.lastMsg}</span>
+                                                        <span className="msg-time"> · {chat.time}</span>
                                                     </div>
-                                                )}
-                                                {chat.online && <span className="dcd-online-dot online"></span>}
-                                            </div>
-                                            <div className="dcd-history-info">
-                                                <div className={`dcd-history-name ${chat.unreadCount > 0 ? 'unread' : ''}`}>{chat.name}</div>
-                                                <div className="dcd-history-lastmsg">
-                                                    <span className={`msg-text ${chat.unreadCount > 0 ? 'unread' : ''}`}>{chat.lastMsg}</span>
-                                                    <span className="msg-time"> · {chat.time}</span>
+                                                </div>
+                                                <div className="dcd-history-status">
+                                                    <button
+                                                        className="dcd-delete-chat-btn"
+                                                        onClick={(e) => this.confirmDelete(e, chat.id)}
+                                                        title="Xóa cuộc trò chuyện"
+                                                    >
+                                                        <i className="fas fa-trash-alt"></i>
+                                                    </button>
+                                                    {chat.unreadCount > 0 && <span className="unread-badge">{chat.unreadCount}</span>}
                                                 </div>
                                             </div>
-                                            <div className="dcd-history-status">
-                                                {chat.unreadCount > 0 && <span className="unread-badge">{chat.unreadCount}</span>}
-                                                <button 
-                                                    className="dcd-delete-chat-btn"
-                                                    onClick={(e) => this.confirmDelete(e, chat.id)}
-                                                    title="Xóa cuộc trò chuyện"
-                                                >
-                                                    <i className="fas fa-trash-alt"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ))
+                                        ))
                                 )}
                             </div>
                         </div>
@@ -412,12 +434,12 @@ class DoctorChat extends Component {
 
                                     <div className="dcd-messages" onClick={this.handleMarkAsRead}>
                                         {messages.map((msg, index) => {
-                                            const isLastSent = msg.senderId === userInfo.id && 
-                                                              index === [...messages].reverse().findIndex(m => m.senderId === userInfo.id);
+                                            const isLastSent = msg.senderId === userInfo.id &&
+                                                index === [...messages].reverse().findIndex(m => m.senderId === userInfo.id);
                                             // Chỗ này tôi dùng mưu mẹo một chút để tìm index cuối cùng của tin nhắn mình gửi
                                             let lastSentIndex = -1;
-                                            for(let i = messages.length - 1; i >= 0; i--) {
-                                                if(messages[i].senderId === userInfo.id) {
+                                            for (let i = messages.length - 1; i >= 0; i--) {
+                                                if (messages[i].senderId === userInfo.id) {
                                                     lastSentIndex = i;
                                                     break;
                                                 }
@@ -465,16 +487,16 @@ class DoctorChat extends Component {
                                                     <i className="fas fa-times-circle" onClick={() => this.setState({ selectedImage: '', previewImage: '' })}></i>
                                                 </div>
                                             )}
-                                                <input
-                                                    type="text"
-                                                    className="dcd-input"
-                                                    placeholder="Nhắn tin cho bác sĩ..."
-                                                    value={inputText}
-                                                    onChange={e => this.setState({ inputText: e.target.value })}
-                                                    onKeyDown={this.handleKeyDown}
-                                                    onFocus={this.handleMarkAsRead}
-                                                    onClick={this.handleMarkAsRead}
-                                                />
+                                            <input
+                                                type="text"
+                                                className="dcd-input"
+                                                placeholder="Nhắn tin cho bác sĩ..."
+                                                value={inputText}
+                                                onChange={e => this.setState({ inputText: e.target.value })}
+                                                onKeyDown={this.handleKeyDown}
+                                                onFocus={this.handleMarkAsRead}
+                                                onClick={this.handleMarkAsRead}
+                                            />
                                         </div>
 
                                         <button className="dcd-send-btn" onClick={this.handleSend} disabled={!inputText.trim() && !this.state.selectedImage}>
