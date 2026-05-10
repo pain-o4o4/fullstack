@@ -1,5 +1,6 @@
+@use "sass:color";
 // --- HEADER & HERO ---
-@import './HomePage.scss';
+@use './HomePage.scss' as *;
 
 // ============================================================
 // HEADER — Teladoc-inspired floating pill design
@@ -249,7 +250,7 @@
             box-shadow: 0 2px 8px rgba($apple-blue, 0.3);
 
             &:hover {
-                background: darken(#0071e3, 8%);
+                background: color.adjust(#0071e3, $lightness: -8%);
                 box-shadow: 0 4px 16px rgba($apple-blue, 0.4);
                 transform: translateY(-1px);
             }
@@ -261,6 +262,7 @@
 
         // --- CHAT DOCTOR BUTTON (Pill-shape Glassmorphism) ---
         .hm-chat-doctor-btn {
+            position: relative; // Thêm neo để badge bám vào
             display: flex;
             align-items: center;
             gap: 8px;
@@ -283,6 +285,26 @@
             i {
                 font-size: 15px;
                 transition: transform 0.25s ease;
+            }
+
+            .chat-badge-count {
+                position: absolute;
+                top: -8px;
+                right: -10px;
+                background: #f02849;
+                color: white;
+                font-size: 11px;
+                font-weight: 700;
+                min-width: 19px;
+                height: 19px;
+                padding: 0 5px;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                z-index: 10;
+                line-height: 1;
             }
 
             &:hover {
@@ -455,7 +477,7 @@
     box-shadow: 0 4px 14px rgba(0, 113, 227, 0.3);
 
     &:hover {
-        background: darken(#0071e3, 6%);
+        background: color.adjust(#0071e3, $lightness: -6%);
         transform: translateY(-2px);
         box-shadow: 0 8px 24px rgba(0, 113, 227, 0.4);
     }

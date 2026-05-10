@@ -5,11 +5,18 @@ const initialState = {
     socket: null,
     notifications: [],
     onlineUsers: [],
+    totalUnreadCount: 0,
     lastUpdatedAt: null
 };
 
 const socketReducer = (state = initialState, action = {}) => {
     switch (action.type) {
+        case actionTypes.UPDATE_UNREAD_COUNT:
+            return {
+                ...state,
+                totalUnreadCount: action.count,
+                lastUpdatedAt: Date.now()
+            };
         case actionTypes.SOCKET_CONNECT:
             return {
                 ...state,

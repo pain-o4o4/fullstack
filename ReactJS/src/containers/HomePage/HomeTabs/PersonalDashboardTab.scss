@@ -1,3 +1,4 @@
+@use "sass:color";
 // PersonalDashboardTab.scss — Apple Health Inspired · Dynamic & Interactive
 
 $blue    : #0071e3;
@@ -139,7 +140,7 @@ $ease    : cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
         &--green {
             background: rgba($green, 0.1);
-            color: darken($green, 10%);
+            color: color.adjust($green, $lightness: -10%);
         }
     }
 
@@ -163,13 +164,13 @@ $ease    : cubic-bezier(0.25, 0.46, 0.45, 0.94);
         .pdt-btn-primary {
             background: $blue;
             color: #fff;
-            &:hover { background: darken($blue, 6%); transform: translateY(-1px); }
+            &:hover { background: color.adjust($blue, $lightness: -6%); transform: translateY(-1px); }
         }
 
         .pdt-btn-secondary {
             background: $bg;
             color: $t1;
-            &:hover { background: darken($bg, 3%); }
+            &:hover { background: color.adjust($bg, $lightness: -3%); }
         }
     }
 }
@@ -273,7 +274,7 @@ $ease    : cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
     &--success {
         background: rgba($green, 0.1);
-        color: darken($green, 5%);
+        color: color.adjust($green, $lightness: -5%);
 
         &:hover { background: rgba($green, 0.18); transform: translateY(-1px); }
     }
@@ -325,7 +326,7 @@ $ease    : cubic-bezier(0.25, 0.46, 0.45, 0.94);
         border-radius: 999px;
 
         &--pending  { background: rgba(255, 149, 0, 0.12); color: #bf6500; }
-        &--confirmed { background: rgba($green, 0.12); color: darken($green, 8%); }
+        &--confirmed { background: rgba($green, 0.12); color: color.adjust($green, $lightness: -8%); }
     }
 }
 
@@ -349,7 +350,7 @@ $ease    : cubic-bezier(0.25, 0.46, 0.45, 0.94);
         cursor: pointer;
         transition: all 0.2s $ease;
 
-        &:hover { background: darken($blue, 6%); transform: translateY(-1px); }
+        &:hover { background: color.adjust($blue, $lightness: -6%); transform: translateY(-1px); }
     }
 }
 

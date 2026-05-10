@@ -1,4 +1,4 @@
-@import './HomePage.scss';
+@use './HomePage.scss' as *;
 
 .hm-footer {
     background-color: #000000;

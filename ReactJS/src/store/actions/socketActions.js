@@ -28,6 +28,11 @@ export const userStatusChange = (payload) => ({
     payload
 });
 
+export const updateUnreadCount = (count) => ({
+    type: actionTypes.UPDATE_UNREAD_COUNT,
+    count
+});
+
 export const socketTokenExpired = () => (dispatch) => {
     dispatch(socketDisconnect());
     dispatch(socketSetInstance(null));

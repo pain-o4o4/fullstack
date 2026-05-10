@@ -10,10 +10,10 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       senderId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       receiverId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       text: {
         type: Sequelize.TEXT

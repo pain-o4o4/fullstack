@@ -266,7 +266,7 @@ class DoctorChat extends Component {
             const { selectedDoctor } = this.state;
             if (selectedDoctor && (Number(data.senderId) === Number(selectedDoctor.id) || Number(data.receiverId) === Number(selectedDoctor.id))) {
                 this.setState(prevState => ({
-                    messages: prevState.messages.map(msg => 
+                    messages: prevState.messages.map(msg =>
                         Number(msg.id) === Number(data.id) ? { ...msg, reactions: data.reactions } : msg
                     )
                 }));
@@ -292,6 +292,8 @@ class DoctorChat extends Component {
                         online: true, // Tạm thời để true
                     }))
                 });
+                const totalUnreadSessions = res.data.filter(item => item.unreadCount > 0).length;
+                this.props.updateUnreadCount(totalUnreadSessions);
             }
 
             // Lấy danh sách tin nhắn nhanh từ DB nếu là bác sĩ
@@ -654,7 +656,7 @@ class DoctorChat extends Component {
             });
             if (res && res.errCode === 0) {
                 this.setState(prevState => ({
-                    messages: prevState.messages.map(msg => 
+                    messages: prevState.messages.map(msg =>
                         Number(msg.id) === Number(messageId) ? { ...msg, reactions: res.data.reactions } : msg
                     )
                 }));
@@ -812,6 +814,7 @@ const mapDispatchToProps = dispatch => {
         fetchAISessions: (userId) => dispatch(actions.fetchSessionsStart(userId)),
         fetchAIHistory: (userId, sessionId) => dispatch(actions.fetchHistoryStart(userId, sessionId)),
         clearAIDbHistory: () => dispatch({ type: 'FETCH_CHAT_HISTORY_SUCCESS', data: [] }),
+        updateUnreadCount: (count) => dispatch(actions.updateUnreadCount(count)),
         openChatWithTab: (tab) => dispatch(actions.openChatWithTab(tab))
     };
 };

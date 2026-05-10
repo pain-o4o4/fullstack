@@ -205,7 +205,12 @@ class HomeHeader extends Component {
                                 onClick={() => this.props.toggleChat()}
                             >
                                 <i className="far fa-comments"></i>
-                                <span>Chat Bác sĩ</span>
+                                <span>Chat </span>
+                                {this.props.totalUnreadCount > 0 && (
+                                    <span className="chat-badge-count">
+                                        {this.props.totalUnreadCount}
+                                    </span>
+                                )}
                             </button>
                         </div>
                     </div>
@@ -260,7 +265,8 @@ const mapStateToProps = state => {
         language: state.app.language,
         userInfo: state.user.userInfo,
         isOpenDoctorChat: state.app.isOpenDoctorChat,
-        doctorChatTab: state.app.doctorChatTab
+        doctorChatTab: state.app.doctorChatTab,
+        totalUnreadCount: state.socket.totalUnreadCount
     };
 };
 
