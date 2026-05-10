@@ -85,7 +85,8 @@ export const PERMISSIONS = {
         '/api/mark-messages-as-read',
         '/api/get-quick-replies',
         '/api/save-quick-reply',
-        '/api/delete-quick-reply'
+        '/api/delete-quick-reply',
+        '/api/update-reaction'
     ],
 
     [ROLES.DOCTOR]: [
@@ -102,7 +103,8 @@ export const PERMISSIONS = {
         '/api/mark-messages-as-read',
         '/api/get-quick-replies',
         '/api/save-quick-reply',
-        '/api/delete-quick-reply'
+        '/api/delete-quick-reply',
+        '/api/update-reaction'
     ],
 
     [ROLES.PATIENT]: [
@@ -117,6 +119,7 @@ export const PERMISSIONS = {
         '/api/get-chat-history-sidebar',
         '/api/search-users-for-chat',
         '/api/delete-conversation',
-        '/api/mark-messages-as-read'
+        '/api/mark-messages-as-read',
+        '/api/update-reaction'
     ]
 };

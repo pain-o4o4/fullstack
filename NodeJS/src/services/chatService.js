@@ -49,13 +49,33 @@ let sendMessage = (data) => {
                     image: data.image || null,
                     isRead: 0,
                     deletedBySender: false,
-                    deletedByReceiver: false
+                    deletedByReceiver: false,
+                    parentId: data.parentId || null
                 });
+
+                // Lấy lại tin nhắn kèm parentData để trả về (Hỗ trợ hiển thị Reply ngay lập tức)
+                let messageWithParent = await db.Message.findByPk(newMessage.id, {
+                    include: [
+                        {
+                            model: db.Message,
+                            as: 'parentData',
+                            attributes: ['id', 'text', 'image', 'senderId']
+                        }
+                    ]
+                });
+
+                let result = messageWithParent.get({ plain: true });
+                if (result.image) {
+                    result.image = Buffer.from(result.image, 'base64').toString('binary');
+                }
+                if (result.parentData && result.parentData.image) {
+                    result.parentData.image = Buffer.from(result.parentData.image, 'base64').toString('binary');
+                }
 
                 resolve({
                     errCode: 0,
                     errMessage: 'Send message succeed!',
-                    data: newMessage
+                    data: result
                 });
             }
         } catch (e) {
@@ -88,19 +108,27 @@ let getMessages = (senderId, receiverId) => {
                             }
                         ]
                     },
-                    order: [['createdAt', 'ASC']],
-                    raw: true
+                    include: [
+                        {
+                            model: db.Message,
+                            as: 'parentData',
+                            attributes: ['id', 'text', 'image', 'senderId']
+                        }
+                    ],
+                    order: [['createdAt', 'ASC']]
                 });
 
                 // Chuyển đổi dữ liệu ảnh sang chuẩn binary của dự án
                 if (messages && messages.length > 0) {
                     messages = messages.map(item => {
-                        if (item.image) {
-                            // item.image = Buffer.from(item.image.toString(), 'base64').toString('binary');
-                            item.image = Buffer.from(item.image, 'base64').toString('binary');
-
+                        let obj = item.get({ plain: true });
+                        if (obj.image) {
+                            obj.image = Buffer.from(obj.image, 'base64').toString('binary');
                         }
-                        return item;
+                        if (obj.parentData && obj.parentData.image) {
+                            obj.parentData.image = Buffer.from(obj.parentData.image, 'base64').toString('binary');
+                        }
+                        return obj;
                     });
                 }
 
@@ -405,6 +433,61 @@ let deleteQuickReply = (id) => {
     });
 };
 
+let updateMessageReaction = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.messageId || !data.userId || !data.reaction) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing required parameters!'
+                });
+            } else {
+                let message = await db.Message.findByPk(data.messageId);
+                if (message) {
+                    let reactions = [];
+                    if (message.reactions) {
+                        try {
+                            reactions = JSON.parse(message.reactions);
+                        } catch (e) {
+                            reactions = [];
+                        }
+                    }
+
+                    // Logic: Mỗi user có 1 reaction. Ấn lại reaction cũ thì xóa, ấn cái mới thì cập nhật.
+                    let index = reactions.findIndex(r => Number(r.userId) === Number(data.userId));
+                    if (index !== -1) {
+                        if (reactions[index].reaction === data.reaction) {
+                            reactions.splice(index, 1);
+                        } else {
+                            reactions[index].reaction = data.reaction;
+                        }
+                    } else {
+                        reactions.push({
+                            userId: Number(data.userId),
+                            reaction: data.reaction
+                        });
+                    }
+
+                    message.reactions = JSON.stringify(reactions);
+                    await message.save();
+
+                    resolve({
+                        errCode: 0,
+                        data: message
+                    });
+                } else {
+                    resolve({
+                        errCode: 2,
+                        errMessage: 'Message not found!'
+                    });
+                }
+            }
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
+
 export default {
     sendMessage: sendMessage,
     getMessages: getMessages,
@@ -414,5 +497,6 @@ export default {
     markMessagesAsRead: markMessagesAsRead,
     getQuickReplies: getQuickReplies,
     saveQuickReply: saveQuickReply,
-    deleteQuickReply: deleteQuickReply
+    deleteQuickReply: deleteQuickReply,
+    updateMessageReaction: updateMessageReaction
 };

@@ -7,7 +7,7 @@ let handleSendMessage = async (req, res) => {
         if (info && info.errCode === 0) {
             let io = req.app.get('io');
             if (io) {
-                let plainMessage = info.data.get({ plain: true });
+                let plainMessage = info.data;
                 // Gửi tin nhắn tới cả người nhận và người gửi để cập nhật UI đồng bộ
                 io.to(`user_room_${req.body.receiverId}`).emit('receive_message', plainMessage);
                 io.to(`user_room_${req.body.senderId}`).emit('receive_message', plainMessage);
@@ -157,6 +157,28 @@ let handleDeleteQuickReply = async (req, res) => {
     }
 };
 
+let handleUpdateReaction = async (req, res) => {
+    try {
+        let info = await chatService.updateMessageReaction(req.body);
+        if (info && info.errCode === 0) {
+            let io = req.app.get('io');
+            if (io) {
+                let data = info.data.get({ plain: true });
+                // Gửi thông báo cập nhật reaction tới cả 2 người
+                io.to(`user_room_${data.senderId}`).emit('message_reaction_updated', data);
+                io.to(`user_room_${data.receiverId}`).emit('message_reaction_updated', data);
+            }
+        }
+        return res.status(200).json(info);
+    } catch (e) {
+        console.log(e);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server'
+        });
+    }
+};
+
 export default {
     handleSendMessage: handleSendMessage,
     handleGetMessages: handleGetMessages,
@@ -166,5 +188,6 @@ export default {
     handleMarkMessagesAsRead: handleMarkMessagesAsRead,
     handleGetQuickReplies: handleGetQuickReplies,
     handleSaveQuickReply: handleSaveQuickReply,
-    handleDeleteQuickReply: handleDeleteQuickReply
+    handleDeleteQuickReply: handleDeleteQuickReply,
+    handleUpdateReaction: handleUpdateReaction
 };

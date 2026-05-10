@@ -10,7 +10,8 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Message.belongsTo(models.Message, { foreignKey: 'parentId', as: 'parentData' });
+      Message.hasMany(models.Message, { foreignKey: 'parentId', as: 'replies' });
     }
   }
   Message.init({
@@ -18,10 +19,11 @@ module.exports = (sequelize, DataTypes) => {
     receiverId: DataTypes.INTEGER,
     image: DataTypes.BLOB('long'),
     text: DataTypes.TEXT,
-    text: DataTypes.TEXT,
     isRead: DataTypes.BOOLEAN,
     deletedBySender: DataTypes.BOOLEAN,
-    deletedByReceiver: DataTypes.BOOLEAN
+    deletedByReceiver: DataTypes.BOOLEAN,
+    parentId: DataTypes.INTEGER,
+    reactions: DataTypes.TEXT
   }, {
     sequelize,
     modelName: 'Message',

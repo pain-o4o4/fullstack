@@ -111,6 +111,7 @@ let initWebRoutes = (app) => {
     router.get('/api/get-quick-replies', chatController.handleGetQuickReplies);
     router.post('/api/save-quick-reply', chatController.handleSaveQuickReply);
     router.delete('/api/delete-quick-reply', chatController.handleDeleteQuickReply);
+    router.post('/api/update-reaction', chatController.handleUpdateReaction);
 
     // System
     router.get('/api/get-system-statistics', systemController.getSystemStatistics);

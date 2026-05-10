@@ -10,10 +10,49 @@ const mdParser = new MarkdownIt({
     breaks: true
 });
 
+const REACTION_LIST = [
+    { id: 'heart', img: 'https://emojicdn.elk.sh/%E2%9D%A4%EF%B8%8F?style=apple', alt: 'heart' },
+    { id: 'laugh', img: 'https://emojicdn.elk.sh/%F0%9F%98%82?style=apple', alt: 'laugh' },
+    { id: 'wow', img: 'https://emojicdn.elk.sh/%F0%9F%98%AE?style=apple', alt: 'wow' },
+    { id: 'sad', img: 'https://emojicdn.elk.sh/%F0%9F%98%A2?style=apple', alt: 'sad' },
+    { id: 'angry', img: 'https://emojicdn.elk.sh/%F0%9F%98%A1?style=apple', alt: 'angry' },
+    { id: 'like', img: 'https://emojicdn.elk.sh/%F0%9F%91%8D?style=apple', alt: 'like' }
+];
+
 class ChatBox extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            showReactionFor: null
+        };
+        this.reactionRef = React.createRef();
+        this.textareaRef = React.createRef();
+    }
+
+    componentDidMount() {
+        document.addEventListener('mousedown', this.handleClickOutside);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('mousedown', this.handleClickOutside);
+    }
+
+    handleClickOutside = (event) => {
+        if (this.reactionRef && this.reactionRef.current && !this.reactionRef.current.contains(event.target)) {
+            this.setState({ showReactionFor: null });
+        }
+    }
+
     componentDidUpdate(prevProps) {
         if (prevProps.messages !== this.props.messages) {
             this.props.messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Tự động reset chiều cao textarea khi nội dung bị xóa (sau khi gửi)
+        if (prevProps.inputText && !this.props.inputText) {
+            if (this.textareaRef.current) {
+                this.textareaRef.current.style.height = '40px';
+            }
         }
     }
 
@@ -41,7 +80,10 @@ class ChatBox extends Component {
             onClearImage,
             showConfirmDelete,
             onCancelDelete,
-            onConfirmDeleteConversation
+            onConfirmDeleteConversation,
+            replyingTo,
+            onSetReply,
+            onCancelReply
         } = this.props;
 
         const isAIMode = selectedDoctor?.isAI;
@@ -83,7 +125,7 @@ class ChatBox extends Component {
                             </div>
                         </div>
 
-                        <div className="dcd-messages" onClick={onMarkAsRead}>
+                        <div className="dcd-messages" onClick={onMarkAsRead} ref={this.reactionRef}>
                             {(() => {
                                 let lastSentIndex = -1;
                                 for (let i = messages.length - 1; i >= 0; i--) {
@@ -94,39 +136,160 @@ class ChatBox extends Component {
                                 }
                                 return (
                                     <>
-                                        {messages.map((msg, index) => (
-                                            <div key={msg.id} className={`dcd-msg dcd-msg--${msg.type}`}>
-                                                {msg.type === 'system' ? (
-                                                    <div className="dcd-system-msg">{msg.text}</div>
-                                                ) : (
-                                                    <div className="dcd-bubble">
-                                                        {msg.isTyping ? (
-                                                            <div className="dcd-typing-indicator">
-                                                                <span></span><span></span><span></span>
-                                                            </div>
+                                        {messages.map((msg, index) => {
+                                            const prevMsg = messages[index - 1];
+                                            const nextMsg = messages[index + 1];
+
+                                            // Logic Messenger: Nhận diện vị trí trong khối để bo góc
+                                            const isFirstInBlock = !prevMsg ||
+                                                Number(prevMsg.senderId) !== Number(msg.senderId) ||
+                                                (new Date(msg.createdAt) - new Date(prevMsg.createdAt) > 5 * 60 * 1000);
+
+                                            const isLastInBlock = !nextMsg ||
+                                                Number(nextMsg.senderId) !== Number(msg.senderId) ||
+                                                (new Date(nextMsg.createdAt) - new Date(msg.createdAt) > 5 * 60 * 1000);
+
+                                            // Logic Messenger: Hiện giờ ở giữa nếu cách nhau > 15 phút hoặc là tin nhắn đầu tiên
+                                            const showTimeDivider = !prevMsg ||
+                                                (new Date(msg.createdAt) - new Date(prevMsg.createdAt) > 5 * 60 * 1000);
+
+                                            let messageReactions = [];
+                                            if (msg.reactions) {
+                                                try {
+                                                    messageReactions = JSON.parse(msg.reactions);
+                                                } catch (e) {
+                                                    messageReactions = [];
+                                                }
+                                            }
+
+                                            return (
+                                                <React.Fragment key={msg.id}>
+                                                    {showTimeDivider && (
+                                                        <div className="dcd-time-divider">
+                                                            {new Date(msg.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                                                        </div>
+                                                    )}
+                                                    <div
+                                                        className={`dcd-msg dcd-msg--${msg.type}`}
+                                                        style={{ marginBottom: isLastInBlock ? '12px' : '1px' }}
+                                                    >
+                                                        {msg.type === 'system' ? (
+                                                            <div className="dcd-system-msg">{msg.text}</div>
                                                         ) : (
                                                             <>
-                                                                {msg.image && (
-                                                                    <div className="dcd-msg-image-wrap">
-                                                                        <img src={msg.image} alt="Sent" className="dcd-msg-image" />
+                                                                {!isAIMode && msg.type === 'doctor' && (
+                                                                    <div className="dcd-msg-avatar-wrap">
+                                                                        {isLastInBlock ? (
+                                                                            selectedDoctor.image ? (
+                                                                                <div className="dcd-msg-avatar" style={{ backgroundImage: `url(${selectedDoctor.image})` }}></div>
+                                                                            ) : (
+                                                                                <div className="dcd-msg-avatar-placeholder"><i className="fas fa-user-md"></i></div>
+                                                                            )
+                                                                        ) : (
+                                                                            <div className="dcd-msg-avatar-empty" style={{ width: '28px' }}></div>
+                                                                        )}
                                                                     </div>
                                                                 )}
-                                                                {msg.text && (
-                                                                    <div
-                                                                        className="dcd-text markdown-content"
-                                                                        dangerouslySetInnerHTML={{ __html: mdParser.render(msg.text) }}
-                                                                    />
-                                                                )}
-                                                                <span className="dcd-time">{msg.time}</span>
+                                                                <div className="dcd-bubble-container">
+                                                                    {msg.parentData && (
+                                                                        <div className="dcd-quoted-msg">
+                                                                            <div className="quoted-sender">
+                                                                                <i className="fas fa-reply"></i>
+                                                                                {Number(msg.parentData.senderId) === Number(userInfo.id) ? 'Bạn' : (isAIMode ? 'AI' : selectedDoctor.firstName)}
+                                                                            </div>
+                                                                            <div className="quoted-text">
+                                                                                {msg.parentData.image ? '[Hình ảnh]' : msg.parentData.text}
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
+                                                                    <div className={`dcd-bubble ${isFirstInBlock ? 'is-first' : ''} ${isLastInBlock ? 'is-last' : ''}`}>
+                                                                        {msg.isTyping ? (
+                                                                            <div className="dcd-typing-indicator">
+                                                                                <span></span><span></span><span></span>
+                                                                            </div>
+                                                                        ) : (
+                                                                            <>
+                                                                                {msg.image && (
+                                                                                    <div className="dcd-msg-image-wrap">
+                                                                                        <img src={msg.image} alt="Sent" className="dcd-msg-image" />
+                                                                                    </div>
+                                                                                )}
+                                                                                {msg.text && (
+                                                                                    <div
+                                                                                        className="dcd-text markdown-content"
+                                                                                        dangerouslySetInnerHTML={{ __html: mdParser.render(msg.text) }}
+                                                                                    />
+                                                                                )}
+
+                                                                                {messageReactions.length > 0 && (
+                                                                                    <div className="dcd-bubble-reactions"
+                                                                                        onClick={(e) => {
+                                                                                            e.stopPropagation();
+                                                                                            const myReaction = messageReactions.find(r => Number(r.userId) === Number(userInfo.id));
+                                                                                            if (myReaction) {
+                                                                                                this.props.onUpdateReaction(msg.id, myReaction.reaction);
+                                                                                            }
+                                                                                        }}
+                                                                                        title="Gỡ cảm xúc"
+                                                                                    >
+                                                                                        {messageReactions.map((r, i) => {
+                                                                                            const reactionObj = REACTION_LIST.find(item => item.id === r.reaction);
+                                                                                            return (
+                                                                                                <span key={i} className="dcd-reaction-img-wrap">
+                                                                                                    {reactionObj ? <img src={reactionObj.img} alt={reactionObj.alt} /> : r.reaction}
+                                                                                                </span>
+                                                                                            );
+                                                                                        })}
+                                                                                    </div>
+                                                                                )}
+                                                                            </>
+                                                                        )}
+                                                                    </div>
+                                                                    {!isAIMode && !msg.isTyping && (
+                                                                        <div className="dcd-msg-actions">
+                                                                            <button
+                                                                                className="dcd-msg-action-btn"
+                                                                                onClick={() => this.setState({ showReactionFor: msg.id })}
+                                                                                title="Cảm xúc"
+                                                                            >
+                                                                                <i className="far fa-smile"></i>
+                                                                            </button>
+                                                                            <button
+                                                                                className="dcd-msg-action-btn"
+                                                                                onClick={() => onSetReply(msg)}
+                                                                                title="Trả lời"
+                                                                            >
+                                                                                <i className="fas fa-reply"></i>
+                                                                            </button>
+
+                                                                            {this.state.showReactionFor === msg.id && (
+                                                                                <div className="dcd-reaction-popover">
+                                                                                    {REACTION_LIST.map(item => (
+                                                                                        <span
+                                                                                            key={item.id}
+                                                                                            onClick={() => {
+                                                                                                this.props.onUpdateReaction(msg.id, item.id);
+                                                                                                this.setState({ showReactionFor: null });
+                                                                                            }}
+                                                                                            className="dcd-popover-item"
+                                                                                        >
+                                                                                            <img src={item.img} alt={item.alt} />
+                                                                                        </span>
+                                                                                    ))}
+                                                                                </div>
+                                                                            )}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
                                                             </>
                                                         )}
+                                                        {index === lastSentIndex && Number(msg.isRead) === 1 && !isAIMode && (
+                                                            <div className="dcd-seen-status">Đã xem</div>
+                                                        )}
                                                     </div>
-                                                )}
-                                                {index === lastSentIndex && Number(msg.isRead) === 1 && !isAIMode && (
-                                                    <div className="dcd-seen-status">Đã xem</div>
-                                                )}
-                                            </div>
-                                        ))}
+                                                </React.Fragment>
+                                            );
+                                        })}
                                         {isAITyping && (
                                             <div className="dcd-msg dcd-msg--doctor">
                                                 <div className="dcd-bubble">
@@ -141,6 +304,22 @@ class ChatBox extends Component {
                             })()}
                             <div ref={messagesEndRef} />
                         </div>
+
+                        {replyingTo && (
+                            <div className="dcd-reply-preview">
+                                <div className="reply-content">
+                                    <div className="reply-title">
+                                        Trả lời {Number(replyingTo.senderId) === Number(userInfo.id) ? 'chính mình' : (isAIMode ? 'AI' : selectedDoctor.firstName)}
+                                    </div>
+                                    <div className="reply-text">
+                                        {replyingTo.image ? '[Hình ảnh]' : replyingTo.text}
+                                    </div>
+                                </div>
+                                <button className="cancel-reply" onClick={onCancelReply}>
+                                    <i className="fas fa-times"></i>
+                                </button>
+                            </div>
+                        )}
 
                         <div className="dcd-input-bar">
                             <input
@@ -167,12 +346,18 @@ class ChatBox extends Component {
                                         <i className="fas fa-times-circle" onClick={onClearImage}></i>
                                     </div>
                                 )}
-                                <input
-                                    type="text"
+                                <textarea
+                                    ref={this.textareaRef}
                                     className="dcd-input"
                                     placeholder="Nhắn tin cho bác sĩ..."
                                     value={inputText}
-                                    onChange={handleInputChange}
+                                    rows="1"
+                                    onChange={(e) => {
+                                        const target = e.target;
+                                        target.style.height = 'auto';
+                                        target.style.height = `${target.scrollHeight}px`;
+                                        handleInputChange(e);
+                                    }}
                                     onKeyDown={handleKeyDown}
                                     onFocus={onMarkAsRead}
                                     onClick={onMarkAsRead}

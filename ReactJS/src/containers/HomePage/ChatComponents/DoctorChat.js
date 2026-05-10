@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../../store/actions';
-import { sendMessageApi, getMessagesApi, getChatHistorySidebarApi, searchUsersForChatApi, deleteConversationApi, markMessagesAsReadApi, getQuickRepliesApi } from '../../../services/userService';
+import { sendMessageApi, getMessagesApi, getChatHistorySidebarApi, searchUsersForChatApi, deleteConversationApi, markMessagesAsReadApi, getQuickRepliesApi, updateMessageReactionApi } from '../../../services/userService';
 import { toast } from 'react-toastify';
 import { CommonUtils } from '../../../utils';
 import './DoctorChat.scss';
@@ -38,9 +38,10 @@ class DoctorChat extends Component {
             // Sidebar & Delete features (Bổ sung mới)
             isSidebarHidden: false,
             isSelectMode: false,
-            selectedSessions: [], // Chứa ID của các phiên cần xóa
+            selectedSessions: [], // Khôi phục dòng này bị xóa nhầm
             deleteType: 'single', // 'single' hoặc 'multiple'
-            aiSessionsLocal: [] // Lưu trữ local để render tức thì khi xóa
+            aiSessionsLocal: [], // Lưu trữ local để render tức thì khi xóa
+            replyingTo: null, // Lưu tin nhắn đang được trả lời
         };
         this.messagesEndRef = React.createRef();
         this.socketRegistered = false;
@@ -149,8 +150,11 @@ class DoctorChat extends Component {
         socket.off('ai_response_chunk');
         socket.off('messages_marked_as_read');
         socket.off('update_chat_history');
+        socket.off('message_reaction_updated');
 
         socket.on('receive_message', (data) => {
+            // ... code cũ ...
+
             const { userInfo } = this.props;
             // Lấy state trực tiếp từ instance để đảm bảo luôn là giá trị mới nhất
             const currentSelectedDoctor = this.state.selectedDoctor;
@@ -169,10 +173,10 @@ class DoctorChat extends Component {
             );
 
             if (isMatch) {
+                // Nếu là tin nhắn của chính mình, bỏ qua vì handleSend đã xử lý hiển thị rồi (Tránh lặp)
+                if (sId === curUserId) return;
+
                 this.setState(prevState => {
-                    // Check trùng lặp: 
-                    // 1. Nếu có ID từ server thì so sánh ID
-                    // 2. Nếu là tin nhắn của mình (sId === curUserId), check xem đã có tin nhắn cùng nội dung chưa
                     const isExist = prevState.messages.some(m =>
                         (m.id && data.id && Number(m.id) === Number(data.id)) ||
                         (m.text === data.text && Number(m.senderId) === sId && (m.createdAt === data.createdAt || sId === curUserId))
@@ -256,6 +260,17 @@ class DoctorChat extends Component {
 
         socket.on('update_chat_history', () => {
             this.loadChatHistory();
+        });
+
+        socket.on('message_reaction_updated', (data) => {
+            const { selectedDoctor } = this.state;
+            if (selectedDoctor && (Number(data.senderId) === Number(selectedDoctor.id) || Number(data.receiverId) === Number(selectedDoctor.id))) {
+                this.setState(prevState => ({
+                    messages: prevState.messages.map(msg => 
+                        Number(msg.id) === Number(data.id) ? { ...msg, reactions: data.reactions } : msg
+                    )
+                }));
+            }
         });
 
         this.socketRegistered = true;
@@ -364,7 +379,7 @@ class DoctorChat extends Component {
     }
 
     handleSend = async () => {
-        const { inputText, selectedDoctor, selectedImage, filterTab, currentAISessionId } = this.state;
+        const { inputText, selectedDoctor, selectedImage, filterTab, currentAISessionId, replyingTo } = this.state;
         const { userInfo, language } = this.props;
         if ((!inputText.trim() && !selectedImage) || !selectedDoctor || !userInfo) return;
 
@@ -422,7 +437,8 @@ class DoctorChat extends Component {
             senderId: userInfo.id,
             receiverId: selectedDoctor.id,
             text: userMsgContent,
-            image: selectedImage
+            image: selectedImage,
+            parentId: replyingTo ? replyingTo.id : null
         });
 
         if (res && res.errCode === 0) {
@@ -436,7 +452,8 @@ class DoctorChat extends Component {
                 messages: [...prevState.messages, newMessage],
                 inputText: '',
                 selectedImage: '',
-                previewImage: ''
+                previewImage: '',
+                replyingTo: null
             }), () => {
                 this.scrollToBottom();
                 this.loadChatHistory();
@@ -598,6 +615,32 @@ class DoctorChat extends Component {
         this.setState({ isSidebarHidden: !isSidebarHidden });
     }
 
+    handleSetReply = (message) => {
+        this.setState({ replyingTo: message });
+    }
+
+    handleCancelReply = () => {
+        this.setState({ replyingTo: null });
+    }
+
+    handleUpdateReaction = async (messageId, reaction) => {
+        const { userInfo } = this.props;
+        if (userInfo?.id) {
+            let res = await updateMessageReactionApi({
+                messageId: messageId,
+                userId: userInfo.id,
+                reaction: reaction
+            });
+            if (res && res.errCode === 0) {
+                this.setState(prevState => ({
+                    messages: prevState.messages.map(msg => 
+                        Number(msg.id) === Number(messageId) ? { ...msg, reactions: res.data.reactions } : msg
+                    )
+                }));
+            }
+        }
+    }
+
     handleToggleSelectMode = () => {
         this.setState({
             isSelectMode: !this.state.isSelectMode,
@@ -701,6 +744,9 @@ class DoctorChat extends Component {
                             isAutoReplyActive={this.state.isAutoReplyActive}
                             quickReplies={this.state.quickReplies}
                             isAITyping={this.state.isAITyping}
+                            replyingTo={this.state.replyingTo}
+                            onSetReply={this.handleSetReply}
+                            onCancelReply={this.handleCancelReply}
                             messagesEndRef={this.messagesEndRef}
                             onMarkAsRead={this.handleMarkAsRead}
                             handleOnChangeImage={this.handleOnChangeImage}
@@ -716,6 +762,7 @@ class DoctorChat extends Component {
                             onCancelDelete={this.cancelDelete}
                             onConfirmDeleteConversation={this.handleDeleteConversation}
                             onConfirmDeleteMultiple={this.confirmDeleteMultiple}
+                            onUpdateReaction={this.handleUpdateReaction}
                         />
                     </div>
                 </div>

@@ -219,6 +219,10 @@ const markMessagesAsReadApi = (data) => {
     return axios.post('/api/mark-messages-as-read', data);
 }
 
+const updateMessageReactionApi = (data) => {
+    return axios.post('/api/update-reaction', data);
+}
+
 export {
     handleLoginApi,
     verifyPaymentStatus,
@@ -272,5 +276,6 @@ export {
     markMessagesAsReadApi,
     getQuickRepliesApi,
     saveQuickReplyApi,
-    deleteQuickReplyApi
+    deleteQuickReplyApi,
+    updateMessageReactionApi
 }
