@@ -28,7 +28,8 @@ class SystemLayout extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            menuApp: []
+            menuApp: [],
+            isOpenSidebar: false
         };
     }
 
@@ -102,6 +103,14 @@ class SystemLayout extends Component {
         this.props.changeLanguageAppRedux(nextLanguage);
     };
 
+    toggleSidebar = () => {
+        this.setState({ isOpenSidebar: !this.state.isOpenSidebar });
+    };
+
+    closeSidebar = () => {
+        this.setState({ isOpenSidebar: false });
+    };
+
     render() {
         const { processLogout, userInfo, children, language } = this.props;
         const { menuApp } = this.state;
@@ -113,9 +122,11 @@ class SystemLayout extends Component {
                 {/* Top Header */}
                 <div className="sub-header">
                     <div className="sub-header-content">
-                        <span className="brand-name"
-                            onClick={() => window.location.href = '/home'}
-                        >BookingCare</span>
+                        <div className="left-controls">
+                            <span className="brand-name"
+                                onClick={() => window.location.href = '/home'}
+                            >BookingCare</span>
+                        </div>
                         <div className="right-controls">
                             <div className="translate-wrapper" onClick={this.changeLanguage} title={lang === 'vi' ? 'Đổi ngôn ngữ' : 'Change Language'}>
                                 <img src={translate} className="icon-translate" alt="Translate" />
@@ -123,16 +134,24 @@ class SystemLayout extends Component {
                             <button className="btn-signout" onClick={processLogout} title={lang === 'vi' ? 'Đăng xuất' : 'Logout'}>
                                 <FormattedMessage id="system-layout.sign-out" defaultMessage="Sign Out" />
                             </button>
+                            <div className="sidebar-toggle" onClick={this.toggleSidebar}>
+                                <i className="fas fa-bars"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
 
 
                 <div className="settings-container">
+                    {/* Overlay for mobile sidebar */}
+                    {this.state.isOpenSidebar && (
+                        <div className="sidebar-overlay" onClick={this.closeSidebar}></div>
+                    )}
+
                     <div className="container-flex">
 
                         {/* Sidebar */}
-                        <aside className="sidebar">
+                        <aside className={`sidebar ${this.state.isOpenSidebar ? 'open' : ''}`}>
                             <div className="user-profile-summary">
                                 <label htmlFor="upload-sys-avatar" className="avatar-circle" style={{ cursor: 'pointer', position: 'relative' }}>
                                     <img src={userInfo && userInfo.image ? decodeBase64Buffer(userInfo.image) : icon_icons} alt="avatar" />
@@ -160,6 +179,7 @@ class SystemLayout extends Component {
                                                     to={item.link}
                                                     className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}
                                                     key={itemIndex}
+                                                    onClick={this.closeSidebar} // Close sidebar on nav click (mobile)
                                                 >
                                                     {item.name.includes('.') ? <FormattedMessage id={item.name} /> : item.name}
                                                 </NavLink>
@@ -177,6 +197,21 @@ class SystemLayout extends Component {
                                         )}
                                     </div>
                                 ))}
+                                
+                                {/* Mobile-only System Actions (Logout/Translate) */}
+                                <div className="menu-group mobile-system-actions">
+                                    <div className="group-name">
+                                        <FormattedMessage id="system-layout.system" defaultMessage="SYSTEM" />
+                                    </div>
+                                    <div className="nav-item" onClick={this.changeLanguage}>
+                                        <img src={translate} className="icon-translate-sidebar" alt="Translate" />
+                                        <span>{lang === 'vi' ? 'Tiếng Anh' : 'Vietnamese'}</span>
+                                    </div>
+                                    <div className="nav-item logout-item" onClick={processLogout}>
+                                        <i className="fas fa-sign-out-alt"></i>
+                                        <FormattedMessage id="system-layout.sign-out" defaultMessage="Sign Out" />
+                                    </div>
+                                </div>
                             </nav>
                         </aside>
 

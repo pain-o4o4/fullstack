@@ -63,7 +63,7 @@
                     font-weight: 700;
                     margin-bottom: 20px;
                     line-height: 1.2;
-                    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
                 }
 
                 .handbook-meta-hero {
@@ -180,7 +180,8 @@
                         margin-bottom: 25px;
                     }
 
-                    h2, h3 {
+                    h2,
+                    h3 {
                         font-weight: 700;
                         margin: 40px 0 20px;
                         color: #1d1d1f;
@@ -190,10 +191,11 @@
                         max-width: 100%;
                         border-radius: 16px;
                         margin: 20px 0;
-                        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+                        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
                     }
 
-                    ul, ol {
+                    ul,
+                    ol {
                         margin-bottom: 25px;
                         padding-left: 20px;
 
@@ -260,7 +262,10 @@
 
                             &:hover {
                                 transform: translateX(5px);
-                                .related-info h4 { color: #0071e3; }
+
+                                .related-info h4 {
+                                    color: #0071e3;
+                                }
                             }
 
                             .related-img {
@@ -423,13 +428,25 @@
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 // Responsive
@@ -449,11 +466,54 @@
     .detail-handbook-container .detail-handbook-body {
         .handbook-hero {
             height: 350px;
-            .hero-content .handbook-title { font-size: 28px; }
+
+            .hero-content .handbook-title {
+                font-size: 28px;
+            }
         }
 
-        .suggested-grid {
-            grid-template-columns: 1fr;
+        .suggested-handbooks {
+            margin-top: 60px;
+            .suggested-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+                h2 { font-size: 24px; letter-spacing: -0.5px; }
+                .view-all-btn { font-size: 14px; }
+            }
+            .suggested-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+                .suggested-card {
+                    display: flex;
+                    height: 120px;
+                    border-radius: 16px;
+                    .card-image {
+                        width: 120px;
+                        height: 100%;
+                        flex-shrink: 0;
+                    }
+                    .card-body {
+                        padding: 12px;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        h3 {
+                            font-size: 14px;
+                            margin-bottom: 4px;
+                            min-height: auto;
+                            -webkit-line-clamp: 2;
+                        }
+                        p { display: none; } // Hide description on small mobile cards
+                        .card-footer {
+                            padding-top: 8px;
+                            margin-top: 0;
+                            border-top: none;
+                            font-size: 11px;
+                        }
+                    }
+                }
+            }
         }
     }
 }

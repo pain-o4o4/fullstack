@@ -359,7 +359,12 @@ class DoctorChat extends Component {
     }
 
     handleSelectDoctor = async (doctor) => {
-        this.setState({ selectedDoctor: doctor }, async () => {
+        // Trên màn hình nhỏ (Mobile), tự động ẩn Sidebar khi đã chọn Doctor
+        const isMobile = window.innerWidth <= 768;
+        this.setState({
+            selectedDoctor: doctor,
+            isSidebarHidden: isMobile ? true : this.state.isSidebarHidden
+        }, async () => {
             this.scrollToBottom();
             await this.handleMarkAsRead();
         });
@@ -752,6 +757,7 @@ class DoctorChat extends Component {
                                 onSelectSessionForDelete={this.handleSelectSessionForDelete}
                                 onConfirmDeleteMultiple={this.confirmDeleteMultiple}
                                 onDeleteAll={this.handleDeleteAllSessions}
+                                onClose={onClose}
                             />
                         )}
 
@@ -786,8 +792,29 @@ class DoctorChat extends Component {
                             onConfirmDeleteConversation={this.handleDeleteConversation}
                             onConfirmDeleteMultiple={this.confirmDeleteMultiple}
                             onUpdateReaction={this.handleUpdateReaction}
+                            onClose={onClose}
                         />
                     </div>
+
+                    {this.state.showConfirmDelete && (
+                        <div className="dcd-confirm-overlay">
+                            <div className="dcd-confirm-popup">
+                                <div className="popup-title">
+                                    {this.state.deleteType === 'single' ? 'Xóa cuộc trò chuyện?' : `Xóa ${this.state.selectedSessions.length} cuộc hội thoại?`}
+                                </div>
+                                <div className="popup-desc">
+                                    {this.state.deleteType === 'single'
+                                        ? 'Mọi tin nhắn trong cuộc hội thoại này sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác.'
+                                        : `Bạn có chắc chắn muốn xóa vĩnh viễn ${this.state.selectedSessions.length} cuộc trò chuyện đã chọn? Hành động này không thể hoàn tác.`
+                                    }
+                                </div>
+                                <div className="popup-actions">
+                                    <button onClick={this.cancelDelete}>Hủy</button>
+                                    <button className="btn-delete" onClick={this.handleDeleteConversation}>Xóa</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </>
         );

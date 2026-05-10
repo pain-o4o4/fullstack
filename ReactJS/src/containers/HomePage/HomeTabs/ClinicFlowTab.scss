@@ -1,5 +1,7 @@
 .clinic-flow-tab {
     padding: 24px 0;
+    min-height: 700px; // Bảo hiểm chiều cao để không bị nhảy trang khi switch view
+    transition: all 0.3s ease;
 }
 
 .cf-header {
@@ -37,9 +39,6 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
     margin-bottom: 32px;
-
-    @media (max-width: 1024px) { grid-template-columns: repeat(2, 1fr); }
-    @media (max-width: 540px) { grid-template-columns: 1fr; }
 }
 
 .cf-util-card {
@@ -148,4 +147,19 @@
 @keyframes ecoPulse {
     0%, 100% { opacity: 0.1; transform: scale(1); }
     50% { opacity: 0.5; transform: scale(1.2); }
+}
+
+// ============================================================
+// RESPONSIVE OVERRIDES (TABLET/LAPTOP)
+// ============================================================
+@media (max-width: 1024px) {
+    .cf-utilities-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+// ============================================================
+// RESPONSIVE OVERRIDES (MOBILE)
+// ============================================================
+@media (max-width: 540px) {
+    .cf-utilities-grid { grid-template-columns: 1fr; }
+    .clinic-flow-tab { min-height: 600px; }
 }

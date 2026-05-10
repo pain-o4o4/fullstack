@@ -83,7 +83,8 @@ class ChatBox extends Component {
             onConfirmDeleteConversation,
             replyingTo,
             onSetReply,
-            onCancelReply
+            onCancelReply,
+            onClose
         } = this.props;
 
         const isAIMode = selectedDoctor?.isAI;
@@ -96,11 +97,11 @@ class ChatBox extends Component {
                             <div className="dcd-header-info">
                                 {isSidebarHidden && (
                                     <button
-                                        className="dcd-action-btn show-sidebar-btn"
+                                        className="dcd-action-btn show-sidebar-btn mobile-back-btn"
                                         onClick={onToggleSidebar}
-                                        title="Hiện danh sách"
+                                        title="Quay lại danh sách"
                                     >
-                                        <i className="fas fa-indent"></i>
+                                        <i className="fas fa-chevron-left"></i>
                                     </button>
                                 )}
                                 <div className="dcd-header-avatar-wrap">
@@ -113,7 +114,12 @@ class ChatBox extends Component {
                                     )}
                                     <span className="dcd-status-dot online"></span>
                                 </div>
-                                <div className="dcd-header-text">
+                                <div
+                                    className="dcd-header-text"
+                                    onClick={onClose}
+                                    style={{ cursor: 'pointer' }}
+                                    title="Bấm để đóng cửa sổ"
+                                >
                                     <div className="dcd-header-name">{isAIMode ? 'AI Support Assistant' : `${selectedDoctor.lastName} ${selectedDoctor.firstName}`}</div>
                                     <div className="dcd-header-status">{isAIMode ? 'Sẵn sàng hỗ trợ 24/7' : 'Đang trực tuyến'}</div>
                                 </div>
@@ -377,23 +383,7 @@ class ChatBox extends Component {
                     <div className="dcd-no-chat">Chọn một bác sĩ để bắt đầu tư vấn</div>
                 )}
 
-                {showConfirmDelete && (
-                    <div className="dcd-confirm-popup">
-                        <div className="popup-title">
-                            {this.props.deleteType === 'single' ? 'Xóa cuộc trò chuyện?' : `Xóa ${this.props.selectedCount} cuộc hội thoại?`}
-                        </div>
-                        <div className="popup-desc">
-                            {this.props.deleteType === 'single'
-                                ? 'Mọi tin nhắn trong cuộc hội thoại này sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác.'
-                                : `Bạn có chắc chắn muốn xóa vĩnh viễn ${this.props.selectedCount} cuộc trò chuyện đã chọn? Hành động này không thể hoàn tác.`
-                            }
-                        </div>
-                        <div className="popup-actions">
-                            <button onClick={onCancelDelete}>Hủy</button>
-                            <button className="btn-delete" onClick={onConfirmDeleteConversation}>Xóa</button>
-                        </div>
-                    </div>
-                )}
+                {/* Confirm Popup đã được chuyển ra DoctorChat.js để phủ toàn bộ drawer */}
             </div>
         );
     }

@@ -10,6 +10,7 @@ import './AllDoctor.scss';
 
 class AllDoctor extends Component {
     componentDidMount() {
+        window.scrollTo(0, 0);
         if (!this.props.allDoctors || this.props.allDoctors.length === 0) {
             this.props.fetchAllDoctors();
         }

@@ -72,7 +72,14 @@ class ChatSidebar extends Component {
         return (
             <div className="dcd-sidebar">
                 <div className="dcd-sidebar-header">
-                    <div className="dcd-sidebar-title">Đoạn chat</div>
+                    <div
+                        className="dcd-sidebar-title"
+                        onClick={this.props.onClose}
+                        style={{ cursor: 'pointer' }}
+                        title="Bấm để đóng cửa sổ"
+                    >
+                        Đoạn chat
+                    </div>
                     <div className="dcd-sidebar-actions" ref={this.menuRef}>
                         <button
                             className={`dcd-action-btn ${isMenuOpen ? 'active' : ''}`}

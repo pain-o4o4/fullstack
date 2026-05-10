@@ -1,5 +1,9 @@
 // DoctorChat.scss — Glassmorphism Slide-over Panel (Apple Style)
 
+// ============================================================
+// BASE STYLES (LAPTOP/DESKTOP)
+// ============================================================
+
 .dcd-overlay {
     position: fixed;
     inset: 0;
@@ -20,98 +24,48 @@
     position: fixed;
     top: 0;
     right: 0;
-    width: 950px; // INCREASED to 790px (was 780px)
+    width: 950px; 
     height: 100vh;
     z-index: 1999;
     display: flex;
     flex-direction: column;
-
-    background: rgba(255, 255, 255, 0.72); // Apple glass background
+    background: rgba(255, 255, 255, 0.72);
     backdrop-filter: blur(30px) saturate(180%);
     -webkit-backdrop-filter: blur(30px) saturate(180%);
     border-left: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: -20px 0 80px rgba(0, 0, 0, 0.12);
-
     transform: translateX(100%);
     transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
 
-    &.open {
-        transform: translateX(0);
-    }
-
-    @media (max-width: 800px) {
-        width: 100vw;
-    }
+    &.open { transform: translateX(0); }
 }
 
-// Header
 .dcd-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 22px 24px;
-    background: #f2f2f7; // Light gray header
+    background: #f2f2f7; 
     border-bottom: 1px solid rgba(0, 0, 0, 0.08);
     flex-shrink: 0;
 
-    .dcd-header-info {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
+    .dcd-header-info { display: flex; align-items: center; gap: 12px; }
     .dcd-header-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
+        width: 40px; height: 40px; border-radius: 12px;
         background: linear-gradient(135deg, #0071e3, #34a9ff);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 18px;
+        display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;
     }
-
-    .dcd-header-title {
-        font-size: 17px; // LARGER
-        font-weight: 700;
-        color: #1d1d1f;
-        letter-spacing: -0.4px;
-    }
-
-    .dcd-header-sub {
-        font-size: 13px; // LARGER
-        color: #34c759;
-        font-weight: 600;
-        margin-top: 2px;
-    }
-
+    .dcd-header-title { font-size: 17px; font-weight: 700; color: #1d1d1f; letter-spacing: -0.4px; }
+    .dcd-header-sub { font-size: 13px; color: #34c759; font-weight: 600; margin-top: 2px; }
     .dcd-close-btn {
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        border: none;
-        background: rgba(120, 120, 128, 0.15);
-        color: #3c3c43;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 14px;
-        transition: all 0.2s ease;
-
-        &:hover {
-            background: rgba(120, 120, 128, 0.28);
-        }
-
-        &:active {
-            transform: scale(0.9);
-        }
+        width: 32px; height: 32px; border-radius: 50%; border: none;
+        background: rgba(120, 120, 128, 0.15); color: #3c3c43; cursor: pointer;
+        display: flex; align-items: center; justify-content: center; font-size: 14px; transition: all 0.2s ease;
+        &:hover { background: rgba(120, 120, 128, 0.28); }
+        &:active { transform: scale(0.9); }
     }
 }
 
-// Body layout
-/* Header của khung Chat (ChatBox) */
 .dcd-chat-header {
     display: flex;
     align-items: center;
@@ -123,452 +77,173 @@
     flex-shrink: 0;
 
     .dcd-header-info {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-
+        display: flex; align-items: center; gap: 14px;
         .show-sidebar-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 15px;
-            border: none;
-            background: rgba(0, 113, 227, 0.08);
-            color: #0071e3;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            // transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            margin-right: 4px;
-
-            &:hover {
-                background: rgba(0, 113, 227, 0.15);
-                transform: scale(1.08) rotate(-2deg);
-                box-shadow: 0 4px 12px rgba(0, 113, 227, 0.2);
-            }
-
-            &:active {
-                transform: scale(0.92);
-            }
+            width: 36px; height: 36px; border-radius: 15px; border: none;
+            background: rgba(0, 113, 227, 0.08); color: #0071e3; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 16px; margin-right: 4px;
+            &:hover { background: rgba(0, 113, 227, 0.15); transform: scale(1.08) rotate(-2deg); box-shadow: 0 4px 12px rgba(0, 113, 227, 0.2); }
+            &:active { transform: scale(0.92); }
         }
-
         .dcd-header-avatar-wrap {
             position: relative;
-
-            .dcd-header-avatar,
-            .dcd-header-avatar-placeholder {
-                width: 42px;
-                height: 42px;
-                border-radius: 50%;
-                background-size: cover;
-                background-position: center;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 20px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            .dcd-header-avatar, .dcd-header-avatar-placeholder {
+                width: 42px; height: 42px; border-radius: 50%; background-size: cover; background-position: center;
+                display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             }
-
-            .dcd-header-avatar-placeholder {
-                background: #f2f2f7;
-                color: #8e8e93;
-
-                &.ai {
-                    background: linear-gradient(135deg, #0071e3, #42a5f5);
-                    color: white;
-                }
-            }
-
-            .dcd-status-dot {
-                position: absolute;
-                bottom: 1px;
-                right: 1px;
-                width: 11px;
-                height: 11px;
-                border-radius: 50%;
-                border: 2px solid white;
-                background: #34c759;
-            }
+            .dcd-header-avatar-placeholder { background: #f2f2f7; color: #8e8e93; &.ai { background: linear-gradient(135deg, #0071e3, #42a5f5); color: white; } }
+            .dcd-status-dot { position: absolute; bottom: 1px; right: 1px; width: 11px; height: 11px; border-radius: 50%; border: 2px solid white; background: #34c759; }
         }
-
         .dcd-header-text {
-            .dcd-header-name {
-                font-size: 16px;
-                font-weight: 700;
-                color: #1d1d1f;
-                line-height: 1.2;
-            }
-
-            .dcd-header-status {
-                font-size: 13px;
-                color: #8e8e93;
-                margin-top: 2px;
-            }
+            .dcd-header-name { font-size: 16px; font-weight: 700; color: #1d1d1f; line-height: 1.2; }
+            .dcd-header-status { font-size: 13px; color: #8e8e93; margin-top: 2px; }
         }
     }
 
     .dcd-header-actions {
-        display: flex;
-        gap: 8px;
-
+        display: flex; gap: 8px;
         .dcd-action-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: none;
-            background: rgba(120, 120, 128, 0.08);
-            color: #0071e3;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 15px;
-            transition: all 0.2s;
-
-            &:hover {
-                background: rgba(0, 113, 227, 0.1);
-                transform: scale(1.05);
-            }
-
-            &:active {
-                transform: scale(0.95);
-            }
+            width: 36px; height: 36px; border-radius: 50%; border: none; background: rgba(120, 120, 128, 0.08);
+            color: #0071e3; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 15px; transition: all 0.2s;
+            &:hover { background: rgba(0, 113, 227, 0.1); transform: scale(1.05); }
+            &:active { transform: scale(0.95); }
         }
     }
 }
 
 .dcd-body {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
+    display: flex; flex: 1; overflow: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     &.hidden-sidebar {
-        .dcd-sidebar {
-            display: none;
-        }
-
-        .dcd-chat-container {
-            flex: 1;
-            width: 100%;
-        }
+        .dcd-sidebar { display: none; }
+        .dcd-chat-container { flex: 1; width: 100%; }
     }
 }
 
-// Sidebar Menu Popover
-.dcd-confirm-popup {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 320px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    border-radius: 20px;
-    padding: 24px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-    z-index: 1000;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    text-align: center;
+.dcd-confirm-overlay {
+    position: absolute; inset: 0; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+    display: flex; align-items: center; justify-content: center; z-index: 3000; animation: fadeIn 0.25s ease-out;
+
+    .dcd-confirm-popup {
+        width: 320px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px); border-radius: 20px; padding: 24px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.4); text-align: center;
+        animation: popupSpring 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        .popup-title { font-size: 18px; font-weight: 700; color: #1d1d1f; margin-bottom: 8px; letter-spacing: -0.5px; }
+        .popup-desc { font-size: 14px; color: #48484a; line-height: 1.45; margin-bottom: 24px; padding: 0 4px; }
+        .popup-actions {
+            display: flex; flex-direction: column; gap: 10px;
+            button {
+                height: 46px; border-radius: 12px; border: none; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+                &:first-child { background: rgba(0, 0, 0, 0.05); color: #007aff; &:hover { background: rgba(0, 0, 0, 0.1); } }
+                &.btn-delete { background: #ff3b30; color: white; box-shadow: 0 4px 12px rgba(255, 59, 48, 0.2); &:hover { background: #d70015; transform: scale(1.02); box-shadow: 0 6px 16px rgba(255, 59, 48, 0.3); } &:active { transform: scale(0.98); } }
+            }
+        }
+    }
 }
 
 .dcd-sidebar-menu-popover {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    margin-top: 8px;
-    width: 200px;
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 14px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
-    padding: 6px;
-    z-index: 2000;
+    position: absolute; top: 100%; right: 0; margin-top: 8px; width: 200px;
+    background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 0, 0, 0.08); border-radius: 14px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12); padding: 6px; z-index: 2000;
     animation: menuSlideIn 0.2s ease-out;
 
     .menu-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 10px 12px;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: background 0.2s;
-
-        i {
-            width: 20px;
-            font-size: 14px;
-            color: #1d1d1f;
-        }
-
-        span {
-            font-size: 14px;
-            font-weight: 500;
-            color: #1d1d1f;
-        }
-
-        &:hover {
-            background: rgba(0, 113, 227, 0.1);
-
-            span,
-            i {
-                color: #0071e3;
-            }
-        }
-
-        &.delete {
-            &:hover {
-                background: rgba(255, 59, 48, 0.1);
-
-                span,
-                i {
-                    color: #ff3b30;
-                }
-            }
-        }
+        display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: background 0.2s;
+        i { width: 20px; font-size: 14px; color: #1d1d1f; }
+        span { font-size: 14px; font-weight: 500; color: #1d1d1f; }
+        &:hover { background: rgba(0, 113, 227, 0.1); span, i { color: #0071e3; } }
+        &.delete { &:hover { background: rgba(255, 59, 48, 0.1); span, i { color: #ff3b30; } } }
     }
 }
 
-// Select Actions Bar
 .dcd-select-actions-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 10px 10px 16px;
-    background: #f2f2f7;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    animation: slideDown 0.3s ease;
-    border-radius: 10px;
-
-    span {
-        font-size: 13px;
-        font-weight: 600;
-        color: #1d1d1f;
-    }
-
+    display: flex; align-items: center; justify-content: space-between; padding: 10px 10px 10px 16px;
+    background: #f2f2f7; border-bottom: 1px solid rgba(0, 0, 0, 0.05); animation: slideDown 0.3s ease; border-radius: 10px;
+    span { font-size: 13px; font-weight: 600; color: #1d1d1f; }
     .select-btns {
-        display: flex;
-        gap: 8px;
-
+        display: flex; gap: 8px;
         button {
-            padding: 6px 12px;
-            border-radius: 8px;
-            border: none;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-
-            &.btn-select-all {
-                background: rgba(0, 113, 227, 0.1);
-                color: #0071e3;
-
-                &:hover {
-                    background: rgba(0, 113, 227, 0.2);
-                }
-            }
-
-            &.btn-delete {
-                background: #ff3b30;
-                color: white;
-
-                &:disabled {
-                    opacity: 0.5;
-                    cursor: not-allowed;
-                }
-            }
+            padding: 6px 12px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+            &.btn-select-all { background: rgba(0, 113, 227, 0.1); color: #0071e3; &:hover { background: rgba(0, 113, 227, 0.2); } }
+            &.btn-delete { background: #ff3b30; color: white; &:disabled { opacity: 0.5; cursor: not-allowed; } }
         }
     }
 }
 
-// Checkbox
 .dcd-select-checkbox {
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    width: 20px;
-    height: 20px;
-    background: white;
-    border: 2px solid #0071e3;
-    border-radius: 50%;
-    z-index: 5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 10px;
-    transition: all 0.2s;
-
-    &.checked {
-        background: #0071e3;
-    }
+    position: absolute; top: -2px; left: -2px; width: 20px; height: 20px; background: white; border: 2px solid #0071e3;
+    border-radius: 50%; z-index: 5; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; transition: all 0.2s;
+    &.checked { background: #0071e3; }
 }
 
-// Confirm Popup
-.dcd-confirm-popup {
-    &.sidebar-popup {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 90%;
-        max-width: 300px;
-        background: white;
-        border-radius: 18px;
-        padding: 20px;
-        box-shadow: 0 10px 50px rgba(0, 0, 0, 0.2);
-        z-index: 2001;
-        animation: popupSpring 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        border: 1px solid rgba(0, 0, 0, 0.1);
-
-        .popup-title {
-            font-size: 17px;
-            font-weight: 700;
-            color: #1d1d1f;
-            margin-bottom: 8px;
-        }
-
-        .popup-desc {
-            font-size: 14px;
-            color: #86868b;
-            margin-bottom: 20px;
-            line-height: 1.4;
-        }
-
-        .popup-actions {
-            display: flex;
-            gap: 12px;
-
-            button {
-                flex: 1;
-                padding: 12px;
-                border-radius: 12px;
-                border: none;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.2s;
-
-                &:first-child {
-                    background: #f2f2f7;
-                    color: #1d1d1f;
-                }
-
-                &.btn-delete {
-                    background: #ff3b30;
-                    color: white;
-                }
-            }
-        }
-    }
-}
-
-@keyframes menuSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px) scale(0.95);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-@keyframes popupSpring {
-    from {
-        opacity: 0;
-        transform: translateY(20px) scale(0.9);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-/* AI Support & Typing Styles (Bổ sung mới) */
 .dcd-new-ai-chat {
-    margin: 12px 16px;
-    padding: 12px;
-    background: rgba(0, 113, 227, 0.1);
-    color: #0071e3;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 14px;
-    transition: all 0.2s;
+    margin: 12px 16px; padding: 12px; background: rgba(0, 113, 227, 0.1); color: #0071e3; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; font-weight: 600; font-size: 14px; transition: all 0.2s;
     border: 1px dashed rgba(0, 113, 227, 0.3);
-
-    &:hover {
-        background: rgba(0, 113, 227, 0.15);
-        transform: translateY(-1px);
-        border-style: solid;
-    }
-
-    i {
-        font-size: 16px;
-    }
+    &:hover { background: rgba(0, 113, 227, 0.15); transform: translateY(-1px); border-style: solid; }
+    i { font-size: 16px; }
 }
 
 .dcd-typing-indicator {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 8px 12px;
-    min-height: 20px;
-
+    display: flex; align-items: center; gap: 4px; padding: 8px 12px; min-height: 20px;
     span {
-        width: 6px;
-        height: 6px;
-        background: #8e8e93;
-        border-radius: 50%;
-        display: inline-block;
-        animation: dcd-bounce 1.4s infinite ease-in-out both;
-
-        &:nth-child(1) {
-            animation-delay: -0.32s;
-        }
-
-        &:nth-child(2) {
-            animation-delay: -0.16s;
-        }
+        width: 6px; height: 6px; background: #8e8e93; border-radius: 50%; display: inline-block; animation: dcd-bounce 1.4s infinite ease-in-out both;
+        &:nth-child(1) { animation-delay: -0.32s; }
+        &:nth-child(2) { animation-delay: -0.16s; }
     }
-}
-
-@keyframes dcd-bounce {
-
-    0%,
-    80%,
-    100% {
-        transform: scale(0.6);
-        opacity: 0.4;
-    }
-
-    40% {
-        transform: scale(1.1);
-        opacity: 1;
-    }
-}
-
-.dcd-header-avatar-placeholder.ai {
-    background: linear-gradient(135deg, #0071e3, #42a5f5);
-    color: white;
 }
 
 .dcd-doc-avatar-placeholder.ai {
-    background: #f2f2f7;
-    color: #0071e3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    font-size: 18px;
+    background: #f2f2f7; color: #0071e3; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; font-size: 18px;
+}
+
+.close-drawer-mobile { display: none; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes menuSlideIn { from { opacity: 0; transform: translateY(-10px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes popupSpring { from { opacity: 0; transform: translateY(20px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes dcd-bounce { 0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; } 40% { transform: scale(1.1); opacity: 1; } }
+
+// ============================================================
+// RESPONSIVE OVERRIDES (MOBILE - MAX 800PX)
+// ============================================================
+@media (max-width: 800px) {
+    .dcd-drawer { width: 100vw; }
+}
+
+// ============================================================
+// RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
+// ============================================================
+@media (max-width: 768px) {
+    .dcd-drawer {
+        width: 100vw !important;
+        height: 100% !important;
+        border-radius: 0 !important;
+        background: #ffffff !important;
+        right: 0 !important;
+        transform: translateX(100%);
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        overflow-x: hidden !important;
+
+        &.open { transform: translateX(0); }
+
+        .close-drawer-mobile {
+            display: flex; position: absolute; top: 15px; right: 15px; width: 36px; height: 36px;
+            background: rgba(0, 0, 0, 0.5); color: white; border-radius: 50%;
+            align-items: center; justify-content: center; z-index: 2010; font-size: 18px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .dcd-body {
+            position: relative; height: 100%; display: flex; flex-direction: column;
+            &:not(.hidden-sidebar) {
+                .dcd-sidebar { display: flex !important; width: 100% !important; min-width: 100% !important; height: 100% !important; border-right: none !important; }
+                .dcd-chat-area { display: none !important; }
+            }
+            &.hidden-sidebar {
+                .dcd-sidebar { display: none !important; }
+                .dcd-chat-area { display: flex !important; width: 100% !important; height: 100% !important; flex: 1; }
+            }
+            .mobile-back-btn { display: flex !important; margin-right: 10px; background: #f2f2f7; color: #0071e3; }
+        }
+    }
 }

@@ -14,6 +14,10 @@ import CustomBreadcrumb from '../../components/CustomBreadcrumb/CustomBreadcrumb
 import backgroundBanner from '../../assets/images/premium_medical_banner.png';
 
 class SelectService extends Component {
+        componentDidMount() {
+        window.scrollTo(0, 0);
+
+    }
     render() {
         const { language } = this.props;
         const breadcrumbItems = [

@@ -10,6 +10,7 @@ import './AllSpecialty.scss';
 
 class AllSpecialty extends Component {
     componentDidMount() {
+        window.scrollTo(0, 0);
         if (!this.props.allSpecialties || this.props.allSpecialties.length === 0) {
             this.props.fecthAllSpecialties();
         }

@@ -221,7 +221,7 @@ class ChatBot extends Component {
 
                         <div className="sessions-list">
                             <div className="session-group-title">Lịch sử trò chuyện</div>
-                            <CustomScrollbars style={{ height: '420px' }}>
+                            <CustomScrollbars className="cb-sessions-scrollbar">
                                 {chatSessions && chatSessions.length > 0 ? (
                                     chatSessions.map((session, index) => (
                                         <div

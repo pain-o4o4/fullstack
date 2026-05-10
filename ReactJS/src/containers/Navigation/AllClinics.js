@@ -10,6 +10,7 @@ import './AllClinics.scss';
 
 class AllClinic extends Component {
     componentDidMount() {
+        window.scrollTo(0, 0);
         if (!this.props.allClinics || this.props.allClinics.length === 0) {
             this.props.fetchAllClinics();
         }

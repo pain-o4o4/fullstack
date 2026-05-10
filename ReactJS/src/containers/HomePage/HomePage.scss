@@ -8,15 +8,12 @@ $light-bg: #fffdf9;
 $border-color: rgba(0, 0, 0, 0.05);
 
 // ============================================================
-// SEGMENTED CONTROL BAR & TABS SECTION
+// BASE STYLES (LAPTOP/DESKTOP)
 // ============================================================
+
 .hm-tabs-section {
     background: #f5f5f7;
-    padding: 20px 32px 40px; // Added 60px top padding to separate from banner
-
-    @media (max-width: 768px) {
-        padding: 40px 16px 48px;
-    }
+    padding: 20px 32px 40px; 
 }
 
 .hm-tabs-container {
@@ -24,32 +21,27 @@ $border-color: rgba(0, 0, 0, 0.05);
     margin: 0 auto;
 }
 
-// iOS-style Segmented Control — centered and more prominent
 .hm-segmented-bar {
     display: flex;
     gap: 4px;
     background: rgba(118, 118, 128, 0.12);
-    border-radius: 14px; // Slightly more rounded
+    border-radius: 14px;
     padding: 4px;
-    margin: 0 auto 48px; // CENTERED
+    margin: 0 auto 48px;
     width: fit-content;
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
-
-    @media (max-width: 768px) {
-        width: 100%;
-    }
 }
 
 .hm-tab-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 10px 32px; // LARGER
+    padding: 10px 32px;
     border: none;
     border-radius: 10px;
     background: transparent;
     cursor: pointer;
-    font-size: 15px; // LARGER
+    font-size: 15px;
     font-weight: 500;
     color: #1d1d1f;
     white-space: nowrap;
@@ -67,20 +59,11 @@ $border-color: rgba(0, 0, 0, 0.05);
         background: #ffffff;
         opacity: 1;
         font-weight: 600;
-        box-shadow:
-            0 2px 6px rgba(0, 0, 0, 0.1),
-            0 0 0 0.5px rgba(0, 0, 0, 0.04);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1), 0 0 0 0.5px rgba(0, 0, 0, 0.04);
     }
 
-    // Squishy click
     &:active {
         transform: scale(0.97);
-    }
-
-    @media (max-width: 768px) {
-        flex: 1;
-        font-size: 13px;
-        padding: 8px 12px;
     }
 }
 
@@ -89,17 +72,9 @@ $border-color: rgba(0, 0, 0, 0.05);
 }
 
 @keyframes tabFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(6px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
 }
-
 
 @mixin glassmorphism {
     background: rgba(255, 255, 255, 0.72);
@@ -117,16 +92,8 @@ body {
     overflow-x: hidden;
 }
 
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
-ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; padding: 0; margin: 0; }
 
 .hm-button {
     display: inline-flex;
@@ -151,15 +118,10 @@ ul {
         background-color: transparent;
         color: $apple-blue;
         border-color: $apple-blue;
-
-        &:hover {
-            background-color: $apple-blue;
-            color: #ffffff;
-        }
+        &:hover { background-color: $apple-blue; color: #ffffff; }
     }
 }
 
-// Global Section Styles
 .hm-section-header {
     margin-bottom: 60px;
     display: flex;
@@ -170,11 +132,7 @@ ul {
         flex-direction: column;
         align-items: center;
         text-align: center;
-
-        .hm-section-desc {
-            text-align: center;
-
-        }
+        .hm-section-desc { text-align: center; }
     }
 
     .hm-section-title {
@@ -196,16 +154,6 @@ ul {
         line-height: 1.4;
         margin-left: 20px;
     }
-
-    @media (max-width: 768px) {
-        flex-direction: column;
-        align-items: flex-start;
-
-        .hm-section-desc {
-            text-align: left;
-            margin-top: 20px;
-        }
-    }
 }
 
 .hm-badge {
@@ -225,7 +173,6 @@ ul {
     }
 }
 
-// 1. Medicine Banner
 .hm-medicine-banner {
     padding: 60px 40px;
     background-color: #f2f2f7;
@@ -244,15 +191,8 @@ ul {
             font-weight: 700;
         }
     }
-
-    @media (max-width: 768px) {
-        .hm-medicine-text {
-            font-size: 24px;
-        }
-    }
 }
 
-// 2. Offer Section
 .hm-offer-section {
     padding: 120px 40px;
     max-width: 1200px;
@@ -261,10 +201,6 @@ ul {
     .hm-offer-list {
         display: flex;
         gap: 40px;
-
-        @media (max-width: 1024px) {
-            flex-direction: column;
-        }
     }
 
     .hm-offer-item {
@@ -275,9 +211,7 @@ ul {
         box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
         transition: transform 0.3s ease;
 
-        &:hover {
-            transform: translateY(-10px);
-        }
+        &:hover { transform: translateY(-10px); }
 
         .hm-offer-icon {
             width: 100px;
@@ -304,7 +238,6 @@ ul {
     }
 }
 
-// --- GALLERY SECTION ---
 .hm-gallery-section {
     padding: 80px 40px;
     background-color: #ffffff;
@@ -319,11 +252,6 @@ ul {
         grid-template-columns: repeat(3, 1fr);
         grid-auto-rows: 250px;
         gap: 24px;
-
-        @media (max-width: 768px) {
-            grid-template-columns: 1fr;
-            grid-auto-rows: auto;
-        }
     }
 
     .gallery-item {
@@ -338,44 +266,22 @@ ul {
             transition: transform 0.5s ease;
         }
 
-        &:hover img {
-            transform: scale(1.05);
-        }
-
-        &.large.horizontal {
-            grid-column: span 2;
-        }
-
-        &.horizontal {
-            grid-column: span 1;
-        }
-
-        &.vertical {
-            grid-row: span 1;
-        }
-
-        &.square {
-            grid-column: span 1;
-            grid-row: span 1;
-        }
+        &:hover img { transform: scale(1.05); }
+        &.large.horizontal { grid-column: span 2; }
+        &.horizontal { grid-column: span 1; }
+        &.vertical { grid-row: span 1; }
+        &.square { grid-column: span 1; grid-row: span 1; }
 
         &.logo-item {
-            background-color: #004d40; // Dark green from Healthymatch logo
+            background-color: #004d40;
             display: flex;
             align-items: center;
             justify-content: center;
-            // padding: 20px;
-
-            img {
-                width: 100%;
-                height: auto;
-                object-fit: contain;
-            }
+            img { width: 100%; height: auto; object-fit: contain; }
         }
     }
 }
 
-// 3. Reach Section
 .hm-reach-section {
     background-color: $apple-blue;
     color: #ffffff;
@@ -392,10 +298,7 @@ ul {
         margin-bottom: 80px;
         align-items: center;
 
-        .hm-reach-text {
-            flex: 1;
-        }
-
+        .hm-reach-text { flex: 1; }
         .hm-reach-title {
             font-size: 56px;
             font-weight: 700;
@@ -403,60 +306,28 @@ ul {
             letter-spacing: -1.5px;
             margin-bottom: 30px;
         }
-
         .hm-reach-desc {
             font-size: 20px;
             line-height: 1.6;
-
-            .hm-strong {
-                font-weight: 700;
-            }
+            .hm-strong { font-weight: 700; }
         }
-
         .hm-reach-image {
             flex: 1;
             border-radius: 24px;
             overflow: hidden;
             height: 400px;
-
-            img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-        }
-
-        @media (max-width: 1024px) {
-            flex-direction: column;
-
-            .hm-reach-title {
-                font-size: 40px;
-            }
-
-            .hm-reach-image {
-                height: 300px;
-                width: 100%;
-            }
+            img { width: 100%; height: 100%; object-fit: cover; }
         }
     }
 
-    .hm-reach-second-title {
-        font-size: 24px;
-        margin-bottom: 30px;
-    }
-
+    .hm-reach-second-title { font-size: 24px; margin-bottom: 30px; }
     .hm-badge {
         border-color: #ffffff;
         color: #ffffff;
-
-        &:hover {
-            background-color: #ffffff;
-            color: $apple-blue;
-        }
+        &:hover { background-color: #ffffff; color: $apple-blue; }
     }
 }
 
-// 4. About Us
 .hm-about-section {
     padding: 120px 40px;
     max-width: 1200px;
@@ -476,34 +347,16 @@ ul {
         }
 
         .hm-about-image {
-            // margin-left: 20px;
             grid-column: 2;
             grid-row: 1 / span 2;
             border-radius: 50% 50% 0 0;
             overflow: hidden;
             height: 500px;
-
-            img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-        }
-
-        @media (max-width: 1024px) {
-            grid-template-columns: 1fr;
-
-            .hm-about-image {
-                grid-column: 1;
-                grid-row: auto;
-                margin-top: 40px;
-                height: 400px;
-            }
+            img { width: 100%; height: 100%; object-fit: cover; }
         }
     }
 }
 
-// 5. Successes Section
 .hm-successes-section {
     padding: 80px 40px;
     text-align: center;
@@ -532,7 +385,6 @@ ul {
     }
 }
 
-// 6. Merits Section
 .hm-merits-section {
     padding: 120px 40px;
     max-width: 1200px;
@@ -543,16 +395,10 @@ ul {
         justify-content: center;
         gap: 80px;
         margin-top: 60px;
-
-        @media (max-width: 768px) {
-            flex-direction: column;
-            gap: 40px;
-        }
     }
 
     .hm-merits-item {
         text-align: center;
-
         .hm-merits-icon {
             width: 160px;
             height: 160px;
@@ -563,21 +409,12 @@ ul {
             align-items: center;
             justify-content: center;
             border: 2px solid $apple-blue;
-
-            img {
-                width: 110x;
-                height: 110px;
-            }
+            img { width: 110px; height: 110px; }
         }
-
-        .hm-merits-title {
-            font-size: 24px;
-            font-weight: 700;
-        }
+        .hm-merits-title { font-size: 24px; font-weight: 700; }
     }
 }
 
-// 7. Contact Banner
 .hm-contact-banner {
     padding: 60px 40px;
     background-color: $apple-black;
@@ -592,11 +429,6 @@ ul {
         background: #2d2d2f;
         padding: 40px;
         border-radius: 24px;
-
-        @media (max-width: 768px) {
-            flex-direction: column;
-            text-align: center;
-        }
     }
 
     .hm-banner-icon {
@@ -607,32 +439,124 @@ ul {
         display: flex;
         align-items: center;
         justify-content: center;
-
-        img {
-            width: 50px;
-            height: 50px;
-        }
+        img { width: 50px; height: 50px; }
     }
 
-    .hm-banner-name {
-        font-size: 24px;
-        font-weight: 700;
-        margin-bottom: 8px;
-    }
-
-    .hm-banner-role {
-        font-size: 16px;
-        color: #a1a1a6;
-    }
-
+    .hm-banner-name { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .hm-banner-role { font-size: 16px; color: #a1a1a6; }
     .hm-banner-desc {
         font-size: 18px;
         line-height: 1.5;
+        a { color: $apple-blue; font-weight: 600; text-decoration: underline; }
+    }
+}
 
-        a {
-            color: $apple-blue;
-            font-weight: 600;
-            text-decoration: underline;
+// ============================================================
+// RESPONSIVE OVERRIDES (TABLET/LAPTOP - MAX 1024PX)
+// ============================================================
+@media (max-width: 1024px) {
+    .hm-reach-section .hm-reach-top {
+        flex-direction: column;
+        .hm-reach-title { font-size: 40px; }
+        .hm-reach-image { height: 300px; width: 100%; }
+    }
+
+    .hm-about-section .hm-about-content {
+        grid-template-columns: 1fr;
+        .hm-about-image {
+            grid-column: 1;
+            grid-row: auto;
+            margin-top: 40px;
+            height: 400px;
         }
+    }
+}
+
+// ============================================================
+// RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
+// ============================================================
+@media (max-width: 768px) {
+    .hm-tabs-section { padding: 40px 16px 48px; }
+    .hm-segmented-bar { width: 100%; }
+    .hm-tab-btn { flex: 1; font-size: 13px; padding: 8px 12px; }
+
+    .hm-section-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        margin-bottom: 30px;
+
+        .hm-section-title {
+            font-size: 28px !important;
+            white-space: normal !important;
+            letter-spacing: -0.5px;
+            text-align: center;
+        }
+
+        .hm-section-desc {
+            text-align: center;
+            margin-top: 15px;
+            margin-left: 0;
+            font-size: 16px;
+        }
+    }
+
+    .hm-medicine-banner .hm-medicine-text { font-size: 24px; }
+
+    .hm-offer-section {
+        .hm-offer-list {
+            display: block; 
+            overflow-x: visible; 
+            padding: 10px 0;
+            & > * { margin-bottom: 20px; width: 100%; }
+            & > *:last-child { margin-bottom: 0; }
+            &::-webkit-scrollbar { display: none; }
+        }
+
+        .hm-offer-item {
+            min-width: 260px;
+            padding: 24px;
+            border-radius: 20px;
+
+            .hm-offer-icon {
+                width: 60px; height: 60px; border-radius: 12px; margin-bottom: 12px;
+                img { width: 32px; height: 32px; }
+            }
+            .hm-offer-title { font-size: 18px; margin-bottom: 10px; }
+            .hm-offer-desc { font-size: 14px; }
+        }
+    }
+
+    .hm-gallery-section .gallery-grid {
+        grid-template-columns: 1fr;
+        grid-auto-rows: auto;
+    }
+
+    .hm-about-section .hm-about-content .hm-about-desc {
+        margin-top: 20px;
+        font-size: 16px;
+        text-align: center;
+    }
+
+    .hm-merits-section {
+        .hm-merits-list {
+            flex-direction: row !important;
+            flex-wrap: nowrap;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: space-around;
+        }
+        .hm-merits-item {
+            .hm-merits-icon {
+                width: 80px; height: 80px; margin-bottom: 12px; border-width: 1.5px;
+                img { width: 44px; height: 44px; }
+            }
+            .hm-merits-title { font-size: 15px; }
+        }
+    }
+
+    .hm-contact-banner .hm-banner-wrapper {
+        flex-direction: column;
+        text-align: center;
     }
 }

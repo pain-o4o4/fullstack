@@ -2,24 +2,26 @@
     background-color: #ffffff;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 180px 20px 40px; // Top 180px để nhường chỗ hoàn toàn cho Header Pill + Breadcrumb Dropdown, ngang 20px, dưới 40px
-    font-family: -system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+    padding: 100px 20px 40px; // Standard top padding for fixed header
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
 
     .intro-doctor {
         display: flex;
-        gap: 30px;
-        margin-bottom: 50px;
-        padding-bottom: 30px;
-        border-bottom: 1px solid #f5f5f7;
+        gap: 40px;
+        margin-bottom: 60px;
+        padding: 40px 0;
+        border-bottom: 1px solid #f2f2f7;
 
         .content-left {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%; // Hình tròn kiểu Apple Profile
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
             background-position: center;
             background-size: cover;
             background-repeat: no-repeat;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: 4px solid #fff;
+            flex-shrink: 0;
         }
 
         .content-right {
@@ -29,17 +31,18 @@
             justify-content: center;
 
             .up {
-                font-size: 28px;
+                font-size: 32px;
                 font-weight: 700;
                 color: #1d1d1f;
-                letter-spacing: -0.5px;
-                margin-bottom: 10px;
+                letter-spacing: -1px;
+                margin-bottom: 12px;
+                line-height: 1.2;
             }
 
             .down {
-                font-size: 16px;
+                font-size: 17px;
                 color: #48484a;
-                line-height: 1.5;
+                line-height: 1.6;
                 max-width: 800px;
             }
         }
@@ -48,17 +51,17 @@
     /* Schedule & Extra Info Section */
     .schedule-doctor {
         display: flex;
-        gap: 30px;
-        background: #f8f9fa; // Nền sáng hơn một chút để tạo sự sạch sẽ
-        padding: 35px;
-        border-radius: 28px;
-        margin-bottom: 50px;
-        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+        gap: 40px;
+        background: #fbfbfd;
+        padding: 40px;
+        border-radius: 32px;
+        margin-bottom: 60px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.02);
 
         .content-left {
-            flex: 1.6; // Cho phép phần lịch rộng hơn
-            border-right: 1px solid #eef0f2;
-            padding-right: 30px;
+            flex: 1.5;
+            border-right: 1px solid #f2f2f7;
+            padding-right: 40px;
         }
 
         .content-right {
@@ -69,48 +72,40 @@
 
     /* Nội dung Markdown phía dưới */
     .detail-info-doctor {
-        padding: 20px;
+        padding: 40px 0;
         color: #1d1d1f;
-        line-height: 1.6;
-        font-size: 17px;
+        line-height: 1.8;
+        font-size: 18px;
+        border-top: 1px solid #f2f2f7;
 
-        /* Tùy chỉnh lại các thẻ HTML bên trong dangerouslySetInnerHTML */
-        h2,
-        h3 {
-            font-weight: 600;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            letter-spacing: -0.3px;
-        }
-
-        p {
-            margin-bottom: 15px;
-            color: #424245;
-        }
+        h2, h3 { font-weight: 700; margin-top: 40px; margin-bottom: 20px; letter-spacing: -0.5px; }
+        p { margin-bottom: 24px; color: #424245; }
+        img { max-width: 100%; border-radius: 20px; margin: 30px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
     }
-
 }
 
-/* Breadcrumb phong cách Teladoc Sub-header */
+/* 
+   IMPORTANT: DO NOT MODIFY .breadcrumb-container 
+   AS PER USER REQUEST TO KEEP IT UNCHANGED
+*/
 .breadcrumb-container {
     position: fixed;
-    top: 40px; // Đẩy lên để phần trên chui hoàn toàn vào sau Header Pill (nằm ở top: 12px)
+    top: 40px; 
     left: 0;
     right: 0;
-    max-width: 1180px; // RỘNG BẰNG CHÍNH XÁC HEADER PILL
+    max-width: 1180px; 
     margin: 0 auto;
-    background: #f4f5f8; // Màu xám nhạt/tím nhạt y hệt ảnh Teladoc
-    z-index: 990; // Nằm DƯỚI header (1000)
-    padding: 44px 32px 14px; // Padding top lớn để phần text hiển thị rõ dưới pill
-    border: none; // Bỏ border để mượt mà
-    border-radius: 0 0 32px 32px; // Bo tròn đẹp mắt ở góc dưới
+    background: #f4f5f8; 
+    z-index: 990; 
+    padding: 44px 32px 14px; 
+    border: none; 
+    border-radius: 0 0 32px 32px; 
     box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.06);
 
-    // Animation trượt xuống
     animation: slideDownBreadcrumb 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     transform-origin: top center;
     display: flex;
-    justify-content: center; // Căn giữa nội dung giống hệt ảnh
+    justify-content: center; 
 
     .breadcrumb {
         font-size: 14px;
@@ -120,7 +115,7 @@
 
         .home-link {
             cursor: pointer;
-            color: #0071e3; // Teladoc / Apple blue
+            color: #0071e3; 
             font-weight: 500;
             transition: color 0.2s;
 
@@ -136,22 +131,65 @@
         }
 
         .current-page {
-            color: #4c40e6; // Trùng màu tím Teladoc để làm nổi bật trang hiện tại
+            color: #4c40e6; 
             font-weight: 600;
         }
     }
 }
 
 @keyframes slideDownBreadcrumb {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-/* Intro Doctor Section */
+// ============================================================
+// RESPONSIVE OVERRIDES (MOBILE)
+// ============================================================
+@media (max-width: 768px) {
+    .doctor-detail-container {
+        padding-top: 70px;
+        
+        .intro-doctor {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 24px;
+            padding: 32px 16px;
+            
+            .content-left {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .content-right {
+                .up { font-size: 24px; margin-bottom: 8px; }
+                .down { font-size: 15px; }
+            }
+        }
+
+        .schedule-doctor {
+            flex-direction: column;
+            padding: 24px 16px;
+            gap: 32px;
+            border-radius: 24px;
+            margin: 0 16px 40px;
+
+            .content-left {
+                padding-right: 0;
+                border-right: none;
+                border-bottom: 1px solid #f2f2f7;
+                padding-bottom: 32px;
+            }
+
+            .content-right {
+                padding-left: 0;
+            }
+        }
+
+        .detail-info-doctor {
+            padding: 32px 16px;
+            font-size: 16px;
+            h2, h3 { font-size: 20px; }
+        }
+    }
+}

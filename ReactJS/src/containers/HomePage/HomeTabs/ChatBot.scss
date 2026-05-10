@@ -1,7 +1,12 @@
 @use "sass:color";
+
+// ============================================================
+// BASE STYLES (LAPTOP/DESKTOP)
+// ============================================================
 .chatbot-integrated {
     animation: fadeIn 0.5s ease;
     height: 100%;
+    min-height: 600px; // Prevent layout collapse when switching views
 
     .cb-header {
         display: flex;
@@ -27,7 +32,7 @@
             font-weight: 800;
             margin: 0;
             letter-spacing: -1px;
-            span { color: #af52de; } // Màu AI
+            span { color: #af52de; }
         }
     }
 
@@ -81,6 +86,10 @@
                 margin-bottom: 8px;
             }
 
+            .cb-sessions-scrollbar {
+                height: 420px;
+            }
+
             .session-item {
                 display: flex;
                 gap: 12px;
@@ -96,10 +105,7 @@
                     i { color: #af52de; }
                 }
 
-                i {
-                    color: #86868b;
-                    margin-top: 2px;
-                }
+                i { color: #86868b; margin-top: 2px; }
 
                 .session-info {
                     flex: 1;
@@ -113,10 +119,7 @@
                         text-overflow: ellipsis;
                         margin-bottom: 4px;
                     }
-                    .session-time {
-                        font-size: 12px;
-                        color: #86868b;
-                    }
+                    .session-time { font-size: 12px; color: #86868b; }
                 }
             }
             .no-sessions {
@@ -161,58 +164,24 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 
             &.markdown-content {
-                p {
-                    margin: 0;
-                    &:not(:last-child) {
-                        margin-bottom: 8px;
-                    }
-                }
-                ul, ol {
-                    margin: 8px 0;
-                    padding-left: 20px;
-                }
-                li {
-                    margin-bottom: 4px;
-                }
-                strong, b {
-                    font-weight: 700;
-                    color: inherit;
-                }
-                h1, h2, h3, h4 {
-                    margin: 12px 0 6px 0;
-                    font-weight: 700;
-                    line-height: 1.2;
-                }
+                p { margin: 0; &:not(:last-child) { margin-bottom: 8px; } }
+                ul, ol { margin: 8px 0; padding-left: 20px; }
+                li { margin-bottom: 4px; }
+                strong, b { font-weight: 700; color: inherit; }
+                h1, h2, h3, h4 { margin: 12px 0 6px 0; font-weight: 700; line-height: 1.2; }
                 h1 { font-size: 1.4em; }
                 h2 { font-size: 1.2em; }
                 h3 { font-size: 1.1em; }
-                
                 code {
-                    background: rgba(0, 0, 0, 0.05);
-                    padding: 2px 4px;
-                    border-radius: 4px;
-                    font-family: 'SF Mono', Monaco, Consolas, monospace;
-                    font-size: 0.9em;
+                    background: rgba(0, 0, 0, 0.05); padding: 2px 4px; border-radius: 4px;
+                    font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 0.9em;
                 }
             }
-
-            &.typing {
-                color: #86868b;
-                letter-spacing: 2px;
-            }
+            &.typing { color: #86868b; letter-spacing: 2px; }
         }
 
-        .assistant .cb-bubble {
-            background: #ffffff;
-            color: #1d1d1f;
-            border-bottom-left-radius: 4px;
-        }
-
-        .user .cb-bubble {
-            background: #af52de;
-            color: #ffffff;
-            border-bottom-right-radius: 4px;
-        }
+        .assistant .cb-bubble { background: #ffffff; color: #1d1d1f; border-bottom-left-radius: 4px; }
+        .user .cb-bubble { background: #af52de; color: #ffffff; border-bottom-right-radius: 4px; }
     }
 
     .cb-input-area {
@@ -230,10 +199,7 @@
             outline: none;
             font-size: 15px;
             transition: border-color 0.2s ease;
-
-            &:focus {
-                border-color: #af52de;
-            }
+            &:focus { border-color: #af52de; }
         }
 
         .cb-send-btn {
@@ -247,21 +213,63 @@
             justify-content: center;
             cursor: pointer;
             transition: transform 0.2s ease;
+            i { color: #ffffff; font-size: 18px; }
+            &:hover { transform: scale(1.05); background: color.adjust(#af52de, $lightness: -5%); }
+            &:disabled { opacity: 0.5; cursor: not-allowed; }
+        }
+    }
+}
 
-            i {
-                color: #ffffff;
-                font-size: 18px;
-            }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-            &:hover {
-                transform: scale(1.05);
-                background: color.adjust(#af52de, $lightness: -5%);
-            }
+// ============================================================
+// RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
+// ============================================================
+@media (max-width: 768px) {
+    .chatbot-integrated {
+        min-height: 500px;
+        
+        .cb-header {
+            gap: 12px;
+            margin-bottom: 16px;
+            h2 { font-size: 22px; }
+            .cb-back { font-size: 14px; }
+        }
 
-            &:disabled {
-                opacity: 0.5;
-                cursor: not-allowed;
+        .cb-layout {
+            flex-direction: column;
+            height: auto;
+            min-height: 550px;
+            padding: 12px;
+            gap: 12px;
+        }
+
+        .cb-sidebar {
+            width: 100%;
+            height: auto;
+            max-height: 180px; // Smaller sidebar on mobile
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding-bottom: 12px;
+
+            .new-chat-btn { padding: 10px; font-size: 13px; }
+            .cb-sessions-scrollbar {
+                height: 150px;
             }
+        }
+
+        .cb-window {
+            height: 400px; // Fixed height for chat window on mobile to prevent outer scroll
+        }
+
+        .cb-messages {
+            padding: 16px;
+            .cb-bubble { font-size: 14px; max-width: 90%; }
+        }
+
+        .cb-input-area {
+            padding: 12px;
+            input { padding: 10px 16px; font-size: 14px; }
+            .cb-send-btn { width: 40px; height: 40px; }
         }
     }
 }

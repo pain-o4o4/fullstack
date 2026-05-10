@@ -1,5 +1,9 @@
 @use './HomePage.scss' as *;
 
+// ============================================================
+// BASE STYLES (LAPTOP/DESKTOP)
+// ============================================================
+
 .hm-footer {
     background-color: #000000;
     color: #ffffff;
@@ -13,14 +17,6 @@
         gap: 40px;
         padding-bottom: 60px;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-
-        @media (max-width: 992px) {
-            grid-template-columns: 1fr 1fr;
-        }
-
-        @media (max-width: 576px) {
-            grid-template-columns: 1fr;
-        }
     }
 
     .hm-footer-col {
@@ -75,12 +71,6 @@
         font-size: 14px;
         color: #86868b;
 
-        @media (max-width: 768px) {
-            flex-direction: column;
-            gap: 20px;
-            text-align: center;
-        }
-
         .footer-legal {
             display: flex;
             gap: 30px;
@@ -91,5 +81,34 @@
                 }
             }
         }
+    }
+}
+
+// ============================================================
+// RESPONSIVE OVERRIDES (TABLET - MAX 992PX)
+// ============================================================
+@media (max-width: 992px) {
+    .hm-footer .hm-footer-top {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+// ============================================================
+// RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
+// ============================================================
+@media (max-width: 768px) {
+    .hm-footer .hm-footer-bottom {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+}
+
+// ============================================================
+// RESPONSIVE OVERRIDES (SMALL MOBILE - MAX 576PX)
+// ============================================================
+@media (max-width: 576px) {
+    .hm-footer .hm-footer-top {
+        grid-template-columns: 1fr;
     }
 }

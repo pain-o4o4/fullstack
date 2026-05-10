@@ -80,6 +80,7 @@
 .dcd-messages {
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden !important;
     padding: 14px;
     display: flex;
     flex-direction: column;
@@ -444,69 +445,7 @@
     }
 }
 
-// Confirm Popup
-.dcd-confirm-popup {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 320px;
-    background: #fff;
-    border-radius: 14px;
-    padding: 24px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-    z-index: 100;
-    text-align: center;
-    animation: popupIn 0.3s cubic-bezier(0.17, 0.89, 0.32, 1.28);
-
-    .popup-title {
-        font-size: 17px;
-        font-weight: 700;
-        color: #1d1d1f;
-        margin-bottom: 8px;
-    }
-
-    .popup-desc {
-        font-size: 13px;
-        color: #8e8e93;
-        line-height: 1.4;
-        margin-bottom: 24px;
-    }
-
-    .popup-actions {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-
-        button {
-            height: 44px;
-            border-radius: 10px;
-            border: none;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-
-            &:first-child {
-                background: #f2f2f7;
-                color: #007aff;
-
-                &:hover {
-                    background: #e5e5ea;
-                }
-            }
-
-            &.btn-delete {
-                background: rgba(255, 59, 48, 0.1);
-                color: #ff3b30;
-
-                &:hover {
-                    background: rgba(255, 59, 48, 0.2);
-                }
-            }
-        }
-    }
-}
+// Confirm Popup đã được chuyển ra DoctorChat.scss
 
 // Avatar next to message
 .dcd-msg-avatar-wrap {
@@ -819,5 +758,67 @@
     to {
         opacity: 1;
         transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+// ============================================================
+// RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
+// ============================================================
+@media (max-width: 768px) {
+    .dcd-chat-doctor-bar {
+        padding: 10px;
+        .dcd-mini-avatar { width: 36px; height: 36px; }
+        .dcd-chat-doctor-name { font-size: 14px; }
+    }
+
+    .dcd-bubble-container {
+        max-width: 75%; // Reduced from 85% to give space for action buttons
+    }
+
+    .dcd-bubble {
+        padding: 8px 12px;
+        font-size: 15px;
+        .dcd-text { font-size: 14px; }
+    }
+
+    .dcd-reaction-popover {
+        padding: 4px 8px;
+        gap: 6px;
+        bottom: 125%;
+        max-width: 250px;
+        flex-wrap: nowrap; // Keep it in one row if possible
+        justify-content: center;
+        
+        // Center it relative to the bubble on mobile
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) scale(1) !important;
+
+        .dcd-popover-item {
+            img {
+                width: 24px; 
+                height: 24px;
+            }
+        }
+    }
+
+    .dcd-msg-actions {
+        // Bring buttons closer to the bubble
+        .dcd-msg--doctor & { right: -45px; }
+        .dcd-msg--patient & { left: -45px; }
+        
+        .dcd-msg-action-btn {
+            width: 30px;
+            height: 30px;
+        }
+    }
+
+    .dcd-input-bar {
+        padding: 8px 10px;
+        .dcd-send-btn { width: 36px; height: 36px; }
+    }
+
+    .dcd-reply-preview {
+        .reply-content .reply-text { max-width: 200px; }
     }
 }
