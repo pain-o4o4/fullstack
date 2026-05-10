@@ -18,6 +18,10 @@ module.exports = {
       text: {
         type: Sequelize.TEXT
       },
+      reactions: {
+        type: Sequelize.TEXT,
+        defaultValue: true
+      },
       image: {
         type: Sequelize.BLOB('long')
       },

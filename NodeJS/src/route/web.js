@@ -14,6 +14,7 @@ import { validateSearch } from '../middleware/searchValidator';
 import socketSyncMiddleware from '../middleware/socketSyncMiddleware';
 import systemController from "../controller/systemController";
 import chatController from "../controller/chatController";
+import adminController from "../controllers/adminController";
 let router = express.Router()
 
 let initWebRoutes = (app) => {
@@ -115,6 +116,13 @@ let initWebRoutes = (app) => {
 
     // System
     router.get('/api/get-system-statistics', systemController.getSystemStatistics);
+
+    // Admin Communication Hub (New)
+    router.get('/api/get-all-email-templates', adminController.handleGetAllEmailTemplates);
+    router.post('/api/save-email-template', adminController.handleUpsertEmailTemplate);
+    router.delete('/api/delete-email-template', adminController.handleDeleteEmailTemplate);
+    router.get('/api/get-all-global-quick-replies', adminController.handleGetAllGlobalQuickReplies);
+    router.post('/api/save-global-quick-reply', adminController.handleUpsertGlobalQuickReply);
 
     return app.use("/", router)
 }

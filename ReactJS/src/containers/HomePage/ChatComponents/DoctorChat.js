@@ -505,9 +505,30 @@ class DoctorChat extends Component {
 
 
     handleSelectQuickReply = (text) => {
-        this.setState({ inputText: text }, () => {
-            this.handleSend();
-        });
+        const { userInfo, allDoctors } = this.props;
+        const { selectedDoctor } = this.state;
+        let replacedText = text;
+
+        if (userInfo) {
+            const doctorName = `${userInfo.lastName} ${userInfo.firstName}`;
+            // Tìm thông tin chi tiết bác sĩ từ danh sách doctors (bao gồm specialty, clinic...)
+            const doctorDetail = allDoctors?.find(d => Number(d.id) === Number(userInfo.id));
+
+            const replacements = {
+                'doctorName': doctorName,
+                'patientName': selectedDoctor ? selectedDoctor.name : 'bạn',
+                'specialty': doctorDetail?.Doctor_Infor?.specialtyData?.valueVi || 'chuyên khoa',
+                'clinicName': doctorDetail?.Doctor_Infor?.clinicData?.name || 'phòng khám',
+                'addressClinic': doctorDetail?.Doctor_Infor?.addressClinic || 'địa chỉ phòng khám'
+            };
+
+            replacedText = text.replace(/\{\{(.*?)\}\}/g, (match, key) => {
+                const value = replacements[key.trim()];
+                return value !== undefined ? value : match;
+            });
+        }
+
+        this.setState({ inputText: replacedText });
     }
 
     handleToggleAutoReply = () => {

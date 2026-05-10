@@ -223,6 +223,26 @@ const updateMessageReactionApi = (data) => {
     return axios.post('/api/update-reaction', data);
 }
 
+const getAllEmailTemplatesApi = () => {
+    return axios.get('/api/get-all-email-templates');
+}
+
+const saveEmailTemplateApi = (data) => {
+    return axios.post('/api/save-email-template', data);
+}
+
+const deleteEmailTemplateApi = (id) => {
+    return axios.delete(`/api/delete-email-template?id=${id}`);
+}
+
+const getAllGlobalQuickRepliesApi = () => {
+    return axios.get('/api/get-all-global-quick-replies');
+}
+
+const saveGlobalQuickReplyApi = (data) => {
+    return axios.post('/api/save-global-quick-reply', data);
+}
+
 export {
     handleLoginApi,
     verifyPaymentStatus,
@@ -277,5 +297,10 @@ export {
     getQuickRepliesApi,
     saveQuickReplyApi,
     deleteQuickReplyApi,
-    updateMessageReactionApi
+    updateMessageReactionApi,
+    getAllEmailTemplatesApi,
+    saveEmailTemplateApi,
+    deleteEmailTemplateApi,
+    getAllGlobalQuickRepliesApi,
+    saveGlobalQuickReplyApi
 }

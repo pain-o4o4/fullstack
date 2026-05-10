@@ -1,39 +1,39 @@
 export const adminMenu = [
-    { // Quản lý người dùng
-        name: 'menu.admin.user',
-        menus: [
-            { name: 'menu.admin.crud', link: '/system/user-manage' },
-            { name: 'menu.admin.manage-doctor', link: '/system/manage-doctor' },
-            { name: 'menu.doctor.manage-schedule', link: '/system/manage-schedule' },
-        ]
-    },
-    { // Quản lý chuyên khoa
-        name: 'menu.admin.specialty',
-        menus: [
-            { name: 'menu.admin.manage-specialty', link: '/system/manage-specialty' }
-        ]
-    },
-    { // Quản lý phòng khám
-        name: 'menu.admin.clinic',
-        menus: [
-            { name: 'menu.admin.manage-clinic', link: '/system/manage-clinic' }
-        ]
-    },
-    { // Quản lý cẩm nang
-        name: 'menu.admin.handbook',
-        menus: [
-            { name: 'menu.admin.manage-handbook', link: '/system/manage-handbook' }
-        ]
-    },
     { // Quản lý thong tin ca nhan
         name: 'menu.admin.security',
         menus: [
             { name: 'menu.admin.information', link: '/system/patient-profile' }
         ]
     },
+    { // Quản lý người dùng
+        name: 'menu.admin.manage',
+        menus: [
+            { name: 'menu.admin.crud', link: '/system/user-manage' },
+            { name: 'menu.admin.manage-doctor', link: '/system/manage-doctor' },
+            { name: 'menu.doctor.manage-schedule', link: '/system/manage-schedule' },
+            { name: 'menu.admin.manage-specialty', link: '/system/manage-specialty' },
+            { name: 'menu.admin.manage-clinic', link: '/system/manage-clinic' },
+
+            { name: 'menu.admin.manage-handbook', link: '/system/manage-handbook' },
+
+        ]
+    },
+    { // Quản lý Giao tiếp
+        name: 'menu.admin.template',
+        menus: [
+            { name: 'menu.admin.manage-quick-reply', link: '/system/manage-quick-reply' },
+            { name: 'menu.admin.manage-email-template', link: '/system/manage-email-template' },
+        ]
+    },
 ];
 
 export const doctorMenu = [
+    { // Quản lý thong tin ca nhan
+        name: 'menu.admin.security',
+        menus: [
+            { name: 'menu.admin.information', link: '/system/patient-profile' }
+        ]
+    },
     {
         name: 'menu.admin.user',
         menus: [
@@ -45,18 +45,14 @@ export const doctorMenu = [
                 name: 'menu.admin.manage-doctor',
                 link: '/doctor/manage-doctor'
             },
+            {
+                name: 'menu.doctor.manage-booking',
+                link: '/doctor/manage-booking'
+            },
         ]
     },
-    {
-        name: 'menu.doctor.manage-booking',
-        link: '/doctor/manage-booking'
-    },
-    { // Quản lý thong tin ca nhan
-        name: 'menu.admin.security',
-        menus: [
-            { name: 'menu.admin.information', link: '/system/patient-profile' }
-        ]
-    },
+
+
 ];
 
 export const patientMenu = [

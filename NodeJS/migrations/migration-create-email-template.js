@@ -1,24 +1,28 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('QuickReplies', {
+    await queryInterface.createTable('EmailTemplates', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      doctorId: {
-        type: Sequelize.INTEGER
+      type: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      language: {
+        type: Sequelize.STRING,
+        defaultValue: 'vi'
+      },
+      subject: {
+        type: Sequelize.STRING,
+        allowNull: false
       },
       content: {
-        type: Sequelize.TEXT
-      },
-      title: {
-        type: Sequelize.STRING
-      },
-      isGlobal: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.TEXT,
+        allowNull: false
       },
       createdAt: {
         allowNull: false,
@@ -31,6 +35,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('QuickReplies');
+    await queryInterface.dropTable('EmailTemplates');
   }
 };

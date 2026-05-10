@@ -366,7 +366,13 @@ let getQuickReplies = (doctorId) => {
                 });
             } else {
                 let data = await db.QuickReply.findAll({
-                    where: { doctorId: doctorId },
+                    where: {
+                        [db.Sequelize.Op.or]: [
+                            { doctorId: doctorId },
+                            { isGlobal: true }
+                        ]
+                    },
+                    order: [['isGlobal', 'DESC'], ['createdAt', 'DESC']],
                     raw: true
                 });
                 resolve({

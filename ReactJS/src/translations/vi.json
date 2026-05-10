@@ -72,22 +72,26 @@
         },
         "admin": {
             "user": "Người dùng",
-            "manage-doctor": "Quản lý bác sỹ",
-            "manage-admin": "Quản lý admin",
-            "crud": "Quản lý người dùng",
+            "manage": "Quản lý",
+            "manage-doctor": "Bác sỹ",
+            "manage-admin": "Admin",
+            "crud": "Người dùng",
             "crud-redux": "Chỉnh sửa người dùng ",
             "clinic": "Cơ sở y tế",
             "specialty": "Chuyên khoa",
-            "manage-specialty": "Quản lý chuyên khoa",
+            "manage-specialty": "Chuyên khoa",
             "information": "Thông tin",
             "security": "Bảo mật",
-            "manage-clinic": "Quản lý cơ sở y tế",
-            "handbook": "Cẩm nang",
-            "manage-handbook": "Quản lý cẩm nang"
+            "manage-clinic": "Cơ sở y tế",
+            "handbook": "Chuyên mục",
+            "manage-handbook": "Chuyên mục",
+            "template": "Bảng mẫu",
+            "manage-quick-reply": "Tin nhắn nhanh",
+            "manage-email-template": "Mẫu Email"
         },
         "doctor": {
             "header": "Bác sỹ",
-            "manage-schedule": "Quản lý lịch khám bệnh",
+            "manage-schedule": "Lịch khám bệnh",
             "manage-booking": "Quản lý đặt lịch"
         },
         "patient": {

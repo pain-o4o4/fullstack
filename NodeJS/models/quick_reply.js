@@ -11,6 +11,8 @@ module.exports = (sequelize, DataTypes) => {
   QuickReply.init({
     doctorId: DataTypes.INTEGER,
     content: DataTypes.TEXT,
+    isGlobal: DataTypes.BOOLEAN,
+    title: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'QuickReply',

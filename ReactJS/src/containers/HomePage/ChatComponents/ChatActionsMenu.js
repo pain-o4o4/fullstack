@@ -57,16 +57,10 @@ class ChatActionsMenu extends Component {
 
         if (filterTab === 'AISUPPORT') return null;
 
-        // Ưu tiên lấy từ DB, nếu trống dùng mẫu mặc định
+        // Lấy động hoàn toàn từ Database (Admin & Doctor)
         const displayReplies = (quickReplies && quickReplies.length > 0)
             ? quickReplies.map(r => r.content)
-            : [
-                "Chào bạn, tôi là Bác sĩ chuyên khoa. Bạn vui lòng mô tả triệu chứng cụ thể nhé!",
-                "Bạn có thể chụp ảnh kết quả xét nghiệm hoặc đơn thuốc cũ (nếu có) gửi tôi xem không?",
-                "Mời bạn đặt lịch khám trực tiếp để tôi có thể kiểm tra kỹ hơn nhé.",
-                "Hiện tại tôi đang bận khám bệnh, tôi sẽ trả lời bạn sớm nhất có thể.",
-                "Chào bạn, cảm ơn bạn đã quan tâm. Tôi có thể giúp gì cho bạn?"
-            ];
+            : [];
 
         return (
             <div className="dcd-action-hub" ref={this.menuRef}>

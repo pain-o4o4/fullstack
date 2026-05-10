@@ -1,5 +1,7 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config();
+import db from '../../models/index';
+import { replacePlaceholders } from '../utils/templateUtils';
 
 let sendSimpleEmail = async (dataSend) => {
     let transporter = nodemailer.createTransport({
@@ -12,11 +14,26 @@ let sendSimpleEmail = async (dataSend) => {
         },
     });
 
+    // Lấy template từ DB
+    let template = await db.EmailTemplate.findOne({
+        where: { type: 'CONFIRMATION', language: dataSend.language || 'vi' }
+    });
+
+    let subject = dataSend.language === 'vi' ? "Xác nhận lịch hẹn khám bệnh" : "Confirmation of medical appointment";
+    let htmlContent = '';
+
+    if (template) {
+        subject = template.subject;
+        htmlContent = replacePlaceholders(template.content, dataSend);
+    } else {
+        htmlContent = getBodyHTMLEmail(dataSend);
+    }
+
     let info = await transporter.sendMail({
         from: '"BookingCare 🏥" <64anhsden@gmail.com>',
         to: dataSend.receiverEmail,
-        subject: dataSend.language === 'vi' ? "Xác nhận lịch hẹn khám bệnh" : "Confirmation of medical appointment",
-        html: getBodyHTMLEmail(dataSend),
+        subject: subject,
+        html: htmlContent,
     });
 
     console.log("Message sent: %s", info.messageId);
@@ -82,11 +99,26 @@ let sendRemedyEmail = async (dataSend) => {
         },
     });
 
+    // Lấy template từ DB
+    let template = await db.EmailTemplate.findOne({
+        where: { type: 'REMEDY', language: dataSend.language || 'vi' }
+    });
+
+    let subject = dataSend.language === 'vi' ? "Kết quả khám bệnh & Cảm ơn" : "Medical examination results & Thank you";
+    let htmlContent = '';
+
+    if (template) {
+        subject = template.subject;
+        htmlContent = replacePlaceholders(template.content, dataSend);
+    } else {
+        htmlContent = getBodyHTMLEmailRemedy(dataSend);
+    }
+
     let info = await transporter.sendMail({
         from: '"BookingCare 🏥" <64anhsden@gmail.com>',
         to: dataSend.receiverEmail,
-        subject: dataSend.language === 'vi' ? "Kết quả khám bệnh & Cảm ơn" : "Medical examination results & Thank you",
-        html: getBodyHTMLEmailRemedy(dataSend),
+        subject: subject,
+        html: htmlContent,
     });
 }
 

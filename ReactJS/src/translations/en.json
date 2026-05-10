@@ -72,22 +72,26 @@
         },
         "admin": {
             "user": "Users",
-            "manage-doctor": "Manage Doctor",
-            "manage-admin": "Manage Admin",
+            "manage": "Manage",
+            "manage-doctor": "Doctor",
+            "manage-admin": "Admin",
             "crud": "User Management",
             "crud-redux": "Edit User",
             "clinic": "Clinic",
             "specialty": "Specialty",
-            "manage-specialty": "Manage Specialty",
+            "manage-specialty": "Specialty",
             "information": "Information",
             "security": "Security",
-            "manage-clinic": "Manage Clinic",
+            "manage-clinic": "Clinic",
             "handbook": "Handbook",
-            "manage-handbook": "Manage Handbook"
+            "manage-handbook": "Handbook",
+            "template": "Template",
+            "manage-quick-reply": "Quick Replies",
+            "manage-email-template": "Email Templates"
         },
         "doctor": {
             "header": "Doctor",
-            "manage-schedule": "Manage Doctor Schedule",
+            "manage-schedule": "Doctor Schedule",
             "manage-booking": "Manage Booking"
         },
         "patient": {
