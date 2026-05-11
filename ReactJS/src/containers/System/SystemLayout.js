@@ -123,9 +123,10 @@ class SystemLayout extends Component {
                 <div className="sub-header">
                     <div className="sub-header-content">
                         <div className="left-controls">
-                            <span className="brand-name"
-                                onClick={() => window.location.href = '/home'}
-                            >BookingCare</span>
+                            <div className="brand-wrapper" onClick={() => window.location.href = '/home'}>
+                                <span className="brand-name">BookingCare</span>
+                                <span className="brand-sub">Đặt lịch khám bệnh</span>
+                            </div>
                         </div>
                         <div className="right-controls">
                             <div className="translate-wrapper" onClick={this.changeLanguage} title={lang === 'vi' ? 'Đổi ngôn ngữ' : 'Change Language'}>

@@ -40,7 +40,10 @@ class MobileSidebarInternal extends Component {
                                 <span className="logo-dot dot-2"></span>
                                 <span className="logo-dot dot-3"></span>
                             </div>
-                            <span className="brand-name">BookingCare</span>
+                            <div className="brand-wrapper">
+                                <span className="brand-name">BookingCare</span>
+                                <span className="brand-sub">Đặt lịch khám bệnh</span>
+                            </div>
                         </div>
                         <div className="close-sidebar-wrapper" onClick={onClose}>
                             <i className="fas fa-times"></i>
@@ -278,7 +281,10 @@ class HomeHeader extends Component {
                                 <span className="logo-dot dot-2"></span>
                                 <span className="logo-dot dot-3"></span>
                             </div>
-                            <span className="brand-name">BookingCare</span>
+                            <div className="brand-wrapper">
+                                <span className="brand-name">BookingCare</span>
+                                <span className="brand-sub">Đặt lịch khám bệnh</span>
+                            </div>
                         </div>
 
                         {isOpenSearch ? (

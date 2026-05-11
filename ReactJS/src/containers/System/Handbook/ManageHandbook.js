@@ -4,11 +4,14 @@ import { FormattedMessage } from 'react-intl';
 import {
     getAllHandbookService,
     deleteHandbookService,
+    createNewHandbookService,
+    editHandbookService
 } from '../../../services/userService';
 import ModalManageHandbook from './ModalManageHandbook';
 import { withSocket } from '../../../hoc/withSocket';
 import './ManageHandbook.scss';
 import moment from 'moment';
+import { toast } from 'react-toastify';
 
 class ManageHandbook extends Component {
     constructor(props) {
@@ -73,6 +76,28 @@ class ManageHandbook extends Component {
         });
     }
 
+    handleSaveHandbook = async (data) => {
+        try {
+            let res;
+            if (this.state.action === 'CREATE') {
+                res = await createNewHandbookService(data);
+            } else {
+                res = await editHandbookService(data);
+            }
+
+            if (res && res.errCode === 0) {
+                toast.success(this.state.action === 'CREATE' ? 'Thêm cẩm nang thành công!' : 'Cập nhật cẩm nang thành công!');
+                this.setState({ isModalOpen: false });
+                await this.getAllHandbooks();
+            } else {
+                toast.error(res.errMessage || 'Error saving handbook');
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error('Error saving handbook');
+        }
+    }
+
     handleDeleteHandbook = async (handbook, force = false) => {
         try {
             let res = await deleteHandbookService(handbook.id, force);
@@ -84,8 +109,9 @@ class ManageHandbook extends Component {
                     isForceDelete: false
                 });
                 await this.getAllHandbooks();
+                toast.success('Xóa cẩm nang thành công!');
             } else {
-                alert(res.errMessage || 'Error deleting handbook');
+                toast.error(res.errMessage || 'Error deleting handbook');
             }
         } catch (error) {
             console.log(error);
@@ -263,11 +289,11 @@ class ManageHandbook extends Component {
                 <ModalManageHandbook 
                     isOpen={isModalOpen}
                     action={action}
-                    handbookEdit={handbookEdit}
-                    closeModal={() => {
+                    currentHandbook={handbookEdit}
+                    toggleFromParent={() => {
                         this.setState({ isModalOpen: false });
-                        this.getAllHandbooks();
                     }}
+                    saveHandbook={this.handleSaveHandbook}
                 />
 
                 {/* CONFIRM DELETE POPUP */}

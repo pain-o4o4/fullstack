@@ -4,10 +4,13 @@ import { FormattedMessage } from 'react-intl';
 import {
     getAllSpecialtyService,
     deleteSpecialtyService,
+    postCreateNewSpecialtyService,
+    editSpecialtyService
 } from '../../../services/userService';
 import ModalManageSpecialty from '../manageSystemModal/ModalManageSpecialty';
 import { withSocket } from '../../../hoc/withSocket';
 import './ManageSpecialty.scss';
+import { toast } from 'react-toastify';
 
 class ManageSpecialty extends Component {
     constructor(props) {
@@ -72,28 +75,25 @@ class ManageSpecialty extends Component {
         });
     }
 
-    handleDeleteSpecialty = async (specialty, force = false) => {
+    handleSaveSpecialty = async (data) => {
         try {
-            let res = await deleteSpecialtyService(specialty.id, force);
-            if (res && res.errCode === 0) {
-                this.setState({
-                    selectedSpecialties: this.state.selectedSpecialties.filter(id => id !== specialty.id),
-                    showBulkDeleteConfirm: false,
-                    specialtyToForceDelete: null,
-                    isForceDelete: false
-                });
-                await this.getAllSpecialties();
-            } else if (res && res.errCode === 5) {
-                this.setState({
-                    showBulkDeleteConfirm: true,
-                    specialtyToForceDelete: specialty,
-                    isForceDelete: true
-                });
+            let res;
+            if (this.state.action === 'CREATE') {
+                res = await postCreateNewSpecialtyService(data);
             } else {
-                alert(res.errMessage);
+                res = await editSpecialtyService(data);
+            }
+
+            if (res && res.errCode === 0) {
+                toast.success(this.state.action === 'CREATE' ? 'Thêm chuyên khoa thành công!' : 'Cập nhật chuyên khoa thành công!');
+                this.setState({ isModalOpen: false });
+                await this.getAllSpecialties();
+            } else {
+                toast.error(res.errMessage || 'Error saving specialty');
             }
         } catch (error) {
             console.log(error);
+            toast.error('Error saving specialty');
         }
     }
 
@@ -274,12 +274,40 @@ class ManageSpecialty extends Component {
                 <ModalManageSpecialty 
                     isOpen={isModalOpen}
                     action={action}
-                    specialtyEdit={specialtyEdit}
-                    closeModal={() => {
+                    currentSpecialty={specialtyEdit}
+                    toggleFromParent={() => {
                         this.setState({ isModalOpen: false });
-                        this.getAllSpecialties();
                     }}
+                    saveSpecialty={this.handleSaveSpecialty}
                 />
+
+                <div style={{ display: 'none' }}>
+                    {this.handleDeleteSpecialty = async (specialty, force = false) => {
+                        try {
+                            let res = await deleteSpecialtyService(specialty.id, force);
+                            if (res && res.errCode === 0) {
+                                this.setState({
+                                    selectedSpecialties: this.state.selectedSpecialties.filter(id => id !== specialty.id),
+                                    showBulkDeleteConfirm: false,
+                                    specialtyToForceDelete: null,
+                                    isForceDelete: false
+                                });
+                                await this.getAllSpecialties();
+                                toast.success('Xóa chuyên khoa thành công!');
+                            } else if (res && res.errCode === 5) {
+                                this.setState({
+                                    showBulkDeleteConfirm: true,
+                                    specialtyToForceDelete: specialty,
+                                    isForceDelete: true
+                                });
+                            } else {
+                                toast.error(res.errMessage);
+                            }
+                        } catch (error) {
+                            console.log(error);
+                        }
+                    }}
+                </div>
 
                 {/* CONFIRM DELETE POPUP */}
                 {this.state.showBulkDeleteConfirm && (

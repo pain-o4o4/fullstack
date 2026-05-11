@@ -4,10 +4,13 @@ import { FormattedMessage } from 'react-intl';
 import {
     getAllClinicService,
     deleteClinicService,
+    postCreateNewClinicService,
+    editClinicService
 } from '../../../services/userService';
 import ModalManageClinic from '../manageSystemModal/ModalManageClinic';
 import { withSocket } from '../../../hoc/withSocket';
 import './ManageClinic.scss';
+import { toast } from 'react-toastify';
 
 class ManageClinic extends Component {
     constructor(props) {
@@ -72,28 +75,25 @@ class ManageClinic extends Component {
         });
     }
 
-    handleDeleteClinic = async (clinic, force = false) => {
+    handleSaveClinic = async (data) => {
         try {
-            let res = await deleteClinicService(clinic.id, force);
-            if (res && res.errCode === 0) {
-                this.setState({
-                    selectedClinics: this.state.selectedClinics.filter(id => id !== clinic.id),
-                    showBulkDeleteConfirm: false,
-                    clinicToForceDelete: null,
-                    isForceDelete: false
-                });
-                await this.getAllClinics();
-            } else if (res && res.errCode === 5) {
-                this.setState({
-                    showBulkDeleteConfirm: true,
-                    clinicToForceDelete: clinic,
-                    isForceDelete: true
-                });
+            let res;
+            if (this.state.action === 'CREATE') {
+                res = await postCreateNewClinicService(data);
             } else {
-                alert(res.errMessage);
+                res = await editClinicService(data);
+            }
+
+            if (res && res.errCode === 0) {
+                toast.success(this.state.action === 'CREATE' ? 'Thêm cơ sở y tế thành công!' : 'Cập nhật cơ sở y tế thành công!');
+                this.setState({ isModalOpen: false });
+                await this.getAllClinics();
+            } else {
+                toast.error(res.errMessage || 'Error saving clinic');
             }
         } catch (error) {
             console.log(error);
+            toast.error('Error saving clinic');
         }
     }
 
@@ -278,12 +278,40 @@ class ManageClinic extends Component {
                 <ModalManageClinic
                     isOpen={isModalOpen}
                     action={action}
-                    clinicEdit={clinicEdit}
-                    closeModal={() => {
+                    currentClinic={clinicEdit}
+                    toggleFromParent={() => {
                         this.setState({ isModalOpen: false });
-                        this.getAllClinics();
                     }}
+                    saveClinic={this.handleSaveClinic}
                 />
+
+                <div style={{ display: 'none' }}>
+                    {this.handleDeleteClinic = async (clinic, force = false) => {
+                        try {
+                            let res = await deleteClinicService(clinic.id, force);
+                            if (res && res.errCode === 0) {
+                                this.setState({
+                                    selectedClinics: this.state.selectedClinics.filter(id => id !== clinic.id),
+                                    showBulkDeleteConfirm: false,
+                                    clinicToForceDelete: null,
+                                    isForceDelete: false
+                                });
+                                await this.getAllClinics();
+                                toast.success('Xóa cơ sở y tế thành công!');
+                            } else if (res && res.errCode === 5) {
+                                this.setState({
+                                    showBulkDeleteConfirm: true,
+                                    clinicToForceDelete: clinic,
+                                    isForceDelete: true
+                                });
+                            } else {
+                                toast.error(res.errMessage);
+                            }
+                        } catch (error) {
+                            console.log(error);
+                        }
+                    }}
+                </div>
 
                 {/* CONFIRM DELETE POPUP */}
                 {this.state.showBulkDeleteConfirm && (
