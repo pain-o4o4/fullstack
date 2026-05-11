@@ -10,6 +10,10 @@ import * as action from '../../../store/actions'
 import ScheduleDoctor from './ScheduleDoctor'
 import ExtraInforDoctor from './ExtraInforDoctor'
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/CustomBreadcrumb';
+import HomeFooter from '../../HomePage/HomeFooter';
+import ProfileDoctor from './ProfileDoctor';
+import { getDetailSpecialtyByIdService } from '../../../services/userService';
+
 class DetailDoctor extends Component {
     constructor(props) {
         super(props);
@@ -17,6 +21,7 @@ class DetailDoctor extends Component {
             detailDoctor: {},
             currentDoctorId: this.props.params && this.props.params.id ? this.props.params.id : -1,
             selectedClinicData: null,
+            listRelatedDoctors: []
         }
     }
 
@@ -30,11 +35,16 @@ class DetailDoctor extends Component {
             this.props.getDetailDoctor(id);
         }
     }
-    componentDidUpdate(prevProps, prevState, snapshot) {
+    async componentDidUpdate(prevProps, prevState, snapshot) {
         if (prevProps.detailDoctor !== this.props.detailDoctor) {
             this.setState({
                 detailDoctor: this.props.detailDoctor
             })
+
+            // Load related doctors when detailDoctor is available
+            if (this.props.detailDoctor && this.props.detailDoctor.doctorinforData && this.props.detailDoctor.doctorinforData.specialtyId) {
+                await this.fetchRelatedDoctors(this.props.detailDoctor.doctorinforData.specialtyId);
+            }
         }
         if (prevProps.params && this.props.params && prevProps.params.id !== this.props.params.id) {
             let id = this.props.params.id;
@@ -42,6 +52,25 @@ class DetailDoctor extends Component {
                 currentDoctorId: id
             });
             this.props.getDetailDoctor(id);
+            window.scrollTo(0, 0); // Scroll to top when switching doctor
+        }
+    }
+
+    fetchRelatedDoctors = async (specialtyId) => {
+        let res = await getDetailSpecialtyByIdService(specialtyId);
+        if (res && res.errCode === 0 && res.data && res.data.doctorSpecialty) {
+            let list = res.data.doctorSpecialty;
+            // Filter out the current doctor
+            list = list.filter(item => item.doctorId !== +this.state.currentDoctorId);
+            this.setState({
+                listRelatedDoctors: list
+            });
+        }
+    }
+
+    handleViewDetailDoctor = (doctor) => {
+        if (this.props.navigate) {
+            this.props.navigate(`/detail-doctor/${doctor.doctorId}`);
         }
     }
     handleClinicSelection = (clinicData) => {
@@ -107,7 +136,31 @@ class DetailDoctor extends Component {
                             && <div dangerouslySetInnerHTML={{ __html: detailDoctor.markdownData.contentHTML }}></div>
                         }
                     </div>
+
+                    {/* Related Doctors Section */}
+                    {this.state.listRelatedDoctors && this.state.listRelatedDoctors.length > 0 && (
+                        <div className="related-doctors-section">
+                            <div className="related-title">
+                                <FormattedMessage id="homepage.outstanding-doctor" defaultMessage="Bác sĩ nổi bật" />
+                            </div>
+                            <div className="related-list">
+                                {this.state.listRelatedDoctors.map((item, index) => (
+                                    <div className="related-item" key={index} onClick={() => this.handleViewDetailDoctor(item)}>
+                                        <ProfileDoctor
+                                            doctorId={item.doctorId}
+                                            isShowDescription={true}
+                                            isShowPrice={false}
+                                        />
+                                        <div className="view-more">
+                                            <FormattedMessage id="homepage.more-info" defaultMessage="Xem thêm" />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
+                <HomeFooter />
             </React.Fragment>
         );
     }

@@ -452,12 +452,27 @@
 // Responsive
 @media (max-width: 1024px) {
     .detail-handbook-container .detail-handbook-body {
+        padding: 0 40px 80px;
+
+        .handbook-hero {
+            height: 380px;
+            .hero-content .handbook-title { font-size: 34px; }
+        }
+
         .content-wrapper {
             grid-template-columns: 1fr;
+            gap: 30px;
+            .main-article { padding: 48px; }
+            .article-sidebar { .sidebar-card { position: relative; top: 0; } }
+        }
+
+        .suggested-handbooks {
+            margin-top: 60px;
+            .suggested-header h2 { font-size: 28px; }
         }
 
         .suggested-grid {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
         }
     }
 }

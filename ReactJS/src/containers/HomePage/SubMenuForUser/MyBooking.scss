@@ -10,8 +10,8 @@
         background: white;
         padding: 40px;
         border-radius: 32px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.03);
-        border: 1px solid rgba(0,0,0,0.02);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.03);
+        border: 1px solid rgba(0, 0, 0, 0.02);
 
         .title-booking {
             text-align: center;
@@ -32,6 +32,7 @@
                 thead {
                     tr {
                         background: transparent;
+
                         th {
                             border: none;
                             padding: 15px 20px;
@@ -47,7 +48,7 @@
                 tbody {
                     tr {
                         background: #ffffff;
-                        box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
                         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                         border-radius: 16px;
 
@@ -65,17 +66,20 @@
                                 font-weight: 700;
                                 color: #86868b;
                             }
+
                             &:last-child {
                                 border-right: 1px solid #f2f2f7;
                                 border-radius: 0 16px 16px 0;
                             }
                         }
 
-                        &.pointer-row { cursor: pointer; }
+                        &.pointer-row {
+                            cursor: pointer;
+                        }
 
                         &:hover {
                             transform: translateY(-4px) scale(1.01);
-                            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+                            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
                             background: #fbfbfd;
                         }
 
@@ -110,11 +114,36 @@
                             font-weight: 700;
                             display: inline-block;
 
-                            &.S1 { background: #fff3cd; color: #856404; } // Pending
-                            &.S2 { background: #d4edda; color: #155724; } // Confirmed
-                            &.S3 { background: #e2e3e5; color: #383d41; } // Done
-                            &.S4 { background: #f8d7da; color: #721c24; } // Cancelled
-                            &.S5 { background: #d1ecf1; color: #0c5460; } // Missed
+                            &.S1 {
+                                background: #fff3cd;
+                                color: #856404;
+                            }
+
+                            // Pending
+                            &.S2 {
+                                background: #d4edda;
+                                color: #155724;
+                            }
+
+                            // Confirmed
+                            &.S3 {
+                                background: #e2e3e5;
+                                color: #383d41;
+                            }
+
+                            // Done
+                            &.S4 {
+                                background: #f8d7da;
+                                color: #721c24;
+                            }
+
+                            // Cancelled
+                            &.S5 {
+                                background: #d1ecf1;
+                                color: #0c5460;
+                            }
+
+                            // Missed
                         }
                     }
                 }
@@ -168,11 +197,20 @@
     }
 }
 
+@media (max-width: 1279px) {
+    .my-booking-container {
+        .my-booking-body {
+            // max-width: 970px;
+        }
+    }
+}
+
 @media (max-width: 768px) {
     .my-booking-container {
         .my-booking-body {
             padding: 20px;
             margin: 20px;
+
             .table {
                 display: block;
                 overflow-x: auto;

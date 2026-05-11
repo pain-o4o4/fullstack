@@ -167,125 +167,95 @@
 // ============================================================
 // MOBILE APPLE SEARCH TAKEOVER
 // ============================================================
+
+/* Mixin for Search Takeover Styles */
+@mixin global-search-takeover {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(255, 255, 255, 0.98) !important;
+    backdrop-filter: blur(30px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(30px) saturate(180%) !important;
+    z-index: 3000 !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    animation: appleSearchFade 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
+    .search-header {
+        height: 56px !important;
+        padding: 0 20px !important;
+        border: none !important;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+        background: rgba(255, 255, 255, 0.9) !important;
+        backdrop-filter: blur(20px) !important;
+        display: flex !important;
+        align-items: center !important;
+
+        .search-icon { font-size: 18px !important; color: #1d1d1f !important; opacity: 0.6 !important; margin-right: 12px !important; }
+        input { flex: 1 !important; border: none !important; outline: none !important; font-size: 17px !important; color: #1d1d1f !important; font-weight: 500 !important; background: transparent !important; &::placeholder { color: #86868b !important; opacity: 0.8 !important; } }
+        .loading-icon { color: #0071e3 !important; margin-right: 10px !important; }
+        .close-btn {
+            background: transparent !important; border: none !important; color: #0071e3 !important; font-size: 16px !important; font-weight: 500 !important; width: auto !important; height: auto !important; padding-left: 10px !important; cursor: pointer !important;
+            i { display: none !important; } &::after { content: 'Hủy'; }
+        }
+    }
+
+    .search-dropdown { position: relative !important; top: 0 !important; left: 0 !important; width: 100% !important; margin-top: 0 !important; flex: 1 !important; overflow: hidden !important; }
+    .search-results {
+        box-shadow: none !important; background: transparent !important; height: 100% !important; max-height: 100% !important; padding: 20px 16px !important; border-radius: 0 !important;
+        .result-group {
+            margin-bottom: 30px !important; animation: appleResultSlide 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+            .group-title { padding: 0 0 12px 0 !important; font-size: 13px !important; color: #86868b !important; border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important; margin-bottom: 8px !important; }
+            .result-item {
+                padding: 12px 0 !important; border-bottom: 1px solid rgba(0, 0, 0, 0.03) !important;
+                &:hover { background: transparent !important; opacity: 0.7 !important; }
+                .item-img { width: 36px !important; height: 36px !important; }
+                .item-name { font-size: 16px !important; color: #1d1d1f !important; }
+            }
+        }
+    }
+}
+
 @media (max-width: 768px) {
     .global-search-container {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100vw !important;
-        height: 100vh !important;
-        background: rgba(255, 255, 255, 0.98) !important;
-        backdrop-filter: blur(30px) saturate(180%) !important;
-        -webkit-backdrop-filter: blur(30px) saturate(180%) !important;
-        z-index: 3000 !important;
-        padding: 0 !important;
-        display: flex !important;
-        flex-direction: column !important;
-        animation: appleSearchFade 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        @include global-search-takeover;
+    }
+}
+
+// ============================================================
+// TABLET APPLE SEARCH TAKEOVER (1024PX)
+// ============================================================
+@media (max-width: 1024px) {
+    .global-search-container {
+        @include global-search-takeover;
 
         .search-header {
-            height: 56px !important;
-            padding: 0 20px !important;
-            border: none !important;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
-            background: rgba(255, 255, 255, 0.9) !important;
-            backdrop-filter: blur(20px) !important;
-            display: flex !important;
-            align-items: center !important;
-
-            .search-icon {
-                font-size: 18px !important;
-                color: #1d1d1f !important;
-                opacity: 0.6 !important;
-                margin-right: 12px !important;
-            }
-
-            input {
-                flex: 1 !important;
-                border: none !important;
-                outline: none !important;
-                font-size: 17px !important;
-                color: #1d1d1f !important;
-                font-weight: 500 !important;
-                background: transparent !important;
-                
-                &::placeholder {
-                    color: #86868b !important;
-                    opacity: 0.8 !important;
-                }
-            }
-
-            .loading-icon {
-                color: #0071e3 !important;
-                margin-right: 10px !important;
-            }
-
-            .close-btn {
-                background: transparent !important;
-                border: none !important;
-                color: #0071e3 !important; // Apple blue for action text
-                font-size: 16px !important;
-                font-weight: 500 !important;
-                width: auto !important;
-                height: auto !important;
-                padding-left: 10px !important;
-                cursor: pointer !important;
-
-                i { display: none !important; } // Hide X icon
-                &::after {
-                    content: 'Hủy'; // "Cancel" in VN
-                }
-            }
+            height: 72px !important;
+            padding: 0 40px !important;
+            input { font-size: 22px !important; font-weight: 600 !important; }
         }
 
         .search-dropdown {
-            position: relative !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            margin-top: 0 !important;
             flex: 1 !important;
-            overflow: hidden !important;
+            overflow-y: auto !important;
+            display: flex !important;
+            justify-content: center !important;
+            padding: 40px 0 !important;
         }
 
         .search-results {
-            box-shadow: none !important;
-            background: transparent !important;
-            height: 100% !important;
-            max-height: 100% !important;
-            padding: 20px 16px !important;
-            border-radius: 0 !important;
-
+            width: 100% !important;
+            max-width: 800px !important;
+            padding: 0 40px !important;
             .result-group {
-                margin-bottom: 30px !important;
-                animation: appleResultSlide 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
-
-                .group-title {
-                    padding: 0 0 12px 0 !important;
-                    font-size: 13px !important;
-                    color: #86868b !important;
-                    border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
-                    margin-bottom: 8px !important;
-                }
-
+                margin-bottom: 40px !important;
                 .result-item {
-                    padding: 12px 0 !important;
-                    border-bottom: 1px solid rgba(0, 0, 0, 0.03) !important;
-
-                    &:hover {
-                        background: transparent !important;
-                        opacity: 0.7 !important;
-                    }
-
-                    .item-img {
-                        width: 36px !important;
-                        height: 36px !important;
-                    }
-
-                    .item-name {
-                        font-size: 16px !important;
-                        color: #1d1d1f !important;
-                    }
+                    padding: 16px 0 !important;
+                    .item-img { width: 48px !important; height: 48px !important; }
+                    .item-name { font-size: 19px !important; font-weight: 600 !important; }
                 }
             }
         }

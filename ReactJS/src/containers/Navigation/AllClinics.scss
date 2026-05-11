@@ -68,6 +68,21 @@
 }
 
 // ============================================================
+// RESPONSIVE OVERRIDES (TABLET - MAX 1024PX)
+// ============================================================
+@media (max-width: 1024px) {
+    .all-clinic-container {
+        .all-clinic-body {
+            padding: 100px 32px 60px;
+            .list-clinic {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 24px;
+            }
+        }
+    }
+}
+
+// ============================================================
 // RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
 // ============================================================
 @media (max-width: 768px) {

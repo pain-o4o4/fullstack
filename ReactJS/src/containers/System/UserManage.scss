@@ -118,12 +118,20 @@
     }
 
     .pagination-footer {
+        position: sticky;
+        bottom: 0;
         display: flex;
         justify-content: center;
         align-items: center;
         gap: 8px;
         margin-top: 30px;
-        padding-bottom: 20px;
+        padding: 20px 0;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        z-index: 100;
+        width: 100%;
 
         button {
             min-width: 40px;
@@ -168,6 +176,24 @@
                 font-weight: 600;
             }
         }
+
+        @media (max-width: 768px) {
+            padding: 15px 0;
+            gap: 4px;
+
+            button {
+                min-width: 34px;
+                height: 34px;
+                padding: 0 8px;
+                font-size: 13px;
+                border-radius: 8px;
+
+                &:first-child,
+                &:last-child {
+                    padding: 0 12px;
+                }
+            }
+        }
     }
 
     .actions-cell {
@@ -201,6 +227,58 @@
 
                 &:hover {
                     background: rgba(255, 59, 48, 0.2);
+                }
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        padding: 16px;
+        margin-top: 10px;
+
+        .header-section {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 20px;
+
+            .page-title {
+                font-size: 20px;
+            }
+
+            .btn-add-user {
+                width: 100%;
+                justify-content: center;
+                padding: 12px;
+                border-radius: 14px;
+            }
+        }
+
+        .table-container {
+            border-radius: 12px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+
+            table {
+                min-width: 600px; // Ensure table doesn't get too squished
+
+                th,
+                td {
+                    padding: 12px 14px;
+                    font-size: 13px;
+                }
+
+                .user-info-cell {
+                    gap: 8px;
+
+                    .avatar-mini {
+                        width: 32px;
+                        height: 32px;
+                    }
+
+                    .user-name-block .name {
+                        font-size: 14px;
+                    }
                 }
             }
         }
@@ -419,6 +497,58 @@
                 background: #0077ed !important;
                 transform: translateY(-3px);
                 box-shadow: 0 15px 30px rgba(0, 113, 227, 0.35) !important;
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        .modal-header {
+            padding: 25px 20px 10px 20px !important;
+
+            h5.modal-title {
+                font-size: 20px;
+            }
+
+            button.close {
+                right: 15px;
+            }
+        }
+
+        .modal-body {
+            padding: 10px 20px 20px 20px !important;
+
+            .user-form-grid .input-group-apple {
+                width: 100% !important;
+                margin-bottom: 20px;
+
+                input,
+                select {
+                    height: 48px;
+                    font-size: 15px;
+                }
+
+                .avatar-upload-area {
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 15px;
+
+                    .avatar-preview {
+                        width: 90px;
+                        height: 90px;
+                    }
+                }
+            }
+        }
+
+        .modal-footer {
+            padding: 0 20px 30px 20px !important;
+            flex-direction: column-reverse;
+            gap: 12px;
+
+            .btn-cancel,
+            .btn-save {
+                width: 100%;
+                padding: 14px !important;
             }
         }
     }

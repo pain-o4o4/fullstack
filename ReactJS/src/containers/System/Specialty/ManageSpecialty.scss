@@ -134,12 +134,20 @@
     }
 
     .pagination-footer {
+        position: sticky;
+        bottom: 0;
         display: flex;
         justify-content: center;
         align-items: center;
         gap: 8px;
         margin-top: 30px;
-        padding-bottom: 20px;
+        padding: 20px 0;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        z-index: 100;
+        width: 100%;
 
         button {
             min-width: 40px;
@@ -182,6 +190,24 @@
             &:last-child {
                 padding: 0 20px;
                 font-weight: 600;
+            }
+        }
+
+        @media (max-width: 768px) {
+            padding: 15px 0;
+            gap: 4px;
+
+            button {
+                min-width: 34px;
+                height: 34px;
+                padding: 0 8px;
+                font-size: 13px;
+                border-radius: 8px;
+
+                &:first-child,
+                &:last-child {
+                    padding: 0 12px;
+                }
             }
         }
     }

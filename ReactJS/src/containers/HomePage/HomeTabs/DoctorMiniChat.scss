@@ -185,6 +185,19 @@
 // ============================================================
 // RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
 // ============================================================
+// ============================================================
+// RESPONSIVE OVERRIDES (TABLET - MAX 1024PX)
+// ============================================================
+@media (max-width: 1024px) {
+    .doctor-chat-container {
+        .dc-header h2 { font-size: 28px; }
+        .dc-layout {
+            height: 600px;
+            .dc-sidebar { width: 240px; }
+        }
+    }
+}
+
 @media (max-width: 768px) {
     .doctor-chat-container {
         .dc-header {

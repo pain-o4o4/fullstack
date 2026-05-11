@@ -762,6 +762,31 @@
 }
 
 // ============================================================
+// RESPONSIVE OVERRIDES (TABLET - MAX 1024PX)
+// ============================================================
+@media (max-width: 1024px) {
+    .dcd-chat-doctor-bar {
+        padding: 14px 20px;
+        .dcd-mini-avatar { width: 40px; height: 40px; }
+        .dcd-chat-doctor-name { font-size: 14px; }
+    }
+
+    .dcd-bubble-container {
+        max-width: 80%;
+    }
+
+    .dcd-bubble {
+        font-size: 15px;
+        .dcd-text { font-size: 14px; }
+    }
+
+    .dcd-input-bar {
+        padding: 12px 18px;
+        .dcd-input-container .dcd-input { font-size: 15px; }
+    }
+}
+
+// ============================================================
 // RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
 // ============================================================
 @media (max-width: 768px) {

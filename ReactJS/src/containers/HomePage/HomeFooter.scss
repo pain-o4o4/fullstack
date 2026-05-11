@@ -87,9 +87,19 @@
 // ============================================================
 // RESPONSIVE OVERRIDES (TABLET - MAX 992PX)
 // ============================================================
-@media (max-width: 992px) {
-    .hm-footer .hm-footer-top {
-        grid-template-columns: 1fr 1fr;
+@media (max-width: 1024px) {
+    .hm-footer {
+        padding: 60px 24px 30px;
+        .hm-footer-top {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+        .hm-footer-bottom {
+            margin-top: 30px;
+            flex-direction: column;
+            gap: 20px;
+            text-align: center;
+        }
     }
 }
 

@@ -10,6 +10,8 @@ import ProfileDoctor from '../Doctor/ProfileDoctor';
 import ScheduleDoctor from '../Doctor/ScheduleDoctor';
 import ExtraInforDoctor from '../Doctor/ExtraInforDoctor';
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/CustomBreadcrumb';
+import HomeFooter from '../../HomePage/HomeFooter';
+import { getAllClinicService } from '../../../services/userService';
 import _ from 'lodash';
 
 class DetailClinic extends Component {
@@ -18,7 +20,8 @@ class DetailClinic extends Component {
         this.state = {
             dataDetailClinic: {},
             arrDoctorId: [],
-            avatarFromChild: ''
+            avatarFromChild: '',
+            listOtherClinics: []
         }
     }
 
@@ -27,6 +30,16 @@ class DetailClinic extends Component {
         if (this.props.params && this.props.params.id) {
             let id = this.props.params.id;
             this.props.getDetailClinicById(id);
+            await this.fetchAllClinics();
+        }
+    }
+
+    fetchAllClinics = async () => {
+        let res = await getAllClinicService();
+        if (res && res.errCode === 0) {
+            this.setState({
+                listOtherClinics: res.data || []
+            });
         }
     }
 
@@ -43,6 +56,19 @@ class DetailClinic extends Component {
                 dataDetailClinic: data,
                 arrDoctorId: arrDoctorId
             })
+        }
+
+        // Fix: Handle URL parameter changes
+        if (this.props.params && this.props.params.id && this.props.params.id !== prevProps.params.id) {
+            let id = this.props.params.id;
+            this.props.getDetailClinicById(id);
+            window.scrollTo(0, 0);
+        }
+    }
+
+    handleViewOtherClinic = (clinicId) => {
+        if (this.props.navigate) {
+            this.props.navigate(`/detail-clinic/${clinicId}`);
         }
     }
     handleGetImageFromChild = (image) => {
@@ -121,8 +147,35 @@ class DetailClinic extends Component {
                             })
                         }
                     </div>
-                </div>
 
+                    {/* Other Clinics Section */}
+                    {this.state.listOtherClinics && this.state.listOtherClinics.length > 1 && (
+                        <div className="other-clinics-section">
+                            <div className="other-title">
+                                <FormattedMessage id="homepage.medical-facility" defaultMessage="Cơ sở y tế nổi bật" />
+                            </div>
+                            <div className="other-list">
+                                {this.state.listOtherClinics
+                                    .filter(item => item.id !== +this.props.params.id)
+                                    .map((item, index) => (
+                                        <div 
+                                            className="other-item" 
+                                            key={index}
+                                            onClick={() => this.handleViewOtherClinic(item.id)}
+                                        >
+                                            <div 
+                                                className="clinic-img"
+                                                style={{ backgroundImage: `url(${item.image})` }}
+                                            ></div>
+                                            <div className="clinic-name">{item.name}</div>
+                                        </div>
+                                    ))
+                                }
+                            </div>
+                        </div>
+                    )}
+                </div>
+                <HomeFooter />
             </div>
         )
     }

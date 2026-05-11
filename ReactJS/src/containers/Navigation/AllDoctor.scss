@@ -68,6 +68,25 @@
 }
 
 // ============================================================
+// RESPONSIVE OVERRIDES (TABLET - MAX 1024PX)
+// ============================================================
+@media (max-width: 1024px) {
+    .all-doctors-container {
+        .all-doctors-body {
+            padding: 100px 32px 60px;
+            .doctors-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            .doctor-card {
+                .card-top .avatar { width: 130px; height: 130px; }
+                .card-bottom .name { font-size: 18px; }
+            }
+        }
+    }
+}
+
+// ============================================================
 // RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
 // ============================================================
 @media (max-width: 768px) {

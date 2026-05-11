@@ -10,13 +10,16 @@ import ProfileDoctor from '../Doctor/ProfileDoctor';
 import ScheduleDoctor from '../Doctor/ScheduleDoctor';
 import ExtraInforDoctor from '../Doctor/ExtraInforDoctor';
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/CustomBreadcrumb';
+import HomeFooter from '../../HomePage/HomeFooter';
+import { getAllSpecialtyService } from '../../../services/userService';
 import _ from 'lodash';
 class DetailSpecialty extends Component {
     constructor(props) {
         super(props);
         this.state = {
             dataDetailSpecialty: {},
-            arrDoctorId: []
+            arrDoctorId: [],
+            listOtherSpecialties: []
         }
     }
 
@@ -25,6 +28,16 @@ class DetailSpecialty extends Component {
         if (this.props.params && this.props.params.id) {
             let id = this.props.params.id;
             await this.props.getDetailSpecialtyById(id);
+            await this.fetchAllSpecialties();
+        }
+    }
+
+    fetchAllSpecialties = async () => {
+        let res = await getAllSpecialtyService();
+        if (res && res.errCode === 0) {
+            this.setState({
+                listOtherSpecialties: res.data || []
+            });
         }
     }
 
@@ -38,6 +51,17 @@ class DetailSpecialty extends Component {
                     arrDoctorId: data.doctorSpecialty ? data.doctorSpecialty : []
                 });
             }
+        }
+        if (this.props.params && this.props.params.id && this.props.params.id !== prevProps.params.id) {
+            let id = this.props.params.id;
+            await this.props.getDetailSpecialtyById(id);
+            window.scrollTo(0, 0);
+        }
+    }
+
+    handleViewOtherSpecialty = (specialtyId) => {
+        if (this.props.navigate) {
+            this.props.navigate(`/detail-specialty/${specialtyId}`);
         }
     }
     handleViewDetailDoctor = (doctorId) => {
@@ -120,8 +144,36 @@ class DetailSpecialty extends Component {
                                 </div>
                             }
                         </div>
+
+                        {/* Other Specialties Section */}
+                        {this.state.listOtherSpecialties && this.state.listOtherSpecialties.length > 1 && (
+                            <div className="other-specialties-section">
+                                <div className="other-title">
+                                    <FormattedMessage id="homepage.specialty-popular" defaultMessage="Chuyên khoa phổ biến" />
+                                </div>
+                                <div className="other-list">
+                                    {this.state.listOtherSpecialties
+                                        .filter(item => item.id !== +this.props.params.id)
+                                        .map((item, index) => (
+                                            <div 
+                                                className="other-item" 
+                                                key={index}
+                                                onClick={() => this.handleViewOtherSpecialty(item.id)}
+                                            >
+                                                <div 
+                                                    className="specialty-img"
+                                                    style={{ backgroundImage: `url(${item.image})` }}
+                                                ></div>
+                                                <div className="specialty-name">{item.name}</div>
+                                            </div>
+                                        ))
+                                    }
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
+                <HomeFooter />
             </React.Fragment>
 
 

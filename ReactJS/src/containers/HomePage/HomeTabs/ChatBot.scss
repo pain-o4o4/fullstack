@@ -225,6 +225,19 @@
 // ============================================================
 // RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
 // ============================================================
+// ============================================================
+// RESPONSIVE OVERRIDES (TABLET - MAX 1024PX)
+// ============================================================
+@media (max-width: 1024px) {
+    .chatbot-integrated {
+        .cb-header h2 { font-size: 28px; }
+        .cb-layout {
+            height: 600px;
+            .cb-sidebar { width: 240px; }
+        }
+    }
+}
+
 @media (max-width: 768px) {
     .chatbot-integrated {
         min-height: 500px;
