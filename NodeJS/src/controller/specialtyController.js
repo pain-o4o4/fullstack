@@ -50,7 +50,8 @@ let handleDeleteSpecialty = async (req, res) => {
                 errMessage: "Missing required parameters!"
             })
         }
-        let response = await specialtyService.deleteSpecialtyService(req.body.id);
+        let force = req.body.force || false;
+        let response = await specialtyService.deleteSpecialtyService(req.body.id, force);
         return res.status(200).json(response);
     } catch (e) {
         console.log(e);

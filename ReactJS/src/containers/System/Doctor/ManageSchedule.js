@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import _ from 'lodash';
 import { bulkCreateScheduleService, getScheduleByDate } from '../../../services/userService'
 import { withSocket } from '../../../hoc/withSocket';
+import moment from 'moment';
 
 class ManageSchedule extends Component {
     constructor(props) {
@@ -19,7 +20,8 @@ class ManageSchedule extends Component {
             selectedOption: null,
             currentDate: '',
             listAllScheduleTime: [],
-            resultBulk: [],
+            showConfirm: false,
+            isLoading: false
         };
     }
 
@@ -41,7 +43,6 @@ class ManageSchedule extends Component {
             });
         }
 
-        // Lắng nghe sự kiện đồng bộ dữ liệu từ server
         if (this.props.socket) {
             this.props.socket.on('system_data_changed', this.handleSystemDataChanged);
         }
@@ -54,9 +55,7 @@ class ManageSchedule extends Component {
     }
 
     handleSystemDataChanged = (data) => {
-        // Reload schedule nếu có thay đổi liên quan đến SCHEDULE hoặc BOOKING (có người đặt)
         if (data && (data.entity === 'SCHEDULE' || data.entity === 'BOOKING')) {
-            console.log('[Socket] Reloading schedule data due to remote change...', data);
             if (this.state.selectedOption && this.state.selectedOption.value && this.state.currentDate) {
                 this.fetchExistingSchedules();
             }
@@ -82,7 +81,6 @@ class ManageSchedule extends Component {
                 listAllScheduleTime: dataSelectTime
             });
 
-            // Re-translate pre-fixed selected option for Doctor role
             let { userInfo } = this.props;
             if (userInfo && userInfo.roleId === 'R2' && this.state.selectedOption) {
                 let labelVi = `${userInfo.lastName} ${userInfo.firstName}`;
@@ -96,7 +94,6 @@ class ManageSchedule extends Component {
             }
         }
 
-        // Whenever doctor OR date changes, fetch existing schedules!
         if (prevState.selectedOption !== this.state.selectedOption || prevState.currentDate !== this.state.currentDate) {
             if (this.state.selectedOption && this.state.selectedOption.value && this.state.currentDate) {
                 await this.fetchExistingSchedules();
@@ -111,7 +108,7 @@ class ManageSchedule extends Component {
         try {
             let res = await getScheduleByDate(doctorId, formattedDate);
             if (res && res.errCode === 0) {
-                let existingSchedules = res.data; // Array of objects
+                let existingSchedules = res.data; 
                 let { listAllScheduleTime } = this.state;
 
                 if (listAllScheduleTime && listAllScheduleTime.length > 0) {
@@ -122,8 +119,6 @@ class ManageSchedule extends Component {
 
                     this.setState({ listAllScheduleTime: updatedScheduleTime });
                 }
-            } else {
-                console.log("Không thể tải lịch trình bác sĩ!");
             }
         } catch (e) {
             console.log(e);
@@ -163,7 +158,6 @@ class ManageSchedule extends Component {
         this.setState({ currentDate: date[0] });
     }
 
-
     handleClickBtnTime = (time) => {
         let { listAllScheduleTime } = this.state;
         if (listAllScheduleTime && listAllScheduleTime.length > 0) {
@@ -179,34 +173,31 @@ class ManageSchedule extends Component {
 
     handleSaveSchedule = async () => {
         let { listAllScheduleTime, selectedOption, currentDate } = this.state;
-        let result = [];
-        if (!currentDate) {
-            console.log('Vui lòng chọn ngày khám!');
+        if (!currentDate || !selectedOption || _.isEmpty(selectedOption)) {
+            toast.error("Vui lòng chọn đầy đủ thông tin!");
             return;
         }
 
+        this.setState({ showConfirm: true });
+    }
+
+    confirmSave = async () => {
+        let { listAllScheduleTime, selectedOption, currentDate } = this.state;
         let formartedDate = new Date(currentDate).getTime();
-
-        if (!selectedOption || _.isEmpty(selectedOption)) {
-            console.log('Vui lòng chọn Bác sĩ!');
-            return;
-        }
+        let result = [];
 
         if (listAllScheduleTime && listAllScheduleTime.length > 0) {
             let schedule = listAllScheduleTime.filter(item => item.isSelected === true);
-            if (schedule && schedule.length >= 0) {
-                // Allows emptying schedules.
-                schedule.forEach(item => {
-                    let object = {};
-                    object.doctorId = selectedOption.value;
-                    object.date = formartedDate;
-                    object.timeType = item.value;
-                    // clinicId is automatically assigned by the backend from Doctor_infor
-                    result.push(object);
+            schedule.forEach(item => {
+                result.push({
+                    doctorId: selectedOption.value,
+                    date: formartedDate,
+                    timeType: item.value
                 });
-            }
+            });
         }
 
+        this.setState({ isLoading: true });
         let res = await bulkCreateScheduleService({
             arrSchedule: result,
             doctorId: selectedOption.value,
@@ -214,116 +205,181 @@ class ManageSchedule extends Component {
         });
 
         if (res && res.errCode === 0) {
-            console.log("Lưu thông tin lịch khám thành công!");
-            this.setState({ resultBulk: result });
+            toast.success("Lưu lịch khám thành công!");
+            this.setState({ showConfirm: false, isLoading: false });
             await this.fetchExistingSchedules();
         } else {
-            console.log("Lưu thông tin lịch khám thất bại!");
+            toast.error("Lưu lịch khám thất bại!");
+            this.setState({ isLoading: false });
         }
+    }
+
+    handleClearSelection = () => {
+        let { listAllScheduleTime } = this.state;
+        let reset = listAllScheduleTime.map(item => ({ ...item, isSelected: false }));
+        this.setState({ listAllScheduleTime: reset });
     }
 
     render() {
         let { language, userInfo } = this.props;
-        let { listAllScheduleTime } = this.state;
+        let { listAllScheduleTime, selectedOption, currentDate, showConfirm, isLoading } = this.state;
         let isDoctorRole = userInfo && userInfo.roleId === 'R2';
+        let selectedCount = listAllScheduleTime.filter(i => i.isSelected).length;
 
         return (
             <div className="manage-schedule-container">
-                <div className="header-section">
-                    <h2 className="title">
-                        <FormattedMessage id='manage-schedule.title' defaultMessage="Quản Lý Lịch Khám Bệnh" />
-                    </h2>
+                <div className="manage-header">
+                    <div className="header-info">
+                        <h1><FormattedMessage id='manage-schedule.title' /></h1>
+                        <span>Lên kế hoạch thời gian khám bệnh chi tiết</span>
+                    </div>
                 </div>
 
-                <div className="settings-grid">
-                    {/* Card 1: Planning Details */}
-                    <div className="info-card">
-                        <div className="card-header">
-                            <span className="card-title">
-                                <FormattedMessage id="manage-schedule.planning" defaultMessage="Thông Tin Lên Lịch" />
-                            </span>
-                            <i className="fas fa-calendar-alt card-icon"></i>
-                        </div>
-                        <div className="card-body">
-                            <div className="input-group-apple">
-                                <label><FormattedMessage id='manage-schedule.choose-doctor' defaultMessage="Chọn Bác Sĩ" /></label>
+                <div className="schedule-main-layout">
+                    {/* Sidebar: Configuration */}
+                    <div className="config-sidebar">
+                        <div className="sidebar-card">
+                            <span className="card-label">Bác sĩ phụ trách</span>
+                            <div className="apple-select">
                                 <Select
-                                    value={this.state.selectedOption}
+                                    value={selectedOption}
                                     onChange={this.handleChange}
                                     options={this.state.listAllDoctors}
                                     isDisabled={isDoctorRole}
-                                    classNamePrefix="react-select"
-                                    placeholder={language === LANGUAGES.VI ? 'Tìm kiếm bác sĩ...' : 'Search doctor...'}
+                                    placeholder={language === LANGUAGES.VI ? 'Tìm bác sĩ...' : 'Search doctor...'}
+                                    menuPortalTarget={document.body}
+                                    styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                 />
                             </div>
-                            <div className="input-group-apple">
-                                <label><FormattedMessage id='manage-schedule.choose-day' defaultMessage="Chọn Ngày Khám" /></label>
-                                <DatePicker
-                                    className="date-picker"
-                                    value={this.state.currentDate}
-                                    onChange={this.handleChangeDate}
-                                    minDate={new Date()}
-                                    placeholder={language === LANGUAGES.VI ? 'Chọn ngày...' : 'Select date...'}
-                                />
+                            {selectedOption && (
+                                (() => {
+                                    let doc = this.props.allDoctors.find(d => d.id === selectedOption.value);
+                                    let image = '';
+                                    let position = language === LANGUAGES.VI ? 'Bác sĩ hệ thống' : 'System Doctor';
+                                    if (doc) {
+                                        image = doc.image || '';
+                                        if (doc.positionData) {
+                                            position = language === LANGUAGES.VI ? doc.positionData.valueVi : doc.positionData.valueEn;
+                                        }
+                                    }
+                                    return (
+                                        <div className="doctor-summary">
+                                            <div className="doc-avatar">
+                                                {image ? <img src={image} alt="doc" /> : <i className="fas fa-user-md"></i>}
+                                            </div>
+                                            <div className="doc-info">
+                                                <div className="doc-name">{selectedOption.label}</div>
+                                                <div className="doc-role">{position}</div>
+                                            </div>
+                                        </div>
+                                    );
+                                })()
+                            )}
+                        </div>
+
+                        <div className="sidebar-card">
+                            <span className="card-label">Ngày khám bệnh</span>
+                            <DatePicker
+                                className="apple-datepicker"
+                                value={currentDate}
+                                onChange={this.handleChangeDate}
+                                minDate={new Date()}
+                            />
+                            {currentDate && (
+                                <div className="doctor-summary">
+                                    <div className="doc-avatar" style={{ color: '#ff3b30' }}>
+                                        <i className="fas fa-calendar-day"></i>
+                                    </div>
+                                    <div className="doc-info">
+                                        <div className="doc-name">{moment(currentDate).format('DD/MM/YYYY')}</div>
+                                        <div className="doc-role">{moment(currentDate).format('dddd')}</div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Main Content: Time Picker */}
+                    <div className="time-picker-area">
+                        <div className="area-header">
+                            <div className="title-wrap">
+                                <h2>Khung giờ làm việc</h2>
+                                <p>Chọn các khung giờ bác sĩ có thể tiếp nhận bệnh nhân</p>
                             </div>
+                            {selectedCount > 0 && (
+                                <div className="selection-badge">
+                                    Đã chọn {selectedCount} khung giờ
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="time-slots-grid">
+                            {listAllScheduleTime && listAllScheduleTime.length > 0 ? (
+                                listAllScheduleTime.map((item, index) => (
+                                    <div
+                                        key={index}
+                                        className={`time-pill ${item.isSelected ? 'selected' : ''}`}
+                                        onClick={() => this.handleClickBtnTime(item)}
+                                    >
+                                        <span className="time-label">{item.label}</span>
+                                        <span className="status-tag">
+                                            {item.isSelected ? 'Đã chọn' : 'Trống'}
+                                        </span>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="no-time-msg">Vui lòng chọn thông tin để hiển thị khung giờ</div>
+                            )}
+                        </div>
+
+                        <div className="footer-actions">
+                            {selectedCount > 0 && (
+                                <button className="btn-clear" onClick={this.handleClearSelection}>Xóa chọn</button>
+                            )}
+                            <button 
+                                className="btn-save-schedule" 
+                                disabled={!selectedOption || !currentDate}
+                                onClick={this.handleSaveSchedule}
+                            >
+                                <i className="fas fa-save" style={{ marginRight: '8px' }}></i>
+                                Lưu lịch khám
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <div className="time-selection-section">
-                    <div className="card-header">
-                        <span className="card-title">
-                            <FormattedMessage id="manage-schedule.available-hours" defaultMessage="Các Khung Giờ Có Sẵn" />
-                        </span>
-                        <i className="fas fa-clock card-icon"></i>
-                    </div>
-                    <div className="pick-hour-container">
-                        {listAllScheduleTime && listAllScheduleTime.length > 0 ? (
-                            listAllScheduleTime.map((item, index) => {
-                                return (
-                                    <button
-                                        key={index}
-                                        className={`pill-btn ${item.isSelected ? 'active' : ''}`}
-                                        onClick={() => this.handleClickBtnTime(item)}
-                                    >
-                                        {item.label}
-                                    </button>
-                                )
-                            })
-                        ) : (
-                            <div className="no-time-msg">
-                                <FormattedMessage id="manage-schedule.no-time" defaultMessage="Vui lòng chọn bác sĩ để xem khung giờ" />
+                {/* CONFIRMATION POPUP */}
+                {showConfirm && (
+                    <div className="apple-confirm-overlay">
+                        <div className="apple-confirm-popup">
+                            <div className="popup-title">Lưu thay đổi?</div>
+                            <div className="popup-desc">
+                                Bạn đang thiết lập {selectedCount} khung giờ khám cho bác sĩ vào ngày {moment(currentDate).format('DD/MM/YYYY')}. Dữ liệu cũ (nếu có) sẽ bị thay thế.
                             </div>
-                        )}
+                            <div className="popup-actions">
+                                <button className="btn-cancel" disabled={isLoading} onClick={() => this.setState({ showConfirm: false })}>Hủy</button>
+                                <button className="btn-delete" style={{ background: '#0071e3' }} disabled={isLoading} onClick={this.confirmSave}>
+                                    {isLoading ? 'Đang lưu...' : 'Xác nhận lưu'}
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                </div>
-
-                <div className="action-footer">
-                    <button className="btn-save-apple" onClick={() => this.handleSaveSchedule()}>
-                        <i className="fas fa-save"></i>
-                        <FormattedMessage id='manage-schedule.save' defaultMessage="Lưu Lịch Khám" />
-                    </button>
-                </div>
+                )}
             </div>
         );
     }
 }
-const mapStateToProps = state => {
-    return {
-        systemMenuPath: state.app.systemMenuPath,
-        isLoggedIn: state.user.isLoggedIn,
-        language: state.app.language,
-        allDoctors: state.admin.allDoctors,
-        allScheduleTime: state.admin.allScheduleTime,
-        userInfo: state.user.userInfo
-    };
-};
 
-const mapDispatchToProps = dispatch => {
-    return {
-        fetchAllDoctors: () => dispatch(action.fetchAllDoctors()),
-        fetchAllScheduleTime: () => dispatch(action.fetchAllScheduleTime()),
-    };
-};
+const mapStateToProps = state => ({
+    language: state.app.language,
+    allDoctors: state.admin.allDoctors,
+    allScheduleTime: state.admin.allScheduleTime,
+    userInfo: state.user.userInfo
+});
+
+const mapDispatchToProps = dispatch => ({
+    fetchAllDoctors: () => dispatch(action.fetchAllDoctors()),
+    fetchAllScheduleTime: () => dispatch(action.fetchAllScheduleTime()),
+});
 
 export default withSocket(connect(mapStateToProps, mapDispatchToProps)(ManageSchedule));

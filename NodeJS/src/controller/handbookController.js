@@ -41,7 +41,8 @@ let getDetailHandbookById = async (req, res) => {
 
 let deleteHandbook = async (req, res) => {
     try {
-        let response = await handbookService.deleteHandbook(req.body.id);
+        let force = req.body.force || false;
+        let response = await handbookService.deleteHandbook(req.body.id, force);
         return res.status(200).json(response);
     } catch (e) {
         console.log("Check deleteHandbook error: ", e);

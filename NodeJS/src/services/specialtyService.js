@@ -101,7 +101,7 @@ let getSpecialtyByIdService = async (inputId) => {
     })
 }
 
-let deleteSpecialtyService = (specialtyId) => {
+let deleteSpecialtyService = (specialtyId, force = false) => {
     return new Promise(async (resolve, reject) => {
         try {
             let specialty = await db.Specialty.findOne({
@@ -110,17 +110,30 @@ let deleteSpecialtyService = (specialtyId) => {
             if (!specialty) {
                 resolve({
                     errCode: 2,
-                    errMessage: "The specialty isn't exist"
-                })
-            } else {
-                await db.Specialty.destroy({
-                    where: { id: specialtyId }
+                    errMessage: "The specialty doesn't exist"
                 });
-                resolve({
-                    errCode: 0,
-                    errMessage: 'The specialty is deleted'
-                })
+                return;
             }
+
+            // CHECK FOR DEPENDENCIES IF NOT FORCED
+            if (!force) {
+                let hasDoctors = await db.Doctor_infor.findOne({ where: { specialtyId: specialtyId } });
+                if (hasDoctors) {
+                    resolve({
+                        errCode: 5,
+                        errMessage: "This specialty has associated doctors. Soft deleting will hide the specialty but preserve doctor records. Do you want to proceed?"
+                    });
+                    return;
+                }
+            }
+
+            // SOFT DELETE (Paranoid mode)
+            await specialty.destroy();
+
+            resolve({
+                errCode: 0,
+                errMessage: 'The specialty is deleted'
+            })
         } catch (error) {
             reject(error)
         }

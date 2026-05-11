@@ -19,10 +19,11 @@ const createNewUsersService = (data) => {
     console.log(`check data from service`, data)
     return axios.post(`/api/create-new-user`, data)
 }
-const deleteUserService = (userId) => {
+const deleteUserService = (userId, force = false) => {
     return axios.delete('/api/delete-user', {
         data: {
-            id: userId
+            id: userId,
+            force: force
         }
     });
 }
@@ -95,10 +96,11 @@ const getAllSpecialtyService = () => {
 const getDetailSpecialtyByIdService = (inputId) => {
     return axios.get(`/api/get-detail-specialty-by-id?id=${inputId}`);
 }
-const deleteSpecialtyService = (specialtyId) => {
+const deleteSpecialtyService = (specialtyId, force = false) => {
     return axios.delete('/api/delete-specialty', {
         data: {
-            id: specialtyId
+            id: specialtyId,
+            force: force
         }
     });
 }
@@ -115,10 +117,11 @@ const getAllClinicService = () => {
 const getDetailClinicByIdService = (inputId) => {
     return axios.get(`/api/get-detail-clinic-by-id?id=${inputId}`);
 }
-const deleteClinicService = (clinicId) => {
+const deleteClinicService = (clinicId, force = false) => {
     return axios.delete('/api/delete-clinic', {
         data: {
-            id: clinicId
+            id: clinicId,
+            force: force
         }
     });
 }
@@ -154,10 +157,11 @@ const getDetailHandbookByIdService = (id) => {
     return axios.get(`/api/get-detail-handbook-by-id?id=${id}`);
 }
 
-const deleteHandbookService = (handbookId) => {
+const deleteHandbookService = (handbookId, force = false) => {
     return axios.delete('/api/delete-handbook', {
         data: {
-            id: handbookId
+            id: handbookId,
+            force: force
         }
     });
 }

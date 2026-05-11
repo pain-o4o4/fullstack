@@ -95,7 +95,7 @@ let getDetailClinicByIdService = (id) => {
         }
     })
 }
-let deleteClinicService = (clinicId) => {
+let deleteClinicService = (clinicId, force = false) => {
     return new Promise(async (resolve, reject) => {
         try {
             let clinic = await db.Clinic.findOne({
@@ -106,15 +106,27 @@ let deleteClinicService = (clinicId) => {
                     errCode: 2,
                     errMessage: "The clinic doesn't exist"
                 })
-            } else {
-                await db.Clinic.destroy({
-                    where: { id: clinicId }
-                });
-                resolve({
-                    errCode: 0,
-                    errMessage: 'The clinic is deleted'
-                })
+                return;
             }
+
+            // CHECK FOR DEPENDENCIES IF NOT FORCED
+            if (!force) {
+                let hasDoctors = await db.Doctor_infor.findOne({ where: { clinicId: clinicId } });
+                if (hasDoctors) {
+                    resolve({
+                        errCode: 5,
+                        errMessage: "This clinic has associated doctors. Soft deleting will hide the clinic but preserve doctor records. Do you want to proceed?"
+                    });
+                    return;
+                }
+            }
+
+            // SOFT DELETE (Paranoid mode)
+            await clinic.destroy();
+            resolve({
+                errCode: 0,
+                errMessage: 'The clinic is deleted'
+            })
         } catch (error) {
             reject(error)
         }

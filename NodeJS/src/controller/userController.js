@@ -126,13 +126,14 @@ let handleEditUser = async (req, res) => {
 let handleDeleteUser = async (req, res) => {
     try {
         let id = req.body.id;
+        let force = req.body.force || false;
         if (!id) {
             return res.status(200).json({
                 errCode: 1,
                 errMessage: 'Missing required parameters!'
             });
         }
-        let message = await userService.deleteUserById(id);
+        let message = await userService.deleteUserById(id, force);
         return res.status(200).json(message);
     } catch (error) {
         console.error(error);

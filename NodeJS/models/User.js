@@ -42,8 +42,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'User',
-    // tableName: 'users',
-    freezeTableName: true, // Thêm dòng này để giữ nguyên tên bảng là 'User'  
+    freezeTableName: true,
+    paranoid: true,
   });
   return User;
 };

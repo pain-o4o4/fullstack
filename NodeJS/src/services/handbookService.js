@@ -90,7 +90,7 @@ let getDetailHandbookById = (id) => {
     });
 };
 
-let deleteHandbook = (id) => {
+let deleteHandbook = (id, force = false) => {
     return new Promise(async (resolve, reject) => {
         try {
             let handbook = await db.Handbook.findOne({
@@ -100,11 +100,12 @@ let deleteHandbook = (id) => {
                 resolve({
                     errCode: 2,
                     errMessage: `The handbook already not exist`
-                })
+                });
+                return;
             }
-            await db.Handbook.destroy({
-                where: { id: id }
-            });
+
+            // SOFT DELETE (Paranoid mode)
+            await handbook.destroy();
 
             resolve({
                 errCode: 0,

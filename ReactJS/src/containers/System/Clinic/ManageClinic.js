@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 import { FormattedMessage } from 'react-intl';
 import {
     getAllClinicService,
-    postCreateNewClinicService,
     deleteClinicService,
-    editClinicService
 } from '../../../services/userService';
 import ModalManageClinic from '../manageSystemModal/ModalManageClinic';
-import { withRouter } from '../../../components/Navigator';
 import { withSocket } from '../../../hoc/withSocket';
 import './ManageClinic.scss';
 
@@ -22,13 +19,17 @@ class ManageClinic extends Component {
             clinicEdit: {},
 
             currentPage: 1,
-            pageSize: 6
+            pageSize: 7,
+            searchTerm: '',
+            selectedClinics: [], // Track selected IDs
+            showBulkDeleteConfirm: false,
+            clinicToForceDelete: null,
+            isForceDelete: false
         };
     }
 
     async componentDidMount() {
         await this.getAllClinics();
-
         if (this.props.socket) {
             this.props.socket.on('system_data_changed', this.handleSystemDataChanged);
         }
@@ -42,7 +43,6 @@ class ManageClinic extends Component {
 
     handleSystemDataChanged = (data) => {
         if (data && data.entity === 'CLINIC') {
-            console.log('[Socket] Reloading clinic data due to remote change...', data);
             this.getAllClinics();
         }
     }
@@ -51,7 +51,7 @@ class ManageClinic extends Component {
         let response = await getAllClinicService();
         if (response && response.errCode === 0) {
             this.setState({
-                arrClinics: response.data
+                arrClinics: response.data || []
             });
         }
     }
@@ -64,41 +64,6 @@ class ManageClinic extends Component {
         });
     }
 
-    toggleModal = () => {
-        this.setState({
-            isModalOpen: !this.state.isModalOpen
-        });
-    }
-
-    saveClinic = async (data) => {
-        let { language } = this.props;
-        try {
-            let res;
-            if (this.state.action === 'CREATE') {
-                res = await postCreateNewClinicService(data);
-            } else {
-                res = await editClinicService(data);
-            }
-
-            if (res && res.errCode === 0) {
-                let successMsg = this.state.action === 'CREATE'
-                    ? (language === 'vi' ? "Thêm cơ sở y tế thành công!" : "Clinic added successfully!")
-                    : (language === 'vi' ? "Cập nhật thông tin thành công!" : "Clinic updated successfully!");
-                console.log(successMsg);
-                this.setState({
-                    isModalOpen: false
-                });
-                await this.getAllClinics();
-            } else {
-                console.log(res?.errMessage || (language === 'vi' ? "Lỗi hệ thống!" : "System error!"));
-            }
-        } catch (e) {
-            console.log(e);
-            let errorMsg = language === 'vi' ? "Lỗi kết nối Server!" : "Server connection error!";
-            console.log(errorMsg);
-        }
-    }
-
     handleEditClinic = (clinic) => {
         this.setState({
             isModalOpen: true,
@@ -107,147 +72,251 @@ class ManageClinic extends Component {
         });
     }
 
-    handleDeleteClinic = async (clinic) => {
-        let { language } = this.props;
-        let confirmMsg = language === 'vi'
-            ? `Bạn có chắc chắn muốn xóa hệ thống y tế: ${clinic.name}?`
-            : `Are you sure you want to delete clinic: ${clinic.name}?`;
-
-        if (window.confirm(confirmMsg)) {
-            try {
-                let res = await deleteClinicService(clinic.id);
-                if (res && res.errCode === 0) {
-                    console.log(language === 'vi' ? "Xóa hệ thống y tế thành công!" : "Clinic deleted successfully!");
-                    await this.getAllClinics();
-                } else {
-                    console.log(res?.errMessage || (language === 'vi' ? "Xóa thất bại!" : "Delete failed!"));
-                }
-            } catch (e) {
-                console.log(e);
-                console.log(language === 'vi' ? "Lỗi từ server!" : "Server error!");
+    handleDeleteClinic = async (clinic, force = false) => {
+        try {
+            let res = await deleteClinicService(clinic.id, force);
+            if (res && res.errCode === 0) {
+                this.setState({
+                    selectedClinics: this.state.selectedClinics.filter(id => id !== clinic.id),
+                    showBulkDeleteConfirm: false,
+                    clinicToForceDelete: null,
+                    isForceDelete: false
+                });
+                await this.getAllClinics();
+            } else if (res && res.errCode === 5) {
+                this.setState({
+                    showBulkDeleteConfirm: true,
+                    clinicToForceDelete: clinic,
+                    isForceDelete: true
+                });
+            } else {
+                alert(res.errMessage);
             }
+        } catch (error) {
+            console.log(error);
         }
     }
 
-    render() {
-        let { arrClinics, isModalOpen, action, clinicEdit, currentPage, pageSize } = this.state;
-        let { language } = this.props;
-        let displayClinics = arrClinics.slice((currentPage - 1) * pageSize, currentPage * pageSize);
-        return (
-            <div className="clinic-management-container">
-                {isModalOpen && (
-                    <ModalManageClinic
-                        isOpen={isModalOpen}
-                        toggleFromParent={this.toggleModal}
-                        saveClinic={this.saveClinic}
-                        action={this.state.action}
-                        currentClinic={this.state.clinicEdit}
-                    />
-                )}
+    handleSelectClinic = (id) => {
+        let { selectedClinics } = this.state;
+        if (selectedClinics.includes(id)) {
+            this.setState({ selectedClinics: selectedClinics.filter(cid => cid !== id) });
+        } else {
+            this.setState({ selectedClinics: [...selectedClinics, id] });
+        }
+    }
 
-                <div className="header-section">
-                    <h2 className="title">
-                        <FormattedMessage id="manage-clinic.title" defaultMessage="Quản lý Cơ Sở Y Tế" />
-                    </h2>
-                    <button className="btn-add-new" onClick={() => this.handleAddNewClinic()}>
-                        <i className="fas fa-plus"></i>
-                    </button>
+    handleSelectAll = (displayClinics) => {
+        let { selectedClinics } = this.state;
+        let allIdsOnPage = displayClinics.map(c => c.id);
+        let allSelected = allIdsOnPage.every(id => selectedClinics.includes(id));
+
+        if (allSelected) {
+            this.setState({ selectedClinics: selectedClinics.filter(id => !allIdsOnPage.includes(id)) });
+        } else {
+            this.setState({ selectedClinics: [...new Set([...selectedClinics, ...allIdsOnPage])] });
+        }
+    }
+
+    handleBulkDelete = () => {
+        if (this.state.selectedClinics.length > 0) {
+            this.setState({ showBulkDeleteConfirm: true, clinicToForceDelete: null, isForceDelete: false });
+        }
+    }
+
+    confirmBulkDelete = async (force = false) => {
+        let { selectedClinics } = this.state;
+        let errors = [];
+        let hasWarning = false;
+
+        for (let id of selectedClinics) {
+            let res = await deleteClinicService(id, force);
+            if (res && res.errCode === 5) {
+                hasWarning = true;
+            } else if (res && res.errCode !== 0) {
+                errors.push(res.errMessage || `Clinic ID ${id} error`);
+            }
+        }
+
+        if (hasWarning && !force) {
+            this.setState({ isForceDelete: true, showBulkDeleteConfirm: true });
+            return;
+        }
+
+        if (errors.length > 0 && !hasWarning) alert(errors.join('\n'));
+
+        this.setState({ selectedClinics: [], showBulkDeleteConfirm: false, isForceDelete: false });
+        await this.getAllClinics();
+    }
+
+    handleCancelBulkDelete = () => {
+        this.setState({ showBulkDeleteConfirm: false, clinicToForceDelete: null, isForceDelete: false });
+    }
+
+    getProcessedClinics = () => {
+        let { arrClinics, searchTerm } = this.state;
+        let filtered = [...arrClinics];
+        if (searchTerm) {
+            let term = searchTerm.toLowerCase();
+            filtered = filtered.filter(c =>
+                c.name.toLowerCase().includes(term) ||
+                c.address.toLowerCase().includes(term)
+            );
+        }
+        return filtered;
+    }
+
+    render() {
+        let { isModalOpen, action, clinicEdit, currentPage, pageSize, searchTerm, selectedClinics } = this.state;
+        let { language } = this.props;
+
+        let processedClinics = this.getProcessedClinics();
+        let displayClinics = processedClinics.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+        let totalPages = Math.ceil(processedClinics.length / pageSize);
+        let isAllSelected = displayClinics.length > 0 && displayClinics.every(c => selectedClinics.includes(c.id));
+
+        return (
+            <div className="apple-clinic-manage">
+                <div className="manage-header">
+                    <div className="header-info">
+                        <h1>Quản lý Cơ sở y tế</h1>
+                        <span>{processedClinics.length} cơ sở</span>
+                    </div>
+                    <div className="header-btns">
+                        <button className="btn-add" onClick={this.handleAddNewClinic}>
+                            <i className="fas fa-plus"></i> Thêm cơ sở
+                        </button>
+                    </div>
+                </div>
+
+                <div className="manage-toolbar">
+                    <div className="search-wrapper">
+                        <i className="fas fa-search"></i>
+                        <input
+                            type="text"
+                            placeholder="Tìm kiếm theo tên hoặc địa chỉ..."
+                            value={searchTerm}
+                            onChange={(e) => this.setState({ searchTerm: e.target.value, currentPage: 1 })}
+                        />
+                    </div>
                 </div>
 
                 <div className="table-wrapper">
-                    <table className="table">
+                    <table className="clean-table">
                         <thead>
                             <tr>
-                                <th><FormattedMessage id="manage-clinic.table-name" /></th>
-                                <th><FormattedMessage id="manage-clinic.table-address" /></th>
-                                <th className="text-right"><FormattedMessage id="manage-clinic.table-actions" /></th>
+                                <th className="check-col">
+                                    <input
+                                        type="checkbox"
+                                        checked={isAllSelected}
+                                        onChange={() => this.handleSelectAll(displayClinics)}
+                                    />
+                                </th>
+                                <th className="id-col">ID</th>
+                                <th className="name-col">Cơ sở y tế</th>
+                                <th className="address-col">Địa chỉ</th>
+                                <th className="actions-col">
+                                    {selectedClinics.length > 0 ? (
+                                        <div className="header-bulk-actions">
+                                            <button className="btn-cancel-select" onClick={() => this.setState({ selectedClinics: [] })}>
+                                                <i className="fas fa-times"></i>
+                                            </button>
+                                            <button className="btn-bulk-delete" onClick={this.handleBulkDelete}>
+                                                <i className="fas fa-trash-alt"></i>
+                                                <span>{selectedClinics.length}</span>
+                                            </button>
+                                        </div>
+                                    ) : "Hành động"}
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
-                            {displayClinics && displayClinics.length > 0 ? (
-                                displayClinics.map((item, index) => {
-                                    return (
-                                        <tr key={index}>
-                                            <td>
-                                                <div className="clinic-cell-info">
-                                                    <div className="clinic-img-wrapper">
-                                                        <img src={item.image || 'https://www.freeiconspng.com/thumbs/hospital-icon/hospital-icon-3.png'} alt="clinic" />
-                                                    </div>
-                                                    <div className="clinic-text">
-                                                        <span className="clinic-name">{item.name}</span>
-                                                    </div>
+                            {displayClinics.map((item, index) => {
+                                let isSelected = selectedClinics.includes(item.id);
+                                return (
+                                    <tr key={item.id} className={isSelected ? 'selected-row' : ''}>
+                                        <td className="check-col">
+                                            <input
+                                                type="checkbox"
+                                                checked={isSelected}
+                                                onChange={() => this.handleSelectClinic(item.id)}
+                                            />
+                                        </td>
+                                        <td className="id-col">#{item.id}</td>
+                                        <td>
+                                            <div className="clinic-cell">
+                                                <div className="clinic-image">
+                                                    <img src={item.image} alt="clinic" />
                                                 </div>
-                                            </td>
-                                            <td>
-                                                <div className="clinic-text">
-                                                    <span className="clinic-address">{item.address}</span>
+                                                <div className="clinic-info">
+                                                    <div className="clinic-name">{item.name}</div>
                                                 </div>
-                                            </td>
-                                            <td className="text-right">
-                                                <div className="actions-cell">
-                                                    <button className="btn-action btn-edit" onClick={() => this.handleEditClinic(item)} title="Chỉnh sửa">
-                                                        <i className="fas fa-pen"></i>
-                                                    </button>
-                                                    <button className="btn-action btn-delete" onClick={() => this.handleDeleteClinic(item)} title="Xóa">
-                                                        <i className="fas fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    )
-                                })
-                            ) : (
-                                <tr>
-                                    <td colSpan="3" className="text-center py-5">
-                                        <div className="no-data-msg">
-                                            <i className="fas fa-folder-open no-data-icon"></i>
-                                            <FormattedMessage id="manage-clinic.no-data" />
-                                        </div>
-                                    </td>
-                                </tr>
-                            )}
+                                            </div>
+                                        </td>
+                                        <td className="address-col">{item.address}</td>
+                                        <td>
+                                            <div className="action-btns">
+                                                <button className="edit" onClick={() => this.handleEditClinic(item)}><i className="fas fa-pencil-alt"></i></button>
+                                                <button className="delete" onClick={() => {
+                                                    this.setState({ clinicToForceDelete: item, showBulkDeleteConfirm: true, isForceDelete: false });
+                                                }}><i className="fas fa-trash"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )
+                            })}
                         </tbody>
                     </table>
                 </div>
-                {arrClinics && arrClinics.length > pageSize &&
-                    <div className="pagination-footer">
-                        <button
-                            className="btn-pagination"
-                            disabled={currentPage === 1}
-                            onClick={() => this.setState({ currentPage: currentPage - 1 })}
-                        >
-                            <i className="fas fa-chevron-left"></i>
-                        </button>
 
-                        {[...Array(Math.ceil(arrClinics.length / pageSize))].map((_, i) => (
-                            <button
-                                key={i}
-                                className={currentPage === i + 1 ? "btn-pagination active" : "btn-pagination"}
-                                onClick={() => this.setState({ currentPage: i + 1 })}
-                            >
-                                {i + 1}
-                            </button>
-                        ))}
+                <div className="pagination-bar">
+                    <button disabled={currentPage === 1} onClick={() => this.setState({ currentPage: currentPage - 1 })}><i className="fas fa-chevron-left"></i></button>
+                    <span>{currentPage} / {totalPages || 1}</span>
+                    <button disabled={currentPage === totalPages} onClick={() => this.setState({ currentPage: currentPage + 1 })}><i className="fas fa-chevron-right"></i></button>
+                </div>
 
-                        <button
-                            className="btn-pagination"
-                            disabled={currentPage === Math.ceil(arrClinics.length / pageSize)}
-                            onClick={() => this.setState({ currentPage: currentPage + 1 })}
-                        >
-                            <i className="fas fa-chevron-right"></i>
-                        </button>
+                <ModalManageClinic
+                    isOpen={isModalOpen}
+                    action={action}
+                    clinicEdit={clinicEdit}
+                    closeModal={() => {
+                        this.setState({ isModalOpen: false });
+                        this.getAllClinics();
+                    }}
+                />
+
+                {/* CONFIRM DELETE POPUP */}
+                {this.state.showBulkDeleteConfirm && (
+                    <div className="apple-confirm-overlay">
+                        <div className="apple-confirm-popup">
+                            <div className="popup-title">
+                                {this.state.isForceDelete ? "Cảnh báo dữ liệu!" : (this.state.clinicToForceDelete ? "Xóa cơ sở y tế?" : `Xóa ${selectedClinics.length} cơ sở?`)}
+                            </div>
+                            <div className="popup-desc">
+                                {this.state.isForceDelete ?
+                                    "Cơ sở này đang có các bác sĩ đang công tác. Bạn có chắc chắn muốn xóa mềm?" :
+                                    "Những dữ liệu được chọn sẽ bị xóa khỏi hệ thống. Hành động này không thể hoàn tác."}
+                            </div>
+                            <div className="popup-actions">
+                                <button className="btn-cancel" onClick={this.handleCancelBulkDelete}>Hủy</button>
+                                <button className="btn-delete" onClick={() => {
+                                    if (this.state.clinicToForceDelete) {
+                                        this.handleDeleteClinic(this.state.clinicToForceDelete, true);
+                                    } else {
+                                        this.confirmBulkDelete(this.state.isForceDelete);
+                                    }
+                                }}>Xác nhận xóa</button>
+                            </div>
+                        </div>
                     </div>
-                }
-
+                )}
             </div>
         );
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        language: state.app.language
-    };
-};
+const mapStateToProps = state => ({
+    language: state.app.language,
+});
 
-export default withSocket(withRouter(connect(mapStateToProps, null)(ManageClinic)));
+export default withSocket(connect(mapStateToProps)(ManageClinic));

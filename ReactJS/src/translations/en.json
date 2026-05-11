@@ -104,6 +104,19 @@
             "name": "Handbook Name",
             "image": "Handbook Image",
             "save": "Save Info"
+        },
+        "manage-doctor": {
+            "title": "Manage Doctor",
+            "select-doctor": "Select Doctor",
+            "intro": "Introduction",
+            "specialty": "Specialty",
+            "select-clinic": "Clinic",
+            "province": "Province",
+            "price": "Price",
+            "payment": "Payment",
+            "note": "Note",
+            "add": "Add Doctor",
+            "update": "Update"
         }
     },
     "manage-user": {
@@ -134,7 +147,10 @@
         "image": "Avatar",
         "save": "Save User",
         "address-place": "123 Street...",
-        "image-palce": "Choose File"
+        "image-palce": "Choose File",
+        "total-users": "users in list",
+        "sort-by": "Sort by",
+        "created-at": "Creation Date"
     },
     "manage-schedule": {
         "title": "Manage Doctor's Schedule",

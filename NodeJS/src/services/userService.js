@@ -363,28 +363,56 @@ let createNewUser = (data) => {
         }
     })
 }
-let deleteUserById = (id) => {
+let deleteUserById = (id, force = false) => {
     return new Promise(async (resolve, reject) => {
         try {
             let user = await db.User.findOne({
                 where: { id: id }
             });
-            if (user) {
-                await user.destroy();
-                resolve({
-                    errCode: 0,
-                    errMessage: "User deleted successfully!"
-                });
-            } else {
+
+            if (!user) {
                 resolve({
                     errCode: 1,
                     errMessage: "User not found!"
                 });
+                return;
             }
+
+            // CHECK FOR DEPENDENCIES IF NOT FORCED
+            if (!force) {
+                let hasData = false;
+                // 1. Doctor role
+                if (user.roleId === 'R2') {
+                    let hasSchedules = await db.Schedule.findOne({ where: { doctorId: id } });
+                    let hasBookings = await db.Booking.findOne({ where: { doctorId: id } });
+                    if (hasSchedules || hasBookings) hasData = true;
+                }
+                // 2. Patient or Admin role (Admins can also book as patients)
+                if (user.roleId === 'R3' || user.roleId === 'R1') {
+                    let hasHistory = await db.History.findOne({ where: { patientId: id } });
+                    let hasBookings = await db.Booking.findOne({ where: { patientId: id } });
+                    if (hasHistory || hasBookings) hasData = true;
+                }
+
+                if (hasData) {
+                    resolve({
+                        errCode: 5,
+                        errMessage: "This user has associated medical records (schedules, appointments, or history). Soft deleting will hide the user but preserve these records. Do you want to proceed?"
+                    });
+                    return;
+                }
+            }
+
+            // SOFT DELETE (Paranoid mode)
+            await user.destroy();
+            resolve({
+                errCode: 0,
+                errMessage: "User deleted successfully!"
+            });
+
         } catch (error) {
             reject(error);
         }
-
     })
 }
 

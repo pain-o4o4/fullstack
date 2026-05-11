@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
-import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { CommonUtils } from '../../utils';
 import {
     getAllUsers,
@@ -10,7 +9,6 @@ import {
     editUserService,
     getAllCodeService
 } from '../../services/userService';
-import ModalCreateUser from './manageSystemModal/ModalCreateUser';
 import './UserManage.scss';
 import icon_icons from '../../assets/images/icon_icons.svg';
 
@@ -33,13 +31,12 @@ class UserManage extends Component {
         super(props);
         this.state = {
             arrUsers: [],
-            isModalOpen: false,
+            isPopupOpen: false,
             action: 'CREATE',
 
             genderArr: [],
             roleArr: [],
             positionArr: [],
-
 
             id: '',
             email: '',
@@ -56,7 +53,16 @@ class UserManage extends Component {
 
             currentPage: 1,
             pageSize: 8,
-            quickEditUser: null
+            quickEditUser: null,
+
+            searchTerm: '',
+            sortBy: 'createdAt',
+            sortOrder: 'desc',
+            filterRole: 'ALL',
+            selectedUsers: [], // Track selected user IDs
+            showBulkDeleteConfirm: false, // Custom confirm popup
+            userToForceDelete: null, // Track user for single force delete
+            isForceDelete: false // Toggle for force delete mode
         };
         this.fileInputRef = React.createRef();
     }
@@ -157,10 +163,10 @@ class UserManage extends Component {
         event.target.value = ''; // reset file input
     }
 
-    resetFormState = () => {
+    closePopup = () => {
         let { genderArr, roleArr, positionArr } = this.state;
         this.setState({
-            isModalOpen: false,
+            isPopupOpen: false,
             action: 'CREATE',
             id: '',
             email: '',
@@ -178,15 +184,15 @@ class UserManage extends Component {
     }
 
     handleAddNewUser = () => {
-        this.resetFormState();
-        this.setState({ isModalOpen: true, action: 'CREATE' });
+        this.closePopup();
+        this.setState({ isPopupOpen: true, action: 'CREATE' });
     }
 
     handleEditUser = (user) => {
         let imageBase64 = decodeBase64Buffer(user.image);
 
         this.setState({
-            isModalOpen: true,
+            isPopupOpen: true,
             action: 'EDIT',
             id: user.id,
             email: user.email,
@@ -207,7 +213,6 @@ class UserManage extends Component {
         let { action, id, email, password, firstName, lastName, address, phonenumber, gender, roleId, positionId, avatar } = this.state;
         let { language } = this.props;
 
-        // Basic validation
         if (!email || !firstName || !lastName || !address || !phonenumber) {
             alert(language === 'vi' ? 'Vui lòng điền đủ các trường bắt buộc!' : 'Please fill in all required fields!');
             return;
@@ -226,7 +231,7 @@ class UserManage extends Component {
             }
 
             if (res && res.errCode === 0) {
-                this.resetFormState();
+                this.closePopup();
                 await this.fetchAllData();
             } else {
                 alert(res.errMessage);
@@ -236,248 +241,392 @@ class UserManage extends Component {
         }
     }
 
-    handleDeleteUser = async (user) => {
+    handleDeleteUser = async (user, force = false) => {
         let { language } = this.props;
         try {
-            let confirmMsg = language === 'vi'
-                ? `Bạn có chắc chắn muốn xóa người dùng: ${user.email}?`
-                : `Are you sure to delete user: ${user.email}?`;
-
-            if (window.confirm(confirmMsg)) {
-                let res = await deleteUserService(user.id);
-                if (res && res.errCode === 0) {
-                    await this.fetchAllData();
-                } else {
-                    alert(res.errMessage);
-                }
+            let res = await deleteUserService(user.id, force);
+            if (res && res.errCode === 0) {
+                this.setState({
+                    selectedUsers: this.state.selectedUsers.filter(id => id !== user.id),
+                    showBulkDeleteConfirm: false,
+                    userToForceDelete: null,
+                    isForceDelete: false
+                });
+                await this.fetchAllData();
+            } else if (res && res.errCode === 5) {
+                // Dependency warning - show custom confirm
+                this.setState({
+                    showBulkDeleteConfirm: true,
+                    userToForceDelete: user,
+                    isForceDelete: true
+                });
+            } else {
+                alert(res.errMessage);
             }
         } catch (error) {
             console.log(error);
         }
     }
 
-    render() {
-        let { arrUsers, isModalOpen, action, genderArr, roleArr, positionArr, currentPage, pageSize } = this.state;
-        let { language } = this.props;
-        let displayUsers = arrUsers.slice((currentPage - 1) * pageSize, currentPage * pageSize);
-        return (
-            <div className="users-container">
-                <div className="header-section">
-                    <h1 className="page-title"><FormattedMessage id="manage-user.title" defaultMessage="Quản lý người dùng" /></h1>
-                    <button className="btn-add-user" onClick={this.handleAddNewUser}>
-                        <i className="fas fa-plus"></i>
-                        <FormattedMessage id="manage-user.add-user" defaultMessage="Thêm tài khoản" />
-                    </button>
-                </div>
-                
-                <input type="file" hidden ref={this.fileInputRef} onChange={this.handleQuickUploadImage} accept="image/*" />
+    handleSelectUser = (userId) => {
+        let { selectedUsers } = this.state;
+        if (selectedUsers.includes(userId)) {
+            this.setState({ selectedUsers: selectedUsers.filter(id => id !== userId) });
+        } else {
+            this.setState({ selectedUsers: [...selectedUsers, userId] });
+        }
+    }
 
-                <div className="table-container">
-                    <table>
+    handleSelectAll = (displayUsers) => {
+        let { selectedUsers } = this.state;
+        let allIdsOnPage = displayUsers.map(u => u.id);
+        let allSelectedOnPage = allIdsOnPage.every(id => selectedUsers.includes(id));
+
+        if (allSelectedOnPage) {
+            this.setState({ selectedUsers: selectedUsers.filter(id => !allIdsOnPage.includes(id)) });
+        } else {
+            this.setState({ selectedUsers: [...new Set([...selectedUsers, ...allIdsOnPage])] });
+        }
+    }
+
+    handleBulkDelete = async () => {
+        let { selectedUsers } = this.state;
+        if (selectedUsers.length === 0) return;
+        this.setState({ showBulkDeleteConfirm: true });
+    }
+
+    confirmBulkDelete = async (force = false) => {
+        let { selectedUsers } = this.state;
+        let successCount = 0;
+        let errors = [];
+        let hasDependencyWarning = false;
+
+        try {
+            // Sequentially delete users and collect results
+            for (let userId of selectedUsers) {
+                let res = await deleteUserService(userId, force);
+                if (res && res.errCode === 0) {
+                    successCount++;
+                } else if (res && res.errCode === 5) {
+                    hasDependencyWarning = true;
+                    errors.push(res.errMessage);
+                } else {
+                    errors.push(res.errMessage || `User ID ${userId} error`);
+                }
+            }
+
+            if (hasDependencyWarning && !force) {
+                this.setState({ isForceDelete: true, showBulkDeleteConfirm: true });
+                return;
+            }
+
+            // Update state based on results
+            if (errors.length > 0 && !hasDependencyWarning) {
+                alert(errors.join('\n'));
+            }
+
+            this.setState({ selectedUsers: [], showBulkDeleteConfirm: false, isForceDelete: false });
+            await this.fetchAllData();
+        } catch (error) {
+            console.log("Bulk delete error:", error);
+            this.setState({ showBulkDeleteConfirm: false });
+        }
+    }
+
+    handleCancelBulkDelete = () => {
+        this.setState({ showBulkDeleteConfirm: false, userToForceDelete: null, isForceDelete: false });
+    }
+
+    handleCancelSelection = () => {
+        this.setState({ selectedUsers: [] });
+    }
+
+    getProcessedUsers = () => {
+        let { arrUsers, searchTerm, sortBy, sortOrder, filterRole } = this.state;
+        let filtered = [...arrUsers];
+
+        if (searchTerm) {
+            let term = searchTerm.toLowerCase();
+            filtered = filtered.filter(u =>
+                u.id.toString().includes(term) ||
+                u.email.toLowerCase().includes(term) ||
+                (u.address && u.address.toLowerCase().includes(term))
+            );
+        }
+
+        if (filterRole !== 'ALL') {
+            filtered = filtered.filter(u => u.roleId === filterRole);
+        }
+
+        filtered.sort((a, b) => {
+            let valA = a[sortBy];
+            let valB = b[sortBy];
+            if (sortBy === 'createdAt') {
+                valA = new Date(a.createdAt || 0);
+                valB = new Date(b.createdAt || 0);
+            }
+            if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
+            if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
+            return 0;
+        });
+
+        return filtered;
+    }
+
+    handleSort = (key) => {
+        let { sortBy, sortOrder } = this.state;
+        if (sortBy === key) {
+            this.setState({ sortOrder: sortOrder === 'asc' ? 'desc' : 'asc' });
+        } else {
+            this.setState({ sortBy: key, sortOrder: 'desc' });
+        }
+    }
+
+    render() {
+        let { isPopupOpen, action, genderArr, roleArr, positionArr, currentPage, pageSize, searchTerm, sortBy, sortOrder, filterRole, selectedUsers } = this.state;
+        let { language, userInfo } = this.props;
+
+        let processedUsers = this.getProcessedUsers();
+        let displayUsers = processedUsers.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+        let totalPages = Math.ceil(processedUsers.length / pageSize);
+
+        let isAllSelectedOnPage = displayUsers.length > 0 && displayUsers.every(u => selectedUsers.includes(u.id));
+
+        return (
+            <div className="apple-user-manage">
+                <div className="manage-header">
+                    <div className="header-info">
+                        <h1><FormattedMessage id="manage-user.title" defaultMessage="Quản lý Người Dùng" /></h1>
+                        <span>{processedUsers.length} <FormattedMessage id="manage-user.total-users" defaultMessage="người dùng" /></span>
+                    </div>
+                    <div className="header-btns">
+                        <button className="btn-add" onClick={this.handleAddNewUser}>
+                            <i className="fas fa-plus"></i>
+                            <FormattedMessage id="manage-user.add-user" defaultMessage="Thêm" />
+                        </button>
+                    </div>
+                </div>
+
+                <div className="manage-toolbar">
+                    <div className="search-wrapper">
+                        <i className="fas fa-search"></i>
+                        <input
+                            type="text"
+                            placeholder={language === 'vi' ? "Tìm theo tên, email..." : "Search users..."}
+                            value={searchTerm}
+                            onChange={(e) => this.setState({ searchTerm: e.target.value, currentPage: 1 })}
+                        />
+                    </div>
+                    <div className="filter-group">
+                        <select value={filterRole} onChange={(e) => this.setState({ filterRole: e.target.value, currentPage: 1 })}>
+                            <option value="ALL">{language === 'vi' ? 'Mọi vai trò' : 'All Roles'}</option>
+                            {roleArr.map((item, index) => (
+                                <option key={index} value={item.keyMap}>{language === 'vi' ? item.valueVi : item.valueEn}</option>
+                            ))}
+                        </select>
+                        <select value={sortBy} onChange={(e) => this.handleSort(e.target.value)}>
+                            <option value="createdAt">{language === 'vi' ? 'Mới nhất' : 'Newest'}</option>
+                            <option value="email">Email</option>
+                            <option value="roleId">Vai trò</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div className="table-wrapper">
+                    <table className="clean-table">
                         <thead>
                             <tr>
-                                <th><FormattedMessage id="manage-user.table-email" defaultMessage="Email" /></th>
-                                <th><FormattedMessage id="manage-user.table-role" defaultMessage="Quyền/Vai trò" /></th>
+                                <th className="check-col">
+                                    <input
+                                        type="checkbox"
+                                        checked={isAllSelectedOnPage}
+                                        onChange={() => this.handleSelectAll(displayUsers)}
+                                    />
+                                </th>
+                                <th onClick={() => this.handleSort('id')}>ID</th>
+                                <th><FormattedMessage id="manage-user.table-email" defaultMessage="Thông tin" /></th>
+                                <th><FormattedMessage id="manage-user.table-role" defaultMessage="Vai trò" /></th>
                                 <th><FormattedMessage id="manage-user.table-address" defaultMessage="Địa chỉ" /></th>
-                                <th><FormattedMessage id="manage-user.table-actions" defaultMessage="Thao tác" /></th>
+                                <th className="text-right">
+                                    {selectedUsers.length > 0 ? (
+                                        <div className="header-bulk-actions">
+                                            <button className="btn-cancel-select" onClick={this.handleCancelSelection} title={language === 'vi' ? 'Hủy chọn' : 'Cancel'}>
+                                                <i className="fas fa-times"></i>
+                                            </button>
+                                            <button className="btn-bulk-delete" onClick={this.handleBulkDelete} title={language === 'vi' ? 'Xóa mục đã chọn' : 'Delete selected'}>
+                                                <i className="fas fa-trash-alt"></i>
+                                                <span>{selectedUsers.length}</span>
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <FormattedMessage id="manage-user.table-action" defaultMessage="Hành động" />
+                                    )}
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
-                            {displayUsers && displayUsers.length > 0 ? (
-                                displayUsers.map((item, index) => {
-                                    let imageBase64 = decodeBase64Buffer(item.image);
-
-                                    return (
-                                        <tr key={index}>
-                                            <td>
-                                                <div className="user-info-cell">
-                                                    <div className="avatar-mini" onClick={() => this.handleQuickChangeAvatar(item)} style={{ cursor: 'pointer' }} title="Change Avatar">
-                                                        <img src={imageBase64 || 'https://static.vecteezy.com/system/resources/previews/026/625/600/non_2x/person-icon-symbol-design-illustration-vector.jpg'} alt="avatar" />
-                                                    </div>
-                                                    <div className="user-name-block">
-                                                        <span className="name">{item.lastName} {item.firstName}</span>
-                                                        <span className="email">{item.email}</span>
-                                                    </div>
+                            {displayUsers.map((item, index) => {
+                                let imageBase64 = decodeBase64Buffer(item.image);
+                                let isSelected = selectedUsers.includes(item.id);
+                                return (
+                                    <tr key={item.id || index} className={`${isSelected ? 'selected-row' : ''} ${item.id === userInfo.id ? 'current-user-row' : ''}`}>
+                                        <td className="check-col">
+                                            <input
+                                                type="checkbox"
+                                                checked={isSelected}
+                                                onChange={() => this.handleSelectUser(item.id)}
+                                                disabled={item.id === userInfo.id}
+                                            />
+                                        </td>
+                                        <td className="id-col">#{item.id}</td>
+                                        <td>
+                                            <div className="user-cell">
+                                                <div className="user-avatar" onClick={() => this.handleQuickChangeAvatar(item)}>
+                                                    <img src={imageBase64 || 'https://static.vecteezy.com/system/resources/previews/026/625/600/non_2x/person-icon-symbol-design-illustration-vector.jpg'} alt="avatar" />
                                                 </div>
-                                            </td>
-                                            <td>{item.roleId}</td>
-                                            <td>{item.address}</td>
-                                            <td>
-                                                <div className="actions-cell">
-                                                    <button className="btn-edit" onClick={() => this.handleEditUser(item)} title="Edit">
-                                                        <i className="fas fa-pencil-alt"></i>
-                                                    </button>
-                                                    <button className="btn-delete" onClick={() => this.handleDeleteUser(item)} title="Delete">
-                                                        <i className="fas fa-trash"></i>
-                                                    </button>
+                                                <div className="user-info">
+                                                    <div className="user-name">
+                                                        {item.lastName} {item.firstName}
+                                                        {item.id === userInfo.id && <span className="you-badge">(Bạn)</span>}
+                                                    </div>
+                                                    <div className="user-email">{item.email}</div>
                                                 </div>
-                                            </td>
-                                        </tr>
-                                    );
-                                })
-                            ) : (
-                                <tr>
-                                    <td colSpan="4" style={{ textAlign: 'center', padding: '20px', color: '#86868b' }}>
-                                        <FormattedMessage id="manage-user.no-data" defaultMessage="Không có dữ liệu" />
-                                    </td>
-                                </tr>
-                            )}
+                                            </div>
+                                        </td>
+                                        <td><span className={`badge ${item.roleId?.toLowerCase()}`}>{item.roleId}</span></td>
+                                        <td className="address-col">{item.address}</td>
+                                        <td>
+                                            <div className="action-btns">
+                                                <button onClick={() => this.handleEditUser(item)} className="edit"><i className="fas fa-pencil-alt"></i></button>
+                                                {item.id !== userInfo.id && (
+                                                    <button onClick={() => {
+                                                        this.setState({ userToForceDelete: item, showBulkDeleteConfirm: true, isForceDelete: false });
+                                                    }} className="delete"><i className="fas fa-trash"></i></button>
+                                                )}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
-
-
                 </div>
-                {arrUsers && arrUsers.length > pageSize &&
-                    <div className="pagination-footer" >
-                        <button
-                            className="btn btn-primary"
-                            disabled={currentPage === 1}
-                            onClick={() => this.setState({ currentPage: currentPage - 1 })}
-                        >
-                            <i className="fas fa-chevron-left"></i>
-                        </button>
 
-                        {/* Tạo danh sách số trang */}
-                        {[...Array(Math.ceil(arrUsers.length / pageSize))].map((_, i) => (
-                            <button
-                                key={i}
-                                className={currentPage === i + 1 ? "btn btn-info active" : "btn btn-outline-info"}
-                                onClick={() => this.setState({ currentPage: i + 1 })}
-                            >
-                                {i + 1}
-                            </button>
-                        ))}
+                <div className="pagination-bar">
+                    <button disabled={currentPage === 1} onClick={() => this.setState({ currentPage: currentPage - 1 })}><i className="fas fa-chevron-left"></i></button>
+                    <span>{currentPage} / {totalPages || 1}</span>
+                    <button disabled={currentPage === totalPages} onClick={() => this.setState({ currentPage: currentPage + 1 })}><i className="fas fa-chevron-right"></i></button>
+                </div>
 
-                        <button
-                            className="btn btn-primary"
-                            disabled={currentPage === Math.ceil(arrUsers.length / pageSize)}
-                            onClick={() => this.setState({ currentPage: currentPage + 1 })}
-                        >
-                            <i className="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
-                }
-                {/* MODAL CẬP NHẬT/THÊM NGƯỜI DÙNG */}
-                <Modal isOpen={isModalOpen} toggle={this.resetFormState} className="user-modal" size="lg" centered>
-                    <ModalHeader toggle={this.resetFormState}>
-                        {action === 'CREATE'
-                            ? <FormattedMessage id="manage-user.modal-create" defaultMessage="Thêm mới người dùng" />
-                            : <FormattedMessage id="manage-user.modal-update" defaultMessage="Cập nhật người dùng" />
-                        }
-                    </ModalHeader>
-                    <div className="modal-body">
-                        <div className="user-form-grid">
-                            <div className="input-group-apple full-width">
-                                <label><FormattedMessage id="manage-user.image" defaultMessage="Ảnh đại diện (Avatar)" /></label>
-                                <div className="avatar-upload-area">
-                                    <div className="avatar-preview">
+                <input type="file" hidden ref={this.fileInputRef} onChange={this.handleQuickUploadImage} accept="image/*" />
+
+                {/* CUSTOM POPUP COMPONENT */}
+                {isPopupOpen && (
+                    <div className="apple-popup-overlay" onClick={this.closePopup}>
+                        <div className="apple-popup-content" onClick={(e) => e.stopPropagation()}>
+                            <div className="popup-header">
+                                <div className="title">
+                                    {action === 'CREATE' ? 'Thêm Người Dùng' : 'Cập Nhật Người Dùng'}
+                                </div>
+                                <button className="close-btn" onClick={this.closePopup}><i className="fas fa-times"></i></button>
+                            </div>
+
+                            <div className="popup-body">
+                                <div className="avatar-picker">
+                                    <div className="preview-wrap">
                                         <img src={this.state.previewImgURL || icon_icons} alt="Preview" />
+                                        <input type="file" id="pAvatar" hidden onChange={this.handleOnChangeImage} />
+                                        <label htmlFor="pAvatar" className="camera-btn"><i className="fas fa-camera"></i></label>
                                     </div>
-                                    <input type="file" id="uploadAvatar" hidden onChange={this.handleOnChangeImage} />
-                                    <label htmlFor="uploadAvatar" className="upload-btn-label">
-                                        <i className="fas fa-camera mr-2"></i>
-                                        <FormattedMessage id="manage-user.upload-avatar" defaultMessage="Thay đổi ảnh" />
-                                    </label>
+                                </div>
+
+                                <div className="form-grid">
+                                    <div className="input-field">
+                                        <label>Email</label>
+                                        <input type="email" value={this.state.email} onChange={(e) => this.handleOnChangeInput(e, 'email')} disabled={action === 'EDIT'} placeholder="apple@icloud.com" />
+                                    </div>
+                                    <div className="input-field">
+                                        <label>Mật khẩu</label>
+                                        <input type="password" value={this.state.password} onChange={(e) => this.handleOnChangeInput(e, 'password')} disabled={action === 'EDIT'} placeholder="••••••••" />
+                                    </div>
+                                    <div className="input-field">
+                                        <label>Họ</label>
+                                        <input type="text" value={this.state.lastName} onChange={(e) => this.handleOnChangeInput(e, 'lastName')} placeholder="Họ" />
+                                    </div>
+                                    <div className="input-field">
+                                        <label>Tên</label>
+                                        <input type="text" value={this.state.firstName} onChange={(e) => this.handleOnChangeInput(e, 'firstName')} placeholder="Tên" />
+                                    </div>
+                                    <div className="input-field">
+                                        <label>Số điện thoại</label>
+                                        <input type="tel" value={this.state.phonenumber} onChange={(e) => this.handleOnChangeInput(e, 'phonenumber')} placeholder="09xx..." />
+                                    </div>
+                                    <div className="input-field">
+                                        <label>Địa chỉ</label>
+                                        <input type="text" value={this.state.address} onChange={(e) => this.handleOnChangeInput(e, 'address')} placeholder="Địa chỉ..." />
+                                    </div>
+                                    <div className="input-field">
+                                        <label>Giới tính</label>
+                                        <select value={this.state.gender} onChange={(e) => this.handleOnChangeInput(e, 'gender')}>
+                                            {genderArr.map((item, index) => (<option key={index} value={item.keyMap}>{language === 'vi' ? item.valueVi : item.valueEn}</option>))}
+                                        </select>
+                                    </div>
+                                    <div className="input-field">
+                                        <label>Vai trò</label>
+                                        <select value={this.state.roleId} onChange={(e) => this.handleOnChangeInput(e, 'roleId')}>
+                                            {roleArr.map((item, index) => (<option key={index} value={item.keyMap}>{language === 'vi' ? item.valueVi : item.valueEn}</option>))}
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="input-group-apple">
-                                <label>Email <span className="text-danger">*</span></label>
-                                <input type="email" value={this.state.email}
-                                    placeholder="name@example.com"
-                                    onChange={(e) => this.handleOnChangeInput(e, 'email')}
-                                    disabled={action === 'EDIT'} />
-                            </div>
-
-                            <div className="input-group-apple">
-                                <label><FormattedMessage id="system.user-manage.password" defaultMessage="Mật khẩu" /> <span className="text-danger">*</span></label>
-                                <input type="password" value={this.state.password}
-                                    placeholder="••••••••"
-                                    onChange={(e) => this.handleOnChangeInput(e, 'password')}
-                                    disabled={action === 'EDIT'} />
-                            </div>
-
-                            <div className="input-group-apple">
-                                <label><FormattedMessage id="system.user-manage.first-name" defaultMessage="Tên" /> <span className="text-danger">*</span></label>
-                                <input type="text" value={this.state.firstName}
-                                    placeholder="Steve"
-                                    onChange={(e) => this.handleOnChangeInput(e, 'firstName')} />
-                            </div>
-
-                            <div className="input-group-apple">
-                                <label><FormattedMessage id="system.user-manage.last-name" defaultMessage="Họ" /> <span className="text-danger">*</span></label>
-                                <input type="text" value={this.state.lastName}
-                                    placeholder="Jobs"
-                                    onChange={(e) => this.handleOnChangeInput(e, 'lastName')} />
-                            </div>
-
-                            <div className="input-group-apple">
-                                <label><FormattedMessage id="manage-user.phone-number" defaultMessage="Số điện thoại" /> <span className="text-danger">*</span></label>
-                                <input type="tel" value={this.state.phonenumber}
-                                    placeholder="+84 ..."
-                                    onChange={(e) => this.handleOnChangeInput(e, 'phonenumber')} />
-                            </div>
-
-                            <div className="input-group-apple">
-                                <label><FormattedMessage id="manage-user.address" defaultMessage="Địa chỉ" /> <span className="text-danger">*</span></label>
-                                <input type="text" value={this.state.address}
-                                    placeholder="1 Infinite Loop, Cupertino..."
-                                    onChange={(e) => this.handleOnChangeInput(e, 'address')} />
-                            </div>
-
-                            <div className="input-group-apple">
-                                <label><FormattedMessage id="manage-user.gender" defaultMessage="Giới tính" /></label>
-                                <select value={this.state.gender} onChange={(e) => this.handleOnChangeInput(e, 'gender')}>
-                                    {genderArr && genderArr.length > 0 && genderArr.map((item, index) => {
-                                        return (
-                                            <option key={index} value={item.keyMap}>
-                                                {language === 'vi' ? item.valueVi : item.valueEn}
-                                            </option>
-                                        )
-                                    })}
-                                </select>
-                            </div>
-
-                            <div className="input-group-apple">
-                                <label><FormattedMessage id="manage-user.role" defaultMessage="Vai trò (Role)" /></label>
-                                <select value={this.state.roleId} onChange={(e) => this.handleOnChangeInput(e, 'roleId')}>
-                                    {roleArr && roleArr.length > 0 && roleArr.map((item, index) => {
-                                        return (
-                                            <option key={index} value={item.keyMap}>
-                                                {language === 'vi' ? item.valueVi : item.valueEn}
-                                            </option>
-                                        )
-                                    })}
-                                </select>
-                            </div>
-
-                            <div className="input-group-apple full-width">
-                                <label><FormattedMessage id="manage-user.position" defaultMessage="Chức danh" /></label>
-                                <select value={this.state.positionId} onChange={(e) => this.handleOnChangeInput(e, 'positionId')}>
-                                    {positionArr && positionArr.length > 0 && positionArr.map((item, index) => {
-                                        return (
-                                            <option key={index} value={item.keyMap}>
-                                                {language === 'vi' ? item.valueVi : item.valueEn}
-                                            </option>
-                                        )
-                                    })}
-                                </select>
+                            <div className="popup-footer">
+                                <button className="btn-secondary" onClick={this.closePopup}>Hủy</button>
+                                <button className="btn-primary" onClick={this.handleSaveUser}>
+                                    {action === 'CREATE' ? 'Tạo mới' : 'Cập nhật'}
+                                </button>
                             </div>
                         </div>
                     </div>
-                    <div className="modal-footer">
-                        <button className="btn-cancel" onClick={this.resetFormState}>
-                            <FormattedMessage id="manage-user.btn-cancel" defaultMessage="Hủy" />
-                        </button>
-                        <button className="btn-save" onClick={this.handleSaveUser}>
-                            {action === 'CREATE'
-                                ? <FormattedMessage id="manage-user.btn-save" defaultMessage="Lưu mới" />
-                                : <FormattedMessage id="manage-user.btn-update" defaultMessage="Cập nhật" />
-                            }
-                        </button>
-                    </div>
-                </Modal>
+                )}
 
+                {/* BULK DELETE CONFIRM POPUP */}
+                {this.state.showBulkDeleteConfirm && (
+                    <div className="apple-confirm-overlay">
+                        <div className="apple-confirm-popup">
+                            <div className="popup-title">
+                                {this.state.isForceDelete ?
+                                    (language === 'vi' ? 'Cảnh báo dữ liệu!' : 'Data Warning!') :
+                                    (language === 'vi' ? (this.state.userToForceDelete ? 'Xóa người dùng?' : `Xóa ${selectedUsers.length} người dùng?`) : (this.state.userToForceDelete ? 'Delete user?' : `Delete ${selectedUsers.length} users?`))
+                                }
+                            </div>
+                            <div className="popup-desc">
+                                {this.state.isForceDelete ?
+                                    (language === 'vi'
+                                        ? 'Người dùng này có dữ liệu lịch sử (lịch hẹn, bệnh án). Bạn có chắc chắn muốn xóa mềm? Dữ liệu lịch sử vẫn sẽ được giữ lại.'
+                                        : 'This user has historical data. Do you still want to soft delete? Historical records will be preserved.') :
+                                    (language === 'vi'
+                                        ? 'Những người dùng được chọn sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác.'
+                                        : 'Selected users will be permanently deleted. This action cannot be undone.')
+                                }
+                            </div>
+                            <div className="popup-actions">
+                                <button className="btn-cancel" onClick={this.handleCancelBulkDelete}>
+                                    {language === 'vi' ? 'Hủy' : 'Cancel'}
+                                </button>
+                                <button className="btn-delete" onClick={() => {
+                                    if (this.state.userToForceDelete) {
+                                        this.handleDeleteUser(this.state.userToForceDelete, true);
+                                    } else {
+                                        this.confirmBulkDelete(this.state.isForceDelete);
+                                    }
+                                }}>
+                                    {language === 'vi' ? 'Xác nhận xóa' : 'Confirm Delete'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         );
     }
@@ -486,6 +635,7 @@ class UserManage extends Component {
 const mapStateToProps = state => {
     return {
         language: state.app.language,
+        userInfo: state.user.userInfo,
     };
 };
 

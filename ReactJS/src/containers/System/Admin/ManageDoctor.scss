@@ -1,212 +1,179 @@
-.manage-doctor-wrapper {
-    // padding: 24px;
-    margin-top: 50px;
-    font-family: -system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
-    background-color: #ffffff;
-    min-height: 100vh;
+.manage-doctor-container {
+    padding: 30px;
+    background-color: transparent;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    color: #1d1d1f;
+    animation: fadeIn 0.4s ease;
 
-    .header-section {
-        margin-bottom: 30px;
+    .manage-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        padding: 0 10px;
 
-        .title {
-            font-size: 32px;
-            font-weight: 700;
-            color: #1d1d1f;
-            letter-spacing: -0.5px;
-            margin: 0;
+        .header-info {
+            h1 {
+                font-size: 28px;
+                font-weight: 700;
+                letter-spacing: -0.022em;
+                margin: 0;
+            }
+
+            span {
+                font-size: 15px;
+                color: #86868b;
+                font-weight: 400;
+            }
         }
     }
 
-    .settings-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-        gap: 24px;
-        margin-bottom: 32px;
+    .doctor-main-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        flex: 1;
 
-        .info-card {
-            background: #ffffff;
-            border: 1px solid #d2d2d7;
-            border-radius: 20px;
-            padding: 24px;
-            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+        // Top Section: Info Cards Grid
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+            gap: 30px;
 
-            &:hover {
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-                transform: translateY(-2px);
-            }
+            .info-card {
+                &.full-width {
+                    grid-column: 1 / -1;
+                }
+                background: rgba(255, 255, 255, 0.7);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                border-radius: 24px;
+                border: 1px solid rgba(255, 255, 255, 0.4);
+                padding: 24px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+                transition: all 0.3s;
 
-            .card-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 20px;
-
-                .card-title {
-                    // display: block;
-                    font-size: 18px;
-                    font-weight: 600;
-                    color: #1d1d1f;
+                &:hover {
+                    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+                    transform: translateY(-2px);
                 }
 
-                .card-icon {
-                    font-size: 20px;
-                    color: #0071e3;
+                .card-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 20px;
+
+                    .card-title {
+                        font-size: 16px;
+                        font-weight: 700;
+                        color: #1d1d1f;
+                        text-transform: uppercase;
+                        letter-spacing: 0.05em;
+                    }
+
+                    i { color: #0071e3; font-size: 18px; }
                 }
-            }
 
-            .card-body {
-                display: flex;
-                flex-direction: column;
-                gap: 16px;
-
-                .input-group-apple {
+                .card-body {
                     display: flex;
                     flex-direction: column;
-                    gap: 8px;
+                    gap: 16px;
 
-                    label {
-                        font-size: 13px;
-                        font-weight: 600;
-                        color: #86868b;
-                        margin: 0;
-                    }
+                    .input-group-apple {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 8px;
 
-                    .input,
-                    .textarea {
-                        border: none;
-                        background: #f5f5f7;
-                        padding: 12px 14px;
-                        border-radius: 12px;
-                        font-size: 15px;
-                        outline: none;
-                        color: #1d1d1f;
-                        transition: background 0.2s;
-
-                        &::placeholder {
-                            color: #c7c7cc;
+                        label {
+                            font-size: 13px;
+                            font-weight: 600;
+                            color: #86868b;
                         }
 
-                        &:focus {
-                            background: #e5e5ea;
+                        input, textarea {
+                            width: 100%;
+                            border: none;
+                            background: #f5f5f7;
+                            padding: 12px 16px;
+                            border-radius: 12px;
+                            font-size: 15px;
+                            outline: none;
+                            transition: all 0.2s;
+                            &:focus { background: #e5e5ea; box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1); }
                         }
+                        textarea { resize: none; min-height: 80px; }
                     }
+                }
+            }
+        }
 
-                    .textarea {
-                        resize: none;
-                    }
+        // Bottom Section: Markdown Editor
+        .editor-section {
+            background: #ffffff;
+            border-radius: 32px;
+            border: 1px solid #d2d2d7;
+            padding: 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 
-                    /* React Select Overrides */
-                    .react-select__control {
-                        background-color: #f5f5f7;
-                        border: none;
-                        border-radius: 12px;
-                        min-height: 44px;
-                        box-shadow: none;
+            .section-header {
+                margin-bottom: 24px;
+                h2 { font-size: 20px; font-weight: 700; margin: 0; }
+                p { font-size: 14px; color: #86868b; margin: 4px 0 0 0; }
+            }
 
-                        &:hover {
-                            background-color: #e5e5ea;
-                        }
-                    }
+            .custom-md-editor {
+                border: 1px solid #e5e5ea;
+                border-radius: 16px;
+                overflow: hidden;
+                height: 500px !important;
 
-                    .react-select__placeholder {
-                        color: #c7c7cc;
-                        font-size: 15px;
-                    }
-
-                    .react-select__single-value {
-                        color: #1d1d1f;
-                        font-size: 15px;
-                    }
-
-                    .react-select__indicator-separator {
-                        display: none;
-                    }
-
-                    .react-select__menu {
-                        border-radius: 12px;
-                        overflow: hidden;
-                        border: 1px solid #d2d2d7;
-                        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-                    }
+                .rc-md-navigation {
+                    background: #f5f5f7;
+                    border-bottom: 1px solid #e5e5ea;
                 }
             }
         }
     }
 
-    .markdown-card {
-        background: #ffffff;
-        border: 1px solid #d2d2d7;
-        border-radius: 20px;
-        padding: 24px;
-        margin-bottom: 32px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-
-            .card-title {
-                font-size: 18px;
-                font-weight: 600;
-                color: #1d1d1f;
-            }
-
-            .card-icon {
-                font-size: 20px;
-                color: #0071e3;
-            }
-        }
-
-        .md-editor {
-            border: 1px solid #e5e5ea;
-            border-radius: 12px;
-            overflow: hidden;
-            height: 450px !important;
-
-            .rc-md-navigation {
-                background: #f5f5f7;
-                border-bottom: 1px solid #e5e5ea;
-            }
-        }
-    }
-
-    .action-footer {
+    .footer-actions {
+        margin-top: 30px;
+        padding-top: 24px;
+        border-top: 1px solid #f2f2f7;
         display: flex;
         justify-content: flex-end;
-        padding-top: 20px;
-        border-top: 1px solid #d2d2d7;
+        gap: 16px;
 
-        .btn-save-apple {
+        .btn-save-doctor {
             background: #0071e3;
             color: white;
             border: none;
-            padding: 14px 32px;
-            border-radius: 24px;
+            padding: 14px 48px;
+            border-radius: 18px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
-            box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 113, 227, 0.2);
 
             &:hover {
                 background: #0077ed;
-                transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(0, 113, 227, 0.4);
+                transform: translateY(-1px);
+                box-shadow: 0 8px 20px rgba(0, 113, 227, 0.3);
             }
 
-            &:active {
-                transform: translateY(1px);
-            }
-
-            i {
-                font-size: 14px;
-            }
+            &:active { transform: translateY(0); }
+            &.update { background: #34c759; box-shadow: 0 4px 12px rgba(52, 199, 89, 0.2); &:hover { background: #30b753; } }
         }
     }
 }
+
+// Reuse global react-select-menu fix
+.react-select__menu {
+    z-index: 9999 !important;
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

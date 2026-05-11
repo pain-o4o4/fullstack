@@ -104,6 +104,19 @@
             "name": "Tên cẩm nang",
             "image": "Ảnh cẩm nang",
             "save": "Lưu thông tin"
+        },
+        "manage-doctor": {
+            "title": "Quản lý bác sĩ",
+            "select-doctor": "Chọn bác sĩ",
+            "intro": "Giới thiệu",
+            "specialty": "Chuyên khoa",
+            "select-clinic": "Phòng khám",
+            "province": "Tỉnh thành",
+            "price": "Giá khám",
+            "payment": "Thanh toán",
+            "note": "Ghi chú",
+            "add": "Thêm bác sĩ",
+            "update": "Cập nhật"
         }
     },
     "manage-user": {
@@ -111,7 +124,7 @@
         "add-user": "Thêm tài khoản",
         "no-data": "Không có dữ liệu",
         "table-email": "Email",
-        "table-role": "Quyền/Vai trò",
+        "table-role": "Vai trò",
         "table-address": "Địa chỉ",
         "table-actions": "Thao tác",
         "modal-create": "Thêm mới người dùng",
@@ -134,7 +147,10 @@
         "image": "Ảnh đại diện",
         "save": "Lưu người dùng",
         "address-place": "123 Đường...",
-        "image-palce": "Chọn tập tập tin"
+        "image-palce": "Chọn tập tập tin",
+        "total-users": "người dùng trong danh sách",
+        "sort-by": "Sắp xếp",
+        "created-at": "Ngày tạo"
     },
     "manage-schedule": {
         "title": "Quản lý lịch khám của bác sĩ",

@@ -1,234 +1,305 @@
 .manage-schedule-container {
-    padding: 24px;
-    margin-top: 50px;
-    font-family: -system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
-    background-color: #ffffff;
-    min-height: 100vh;
+    padding: 30px;
+    background-color: transparent;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    color: #1d1d1f;
+    animation: fadeIn 0.4s ease;
 
-    .header-section {
-        margin-bottom: 30px;
+    .manage-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        padding: 0 10px;
 
-        .title {
-            font-size: 32px;
-            font-weight: 700;
-            color: #1d1d1f;
-            letter-spacing: -0.5px;
-            margin: 0;
+        .header-info {
+            h1 {
+                font-size: 28px;
+                font-weight: 700;
+                letter-spacing: -0.022em;
+                margin: 0;
+            }
+
+            span {
+                font-size: 15px;
+                color: #86868b;
+                font-weight: 400;
+            }
         }
     }
 
-    .settings-grid {
+    .schedule-main-layout {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-        gap: 24px;
-        margin-bottom: 32px;
+        grid-template-columns: 350px 1fr;
+        gap: 30px;
+        flex: 1;
+        min-height: 0; // Allow grid to shrink
 
-        .info-card {
-            background: #ffffff;
-            border: 1px solid #d2d2d7;
-            border-radius: 20px;
-            padding: 24px;
-            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+        // Left Column: Configuration
+        .config-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
 
-            &:hover {
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-                transform: translateY(-2px);
+            .sidebar-card {
+                background: rgba(255, 255, 255, 0.7);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                border-radius: 24px;
+                border: 1px solid rgba(255, 255, 255, 0.4);
+                padding: 24px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+                position: relative;
+                z-index: 1; // Base z-index
+
+                .card-label {
+                    display: block;
+                    font-size: 13px;
+                    font-weight: 600;
+                    color: #86868b;
+                    margin-bottom: 12px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
+                }
+
+                .doctor-summary {
+                    display: flex;
+                    align-items: center;
+                    gap: 16px;
+                    margin-top: 8px;
+
+                    .doc-avatar {
+                        width: 50px;
+                        height: 50px;
+                        border-radius: 15px;
+                        background: #f2f2f7;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 20px;
+                        color: #0071e3;
+                        overflow: hidden;
+
+                        img {
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                        }
+                    }
+
+                    .doc-info {
+                        .doc-name {
+                            font-weight: 700;
+                            font-size: 16px;
+                            color: #1d1d1f;
+                        }
+                        .doc-role {
+                            font-size: 13px;
+                            color: #86868b;
+                        }
+                    }
+                }
             }
+        }
 
-            .card-header {
+        // Right Column: Time Selection
+        .time-picker-area {
+            background: #ffffff;
+            border-radius: 32px;
+            border: 1px solid #d2d2d7;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+            .area-header {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                margin-bottom: 20px;
+                margin-bottom: 30px;
 
-                .card-title {
-                    font-size: 18px;
-                    font-weight: 600;
-                    color: #1d1d1f;
+                .title-wrap {
+                    h2 {
+                        font-size: 20px;
+                        font-weight: 700;
+                        margin: 0;
+                    }
+                    p {
+                        font-size: 14px;
+                        color: #86868b;
+                        margin: 4px 0 0 0;
+                    }
                 }
 
-                .card-icon {
-                    font-size: 20px;
+                .selection-badge {
+                    background: #f2f2f7;
+                    padding: 6px 14px;
+                    border-radius: 20px;
+                    font-size: 13px;
+                    font-weight: 600;
                     color: #0071e3;
                 }
             }
 
-            .card-body {
-                display: flex;
-                flex-direction: column;
+            .time-slots-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 16px;
+                overflow-y: auto;
+                padding-right: 8px;
+                flex: 1;
 
-                .input-group-apple {
+                &::-webkit-scrollbar { width: 4px; }
+                &::-webkit-scrollbar-track { background: transparent; }
+                &::-webkit-scrollbar-thumb { background: #d2d2d7; border-radius: 10px; }
+
+                .time-pill {
+                    background: #f5f5f7;
+                    border: 2px solid transparent;
+                    padding: 18px 10px;
+                    border-radius: 18px;
+                    font-size: 15px;
+                    font-weight: 600;
+                    color: #1d1d1f;
+                    cursor: pointer;
+                    text-align: center;
+                    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
                     display: flex;
                     flex-direction: column;
-                    gap: 8px;
+                    gap: 4px;
 
-                    label {
-                        font-size: 13px;
-                        font-weight: 600;
-                        color: #86868b;
-                        margin: 0;
+                    &:hover {
+                        background: #e5e5ea;
+                        transform: translateY(-2px);
                     }
 
-                    /* React Select Overrides */
-                    .react-select__control {
-                        background-color: #f5f5f7;
-                        border: none;
-                        border-radius: 12px;
-                        min-height: 44px;
-                        box-shadow: none;
-
-                        &:hover {
-                            background-color: #e5e5ea;
-                        }
+                    &.selected {
+                        background: #0071e3;
+                        color: white;
+                        box-shadow: 0 8px 20px rgba(0, 113, 227, 0.25);
+                        transform: scale(1.02);
+                        border-color: rgba(255, 255, 255, 0.2);
                     }
 
-                    .react-select__placeholder {
-                        color: #c7c7cc;
-                        font-size: 15px;
+                    .time-label { font-size: 16px; }
+                    .status-tag { 
+                        font-size: 10px; 
+                        text-transform: uppercase; 
+                        letter-spacing: 0.05em; 
+                        opacity: 0.8;
                     }
 
-                    .react-select__single-value {
-                        color: #1d1d1f;
-                        font-size: 15px;
-                    }
-
-                    .react-select__indicator-separator {
-                        display: none;
-                    }
-
-                    .react-select__menu {
-                        border-radius: 12px;
-                        overflow: hidden;
-                        border: 1px solid #d2d2d7;
-                        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-                        z-index: 100;
-                    }
-
-                    /* DatePicker override */
-                    .date-picker {
-                        border: none;
-                        background: #f5f5f7;
-                        padding: 12px 14px;
-                        border-radius: 12px;
-                        font-size: 15px;
-                        outline: none;
-                        color: #1d1d1f;
-                        width: 100%;
-                        transition: background 0.2s;
-
-                        &:focus {
-                            background: #e5e5ea;
-                        }
+                    &.has-patient {
+                        background: #fff;
+                        border: 2px solid #34c759;
+                        color: #34c759;
+                        cursor: default;
+                        pointer-events: none;
+                        &:hover { transform: none; }
                     }
                 }
             }
 
-            &.full-width {
-                grid-column: 1 / -1;
-            }
-        }
-    }
+            .footer-actions {
+                margin-top: 30px;
+                padding-top: 24px;
+                border-top: 1px solid #f2f2f7;
+                display: flex;
+                justify-content: flex-end;
+                gap: 16px;
 
-    .time-selection-section {
-        background: #ffffff;
-        border: 1px solid #d2d2d7;
-        border-radius: 20px;
-        padding: 24px;
-        margin-bottom: 32px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-
-            .card-title {
-                font-size: 18px;
-                font-weight: 600;
-                color: #1d1d1f;
-            }
-
-            .card-icon {
-                font-size: 20px;
-                color: #0071e3;
-            }
-        }
-
-        .pick-hour-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-            gap: 16px;
-
-            .pill-btn {
-                background: #f5f5f7;
-                border: 1px solid transparent;
-                padding: 14px 10px; // Reduced side padding, let grid handle width
-                border-radius: 14px;
-                font-size: 15px;
-                font-weight: 500;
-                color: #1d1d1f;
-                cursor: pointer;
-                text-align: center;
-                transition: all 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
-
-                &:hover {
-                    background: #e5e5ea;
-                    transform: scale(1.03);
+                .btn-clear {
+                    background: transparent;
+                    border: none;
+                    color: #ff3b30;
+                    font-weight: 600;
+                    font-size: 15px;
+                    cursor: pointer;
+                    padding: 10px 20px;
+                    border-radius: 12px;
+                    &:hover { background: #fff1f0; }
                 }
 
-                &.active {
+                .btn-save-schedule {
                     background: #0071e3;
                     color: white;
-                    box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
+                    border: none;
+                    padding: 12px 36px;
+                    border-radius: 16px;
+                    font-size: 16px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    box-shadow: 0 4px 12px rgba(0, 113, 227, 0.2);
+
+                    &:hover {
+                        background: #0077ed;
+                        transform: translateY(-1px);
+                        box-shadow: 0 6px 16px rgba(0, 113, 227, 0.3);
+                    }
+
+                    &:active { transform: translateY(0); }
+                    &:disabled {
+                        background: #d2d2d7;
+                        color: #86868b;
+                        cursor: not-allowed;
+                        box-shadow: none;
+                        transform: none;
+                    }
                 }
             }
         }
-        .no-time-msg {
-            grid-column: 1 / -1;
-            text-align: center;
-            color: #86868b;
-            padding: 20px;
-            font-size: 15px;
-        }
     }
+}
 
-    .action-footer {
-        display: flex;
-        justify-content: flex-end;
-        padding-top: 20px;
-        border-top: 1px solid #d2d2d7;
+// React Select Overrides
+.apple-select {
+    .react-select__control {
+        background: #f5f5f7 !important;
+        border: none !important;
+        border-radius: 14px !important;
+        padding: 4px 8px !important;
+        box-shadow: none !important;
+        &:hover { background: #e5e5ea !important; }
+    }
+}
 
-        .btn-save-apple {
-            background: #0071e3;
-            color: white;
-            border: none;
-            padding: 14px 32px;
-            border-radius: 24px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
-            box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
-            display: flex;
-            align-items: center;
-            gap: 10px;
+// React Select Menu (Portaled to body)
+.react-select__menu {
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1) !important;
+    backdrop-filter: blur(20px) !important;
+    z-index: 9999 !important;
+}
 
-            &:hover {
-                background: #0077ed;
-                transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(0, 113, 227, 0.4);
-            }
+// DatePicker Overrides
+.apple-datepicker {
+    width: 100%;
+    height: 48px;
+    background: #f5f5f7;
+    border: none;
+    border-radius: 14px;
+    padding: 0 16px;
+    font-size: 15px;
+    color: #1d1d1f;
+    outline: none;
+    transition: all 0.2s;
+    &:focus {
+        background: #e5e5ea;
+        box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
+    }
+}
 
-            &:active {
-                transform: translateY(1px);
-            }
+// Animations
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-            i {
-                font-size: 14px;
-            }
-        }
+@media (max-width: 1024px) {
+    .schedule-main-layout {
+        grid-template-columns: 1fr !important;
     }
 }

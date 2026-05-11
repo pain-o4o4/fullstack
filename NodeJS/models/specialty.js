@@ -24,7 +24,8 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         sequelize,
         modelName: 'Specialty',
-        tableName: 'Specialties'
+        tableName: 'Specialties',
+        paranoid: true,
     });
     return specialty;
 };
