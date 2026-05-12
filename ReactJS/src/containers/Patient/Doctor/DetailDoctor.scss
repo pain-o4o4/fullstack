@@ -54,7 +54,7 @@
         gap: 40px;
         background: #fbfbfd;
         padding: 40px;
-        border-radius: 32px;
+        border-radius: 24px;
         margin-bottom: 60px;
         box-shadow: 0 4px 24px rgba(0, 0, 0, 0.02);
 
@@ -80,7 +80,7 @@
 
         h2, h3 { font-weight: 700; margin-top: 40px; margin-bottom: 20px; letter-spacing: -0.5px; }
         p { margin-bottom: 24px; color: #424245; }
-        img { max-width: 100%; border-radius: 20px; margin: 30px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        img { max-width: 100%; border-radius: 16px; margin: 30px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
     }
 }
 
@@ -194,7 +194,7 @@
             flex-direction: column;
             padding: 24px 16px;
             gap: 32px;
-            border-radius: 24px;
+            border-radius: 12px;
             margin: 0 16px 40px;
 
             .content-left {
@@ -240,7 +240,7 @@
         .related-item {
             background: #ffffff;
             border: 1px solid #f2f2f7;
-            border-radius: 24px;
+            border-radius: 12px;
             padding: 20px;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);

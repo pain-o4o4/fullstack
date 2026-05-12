@@ -51,7 +51,7 @@ $ease    : cubic-bezier(0.25, 0.46, 0.45, 0.94);
     grid-area: profile;
     background: $surface;
     border: 1px solid $border;
-    border-radius: 24px;
+    border-radius: 12px;
     padding: 32px 22px;
     text-align: center;
     display: flex;
@@ -136,7 +136,7 @@ $ease    : cubic-bezier(0.25, 0.46, 0.45, 0.94);
         font-size: 11px;
         font-weight: 600;
         padding: 4px 10px;
-        border-radius: 999px;
+        border-radius: 12px;
 
         &--green {
             background: rgba($green, 0.1);
@@ -225,7 +225,7 @@ $ease    : cubic-bezier(0.25, 0.46, 0.45, 0.94);
         width: 62px;
         height: 62px;
         background: $bg;
-        border-radius: 18px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -323,7 +323,7 @@ $ease    : cubic-bezier(0.25, 0.46, 0.45, 0.94);
         font-size: 11px;
         font-weight: 700;
         padding: 3px 10px;
-        border-radius: 999px;
+        border-radius: 12px;
 
         &--pending  { background: rgba(255, 149, 0, 0.12); color: #bf6500; }
         &--confirmed { background: rgba($green, 0.12); color: color.adjust($green, $lightness: -8%); }
@@ -344,7 +344,7 @@ $ease    : cubic-bezier(0.25, 0.46, 0.45, 0.94);
         background: $blue;
         color: #fff;
         border: none;
-        border-radius: 999px;
+        border-radius: 12px;
         font-size: 13px;
         font-weight: 700;
         cursor: pointer;
@@ -364,7 +364,7 @@ $ease    : cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
 .pdt-skeleton {
     height: 14px;
-    border-radius: 8px;
+    border-radius: 12px;
     background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
     background-size: 200% 100%;
     animation: shimmer 1.4s infinite;
@@ -450,7 +450,7 @@ $ease    : cubic-bezier(0.25, 0.46, 0.45, 0.94);
         letter-spacing: 0.8px;
         background: rgba(255, 255, 255, 0.2);
         padding: 4px 12px;
-        border-radius: 999px;
+        border-radius: 12px;
         width: fit-content;
         margin-bottom: 14px;
     }
@@ -478,7 +478,7 @@ $ease    : cubic-bezier(0.25, 0.46, 0.45, 0.94);
         background: #fff;
         color: $purple;
         border: none;
-        border-radius: 999px;
+        border-radius: 12px;
         font-size: 14px;
         font-weight: 700;
         cursor: pointer;

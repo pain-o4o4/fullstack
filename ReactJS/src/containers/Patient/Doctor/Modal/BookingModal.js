@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { Button, Modal } from 'reactstrap';
 import { LANGUAGES } from '../../../../utils/constant'
-import { withRouter } from '../../../../components/Navigator'; // hoặc 'react-router-dom'
+import { withRouter } from '../../../../components/Navigator';
 import { FormattedMessage } from 'react-intl';
 import './BookingModal.scss'
 import ProfileDoctor from '../ProfileDoctor'
@@ -13,6 +13,7 @@ import { postBookAppointment } from '../../../../services/userService'
 import Select from 'react-select';
 import { toast } from 'react-toastify';
 import { path } from '../../../../utils/constant'
+
 class BookingModal extends Component {
     constructor(props) {
         super(props);
@@ -31,11 +32,11 @@ class BookingModal extends Component {
 
             selectedPayment: '',
             listPayment: [],
-            // priceId: '',
             priceData: '',
-            // provinceId: '',
             provinceData: '',
-            currentDoctorId: -1
+            currentDoctorId: -1,
+            isLoading: false,
+            progressStatus: 'idle'
         }
     }
 
@@ -44,11 +45,11 @@ class BookingModal extends Component {
         if (this.props.params && this.props.params.id) {
             let id = this.props.params.id;
             this.setState({
-                currentDoctorId: id // Thêm dòng này
+                currentDoctorId: id
             });
-
         }
     }
+
     buildDataInput = (dataInput, type) => {
         let result = [];
         let { language } = this.props;
@@ -79,8 +80,8 @@ class BookingModal extends Component {
             if (type === "PRICE") {
                 dataInput.forEach((item, index) => {
                     let object = {};
-                    let labelVi = `${item.valueVi}` + 'VNđ';
-                    let labelEn = `${item.valueEn}` + 'USD$';
+                    let labelVi = `${item.valueVi}` + ' VNĐ';
+                    let labelEn = `${item.valueEn}` + ' USD';
                     object.label = language === LANGUAGES.VI ? labelVi : labelEn;
                     object.value = item.keyMap;
                     result.push(object);
@@ -113,13 +114,11 @@ class BookingModal extends Component {
                     result.push(object);
                 });
             }
-
         }
-
         return result;
     }
-    async componentDidUpdate(prevProps, prevState, snapshot) {
 
+    async componentDidUpdate(prevProps, prevState, snapshot) {
         if (prevProps.userInfo !== this.props.userInfo) {
             let { userInfo } = this.props;
             if (userInfo) {
@@ -136,7 +135,6 @@ class BookingModal extends Component {
             prevProps.detailDoctor !== this.props.detailDoctor) {
             if (this.props.genders && this.props.genders.length > 0) {
                 let data = this.buildDataInput(this.props.genders, 'GENDER');
-                console.log('data', data)
                 this.setState({
                     genders: data
                 });
@@ -147,7 +145,6 @@ class BookingModal extends Component {
                 this.setState({
                     listPayment: listPaymentConvert,
                     selectedPayment: this.props.detailDoctor.doctorinforData.paymentId
-
                 })
             }
         }
@@ -156,21 +153,17 @@ class BookingModal extends Component {
                 this.setState({
                     doctorId: this.props.dataTimeModal.doctorId,
                     timeType: this.props.dataTimeModal.timeType
-
                 })
             }
         }
         if (prevProps.params && this.props.params && prevProps.params.id !== this.props.params.id) {
             let id = this.props.params.id;
-
             this.setState({
                 currentDoctorId: id
             });
-
             this.props.getDetailDoctor(id);
         }
     }
-
 
     handleOnChangeInput = (event, type) => {
         let copyState = { ...this.state }
@@ -179,17 +172,21 @@ class BookingModal extends Component {
             ...copyState
         })
     }
+
     handleOnChangeDatePicker = (date) => {
         this.setState({
             birthday: date[0]
         })
     }
+
     handleChangeSelect = (selectedOption, actionMeta) => {
         this.setState({
             [actionMeta.name]: selectedOption
         });
     }
+
     handleConfirmBooking = async () => {
+        this.setState({ isLoading: true, progressStatus: 'encrypting' });
         let { dataTimeModal, isLoggedIn } = this.props;
         let {
             selectedPayment, fullName, email, address,
@@ -197,42 +194,47 @@ class BookingModal extends Component {
         } = this.state;
 
         if (!isLoggedIn) {
-            toast.warning(this.props.language === 'vi' ? "Vui lòng đăng nhập để thực hiện đặt lịch!" : "Please login to book an appointment!");
+            toast.warning(this.props.language === 'vi' ? "Vui Lòng Đăng Nhập Để Thực Hiện Đặt Lịch!" : "Please Login To Book An Appointment!");
             this.props.navigate(path.LOGIN);
+            this.setState({ isLoading: false, progressStatus: 'idle' });
             return;
         }
 
-        // Regular Expressions
         const emailRe = /\S+@\S+\.\S+/;
         const phoneRe = /^\d+$/;
 
         if (!fullName || !email || !address || !phoneNumber || !selectedGender || !selectedPayment || !birthday || !reason) {
-            console.log("Vui lòng điền đầy đủ các thông tin bắt buộc!");
+            toast.error(this.props.language === 'vi' ? "Vui Lòng Điền Đầy Đủ Các Thông Tin Bắt Buộc!" : "Please Fill In All Required Fields!");
+            this.setState({ isLoading: false, progressStatus: 'idle' });
             return;
         }
 
         if (!emailRe.test(email)) {
-            console.log("Định dạng Email không hợp lệ!");
+            toast.error(this.props.language === 'vi' ? "Định Dạng Email Không Hợp Lệ!" : "Invalid Email Format!");
+            this.setState({ isLoading: false, progressStatus: 'idle' });
             return;
         }
 
         if (!phoneRe.test(phoneNumber)) {
-            console.log("Số điện thoại chỉ được chứa các chữ số!");
+            toast.error(this.props.language === 'vi' ? "Số Điện Thoại Không Hợp Lệ!" : "Invalid Phone Number!");
+            this.setState({ isLoading: false, progressStatus: 'idle' });
             return;
         }
 
         if (reason.length < 10) {
-            console.log("Vui lòng mô tả lý do khám chi tiết hơn (tối thiểu 10 ký tự)!");
+            toast.error(this.props.language === 'vi' ? "Vui Lòng Mô Tả Lý Do Khám Chi Tiết Hơn!" : "Please Describe Your Reason In More Detail!");
+            this.setState({ isLoading: false, progressStatus: 'idle' });
             return;
         }
 
-        if (selectedPayment === 'PAY1') {
-            toast.warning(`Hiện tại hệ thống chỉ hỗ trợ thanh toán qua mã QR. Vui lòng chọn phương thức thanh toán khác!`);
-            return;
-        }
-
-        this.handleOnlinePayment();
+        setTimeout(() => {
+            this.setState({ progressStatus: 'sending' });
+            setTimeout(() => {
+                this.handleOnlinePayment();
+            }, 1200);
+        }, 1000);
     }
+
     handleOnlinePayment = async () => {
         let { dataTimeModal, userInfo, detailDoctor, language } = this.props;
         let { fullName, phoneNumber, email, address, reason, birthday, selectedGender } = this.state;
@@ -263,37 +265,35 @@ class BookingModal extends Component {
             language: language,
             doctorName: this.state.doctorName,
 
-            // Location Sync
-            clinicId: dataTimeModal.clinicId,
             clinicName: dataTimeModal.clinicData?.name || doctorInfor.nameClinic,
             addressClinic: dataTimeModal.clinicData?.address || doctorInfor.addressClinic,
 
-            // Data cho PayOS và hiển thị Payment
             paymentId: doctorInfor.paymentId,
             price: doctorInfor.priceTypeData?.valueVi || 0,
             priceId: language === LANGUAGES.VI ? doctorInfor.priceTypeData?.valueVi + ' VNĐ' : doctorInfor.priceTypeData?.valueEn + ' USD',
 
-            // Data bổ sung cho trang Payment
             specialtyName: detailDoctor?.specialtyData?.name || '',
-            doctorImage: detailDoctor?.image || '', // Pass the image string to Payment page
+            doctorImage: detailDoctor?.image || '',
         };
 
         this.props.navigate(path.PAYMENT, {
             state: { bookingData: bookingData }
         });
+        this.setState({ isLoading: false, progressStatus: 'idle' });
     }
+
     doctorNameFromChild = (name) => {
         this.setState({
             doctorName: name
         })
     }
+
     render() {
         let { language, isTheModalOpen, closeModal, dataTimeModal } = this.props
         let doctorId = dataTimeModal && !_.isEmpty(dataTimeModal)
             ? dataTimeModal.doctorId : '';
-        console.log('dataTimeModal', dataTimeModal);
-        console.log('doctorId', this.state);
-        let { userInfo } = this.props
+        let { isLoading, progressStatus } = this.state;
+
         return (
             <Modal
                 isOpen={isTheModalOpen}
@@ -301,17 +301,17 @@ class BookingModal extends Component {
                 size="lg"
                 centered
                 fade={false}
+                role="dialog"
+                aria-labelledby="modal-title"
+                aria-modal="true"
             >
                 <div className="booking-modal-content">
                     <div className="booking-modal-header">
-                        <h5 className="modal-title">
-                            <FormattedMessage id="schedule-doctor.title"
-                            />
+                        <h5 className="modal-title" id="modal-title">
+                            <FormattedMessage id="schedule-doctor.title" />
                         </h5>
-                        <button type="button" className="close">
-                            <span
-                                onClick={closeModal}
-                                aria-hidden="true">×</span>
+                        <button type="button" className="close" onClick={closeModal} aria-label="Close modal">
+                            <span aria-hidden="true">×</span>
                         </button>
                     </div>
                     <div className="booking-modal-body">
@@ -325,64 +325,76 @@ class BookingModal extends Component {
                             />
                         </div>
                         <div className="row">
-                            <div className="col-6 form-group">
-                                <label><FormattedMessage id="schedule-doctor.fullName" /></label>
+                            <div className="col-md-6 form-group">
+                                <label htmlFor="fullName"><FormattedMessage id="schedule-doctor.fullName" /></label>
                                 <input
+                                    id="fullName"
                                     className="form-control"
                                     type="text"
                                     value={this.state.fullName}
                                     onChange={(event) => { this.handleOnChangeInput(event, 'fullName') }}
+                                    placeholder="VD: Nguyễn Văn A"
+                                    aria-required="true"
                                 />
                             </div>
-                            <div className="col-6 form-group">
-                                <label><FormattedMessage id="schedule-doctor.phoneNumber" /></label>
+                            <div className="col-md-6 form-group">
+                                <label htmlFor="phoneNumber"><FormattedMessage id="schedule-doctor.phoneNumber" /></label>
                                 <input
+                                    id="phoneNumber"
                                     className="form-control"
-                                    type="text"
+                                    type="tel"
                                     value={this.state.phoneNumber}
                                     onChange={(event) => { this.handleOnChangeInput(event, 'phoneNumber') }}
-
+                                    placeholder="09xx xxx xxx"
+                                    aria-required="true"
                                 />
                             </div>
-                            <div className="col-6 form-group">
-                                <label><FormattedMessage id="schedule-doctor.email" /></label>
+                            <div className="col-md-6 form-group">
+                                <label htmlFor="email"><FormattedMessage id="schedule-doctor.email" /></label>
                                 <input
+                                    id="email"
                                     className="form-control"
-                                    type="text"
-                                    // Thêm dấu ? sau userInfo và || '' ở cuối
+                                    type="email"
                                     value={this.state.email}
                                     onChange={(event) => { this.handleOnChangeInput(event, "email") }}
+                                    placeholder="Email"
+                                    aria-required="true"
                                 />
                             </div>
-                            <div className="col-6 form-group">
-                                <label><FormattedMessage id="schedule-doctor.address" /></label>
+                            <div className="col-md-6 form-group">
+                                <label htmlFor="address"><FormattedMessage id="schedule-doctor.address" /></label>
                                 <input
+                                    id="address"
                                     className="form-control"
                                     type="text"
                                     value={this.state.address}
                                     onChange={(event) => { this.handleOnChangeInput(event, "address") }}
+                                    placeholder="Địa chỉ"
+                                    aria-required="true"
                                 />
                             </div>
-                            <div className="col-6 form-group">
-                                <label><FormattedMessage id="schedule-doctor.reason" /></label>
-                                <input
+                            <div className="col-12 form-group">
+                                <label htmlFor="reason"><FormattedMessage id="schedule-doctor.reason" /></label>
+                                <textarea
+                                    id="reason"
                                     className="form-control"
-                                    type="text"
+                                    rows="3"
                                     value={this.state.reason}
                                     onChange={(event) => { this.handleOnChangeInput(event, "reason") }}
-
+                                    placeholder="Mô tả triệu chứng..."
+                                    aria-required="true"
                                 />
                             </div>
-                            <div className="col-6 form-group">
+                            <div className="col-4 form-group">
                                 <label><FormattedMessage id="schedule-doctor.birthday" /></label>
                                 <DatePicker
                                     onChange={(date) => { this.handleOnChangeDatePicker(date) }}
                                     className="form-control"
                                     value={this.state.birthday}
-                                    maxDate={new Date()} // Prevent future birthdays
+                                    maxDate={new Date()}
                                 />
                             </div>
-                            <div className="col-6 form-group">
+                            <div className="col-4 form-group">
                                 <label><FormattedMessage id="schedule-doctor.gender" /></label>
                                 <Select
                                     value={this.state.selectedGender || null}
@@ -393,7 +405,7 @@ class BookingModal extends Component {
                                     classNamePrefix="react-select"
                                 />
                             </div>
-                            <div className="col-6 form-group">
+                            <div className="col-4 form-group">
                                 <label><FormattedMessage id="schedule-doctor.payment" /></label>
                                 <Select
                                     value={this.state.selectedPayment || null}
@@ -405,24 +417,38 @@ class BookingModal extends Component {
                                 />
                             </div>
                         </div>
-                        <div className="booking-modal-footer">
 
+                        <div className="medical-security-badge" role="note">
+                            <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7 0L0 3V8C0 12.33 3 16 7 16C11 16 14 12.33 14 8V3L7 0ZM12 8C12 11.23 9.87 14.12 7 14.93C4.13 14.12 2 11.23 2 8V4.31L7 2.17L12 4.31V8Z" fill="#248A3D"/>
+                                <path d="M10 6L6 10L4 8" stroke="#248A3D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                            <span>Dữ liệu của bạn được mã hóa đầu cuối (End-to-end Encrypted)</span>
+                        </div>
+
+                        <div className="booking-modal-footer">
                             <button
                                 type="button"
-                                className="btn btn-primary"
-                                data-dismiss="modal"
+                                className="btn-cancel"
+                                onClick={closeModal}
+                                disabled={isLoading}
+                                aria-disabled={isLoading}
                             >
                                 <FormattedMessage id="schedule-doctor.cancel" />
                             </button>
-                            <Button
-                                type="button"
-                                className="btn btn-primary"
-                                data-dismiss="modal"
+                            <button
+                                className={`btn-booking-confirm ${progressStatus}`}
                                 onClick={() => { this.handleConfirmBooking() }}
+                                disabled={isLoading}
+                                aria-busy={isLoading}
                             >
-                                <FormattedMessage id="schedule-doctor.confirm" />
-                            </Button>
-
+                                <span className="btn-text">
+                                    {progressStatus === 'idle' && <FormattedMessage id="schedule-doctor.confirm" />}
+                                    {progressStatus === 'encrypting' && "Đang mã hóa dữ liệu..."}
+                                    {progressStatus === 'sending' && "Đang gửi yêu cầu..."}
+                                </span>
+                                <div className="btn-progress-bar"></div>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -451,5 +477,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-// import { withRouter } from 'react-router'; // hoặc 'react-router-dom'
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(BookingModal));

@@ -49,7 +49,7 @@
                 background: #f5f5f7;
                 color: #0071e3;
                 border: none;
-                border-radius: 980px;
+                border-radius: 12px;
                 font-size: 14px;
                 font-weight: 600;
                 cursor: pointer;
@@ -82,7 +82,7 @@
         flex: 0 0 300px;
         height: 420px;
         position: relative;
-        border-radius: 24px;
+        border-radius: 12px;
         overflow: hidden;
         cursor: pointer;
         transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
@@ -198,7 +198,7 @@
                 .maven-card-btn {
                     border: none;
                     padding: 8px 18px;
-                    border-radius: 980px;
+                    border-radius: 12px;
                     background: #fff;
                     color: #1d1d1f;
                     font-weight: 600;
@@ -289,7 +289,7 @@
         .maven-card {
             flex: 0 0 200px;
             height: 280px;
-            border-radius: 18px;
+            border-radius: 12px;
 
             &:hover {
                 flex: 0 0 200px;
@@ -303,6 +303,115 @@
                     font-size: 16px;
                 }
             }
+        }
+    }
+}
+// Symptom Categories Overrides
+.symptom-categories {
+    .symptom-grid {
+        padding-bottom: 32px;
+    }
+
+    .symptom-card {
+        flex: 0 0 160px;
+        height: 180px;
+        background: #f8fafc; // bg-slate-50
+        border-radius: 20px; // rounded-2xl
+        padding: 24px 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+
+        .symptom-emoji {
+            font-size: 40px;
+            margin-bottom: 16px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05));
+        }
+
+        .symptom-info {
+            .symptom-name {
+                font-size: 15px;
+                font-weight: 700;
+                color: #1d1d1f;
+                margin-bottom: 4px;
+                line-height: 1.2;
+            }
+
+            .symptom-hint {
+                font-size: 11px;
+                font-weight: 600;
+                color: #86868b;
+                opacity: 0.8;
+            }
+        }
+
+        &:hover {
+            background: #ffffff;
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+            border-color: rgba(0, 113, 227, 0.1);
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .symptom-categories {
+        .symptom-card {
+            flex: 0 0 140px;
+            height: 160px;
+            padding: 16px 12px;
+
+            .symptom-emoji {
+                font-size: 32px;
+            }
+
+            .symptom-name {
+                font-size: 13px !important;
+            }
+        }
+    }
+}
+
+// Social Proof Badge Styles
+.maven-social-proof {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    animation: appleHeroFade 0.6s ease both 0.4s;
+
+    .rating {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        background: rgba(255, 184, 0, 0.1);
+        padding: 2px 8px;
+        border-radius: 6px;
+
+        span {
+            font-size: 13px;
+            font-weight: 700;
+            color: #FFB800;
+        }
+    }
+
+    .patient-count {
+        font-size: 13px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.8);
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 768px) {
+    .maven-social-proof {
+        .rating span, .patient-count {
+            font-size: 11px;
         }
     }
 }

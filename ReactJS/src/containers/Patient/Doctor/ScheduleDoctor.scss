@@ -41,11 +41,11 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 700;
             color: #86868b;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            text-transform: none; // Accessible typography
+            letter-spacing: 0.5px;
 
             img {
                 width: 18px;
@@ -88,8 +88,9 @@
             .time-slot-btn {
                 background: #ffffff;
                 border: 1px solid #f1f3f5;
-                border-radius: 14px;
-                padding: 12px;
+                border-radius: 12px;
+                padding: 14px 12px;
+                min-height: 46px; // WCAG Touch Target compliance
                 display: flex;
                 flex-direction: column;
                 align-items: center;

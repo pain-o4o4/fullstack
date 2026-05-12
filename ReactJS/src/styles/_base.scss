@@ -13,18 +13,23 @@ html {
 }
 
 .btn {
-  padding: 0;
+  padding: 0 12px;
   border: none;
   cursor: pointer;
   font-weight: 700;
-  height: 30px;
-  line-height: 30px;
+  height: 44px; // WCAG Touch Target standard
+  min-width: 44px;
+  line-height: 44px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   -moz-user-select: none;
   -webkit-user-select: none;
   user-select: none;
 
   i {
-    font-size: $base-size - 3px;
+    font-size: 16px;
   }
 }
 
@@ -115,5 +120,40 @@ html {
         }
       }
     }
+  }
+}
+// Anxiety-Reducing Utilities
+.shadow-soft {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04) !important;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.pill-suggestion {
+  background: #e6f6f4; // Soft Mint/Teal
+  color: #0d9488; // Darker Teal
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid rgba(13, 148, 136, 0.1);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  &:hover {
+    transform: scale(1.05);
+    background: #ccede8;
+    color: #0f766e;
+    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.1);
   }
 }

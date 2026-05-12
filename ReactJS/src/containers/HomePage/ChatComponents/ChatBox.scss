@@ -63,7 +63,7 @@
         font-size: 10px;
         font-weight: 600;
         padding: 3px 10px;
-        border-radius: 20px;
+        border-radius: 16px;
 
         &.online {
             color: #34c759;
@@ -93,7 +93,7 @@
 
     &::-webkit-scrollbar-thumb {
         background: rgba(0, 0, 0, 0.1);
-        border-radius: 10px;
+        border-radius: 12px;
         transition: all 0.3s;
     }
 
@@ -154,19 +154,19 @@
         .dcd-bubble {
             background: #f2f2f7; // iMessage/Messenger grey
             color: #1d1d1f;
-            border-radius: 18px;
+            border-radius: 12px;
 
             // Bo góc Messenger Style - Mềm hóa góc tiếp giáp thành 8px
             &.is-first:not(.is-last) {
-                border-radius: 18px 18px 18px 8px;
+                border-radius: 12px 18px 18px 8px;
             }
 
             &:not(.is-first):not(.is-last) {
-                border-radius: 8px 18px 18px 8px;
+                border-radius: 12px 18px 18px 8px;
             }
 
             &.is-last:not(.is-first) {
-                border-radius: 8px 18px 18px 18px;
+                border-radius: 12px 18px 18px 18px;
             }
 
             // Nới rộng bong bóng nếu có reaction để tránh đè chữ
@@ -183,20 +183,20 @@
         .dcd-bubble {
             background: #0071e3; // Messenger Blue
             color: #fff;
-            border-radius: 18px;
+            border-radius: 12px;
             box-shadow: 0 1px 2px rgba(0, 113, 227, 0.1);
 
             // Bo góc Messenger Style - Mềm hóa góc tiếp giáp thành 8px
             &.is-first:not(.is-last) {
-                border-radius: 18px 18px 8px 18px;
+                border-radius: 12px 18px 8px 18px;
             }
 
             &:not(.is-first):not(.is-last) {
-                border-radius: 18px 8px 8px 18px;
+                border-radius: 12px 8px 8px 18px;
             }
 
             &.is-last:not(.is-first) {
-                border-radius: 18px 8px 18px 18px;
+                border-radius: 12px 8px 18px 18px;
             }
 
             // Nới rộng bong bóng nếu có reaction để tránh đè chữ
@@ -319,7 +319,7 @@
     font-size: 11px;
     font-weight: 500;
     padding: 6px 14px;
-    border-radius: 20px;
+    border-radius: 16px;
     text-align: center;
     animation: bubbleIn 0.25s ease;
 }
@@ -361,7 +361,7 @@
         display: flex;
         flex-direction: column;
         background: #f2f2f7;
-        border-radius: 20px;
+        border-radius: 16px;
         border: 1px solid rgba(0, 0, 0, 0.05);
         overflow: hidden;
 
@@ -375,7 +375,7 @@
                 width: 60px;
                 height: 60px;
                 object-fit: cover;
-                border-radius: 8px;
+                border-radius: 12px;
                 border: 1px solid rgba(0, 0, 0, 0.1);
             }
 
@@ -538,7 +538,7 @@
     bottom: 110%;
     background: #ffffff;
     padding: 6px 10px;
-    border-radius: 30px;
+    border-radius: 20px;
     display: flex;
     align-items: center;
     gap: 8px;

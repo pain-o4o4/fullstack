@@ -12,6 +12,11 @@ class HomeFooter extends Component {
                 <div className="hm-footer-top">
                     <div className="hm-footer-col">
                         <div className="hm-footer-logo">
+                            <div className="logo-icon">
+                                <span className="logo-dot dot-1"></span>
+                                <span className="logo-dot dot-2"></span>
+                                <span className="logo-dot dot-3"></span>
+                            </div>
                             <span className="logo-text">BookingCare</span>
                         </div>
                         <div className="hm-footer-desc">

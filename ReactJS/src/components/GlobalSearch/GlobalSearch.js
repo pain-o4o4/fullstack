@@ -58,12 +58,30 @@ class GlobalSearch extends Component {
 
     handleClickOutside = (event) => {
         if (this.searchRef.current && !this.searchRef.current.contains(event.target)) {
-            this.props.onClose();
+            if (this.props.onClose) {
+                this.props.onClose();
+            } else if (this.props.isHero) {
+                this.setState({
+                    keyword: '',
+                    results: { doctors: [], clinics: [], specialties: [], handbooks: [] },
+                    searchedKeyword: ''
+                });
+            }
         }
     };
 
     handleKeyDown = (event) => {
-        if (event.key === 'Escape') this.props.onClose();
+        if (event.key === 'Escape') {
+            if (this.props.onClose) {
+                this.props.onClose();
+            } else if (this.props.isHero) {
+                this.setState({
+                    keyword: '',
+                    results: { doctors: [], clinics: [], specialties: [], handbooks: [] },
+                    searchedKeyword: ''
+                });
+            }
+        }
     };
 
     onChangeInput = (e) => {
@@ -116,7 +134,7 @@ class GlobalSearch extends Component {
     };
 
     handleResultClick = (type, item) => {
-        this.props.onClose();
+        if (this.props.onClose) this.props.onClose();
         if (type === 'doctor') {
             this.props.navigate(`/detail-doctor/${item.id}`);
         } else if (type === 'clinic') {
@@ -131,12 +149,12 @@ class GlobalSearch extends Component {
     // ─── Render ────────────────────────────────────────────────────────────────
 
     render() {
-        const { isOpen, onClose } = this.props;
+        const { isHero, onClose } = this.props;
         const { keyword, results, isLoading, error, searchedKeyword } = this.state;
 
-        if (!isOpen) return null;
+        if (!isHero && !this.props.isOpen) return null;
 
-        const isEmpty = !isLoading && 
+        const isEmpty = !isLoading &&
             keyword.trim().length >= 2 &&
             keyword.trim().toLowerCase() === searchedKeyword.toLowerCase() && // Chỉ rỗng khi từ khóa gõ trùng khớp với từ khóa đã được API trả về kết quả
             results.doctors.length === 0 &&
@@ -148,20 +166,22 @@ class GlobalSearch extends Component {
         const showDropdown = keyword.trim().length >= 2;
 
         return (
-            <div className="global-search-container" ref={this.searchRef}>
+            <div className={`global-search-container ${isHero ? 'hero-mode' : ''}`} ref={this.searchRef}>
                 <div className="search-header">
                     <i className="fas fa-search search-icon"></i>
                     <input
                         ref={this.inputRef}
                         type="text"
-                        placeholder="Search by keyword or phrase"
+                        placeholder="Tìm kiếm theo từ khóa hoặc cụm từ"
                         value={keyword}
                         onChange={this.onChangeInput}
                     />
                     {isLoading && <i className="fas fa-spinner fa-spin loading-icon"></i>}
-                    <button className="close-btn" onClick={onClose}>
-                        <i className="fas fa-times"></i>
-                    </button>
+                    {!isHero && (
+                        <button className="close-btn" onClick={onClose}>
+                            <i className="fas fa-times"></i>
+                        </button>
+                    )}
                 </div>
 
                 {showDropdown && (

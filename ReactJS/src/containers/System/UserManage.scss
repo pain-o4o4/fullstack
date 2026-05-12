@@ -218,7 +218,10 @@
                             &.btn-cancel-select {
                                 color: #86868b;
                                 font-size: 16px;
-                                &:hover { color: #1d1d1f; }
+
+                                &:hover {
+                                    color: #1d1d1f;
+                                }
                             }
 
                             &.btn-bulk-delete {
@@ -234,7 +237,10 @@
                                     background: #ff453a;
                                     transform: scale(1.05);
                                 }
-                                &:active { transform: scale(0.95); }
+
+                                &:active {
+                                    transform: scale(0.95);
+                                }
                             }
                         }
                     }
@@ -706,6 +712,7 @@
                 &.btn-cancel {
                     background: rgba(0, 0, 0, 0.05);
                     color: #007aff;
+
                     &:hover {
                         background: rgba(0, 0, 0, 0.1);
                     }
@@ -715,11 +722,13 @@
                     background: #ff3b30;
                     color: white;
                     box-shadow: 0 4px 12px rgba(255, 59, 48, 0.2);
+
                     &:hover {
                         background: #d70015;
                         transform: scale(1.02);
                         box-shadow: 0 6px 16px rgba(255, 59, 48, 0.3);
                     }
+
                     &:active {
                         transform: scale(0.98);
                     }

@@ -8,7 +8,7 @@
         background: rgba(255, 255, 255, 0.9) !important;
         backdrop-filter: blur(20px) !important;
         -webkit-backdrop-filter: blur(20px) !important;
-        border-radius: 28px !important;
+        border-radius: 16px !important;
         border: none !important;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important;
         overflow: hidden;
@@ -142,7 +142,7 @@
             .preview-image {
                 width: 140px;
                 height: 90px;
-                border-radius: 18px;
+                border-radius: 12px;
                 background-size: cover;
                 background-position: center;
                 box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
@@ -154,7 +154,7 @@
             margin-top: 25px;
 
             .rc-md-editor {
-                border-radius: 18px;
+                border-radius: 12px;
                 border: 1px solid rgba(0, 0, 0, 0.05);
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
                 height: 400px !important;

@@ -122,8 +122,13 @@ class SystemLayout extends Component {
                 {/* Top Header */}
                 <div className="sub-header">
                     <div className="sub-header-content">
-                        <div className="left-controls">
-                            <div className="brand-wrapper" onClick={() => window.location.href = '/home'}>
+                        <div className="left-controls" onClick={() => window.location.href = '/home'} style={{ cursor: 'pointer' }}>
+                            <div className="logo-icon">
+                                <span className="logo-dot dot-1"></span>
+                                <span className="logo-dot dot-2"></span>
+                                <span className="logo-dot dot-3"></span>
+                            </div>
+                            <div className="brand-wrapper">
                                 <span className="brand-name">BookingCare</span>
                                 <span className="brand-sub">Đặt lịch khám bệnh</span>
                             </div>

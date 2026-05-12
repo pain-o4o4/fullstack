@@ -116,10 +116,6 @@ class MobileSidebarInternal extends Component {
                                 </React.Fragment>
                             )}
 
-                            <li className="sidebar-item" onClick={() => { this.props.openChatWithTab('AISUPPORT'); onClose(); }}>
-                                <i className="fas fa-robot"></i>
-                                <span>Trợ lý AI</span>
-                            </li>
 
                             <li className="menu-group-label">Thông tin</li>
                             <li className="sidebar-item" onClick={() => { handleViewList('PRIVACY_POLICY'); onClose(); }}>
@@ -273,7 +269,7 @@ class HomeHeader extends Component {
 
         return (
             <React.Fragment>
-                <header className="hm-header">
+                <div className="hm-header">
                     <div className="hm-header-pill">
                         <div className="hm-header-logo" onClick={() => this.handleViewList('HOME')}>
                             <div className="logo-icon">
@@ -290,16 +286,17 @@ class HomeHeader extends Component {
                         {isOpenSearch ? (
                             <GlobalSearch isOpen={isOpenSearch} onClose={() => this.toggleSearch(false)} />
                         ) : (
-                            <nav className="hm-header-nav">
-                                <ul className="hm-nav-list">
-                                    <li className="hm-nav-item" onClick={() => this.handleViewList('HOME')}><span className="nav-link"><FormattedMessage id="homeheader.home" /></span></li>
-                                    <li className="hm-nav-item" onClick={() => this.handleViewList('SELECT_SERVICE')}><span className="nav-link"><FormattedMessage id="homeheader.booking" /></span></li>
-                                    <li className="hm-nav-item" onClick={() => this.handleViewList('HANDBOOK')}><span className="nav-link"><FormattedMessage id="homeheader.handbook-nav" /></span></li>
-                                </ul>
-                            </nav>
+                            <div className="hm-header-nav">
+                                <div className="hm-nav-list">
+                                    <div className="hm-nav-item" onClick={() => this.handleViewList('HOME')}><span className="nav-link"><FormattedMessage id="homeheader.home" /></span></div>
+                                    <div className="hm-nav-item" onClick={() => this.handleViewList('SELECT_SERVICE')}><span className="nav-link"><FormattedMessage id="homeheader.booking" /></span></div>
+                                    <div className="hm-nav-item" onClick={() => this.handleViewList('HANDBOOK')}><span className="nav-link"><FormattedMessage id="homeheader.handbook-nav" /></span></div>
+                                </div>
+                            </div>
                         )}
 
                         <div className="hm-header-actions">
+                            {/* Search trigger removed from desktop header, will be visible on mobile via SCSS */}
                             {!isOpenSearch && (
                                 <div className="nav-sign-in search-trigger" onClick={() => this.toggleSearch(true)}>
                                     <i className="fas fa-search search-icon"></i>
@@ -323,7 +320,7 @@ class HomeHeader extends Component {
                             </div>
                         </div>
                     </div>
-                </header>
+                </div>
 
                 {this.props.isShowBanner === true && (
                     <section className="hm-hero" id="strona-glowna">
@@ -334,16 +331,22 @@ class HomeHeader extends Component {
                         <div className="hm-hero-inner">
                             <div className="hm-hero-text">
                                 <div className="hero-badge"><span className="badge-dot"></span>Nền tảng Y tế Số #1 Việt Nam</div>
-                                <h1 className="hero-headline">Chăm sóc sức khỏe<span className="hero-accent"> thông minh.</span></h1>
+                                <h1 className="hero-headline">Chăm sóc sức khỏe<span className="hero-accent"> thông minh</span></h1>
+
+                                <div className="hero-search-wrapper">
+                                    <GlobalSearch isHero={true} />
+                                </div>
+
                                 <div className="hero-actions">
-                                    <button className="ai-btn-special" onClick={() => this.props.openChatWithTab('AISUPPORT')}>
-                                        <i className="fas fa-robot"></i>
-                                        Tư vấn AI
-                                    </button>
                                     <a href="tel:0966226404" className="call-button">
                                         <i className="fas fa-phone-alt"></i>
                                         Liên hệ ngay
                                     </a>
+                                    <div className="hero-quick-tags">
+                                        <span>Tìm kiếm nhanh:</span>
+                                        <button onClick={() => this.handleViewList('SPECIALTY')}>Chuyên khoa</button>
+                                        <button onClick={() => this.handleViewList('PHYSICIAN')}>Bác sĩ</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -360,6 +363,35 @@ class HomeHeader extends Component {
                     imageBase64={imageBase64}
                     handleViewList={this.handleViewList}
                 />
+
+                {/* BOTTOM NAVIGATION BAR (Mobile Only) */}
+                {(!isOpenSearch && !this.state.isOpenSidebar && !this.props.isOpenDoctorChat) && (
+                    <div className="hm-bottom-nav">
+                        <div className={`nav-item ${!isOpenSearch ? 'active' : ''}`} onClick={() => { this.handleViewList('HOME'); this.toggleSearch(false); }}>
+                            <i className="fas fa-home"></i>
+                            <span>Trang chủ</span>
+                        </div>
+                        <div className={`nav-item ${isOpenSearch ? 'active' : ''}`} onClick={() => this.toggleSearch(true)}>
+                            <i className="fas fa-search"></i>
+                            <span>Tìm kiếm</span>
+                        </div>
+                        <div className="nav-item chat-item" onClick={() => this.props.toggleChat()}>
+                            <div className="icon-wrapper">
+                                <i className="fas fa-comment-medical"></i>
+                                {this.props.totalUnreadCount > 0 && <span className="badge">{this.props.totalUnreadCount}</span>}
+                            </div>
+                            <span>Hỗ trợ</span>
+                        </div>
+                        <div className="nav-item" onClick={this.toggleSidebar}>
+                            {isLoggedIn && imageBase64 ? (
+                                <img src={imageBase64} className="user-avatar-nav" alt="Profile" />
+                            ) : (
+                                <i className="fas fa-user-circle"></i>
+                            )}
+                            <span>Cá nhân</span>
+                        </div>
+                    </div>
+                )}
             </React.Fragment>
         );
     }
