@@ -8,6 +8,7 @@ import { path } from '../../../utils/constant';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import '../../Navigation/MavenSlider.scss';
+import { SectionSkeleton } from '../../Navigation/SelectService';
 
 const DOT_COLORS = ['#00d1b2', '#34d399', '#818cf8', '#fbbf24', '#f472b6'];
 
@@ -16,7 +17,8 @@ class MedicalFacility extends Component {
         super(props);
         this.scrollRef = React.createRef();
         this.state = {
-            dataClinics: this.props.allClinics || []
+            dataClinics: this.props.allClinics || [],
+            isLoading: !this.props.allClinics || this.props.allClinics.length === 0
         }
     }
 
@@ -40,7 +42,10 @@ class MedicalFacility extends Component {
     componentDidUpdate(prevProps, prevState, snapshot) {
 
         if (prevProps.allClinics !== this.props.allClinics) {
-            this.setState({ dataClinics: this.props.allClinics })
+            this.setState({
+                dataClinics: this.props.allClinics,
+                isLoading: false
+            })
         }
     }
     handleViewDetailClinic = (item) => {
@@ -50,30 +55,12 @@ class MedicalFacility extends Component {
     }
 
     render() {
-        let settings = {
-            dots: false,
-            infinite: true,
-            speed: 500,
-            slidesToShow: 3,
-            slidesToScroll: 3,
-            rows: 2,
-            slidesPerRow: 1,
-            arrows: true,
+        let { dataClinics, isLoading } = this.state;
 
+        if (isLoading) {
+            return <SectionSkeleton />;
+        }
 
-            responsive: [
-                {
-                    breakpoint: 767,
-                    settings: {
-                        slidesToShow: 1,
-                        slidesToScroll: 1,
-                        rows: 1,
-                        slidesPerRow: 1,
-                        arrows: true
-                    }
-                }
-            ]
-        };
         return (
             <div className='section-maven'>
                 <div className='section-header'>
@@ -93,8 +80,8 @@ class MedicalFacility extends Component {
 
                 <div className='section-body'>
                     <div className="maven-slider-wrapper" ref={this.scrollRef}>
-                        {this.state.dataClinics && this.state.dataClinics.length > 0 &&
-                            this.state.dataClinics.map((item, index) => {
+                        {dataClinics && dataClinics.length > 0 &&
+                            dataClinics.map((item, index) => {
                                 let dotColor = DOT_COLORS[index % DOT_COLORS.length];
 
                                 return (
@@ -126,6 +113,7 @@ class MedicalFacility extends Component {
         );
     }
 }
+
 
 const mapStateToProps = state => {
     return {

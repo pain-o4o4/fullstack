@@ -7,6 +7,7 @@ import { withRouter } from '../../../components/Navigator';
 import { path } from '../../../utils/constant';
 import * as actions from '../../../store/actions'
 import '../../Navigation/MavenSlider.scss';
+import { SectionSkeleton } from '../../Navigation/SelectService';
 
 const DOT_COLORS = ['#00d1b2', '#34d399', '#818cf8', '#fbbf24', '#f472b6'];
 
@@ -18,7 +19,8 @@ class HandBook extends Component {
         this.state = {
             dataHandbook: handbooks.filter(item =>
                 item.name !== 'Chính sách bảo mật' && item.name !== 'Điều khoản sử dụng'
-            )
+            ),
+            isLoading: !this.props.allHandbooks || this.props.allHandbooks.length === 0
         }
     }
 
@@ -46,7 +48,8 @@ class HandBook extends Component {
                 item.name !== 'Chính sách bảo mật' && item.name !== 'Điều khoản sử dụng'
             );
             this.setState({
-                dataHandbook: filteredData
+                dataHandbook: filteredData,
+                isLoading: false
             })
         }
     }
@@ -58,7 +61,12 @@ class HandBook extends Component {
     }
 
     render() {
-        let { dataHandbook } = this.state;
+        let { dataHandbook, isLoading } = this.state;
+
+        if (isLoading) {
+            return <SectionSkeleton />;
+        }
+
         return (
             <React.Fragment>
                 <div className='section-maven'>
@@ -112,6 +120,7 @@ class HandBook extends Component {
         );
     }
 }
+
 
 const mapStateToProps = state => {
     return {

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-// import './OutStandingDoctor.scss';
 import { FormattedMessage } from 'react-intl';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
@@ -9,6 +8,7 @@ import * as actions from '../../../store/actions'
 import { LANGUAGES, path } from '../../../utils/constant'
 import { withRouter } from '../../../components/Navigator';
 import '../../Navigation/MavenSlider.scss';
+import { SectionSkeleton } from '../../Navigation/SelectService';
 
 const DOT_COLORS = ['#00d1b2', '#34d399', '#818cf8', '#fbbf24', '#f472b6'];
 
@@ -17,7 +17,8 @@ class OutStandingDoctor extends Component {
         super(props);
         this.scrollRef = React.createRef();
         this.state = {
-            arrDoctors: []
+            arrDoctors: this.props.topDoctors || [],
+            isLoading: !this.props.topDoctors || this.props.topDoctors.length === 0
         }
     }
 
@@ -34,17 +35,16 @@ class OutStandingDoctor extends Component {
     }
 
     componentDidMount() {
-        this.props.loadTopDoctors();
-        console.log('this.props.topDoctors', this.props.topDoctors)
-        // loadTopDoctors: () => dispatch(actions.fetchTopDoctor()),
-
+        if (!this.props.topDoctors || this.props.topDoctors.length === 0) {
+            this.props.loadTopDoctors();
+        }
     }
     componentDidUpdate(prevProps, prevState, snapshot) {
 
         if (prevProps.topDoctors !== this.props.topDoctors) {
-            console.log('>>> Data mới từ Redux:', this.props.topDoctors);
             this.setState({
-                arrDoctors: this.props.topDoctors
+                arrDoctors: this.props.topDoctors,
+                isLoading: false
             })
         }
     }
@@ -54,8 +54,12 @@ class OutStandingDoctor extends Component {
         }
     }
     render() {
-        let { arrDoctors } = this.state;
+        let { arrDoctors, isLoading } = this.state;
         let { language } = this.props;
+
+        if (isLoading) {
+            return <SectionSkeleton />;
+        }
 
         return (
             <React.Fragment>
@@ -128,6 +132,7 @@ class OutStandingDoctor extends Component {
     }
 
 }
+
 
 const mapStateToProps = state => {
     return {

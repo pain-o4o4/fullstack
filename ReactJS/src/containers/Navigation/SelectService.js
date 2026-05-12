@@ -57,41 +57,66 @@ class SelectService extends Component {
         };
 
         return (
-            <div className="select-service-container">
+            <React.Fragment>
                 <HomeHeader isShowBanner={false} />
-                {/* <CustomBreadcrumb items={breadcrumbItems} /> */}
+                <div className="select-service-container fade-in">
+                    {/* <CustomBreadcrumb items={breadcrumbItems} /> */}
 
-                <div className="select-service-banner">
-                    <img src={backgroundBanner} alt="Banner" className="banner-img" />
-                    <div className="banner-content">
-                        <h1 className="banner-title">
-                            <FormattedMessage id="select-service.title" />
-                        </h1>
-                        <p className="banner-desc">
-                            <FormattedMessage id="select-service.desc" />
-                        </p>
-                        {/* <div className="banner-actions">
-                            <button className="btn-primary">
-                                <FormattedMessage id="select-service.get-care" />
-                            </button>
-                            <button className="btn-secondary">
-                                <FormattedMessage id="select-service.no-insurance" />
-                            </button>
-                        </div> */}
+                    <div className="select-service-banner">
+                        <img src={backgroundBanner} alt="Banner" className="banner-img" />
+                        <div className="banner-content">
+                            <h1 className="banner-title">
+                                <FormattedMessage id="select-service.title" />
+                            </h1>
+                            <p className="banner-desc">
+                                <FormattedMessage id="select-service.desc" />
+                            </p>
+                        </div>
                     </div>
-                </div>
 
-                <div className="select-service-content">
-                    <Specialty settings={settings} />
-                    <MedicalFacility settings={settings} />
-                    <OutStandingDoctor settings={settings} />
-                    <HandBook settings={settings} />
+                    <div className="select-service-content">
+                        <Specialty settings={settings} />
+                        <MedicalFacility settings={settings} />
+                        <OutStandingDoctor settings={settings} />
+                        <HandBook settings={settings} />
+                    </div>
+                    <HomeFooter />
                 </div>
-                <HomeFooter />
-            </div>
+            </React.Fragment>
         );
+
+
     }
 }
+
+// ==========================================
+// SUB-COMPONENT: SECTION SKELETON
+// ==========================================
+export const SectionSkeleton = ({ items = 4 }) => {
+    return (
+        <div className="section-skeleton">
+            <div className="skeleton-header">
+                <div className="skeleton-title"></div>
+                <div className="skeleton-actions">
+                    <div className="skeleton-btn-nav"></div>
+                    <div className="skeleton-btn-nav"></div>
+                    <div className="skeleton-btn-more"></div>
+                </div>
+            </div>
+            <div className="skeleton-body">
+                {[...Array(items)].map((_, index) => (
+                    <div className="skeleton-card" key={index}>
+                        <div className="skeleton-card-img"></div>
+                        <div className="skeleton-card-content">
+                            <div className="skeleton-card-line short"></div>
+                            <div className="skeleton-card-line"></div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
 
 const mapStateToProps = state => {
     return {

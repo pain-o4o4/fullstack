@@ -7,6 +7,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import * as action from '../../../store/actions'
 import '../../Navigation/MavenSlider.scss';
+import { SectionSkeleton } from '../../Navigation/SelectService';
 
 const DOT_COLORS = ['#00d1b2', '#34d399', '#818cf8', '#fbbf24', '#f472b6'];
 
@@ -15,7 +16,8 @@ class Specialty extends Component {
         super(props);
         this.scrollRef = React.createRef();
         this.state = {
-            dataSpecialty: this.props.allSpecialties || []
+            dataSpecialty: this.props.allSpecialties || [],
+            isLoading: !this.props.allSpecialties || this.props.allSpecialties.length === 0
         }
     }
 
@@ -39,7 +41,8 @@ class Specialty extends Component {
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (prevProps.allSpecialties !== this.props.allSpecialties) {
             this.setState({
-                dataSpecialty: this.props.allSpecialties
+                dataSpecialty: this.props.allSpecialties,
+                isLoading: false
             })
         }
     }
@@ -49,7 +52,11 @@ class Specialty extends Component {
         }
     }
     render() {
-        let { dataSpecialty } = this.state;
+        let { dataSpecialty, isLoading } = this.state;
+
+        if (isLoading) {
+            return <SectionSkeleton />;
+        }
 
         return (
             <div className='section-maven'>
@@ -103,6 +110,7 @@ class Specialty extends Component {
         );
     }
 }
+
 
 const mapStateToProps = state => {
     return {

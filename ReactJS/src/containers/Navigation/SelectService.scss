@@ -1,6 +1,11 @@
 .select-service-container {
     background-color: #f5f5f5;
     min-height: 60vh;
+    opacity: 0;
+
+    &.fade-in {
+        animation: fadeIn 0.8s ease forwards;
+    }
 
     .select-service-banner {
         width: 100%;
@@ -219,6 +224,18 @@
     }
 }
 
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 @keyframes float {
     0% {
         transform: translateY(0px);
@@ -236,5 +253,103 @@
 @media (prefers-reduced-motion: reduce) {
     * {
         transition-duration: 0.01ms !important;
+    }
+}
+
+// ==========================================
+// SECTION SKELETON (Internal for SelectService)
+// ==========================================
+.section-skeleton {
+    margin-bottom: 40px;
+    background: #fff;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+
+    .skeleton-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+
+        .skeleton-title {
+            width: 200px;
+            height: 28px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        .skeleton-actions {
+            display: flex;
+            gap: 12px;
+
+            .skeleton-btn-nav {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: #f0f0f0;
+                animation: skeleton-loading 1.5s infinite;
+            }
+
+            .skeleton-btn-more {
+                width: 80px;
+                height: 36px;
+                border-radius: 12px;
+                background: #f0f0f0;
+                animation: skeleton-loading 1.5s infinite;
+            }
+        }
+    }
+
+    .skeleton-body {
+        display: flex;
+        gap: 20px;
+        overflow: hidden;
+
+        .skeleton-card {
+            flex: 0 0 280px;
+            height: 380px;
+            border-radius: 20px;
+            background: #fff;
+            border: 1px solid #f0f0f0;
+            overflow: hidden;
+
+            .skeleton-card-img {
+                height: 70%;
+                background: #f0f0f0;
+                animation: skeleton-loading 1.5s infinite;
+            }
+
+            .skeleton-card-content {
+                padding: 16px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+
+                .skeleton-card-line {
+                    height: 14px;
+                    background: #f0f0f0;
+                    border-radius: 4px;
+                    width: 100%;
+                    animation: skeleton-loading 1.5s infinite;
+
+                    &.short {
+                        width: 60%;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
     }
 }
