@@ -21,6 +21,8 @@ export const path = {
     ALL_SPECIALTY: '/all-specialty',
     ALL_HANDBOOK: '/all-handbook',
     SELECT_SERVICE: '/select-service',
+    PROCESS_BOOKING: '/process-booking',
+
     AI_SUPPORT: '/ai-support',
     PRIVACY_POLICY: '/privacy-policy',
     TERMS_OF_USE: '/terms-of-use',

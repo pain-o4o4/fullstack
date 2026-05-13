@@ -240,12 +240,21 @@ class HomeHeader extends Component {
             return;
         }
         const routeMap = {
-            SPECIALTY: path.ALL_SPECIALTY, CLINIC: path.ALL_CLINIC,
-            PHYSICIAN: path.ALL_DOCTOR, HANDBOOK: path.ALL_HANDBOOK,
-            HOME: path.HOMEPAGE, REGISTER: path.REGISTER,
-            SETTINGS: path.SETTINGS, MY_BOOKING: path.MY_BOOKING,
-            BOOKING_HISTORY: path.BOOKING_HISTORY, SELECT_SERVICE: path.SELECT_SERVICE,
-            AI_SUPPORT: path.AI_SUPPORT, PRIVACY_POLICY: path.PRIVACY_POLICY,
+            SPECIALTY: path.ALL_SPECIALTY,
+            CLINIC: path.ALL_CLINIC,
+            PHYSICIAN: path.ALL_DOCTOR,
+            HANDBOOK: path.ALL_HANDBOOK,
+
+            HOME: path.HOMEPAGE,
+            REGISTER: path.REGISTER,
+            PROCESS_BOOKING: path.PROCESS_BOOKING,
+            SETTINGS: path.SETTINGS,
+            MY_BOOKING: path.MY_BOOKING,
+            BOOKING_HISTORY: path.BOOKING_HISTORY,
+            SELECT_SERVICE: path.SELECT_SERVICE,
+
+            AI_SUPPORT: path.AI_SUPPORT,
+            PRIVACY_POLICY: path.PRIVACY_POLICY,
             TERMS_OF_USE: path.TERMS_OF_USE,
         };
         if (routeMap[type]) navigate(routeMap[type]);
@@ -290,6 +299,7 @@ class HomeHeader extends Component {
                                 <div className="hm-nav-list">
                                     <div className="hm-nav-item" onClick={() => this.handleViewList('HOME')}><span className="nav-link"><FormattedMessage id="homeheader.home" /></span></div>
                                     <div className="hm-nav-item" onClick={() => this.handleViewList('SELECT_SERVICE')}><span className="nav-link"><FormattedMessage id="homeheader.booking" /></span></div>
+                                    <div className="hm-nav-item" onClick={() => this.handleViewList('PROCESS_BOOKING')}><span className="nav-link"><FormattedMessage id="homeheader.process-booking" /></span></div>
                                     <div className="hm-nav-item" onClick={() => this.handleViewList('HANDBOOK')}><span className="nav-link"><FormattedMessage id="homeheader.handbook-nav" /></span></div>
                                 </div>
                             </div>

@@ -34,6 +34,7 @@ import AllSpecialty from '../containers/Navigation/AllSpecialty.js';
 import AllClinic from '../containers/Navigation/AllClinics.js';
 import AllDoctor from '../containers/Navigation/AllDoctor.js';
 import AllHandbook from '../containers/Navigation/AllHandbook.js';
+import ProcessBooking from '../containers/Navigation/ProcessBooking.js';
 import SelectService from '../containers/Navigation/SelectService.js';
 
 import MyBooking from './HomePage/SubMenuForUser/MyBooking';
@@ -128,6 +129,8 @@ class App extends Component {
                                     <Route path={path.ALL_DOCTOR} element={<AllDoctor />} />
                                     <Route path={path.ALL_HANDBOOK} element={<AllHandbook />} />
                                     <Route path={path.SELECT_SERVICE} element={<SelectService />} />
+                                    <Route path={path.PROCESS_BOOKING} element={<ProcessBooking />} />
+
                                     <Route path={path.AI_SUPPORT} element={<UserIsAuthenticated><AISupportPage /></UserIsAuthenticated>} />
                                     <Route path={path.PRIVACY_POLICY} element={<PrivacyPolicy />} />
                                     <Route path={path.TERMS_OF_USE} element={<TermsOfUse />} />
