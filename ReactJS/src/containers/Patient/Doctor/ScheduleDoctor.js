@@ -12,6 +12,7 @@ import BookingModal from './Modal/BookingModal';
 import _ from 'lodash';
 import { toast } from 'react-toastify';
 import { withSocket } from '../../../hoc/withSocket';
+import * as actions from '../../../store/actions';
 
 class ScheduleDoctor extends Component {
     constructor(props) {
@@ -139,13 +140,13 @@ class ScheduleDoctor extends Component {
     }
     handleClickSheduleTime = (time) => {
         let { userInfo, isLoggedIn, language } = this.props;
-        
+
         // Chặn bác sĩ đặt lịch
         if (isLoggedIn && userInfo && userInfo.roleId === 'R2') {
             toast.warning(
-                language === 'vi' 
-                ? 'Bác sĩ không thể đặt lịch khám bệnh!' 
-                : 'Doctors cannot book appointments!'
+                language === 'vi'
+                    ? 'Bác sĩ không thể đặt lịch khám bệnh!'
+                    : 'Doctors cannot book appointments!'
             );
             return;
         }
@@ -213,24 +214,24 @@ class ScheduleDoctor extends Component {
                                                 .map((item, index) => {
                                                     return (
                                                         <button
-                                                        key={index}
-                                                        className="time-slot-btn"
-                                                        onMouseEnter={() => {
-                                                            if (item.clinicData) this.props.handleClinicSelection(item.clinicData);
-                                                        }}
-                                                        onClick={() => {
-                                                            this.handleClickSheduleTime(item);
-                                                        }}
-                                                    >
-                                                        <span className="time-label">
-                                                            {language === 'vi'
-                                                                ? item.timeTypeData.valueVi
-                                                                : item.timeTypeData.valueEn
-                                                            }
-                                                        </span>
-                                                    </button>
-                                                )
-                                            })}
+                                                            key={index}
+                                                            className="time-slot-btn"
+                                                            onMouseEnter={() => {
+                                                                if (item.clinicData) this.props.handleClinicSelection(item.clinicData);
+                                                            }}
+                                                            onClick={() => {
+                                                                this.handleClickSheduleTime(item);
+                                                            }}
+                                                        >
+                                                            <span className="time-label">
+                                                                {language === 'vi'
+                                                                    ? item.timeTypeData.valueVi
+                                                                    : item.timeTypeData.valueEn
+                                                                }
+                                                            </span>
+                                                        </button>
+                                                    )
+                                                })}
                                         </div>
                                     </div>
                                 )

@@ -767,8 +767,15 @@
 @media (max-width: 1024px) {
     .dcd-chat-doctor-bar {
         padding: 14px 20px;
-        .dcd-mini-avatar { width: 40px; height: 40px; }
-        .dcd-chat-doctor-name { font-size: 14px; }
+
+        .dcd-mini-avatar {
+            width: 40px;
+            height: 40px;
+        }
+
+        .dcd-chat-doctor-name {
+            font-size: 14px;
+        }
     }
 
     .dcd-bubble-container {
@@ -777,12 +784,18 @@
 
     .dcd-bubble {
         font-size: 15px;
-        .dcd-text { font-size: 14px; }
+
+        .dcd-text {
+            font-size: 14px;
+        }
     }
 
     .dcd-input-bar {
         padding: 12px 18px;
-        .dcd-input-container .dcd-input { font-size: 15px; }
+
+        .dcd-input-container .dcd-input {
+            font-size: 15px;
+        }
     }
 }
 
@@ -792,8 +805,15 @@
 @media (max-width: 768px) {
     .dcd-chat-doctor-bar {
         padding: 10px;
-        .dcd-mini-avatar { width: 36px; height: 36px; }
-        .dcd-chat-doctor-name { font-size: 14px; }
+
+        .dcd-mini-avatar {
+            width: 36px;
+            height: 36px;
+        }
+
+        .dcd-chat-doctor-name {
+            font-size: 14px;
+        }
     }
 
     .dcd-bubble-container {
@@ -803,7 +823,10 @@
     .dcd-bubble {
         padding: 8px 12px;
         font-size: 15px;
-        .dcd-text { font-size: 14px; }
+
+        .dcd-text {
+            font-size: 14px;
+        }
     }
 
     .dcd-reaction-popover {
@@ -813,7 +836,7 @@
         max-width: 250px;
         flex-wrap: nowrap; // Keep it in one row if possible
         justify-content: center;
-        
+
         // Center it relative to the bubble on mobile
         left: 50% !important;
         right: auto !important;
@@ -821,17 +844,23 @@
 
         .dcd-popover-item {
             img {
-                width: 24px; 
+                width: 24px;
                 height: 24px;
             }
         }
     }
 
     .dcd-msg-actions {
+
         // Bring buttons closer to the bubble
-        .dcd-msg--doctor & { right: -45px; }
-        .dcd-msg--patient & { left: -45px; }
-        
+        .dcd-msg--doctor & {
+            right: -45px;
+        }
+
+        .dcd-msg--patient & {
+            left: -45px;
+        }
+
         .dcd-msg-action-btn {
             width: 30px;
             height: 30px;
@@ -840,10 +869,16 @@
 
     .dcd-input-bar {
         padding: 8px 10px;
-        .dcd-send-btn { width: 36px; height: 36px; }
+
+        .dcd-send-btn {
+            width: 36px;
+            height: 36px;
+        }
     }
 
     .dcd-reply-preview {
-        .reply-content .reply-text { max-width: 200px; }
+        .reply-content .reply-text {
+            max-width: 200px;
+        }
     }
 }

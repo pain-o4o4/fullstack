@@ -37,11 +37,19 @@ class HomePage extends Component {
             activeTab: 'intro',
         };
         this.pillRef = React.createRef();
+        this.tabsSectionRef = React.createRef(); // Add this
         this.tabRefs = {};
     }
 
     handleTabChange = (tabId) => {
-        this.setState({ activeTab: tabId });
+        this.setState({ activeTab: tabId }, () => {
+            if (this.tabsSectionRef.current) {
+                this.tabsSectionRef.current.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
     }
 
     render() {
@@ -51,7 +59,7 @@ class HomePage extends Component {
                 <HomeHeader isShowBanner={true} />
 
                 {/* ============ SEGMENTED CONTROL BAR + TABS ============ */}
-                <section className="hm-tabs-section">
+                <div className="hm-tabs-section" ref={this.tabsSectionRef}>
                     <div className="hm-tabs-container">
                         <div className="hm-segmented-bar">
                             {TAB_CONFIG.map(tab => (
@@ -73,17 +81,17 @@ class HomePage extends Component {
                             {activeTab === 'personal' && <PersonalDashboardTab />}
                         </div>
                     </div>
-                </section>
+                </div>
 
                 {/* 1. Medicine Banner */}
-                <section className="hm-medicine-banner">
+                <div className="hm-medicine-banner">
                     <div className="hm-medicine-text" data-sal="slide-up">
                         <FormattedMessage id="homepage.medicine-text" />
                     </div>
-                </section>
+                </div>
 
                 {/* 2. Offer Section */}
-                <section className="hm-offer-section" id="oferta">
+                <div className="hm-offer-section" id="oferta">
                     <div className="hm-section-header">
                         <div className="hm-section-title">
                             <FormattedMessage id="homepage.service" />
@@ -133,10 +141,10 @@ class HomePage extends Component {
                             </div>
                         </li>
                     </ul>
-                </section>
+                </div>
 
                 {/* --- NEW Gallery Section --- */}
-                <section className="hm-gallery-section">
+                <div className="hm-gallery-section">
                     <div className="hm-gallery-container">
                         <div className="gallery-grid">
                             <div className="gallery-item large horizontal">
@@ -156,10 +164,10 @@ class HomePage extends Component {
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
 
                 {/* 3. Reach Section */}
-                <section className="hm-reach-section">
+                <div className="hm-reach-section">
                     <div className="hm-reach-wrapper">
                         <div className="hm-reach-top">
                             <div className="hm-reach-text">
@@ -187,10 +195,10 @@ class HomePage extends Component {
                             </ul>
                         </div>
                     </div>
-                </section>
+                </div>
 
                 {/* 4. About Us Section */}
-                <section className="hm-about-section" id="o-nas">
+                <div className="hm-about-section" id="o-nas">
                     <div className="hm-section-header">
                         <div className="hm-section-title">
                             <FormattedMessage id="homepage.about-us" />
@@ -210,10 +218,10 @@ class HomePage extends Component {
                             <img src={hmAboutImg} alt="Medical Partnership" />
                         </div>
                     </div>
-                </section>
+                </div>
 
                 {/* 5. Successes Section */}
-                <section className="hm-successes-section">
+                <div className="hm-successes-section">
                     <div className="hm-successes-wrapper">
                         <div className="hm-successes-title">
                             <FormattedMessage id="homepage.success-title" />
@@ -229,10 +237,10 @@ class HomePage extends Component {
                             <FormattedMessage id="homepage.and-more" />
                         </div>
                     </div>
-                </section>
+                </div>
 
                 {/* 6. Merits Section */}
-                <section className="hm-merits-section" id="co-nas-wyroznia">
+                <div className="hm-merits-section" id="co-nas-wyroznia">
                     <div className="hm-section-header center">
                         <div className="hm-section-title">
                             <FormattedMessage id="homepage.why-choose" />
@@ -267,10 +275,10 @@ class HomePage extends Component {
                             </div>
                         </li>
                     </ul>
-                </section>
+                </div>
 
                 {/* 7. Contact Banner */}
-                <section className="hm-contact-banner">
+                <div className="hm-contact-banner">
                     <div className="hm-banner-wrapper">
                         <div className="hm-banner-col">
                             <div className="hm-banner-icon">
@@ -292,7 +300,7 @@ class HomePage extends Component {
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
 
                 <HomeFooter />
             </div>
@@ -308,4 +316,3 @@ const mapStateToProps = state => {
 
 // export default connect(mapStateToProps)(HomePage);
 export default withRouter(connect(mapStateToProps)(HomePage));
-

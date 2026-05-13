@@ -21,7 +21,9 @@ class DetailClinic extends Component {
             dataDetailClinic: {},
             arrDoctorId: [],
             avatarFromChild: '',
-            listOtherClinics: []
+            listOtherClinics: [],
+            currentPage: 1,
+            itemsPerPage: 6
         }
     }
 
@@ -83,8 +85,76 @@ class DetailClinic extends Component {
             this.props.navigate(`/detail-doctor/${doctorId}`);
         }
     }
+    handlePageChange = (page) => {
+        this.setState({ currentPage: page });
+        const section = document.querySelector('.other-clinics-section');
+        if (section) {
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    renderPagination = (totalItems) => {
+        const { currentPage, itemsPerPage } = this.state;
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        if (totalPages <= 1) return null;
+
+        let pages = [];
+        const maxVisiblePages = 5;
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+        if (endPage - startPage < maxVisiblePages - 1) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            pages.push(i);
+        }
+
+        return (
+            <div className="pagination-container">
+                <button
+                    className="btn-pagination"
+                    disabled={currentPage === 1}
+                    onClick={() => this.handlePageChange(currentPage - 1)}
+                >
+                    <i className="fas fa-chevron-left"></i>
+                </button>
+
+                {startPage > 1 && <span className="pagination-ellipsis">...</span>}
+
+                {pages.map(page => (
+                    <button
+                        key={page}
+                        className={`btn-pagination ${currentPage === page ? 'active' : ''}`}
+                        onClick={() => this.handlePageChange(page)}
+                    >
+                        {page}
+                    </button>
+                ))}
+
+                {endPage < totalPages && <span className="pagination-ellipsis">...</span>}
+
+                <button
+                    className="btn-pagination"
+                    disabled={currentPage === totalPages}
+                    onClick={() => this.handlePageChange(currentPage + 1)}
+                >
+                    <i className="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        );
+    }
+
     render() {
-        let { dataDetailClinic, arrDoctorId } = this.state;
+        let { dataDetailClinic, arrDoctorId, listOtherClinics, currentPage, itemsPerPage } = this.state;
+        
+        const filteredClinics = listOtherClinics.filter(item => item.id !== +this.props.params.id);
+        const indexOfLastItem = currentPage * itemsPerPage;
+        const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+        const currentItems = filteredClinics.slice(indexOfFirstItem, indexOfLastItem);
+
         return (
             <div className="detail-clinic-container">
                 <HomeHeader />
@@ -149,35 +219,36 @@ class DetailClinic extends Component {
                     </div>
 
                     {/* Other Clinics Section */}
-                    {this.state.listOtherClinics && this.state.listOtherClinics.length > 1 && (
+                    {filteredClinics && filteredClinics.length > 0 && (
                         <div className="other-clinics-section">
                             <div className="other-title">
-                                <FormattedMessage id="homepage.medical-facility" defaultMessage="Cơ sở y tế nổi bật" />
+                                <FormattedMessage id="homepage.medical-facility" defaultMessage="Cơ sở y tế khác" />
                             </div>
                             <div className="other-list">
-                                {this.state.listOtherClinics
-                                    .filter(item => item.id !== +this.props.params.id)
-                                    .map((item, index) => (
+                                {currentItems.map((item, index) => (
+                                    <div 
+                                        className="other-item" 
+                                        key={index}
+                                        onClick={() => this.handleViewOtherClinic(item.id)}
+                                    >
                                         <div 
-                                            className="other-item" 
-                                            key={index}
-                                            onClick={() => this.handleViewOtherClinic(item.id)}
-                                        >
-                                            <div 
-                                                className="clinic-img"
-                                                style={{ backgroundImage: `url(${item.image})` }}
-                                            ></div>
+                                            className="clinic-img"
+                                            style={{ backgroundImage: `url(${item.image})` }}
+                                        ></div>
+                                        <div className="clinic-info">
                                             <div className="clinic-name">{item.name}</div>
+                                            <div className="clinic-address-small">{item.address}</div>
                                         </div>
-                                    ))
-                                }
+                                    </div>
+                                ))}
                             </div>
+                            {this.renderPagination(filteredClinics.length)}
                         </div>
                     )}
                 </div>
                 <HomeFooter />
             </div>
-        )
+        );
     }
 }
 

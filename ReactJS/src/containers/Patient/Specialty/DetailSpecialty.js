@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import * as action from '../../../store/actions'
 import { LANGUAGES } from '../../../utils/constant'
-import { withRouter } from '../../../components/Navigator'; // hoặc 'react-router-dom'
+import { withRouter } from '../../../components/Navigator';
 import { FormattedMessage } from 'react-intl';
 import './DetailSpecialty.scss'
 import HomeHeader from '../../HomePage/HomeHeader';
@@ -13,16 +13,18 @@ import CustomBreadcrumb from '../../../components/CustomBreadcrumb/CustomBreadcr
 import HomeFooter from '../../HomePage/HomeFooter';
 import { getAllSpecialtyService } from '../../../services/userService';
 import _ from 'lodash';
+
 class DetailSpecialty extends Component {
     constructor(props) {
         super(props);
         this.state = {
             dataDetailSpecialty: {},
             arrDoctorId: [],
-            listOtherSpecialties: []
+            listOtherSpecialties: [],
+            currentPage: 1,
+            itemsPerPage: 6
         }
     }
-
 
     async componentDidMount() {
         if (this.props.params && this.props.params.id) {
@@ -47,7 +49,6 @@ class DetailSpecialty extends Component {
             if (data && !_.isEmpty(data)) {
                 this.setState({
                     dataDetailSpecialty: data,
-                    // Chú ý: dùng đúng alias 'doctorSpecialty' Duy đã khai báo ở Model
                     arrDoctorId: data.doctorSpecialty ? data.doctorSpecialty : []
                 });
             }
@@ -55,6 +56,7 @@ class DetailSpecialty extends Component {
         if (this.props.params && this.props.params.id && this.props.params.id !== prevProps.params.id) {
             let id = this.props.params.id;
             await this.props.getDetailSpecialtyById(id);
+            this.setState({ currentPage: 1 });
             window.scrollTo(0, 0);
         }
     }
@@ -64,16 +66,83 @@ class DetailSpecialty extends Component {
             this.props.navigate(`/detail-specialty/${specialtyId}`);
         }
     }
+
     handleViewDetailDoctor = (doctorId) => {
         if (this.props.navigate) {
             this.props.navigate(`/detail-doctor/${doctorId}`)
         }
     }
 
+    handlePageChange = (page) => {
+        this.setState({ currentPage: page });
+        const section = document.querySelector('.other-specialties-section');
+        if (section) {
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    renderPagination = (totalItems) => {
+        const { currentPage, itemsPerPage } = this.state;
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        if (totalPages <= 1) return null;
+
+        let pages = [];
+        const maxVisiblePages = 5;
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+        if (endPage - startPage < maxVisiblePages - 1) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            pages.push(i);
+        }
+
+        return (
+            <div className="pagination-container">
+                <button
+                    className="btn-pagination"
+                    disabled={currentPage === 1}
+                    onClick={() => this.handlePageChange(currentPage - 1)}
+                >
+                    <i className="fas fa-chevron-left"></i>
+                </button>
+
+                {startPage > 1 && <span className="pagination-ellipsis">...</span>}
+
+                {pages.map(page => (
+                    <button
+                        key={page}
+                        className={`btn-pagination ${currentPage === page ? 'active' : ''}`}
+                        onClick={() => this.handlePageChange(page)}
+                    >
+                        {page}
+                    </button>
+                ))}
+
+                {endPage < totalPages && <span className="pagination-ellipsis">...</span>}
+
+                <button
+                    className="btn-pagination"
+                    disabled={currentPage === totalPages}
+                    onClick={() => this.handlePageChange(currentPage + 1)}
+                >
+                    <i className="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        );
+    }
+
     render() {
-        let { dataDetailSpecialty, arrDoctorId } = this.state;
-        let { language } = this.props;
-        console.log('check state: ', this.state)
+        let { dataDetailSpecialty, arrDoctorId, listOtherSpecialties, currentPage, itemsPerPage } = this.state;
+        
+        const filteredSpecialties = listOtherSpecialties.filter(item => item.id !== +this.props.params.id);
+        const indexOfLastItem = currentPage * itemsPerPage;
+        const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+        const currentItems = filteredSpecialties.slice(indexOfFirstItem, indexOfLastItem);
+
         return (
             <React.Fragment>
                 <div className="detail-specialty-container">
@@ -97,14 +166,12 @@ class DetailSpecialty extends Component {
                             </div>
                         )}
 
-                        {/* Mô tả Chuyên Khoa */}
                         <div className="description-specialty">
                             {dataDetailSpecialty && !_.isEmpty(dataDetailSpecialty) && (
                                 <div dangerouslySetInnerHTML={{ __html: dataDetailSpecialty.descriptionHTML }}></div>
                             )}
                         </div>
 
-                        {/* Danh sách Bác sĩ thuộc chuyên khoa */}
                         <div className="specialty-doctor-list">
                             <div className="list-title">
                                 <FormattedMessage id="specialty-detail.title" />
@@ -113,13 +180,11 @@ class DetailSpecialty extends Component {
                                 arrDoctorId.map((item, index) => {
                                     return (
                                         <div className="each-doctor" key={index}>
-
                                             <div
                                                 className="dt-content-left"
                                                 onClick={() => {
                                                     this.handleViewDetailDoctor(item.doctorId)
                                                 }}
-
                                             >
                                                 <ProfileDoctor
                                                     doctorId={item.doctorId}
@@ -129,9 +194,6 @@ class DetailSpecialty extends Component {
                                                 />
                                             </div>
                                             <div className="dt-content-right">
-                                                {/* <div className="doctor-schedule">
-                                                    <ScheduleDoctor doctorIdFromParent={item.doctorId} />
-                                                </div> */}
                                                 <div className="doctor-extra-info">
                                                     <ExtraInforDoctor doctorIdFromParent={item.doctorId} />
                                                 </div>
@@ -145,57 +207,51 @@ class DetailSpecialty extends Component {
                             }
                         </div>
 
-                        {/* Other Specialties Section */}
-                        {this.state.listOtherSpecialties && this.state.listOtherSpecialties.length > 1 && (
+                        {filteredSpecialties && filteredSpecialties.length > 0 && (
                             <div className="other-specialties-section">
                                 <div className="other-title">
-                                    <FormattedMessage id="homepage.specialty-popular" defaultMessage="Chuyên khoa phổ biến" />
+                                    <FormattedMessage id="homepage.specialty-popular" defaultMessage="Chuyên khoa khác" />
                                 </div>
                                 <div className="other-list">
-                                    {this.state.listOtherSpecialties
-                                        .filter(item => item.id !== +this.props.params.id)
-                                        .map((item, index) => (
+                                    {currentItems.map((item, index) => (
+                                        <div 
+                                            className="other-item" 
+                                            key={index}
+                                            onClick={() => this.handleViewOtherSpecialty(item.id)}
+                                        >
                                             <div 
-                                                className="other-item" 
-                                                key={index}
-                                                onClick={() => this.handleViewOtherSpecialty(item.id)}
-                                            >
-                                                <div 
-                                                    className="specialty-img"
-                                                    style={{ backgroundImage: `url(${item.image})` }}
-                                                ></div>
+                                                className="specialty-img"
+                                                style={{ backgroundImage: `url(${item.image})` }}
+                                            ></div>
+                                            <div className="specialty-info">
                                                 <div className="specialty-name">{item.name}</div>
+                                                <div className="specialty-desc-small">Chuyên khoa uy tín</div>
                                             </div>
-                                        ))
-                                    }
+                                        </div>
+                                    ))}
                                 </div>
+                                {this.renderPagination(filteredSpecialties.length)}
                             </div>
                         )}
                     </div>
                 </div>
                 <HomeFooter />
             </React.Fragment>
-
-
-        )
+        );
     }
 }
 
 const mapStateToProps = state => {
     return {
         language: state.app.language,
-        // // DetailSpecialty: state.admin.DetailSpecialty
         detailSpecialty: state.admin.detailSpecialty
-
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-
         getDetailSpecialtyById: (id) => dispatch(action.getDetailSpecialtyById(id))
     };
 };
 
-// import { withRouter } from 'react-router'; // hoặc 'react-router-dom'
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DetailSpecialty));

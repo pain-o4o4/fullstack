@@ -1,6 +1,6 @@
 .section-maven {
     padding: 60px 40px;
-    max-width: 1200px;
+    max-width: 100%;
     margin: 0 auto;
     overflow: hidden;
 
@@ -306,6 +306,7 @@
         }
     }
 }
+
 // Symptom Categories Overrides
 .symptom-categories {
     .symptom-grid {
@@ -330,7 +331,7 @@
         .symptom-emoji {
             font-size: 40px;
             margin-bottom: 16px;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05));
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.05));
         }
 
         .symptom-info {
@@ -410,7 +411,9 @@
 
 @media (max-width: 768px) {
     .maven-social-proof {
-        .rating span, .patient-count {
+
+        .rating span,
+        .patient-count {
             font-size: 11px;
         }
     }

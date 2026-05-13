@@ -32,7 +32,7 @@ class MobileSidebarInternal extends Component {
         return (
             <React.Fragment>
                 <div className={`hm-mobile-sidebar-overlay ${isOpen ? 'active' : ''}`} onClick={onClose}></div>
-                <aside className={`hm-mobile-sidebar ${isOpen ? 'open' : ''}`}>
+                <div className={`hm-mobile-sidebar ${isOpen ? 'open' : ''}`}>
                     <div className="sidebar-header">
                         <div className="sidebar-logo" onClick={() => { handleViewList('HOME'); onClose(); }}>
                             <div className="logo-icon">
@@ -150,7 +150,7 @@ class MobileSidebarInternal extends Component {
                             <span className={language === LANGUAGES.EN ? 'active' : ''} onClick={() => this.props.changeLanguage(LANGUAGES.EN)}>EN</span>
                         </div>
                     </div>
-                </aside>
+                </div>
             </React.Fragment>
         );
     }
@@ -323,7 +323,7 @@ class HomeHeader extends Component {
                 </div>
 
                 {this.props.isShowBanner === true && (
-                    <section className="hm-hero" id="strona-glowna">
+                    <div className="hm-hero" id="strona-glowna">
                         <div className="hm-hero-bg">
                             <div className="hero-bg-image" style={{ backgroundImage: `url(${bannerService})` }}></div>
                             <div className="hero-bg-overlay"></div>
@@ -350,7 +350,7 @@ class HomeHeader extends Component {
                                 </div>
                             </div>
                         </div>
-                    </section>
+                    </div>
                 )}
 
                 <DoctorChat isOpen={this.props.isOpenDoctorChat} onClose={() => this.props.toggleChat()} />

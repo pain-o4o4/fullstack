@@ -36,7 +36,7 @@
         align-items: center;
         gap: 10px;
         margin-bottom: 20px;
-        
+
         span {
             display: flex;
             align-items: center;
@@ -84,7 +84,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
             gap: 12px;
-            
+
             .time-slot-btn {
                 background: #ffffff;
                 border: 1px solid #f1f3f5;
