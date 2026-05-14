@@ -292,6 +292,11 @@ class ChatBox extends Component {
                                                         {index === lastSentIndex && Number(msg.isRead) === 1 && !isAIMode && (
                                                             <div className="dcd-seen-status">Đã xem</div>
                                                         )}
+                                                        {msg.isPending && (
+                                                            <div className="dcd-pending-status">
+                                                                <i className="far fa-clock"></i> Đang chờ kết nối...
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </React.Fragment>
                                             );

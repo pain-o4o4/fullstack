@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import { FormattedMessage } from 'react-intl';
 import { LANGUAGES } from '../../../../utils';
 import _ from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 import './Payment.scss';
 
 class Payment extends Component {
@@ -26,7 +27,10 @@ class Payment extends Component {
 
         // CASE 1: Arriving from BookingModal (New booking, not yet saved in DB)
         if (this.props.location.state && this.props.location.state.bookingData) {
-            bookingData = this.props.location.state.bookingData;
+            bookingData = {
+                ...this.props.location.state.bookingData,
+                idempotencyKey: uuidv4() // Generate unique key for this session
+            };
 
             this.setState({ bookingData, isLoading: false });
 
@@ -186,29 +190,43 @@ class Payment extends Component {
         let { bookingData, isProcessing } = this.state;
         if (isProcessing) return;
 
+        if (!navigator.onLine) {
+            toast.error(this.props.language === LANGUAGES.VI 
+                ? "Mất kết nối mạng. Vui lòng kiểm tra lại!" 
+                : "Network connection lost. Please check again!");
+            return;
+        }
+
         if (bookingData) {
             try {
                 this.setState({ isProcessing: true });
-                let res = await postBookAppointment(bookingData);
+                // Send idempotencyKey to backend
+                let res = await postBookAppointment({
+                    ...bookingData,
+                    idempotencyKey: bookingData.idempotencyKey
+                });
+
                 if (res && res.errCode === 0 && res.data && res.data.checkoutUrl) {
                     localStorage.removeItem(`payment_expiry_${bookingData.bookingId}`);
                     
-                    // Tự động gửi tin nhắn chào mừng từ bác sĩ
-                    await sendMessageApi({
+                    // Tự động gửi tin nhắn chào mừng từ bác sĩ (Background task)
+                    sendMessageApi({
                         senderId: bookingData.doctorId,
                         receiverId: bookingData.patientId,
                         text: `Chào bạn, tôi đã nhận được lịch hẹn của bạn vào lúc ${bookingData.timeLabel} ngày ${bookingData.date}. Hẹn gặp bạn nhé!`,
                         type: 'text'
-                    });
+                    }).catch(err => console.warn("Auto welcome message failed, but payment proceed", err));
 
                     window.location.href = res.data.checkoutUrl;
                 } else {
-                    console.log(res.errMessage || "Error initializing payment!");
+                    toast.error(res.errMessage || (this.props.language === LANGUAGES.VI ? "Lỗi khởi tạo thanh toán!" : "Error initializing payment!"));
                     this.setState({ isProcessing: false });
                 }
             } catch (e) {
-                console.log(e);
-                console.log("Connection error!");
+                console.error(e);
+                toast.warning(this.props.language === LANGUAGES.VI 
+                    ? "Kết nối chập chờn. Bạn có thể thử lại an toàn nhờ Idempotency Key." 
+                    : "Unstable connection. You can safely retry thanks to Idempotency Key.");
                 this.setState({ isProcessing: false });
             }
         }

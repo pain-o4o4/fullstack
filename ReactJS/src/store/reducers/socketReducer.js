@@ -6,7 +6,9 @@ const initialState = {
     notifications: [],
     onlineUsers: [],
     totalUnreadCount: 0,
-    lastUpdatedAt: null
+    lastUpdatedAt: null,
+    isOnline: navigator.onLine,
+    offlineQueue: []
 };
 
 const socketReducer = (state = initialState, action = {}) => {
@@ -54,6 +56,26 @@ const socketReducer = (state = initialState, action = {}) => {
                     ? Array.from(new Set([...state.onlineUsers, action.payload.userId]))
                     : state.onlineUsers.filter(userId => userId !== action.payload?.userId),
                 lastUpdatedAt: Date.now()
+            };
+        case actionTypes.SET_NETWORK_STATUS:
+            return {
+                ...state,
+                isOnline: action.isOnline
+            };
+        case actionTypes.OFFLINE_MESSAGE_QUEUE_ADD:
+            return {
+                ...state,
+                offlineQueue: [...state.offlineQueue, action.message]
+            };
+        case actionTypes.OFFLINE_MESSAGE_QUEUE_REMOVE:
+            return {
+                ...state,
+                offlineQueue: state.offlineQueue.filter(m => m.tempId !== action.tempId)
+            };
+        case actionTypes.OFFLINE_MESSAGE_QUEUE_CLEAR:
+            return {
+                ...state,
+                offlineQueue: []
             };
         default:
             return state;

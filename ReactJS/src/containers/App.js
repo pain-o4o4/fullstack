@@ -24,6 +24,7 @@ import { CustomToastCloseButton } from '../components/CustomToast';
 import ConfirmModal from '../components/ConfirmModal';
 import CustomScrollbars from '../components/CustomScrollbars';
 import VerifyEmail from '../containers/Patient/VerifyEmail.js';
+import ResilienceBanner from './App/ResilienceBanner';
 
 import DetailDoctor from './Patient/Doctor/DetailDoctor.js';
 import DetailSpecialty from './Patient/Specialty/DetailSpecialty.js';
@@ -94,6 +95,7 @@ class App extends Component {
 
                 <BrowserRouter>
                     <div className="main-container">
+                        <ResilienceBanner />
                         <ConfirmModal />
                         <div className="content-container">
                             <CustomScrollbars style={{ height: '100vh', width: '100%' }}>

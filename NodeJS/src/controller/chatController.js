@@ -8,6 +8,11 @@ let handleSendMessage = async (req, res) => {
             let io = req.app.get('io');
             if (io) {
                 let plainMessage = info.data;
+                // Đính kèm idempotencyKey để Frontend có thể khớp tin nhắn tạm
+                if (req.body.tempId || req.body.idempotencyKey) {
+                    plainMessage.idempotencyKey = req.body.tempId || req.body.idempotencyKey;
+                }
+                
                 // Gửi tin nhắn tới cả người nhận và người gửi để cập nhật UI đồng bộ
                 io.to(`user_room_${req.body.receiverId}`).emit('receive_message', plainMessage);
                 io.to(`user_room_${req.body.senderId}`).emit('receive_message', plainMessage);

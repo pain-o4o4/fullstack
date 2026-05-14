@@ -39,7 +39,8 @@
     "slick-carousel": "^1.8.1",
     "socket.io-client": "^4.8.3",
     "typescript": "^4.3.2",
-    "use-debounce": "^10.1.1"
+    "use-debounce": "^10.1.1",
+    "uuid": "^14.0.0"
   },
   "scripts": {
     "start": "react-scripts start",

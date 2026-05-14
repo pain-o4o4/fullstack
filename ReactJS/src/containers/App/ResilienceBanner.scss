@@ -1,0 +1,75 @@
+.resilience-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    &.slide-down {
+        transform: translateY(0);
+    }
+
+    &.slide-up {
+        transform: translateY(-100%);
+    }
+
+    &.warning {
+        background-color: rgba(245, 245, 247, 0.9); // Apple Light Grey
+        color: #1d1d1f;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+        i {
+            color: #ff9f0a; // Apple Orange
+        }
+    }
+
+    &.success {
+        background-color: rgba(52, 199, 89, 0.9); // Apple Green
+        color: #ffffff;
+
+        i {
+            color: #ffffff;
+        }
+    }
+
+    &.error {
+        background-color: rgba(255, 59, 48, 0.9); // Apple Red
+        color: #ffffff;
+    }
+
+    .banner-content {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+
+        i {
+            font-size: 16px;
+        }
+
+        .banner-text {
+            letter-spacing: -0.01em;
+        }
+    }
+}
+
+// Add animation for pulsing if needed
+@keyframes pulse-opacity {
+    0% { opacity: 0.8; }
+    50% { opacity: 1; }
+    100% { opacity: 0.8; }
+}
+
+.resilience-banner.warning {
+    animation: pulse-opacity 2s infinite ease-in-out;
+}

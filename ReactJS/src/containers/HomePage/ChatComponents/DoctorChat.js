@@ -141,6 +141,9 @@ class DoctorChat extends Component {
             // Quan trọng: Reset lại trạng thái tab
             this.props.openChatWithTab(null);
         }
+        if (prevProps.offlineQueue !== this.props.offlineQueue) {
+            this.loadMessages();
+        }
     }
 
     setupSocket = (socket) => {
@@ -156,47 +159,69 @@ class DoctorChat extends Component {
             // ... code cũ ...
 
             const { userInfo } = this.props;
-            // Lấy state trực tiếp từ instance để đảm bảo luôn là giá trị mới nhất
-            const currentSelectedDoctor = this.state.selectedDoctor;
+            const sId = String(data.senderId || "").trim();
+            const rId = String(data.receiverId || "").trim();
+            
+            // Luôn lấy state mới nhất ngay tại thời điểm nhận tin nhắn
+            const { selectedDoctor } = this.state;
+            const curSelectedId = String(selectedDoctor?.id || "").trim();
+            const curUserId = String(this.props.userInfo?.id || "").trim();
 
-            const sId = Number(data.senderId);
-            const rId = Number(data.receiverId);
-            const curSelectedId = Number(currentSelectedDoctor?.id);
-            const curUserId = Number(userInfo?.id);
-
-            console.log("LOG SOCKET REALTIME:", { sId, rId, curSelectedId, curUserId });
-
-            // Logic: Tin nhắn thuộc về phiên chat đang mở (Dù là mình gửi hay họ gửi)
-            const isMatch = curSelectedId && (
+            const isMatch = curSelectedId && curUserId && (
                 (sId === curSelectedId && rId === curUserId) ||
                 (sId === curUserId && rId === curSelectedId)
             );
 
+            console.log("FINAL DEBUG CHAT:", {
+                role: this.props.userInfo?.roleId,
+                sId, rId, curSelectedId, curUserId, isMatch
+            });
+
             if (isMatch) {
-                // Nếu là tin nhắn của chính mình, bỏ qua vì handleSend đã xử lý hiển thị rồi (Tránh lặp)
-                if (sId === curUserId) return;
-
                 this.setState(prevState => {
+                    // 1. Kiểm tra xem tin nhắn này đã tồn tại chưa (qua ID thật hoặc IdempotencyKey)
                     const isExist = prevState.messages.some(m =>
-                        (m.id && data.id && Number(m.id) === Number(data.id)) ||
-                        (m.text === data.text && Number(m.senderId) === sId && (m.createdAt === data.createdAt || sId === curUserId))
+                        (m.id && data.id && String(m.id) === String(data.id)) ||
+                        (data.idempotencyKey && String(m.idempotencyKey) === String(data.idempotencyKey))
                     );
-                    if (isExist) return null;
 
-                    return {
-                        messages: [...prevState.messages, {
+                    let newMessages;
+                    if (isExist) {
+                        // 2. Nếu đã tồn tại (tin nhắn tạm của mình), cập nhật thành tin nhắn thật
+                        newMessages = prevState.messages.map(m => {
+                            const isMatchMsg = (m.id && data.id && String(m.id) === String(data.id)) ||
+                                               (data.idempotencyKey && String(m.idempotencyKey) === String(data.idempotencyKey));
+                            if (isMatchMsg) {
+                                return {
+                                    ...data,
+                                    isPending: false,
+                                    type: String(sId) === String(curUserId) ? 'patient' : 'doctor',
+                                    time: new Date(data.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+                                };
+                            }
+                            return m;
+                        });
+                    } else {
+                        // 3. Tin nhắn mới hoàn toàn (từ đối phương hoặc mình gửi từ thiết bị khác)
+                        newMessages = [...prevState.messages, {
                             ...data,
-                            type: sId === curUserId ? 'patient' : 'doctor',
+                            type: String(sId) === String(curUserId) ? 'patient' : 'doctor',
                             time: new Date(data.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
-                        }]
-                    };
+                        }];
+                    }
+
+                    return { messages: newMessages };
                 }, () => {
                     this.scrollToBottom();
                     this.loadChatHistory();
                 });
             } else {
-                // Nếu không match, vẫn load lại history để hiện badge unread hoặc tin nhắn mới ở Sidebar
-                this.loadChatHistory();
+                // Fallback: Nếu không match trực tiếp nhưng tin nhắn liên quan đến mình, vẫn nên load lại history
+                if (String(rId) === String(curUserId) || String(sId) === String(curUserId)) {
+                    this.loadChatHistory();
+                    // Nếu đang rảnh, load nhẹ lại tin nhắn để đảm bảo đồng bộ
+                    if (curSelectedId) this.loadMessages();
+                }
             }
         });
 
@@ -245,14 +270,14 @@ class DoctorChat extends Component {
         });
 
         socket.on('messages_marked_as_read', (data) => {
+            const readerId = String(data.readerId || "").trim();
             const { selectedDoctor } = this.state;
-            const readerId = Number(data.readerId);
-            const currentSelectedId = Number(selectedDoctor?.id);
+            const currentSelectedId = String(selectedDoctor?.id || "").trim();
 
-            if (currentSelectedId && readerId === currentSelectedId) {
+            if (currentSelectedId && readerId && readerId === currentSelectedId) {
                 this.setState(prevState => ({
                     messages: prevState.messages.map(msg =>
-                        Number(msg.receiverId) === readerId ? { ...msg, isRead: 1 } : msg
+                        String(msg.receiverId || "").trim() === readerId ? { ...msg, isRead: 1 } : msg
                     )
                 }));
             }
@@ -316,18 +341,30 @@ class DoctorChat extends Component {
         if (selectedDoctor && userInfo && userInfo.id) {
             let res = await getMessagesApi(userInfo.id, selectedDoctor.id);
             if (res && res.errCode === 0) {
-                console.log("LOG LOAD MSGS:", {
-                    firstMsgSenderId: res.data[0]?.senderId,
-                    currentUserId: userInfo.id,
-                    isMatch: res.data[0]?.senderId === userInfo.id
-                });
+                const dbMessages = res.data.map(m => ({
+                    ...m,
+                    isRead: Number(m.isRead),
+                    type: String(m.senderId) === String(userInfo.id) ? 'patient' : 'doctor',
+                    time: new Date(m.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+                }));
+
+                // Get messages from offline queue for this conversation
+                const { offlineQueue } = this.props;
+                const conversationOfflineMsgs = offlineQueue
+                    .filter(msg => 
+                        String(msg.senderId) === String(userInfo.id) && 
+                        String(msg.receiverId) === String(selectedDoctor.id)
+                    )
+                    .map(msg => ({
+                        ...msg,
+                        id: msg.tempId,
+                        isPending: true,
+                        time: new Date(msg.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+                        type: 'patient'
+                    }));
+
                 this.setState({
-                    messages: res.data.map(m => ({
-                        ...m,
-                        isRead: Number(m.isRead),
-                        type: Number(m.senderId) === Number(userInfo.id) ? 'patient' : 'doctor',
-                        time: new Date(m.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
-                    }))
+                    messages: [...dbMessages, ...conversationOfflineMsgs]
                 }, this.scrollToBottom);
             }
         }
@@ -439,32 +476,45 @@ class DoctorChat extends Component {
             return;
         }
 
-        // Luồng chat người-người cũ của sếp (Giữ nguyên)
-        let res = await sendMessageApi({
+        // Luồng chat người-người cũ của sếp (Đã được Resilience hóa)
+        const sendData = {
             senderId: userInfo.id,
             receiverId: selectedDoctor.id,
             text: userMsgContent,
             image: selectedImage,
             parentId: replyingTo ? replyingTo.id : null
+        };
+
+        // Optimistic UI update
+        const tempId = `temp_${Date.now()}`;
+        const optimisticMsg = {
+            id: tempId,
+            idempotencyKey: tempId,
+            ...sendData,
+            type: 'patient',
+            time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+            isPending: true
+        };
+
+        this.setState(prevState => ({
+            messages: [...prevState.messages, optimisticMsg],
+            inputText: '',
+            selectedImage: '',
+            previewImage: '',
+            replyingTo: null
+        }), this.scrollToBottom);
+
+        let res = await this.props.sendMessageResilient({
+            ...sendData,
+            tempId: tempId // Explicitly pass tempId to match
         });
 
-        if (res && res.errCode === 0) {
-            const newMessage = {
-                ...res.data,
-                type: 'patient',
-                time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
-            };
-
-            this.setState(prevState => ({
-                messages: [...prevState.messages, newMessage],
-                inputText: '',
-                selectedImage: '',
-                previewImage: '',
-                replyingTo: null
-            }), () => {
-                this.scrollToBottom();
-                this.loadChatHistory();
-            });
+        if (res && res.success) {
+            this.loadMessages();
+            this.loadChatHistory();
+        } else if (res && res.offline) {
+            // Keep as pending in UI
+            console.log("Message queued for offline sending");
         }
     }
 
@@ -826,11 +876,12 @@ const mapStateToProps = state => {
         allDoctors: state.admin.allDoctors,
         userInfo: state.user.userInfo,
         socket: state.socket.socket,
-        // AI related data
         chatSessions: state.admin.chatSessions,
         dbChatHistory: state.admin.dbChatHistory,
         language: state.app.language,
         doctorChatTab: state.app.doctorChatTab,
+        offlineQueue: state.socket.offlineQueue,
+        isOnline: state.socket.isOnline
     };
 };
 
@@ -842,7 +893,8 @@ const mapDispatchToProps = dispatch => {
         fetchAIHistory: (userId, sessionId) => dispatch(actions.fetchHistoryStart(userId, sessionId)),
         clearAIDbHistory: () => dispatch({ type: 'FETCH_CHAT_HISTORY_SUCCESS', data: [] }),
         updateUnreadCount: (count) => dispatch(actions.updateUnreadCount(count)),
-        openChatWithTab: (tab) => dispatch(actions.openChatWithTab(tab))
+        openChatWithTab: (tab) => dispatch(actions.openChatWithTab(tab)),
+        sendMessageResilient: (data) => dispatch(actions.sendMessageResilient(data))
     };
 };
 
