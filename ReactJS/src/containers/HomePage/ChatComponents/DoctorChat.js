@@ -510,8 +510,14 @@ class DoctorChat extends Component {
         });
 
         if (res && res.success) {
-            this.loadMessages();
+            // Không gọi loadMessages() nữa để tránh lag và tốn băng thông
+            // Chỉ cập nhật Sidebar (vì tin nhắn mới làm thay đổi thứ tự hàng chờ)
             this.loadChatHistory();
+
+            // Fallback: Nếu socket đang rớt, vẫn phải load lại để chắc chắn
+            if (!this.props.socket || !this.props.socket.connected) {
+                this.loadMessages();
+            }
         } else if (res && res.offline) {
             // Keep as pending in UI
             console.log("Message queued for offline sending");

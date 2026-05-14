@@ -125,8 +125,8 @@ class ChatBox extends Component {
                                 </div>
                             </div>
                             <div className="dcd-header-actions">
-                                <button className="dcd-action-btn"><i className="fas fa-phone-alt"></i></button>
-                                <button className="dcd-action-btn"><i className="fas fa-video"></i></button>
+                                {/* <button className="dcd-action-btn"><i className="fas fa-phone-alt"></i></button> */}
+                                {/* <button className="dcd-action-btn"><i className="fas fa-video"></i></button> */}
                                 <button className="dcd-action-btn"><i className="fas fa-info-circle"></i></button>
                             </div>
                         </div>
