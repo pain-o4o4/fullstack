@@ -2,7 +2,7 @@
     background-color: #ffffff;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 100px 20px 40px; // Standard top padding for fixed header
+    padding: 120px 20px 40px; // Standard top padding for fixed header
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
 
     .intro-doctor {
@@ -78,9 +78,25 @@
         font-size: 18px;
         border-top: 1px solid #f2f2f7;
 
-        h2, h3 { font-weight: 700; margin-top: 40px; margin-bottom: 20px; letter-spacing: -0.5px; }
-        p { margin-bottom: 24px; color: #424245; }
-        img { max-width: 100%; border-radius: 16px; margin: 30px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        h2,
+        h3 {
+            font-weight: 700;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+
+        p {
+            margin-bottom: 24px;
+            color: #424245;
+        }
+
+        img {
+            max-width: 100%;
+            border-radius: 16px;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
     }
 }
 
@@ -90,22 +106,22 @@
 */
 .breadcrumb-container {
     position: fixed;
-    top: 40px; 
+    top: 40px;
     left: 0;
     right: 0;
-    max-width: 1180px; 
+    max-width: 1180px;
     margin: 0 auto;
-    background: #f4f5f8; 
-    z-index: 990; 
-    padding: 44px 32px 14px; 
-    border: none; 
-    border-radius: 0 0 32px 32px; 
+    background: #f4f5f8;
+    z-index: 990;
+    padding: 44px 32px 14px;
+    border: none;
+    border-radius: 0 0 32px 32px;
     box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.06);
 
     animation: slideDownBreadcrumb 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     transform-origin: top center;
     display: flex;
-    justify-content: center; 
+    justify-content: center;
 
     .breadcrumb {
         font-size: 14px;
@@ -115,7 +131,7 @@
 
         .home-link {
             cursor: pointer;
-            color: #0071e3; 
+            color: #0071e3;
             font-weight: 500;
             transition: color 0.2s;
 
@@ -131,15 +147,22 @@
         }
 
         .current-page {
-            color: #4c40e6; 
+            color: #4c40e6;
             font-weight: 600;
         }
     }
 }
 
 @keyframes slideDownBreadcrumb {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 // ============================================================
@@ -148,20 +171,36 @@
 @media (max-width: 1024px) {
     .doctor-detail-container {
         padding: 100px 32px 40px;
+
         .intro-doctor {
             gap: 30px;
-            .content-left { width: 130px; height: 130px; }
-            .content-right .up { font-size: 28px; }
+
+            .content-left {
+                width: 130px;
+                height: 130px;
+            }
+
+            .content-right .up {
+                font-size: 28px;
+            }
         }
+
         .schedule-doctor {
             padding: 30px;
             gap: 30px;
-            .content-left { padding-right: 30px; }
+
+            .content-left {
+                padding-right: 30px;
+            }
         }
     }
+
     .related-doctors-section {
         padding: 40px 32px;
-        .related-list { grid-template-columns: repeat(2, 1fr); }
+
+        .related-list {
+            grid-template-columns: repeat(2, 1fr);
+        }
     }
 }
 
@@ -171,22 +210,28 @@
 @media (max-width: 768px) {
     .doctor-detail-container {
         padding-top: 70px;
-        
+
         .intro-doctor {
             flex-direction: column;
             align-items: center;
             text-align: center;
             gap: 24px;
             padding: 32px 16px;
-            
+
             .content-left {
                 width: 120px;
                 height: 120px;
             }
-            
+
             .content-right {
-                .up { font-size: 24px; margin-bottom: 8px; }
-                .down { font-size: 15px; }
+                .up {
+                    font-size: 24px;
+                    margin-bottom: 8px;
+                }
+
+                .down {
+                    font-size: 15px;
+                }
             }
         }
 
@@ -212,10 +257,15 @@
         .detail-info-doctor {
             padding: 32px 16px;
             font-size: 16px;
-            h2, h3 { font-size: 20px; }
+
+            h2,
+            h3 {
+                font-size: 20px;
+            }
         }
     }
 }
+
 // ============================================================
 // RELATED DOCTORS SECTION STYLES
 // ============================================================
@@ -254,6 +304,7 @@
 
             .profile-doctor-container {
                 padding: 0;
+
                 .intro-doctor {
                     margin-bottom: 0;
                     padding: 0;
@@ -273,6 +324,7 @@
                             margin-bottom: 4px;
                             letter-spacing: -0.5px;
                         }
+
                         .down {
                             font-size: 14px;
                             line-height: 1.4;
@@ -313,6 +365,7 @@
 @media (max-width: 768px) {
     .related-doctors-section {
         margin: 40px 16px;
+
         .related-list {
             grid-template-columns: 1fr;
         }

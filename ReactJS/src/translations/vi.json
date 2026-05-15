@@ -331,6 +331,9 @@
         }
     },
     "patient": {
+        "detail-doctor": {
+            "no-schedule": "Bác sĩ không có lịch hẹn trong ngày này, vui lòng chọn ngày khác."
+        },
         "my-booking": {
             "title": "LỊCH HẸN CỦA BẠN",
             "time": "Thời gian",

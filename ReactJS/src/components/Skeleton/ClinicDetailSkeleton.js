@@ -4,22 +4,25 @@ import './Skeleton.scss';
 const ClinicDetailSkeleton = () => {
     return (
         <div className="clinic-detail-skeleton-container">
-            <div className="clinic-banner-skeleton skeleton" style={{ height: '300px', width: '100%' }}></div>
-            <div className="clinic-description-skeleton" style={{ padding: '20px' }}>
-                <div className="skeleton skeleton-title" style={{ width: '40%' }}></div>
-                <div className="skeleton skeleton-text" style={{ width: '60%' }}></div>
+            <div className="skeleton banner-skeleton"></div>
+            
+            <div className="info-skeleton">
+                <div className="skeleton skeleton-title" style={{ width: '50%' }}></div>
+                <div className="skeleton skeleton-text" style={{ width: '30%', height: '14px' }}></div>
+                <div className="skeleton skeleton-text" style={{ marginTop: '20px' }}></div>
                 <div className="skeleton skeleton-text"></div>
-                <div className="skeleton skeleton-text"></div>
+                <div className="skeleton skeleton-text" style={{ width: '80%' }}></div>
             </div>
-            <div className="doctor-list-skeleton" style={{ padding: '20px' }}>
-                <div className="skeleton skeleton-title" style={{ width: '20%' }}></div>
+
+            <div className="doctor-list-skeleton">
+                <div className="skeleton skeleton-title" style={{ width: '220px', marginBottom: '25px' }}></div>
                 {[1, 2].map((item) => (
-                    <div key={item} className="each-doctor-skeleton" style={{ display: 'flex', gap: '20px', marginBottom: '20px', border: '1px solid #eee', padding: '15px' }}>
-                        <div className="skeleton skeleton-avatar" style={{ width: '100px', height: '100px' }}></div>
-                        <div style={{ flex: 1 }}>
-                            <div className="skeleton skeleton-title" style={{ width: '50%' }}></div>
+                    <div key={item} className="each-doctor-skeleton">
+                        <div className="skeleton doc-left"></div>
+                        <div className="doc-right">
+                            <div className="skeleton skeleton-title" style={{ width: '45%' }}></div>
                             <div className="skeleton skeleton-text"></div>
-                            <div className="skeleton skeleton-text" style={{ width: '80%' }}></div>
+                            <div className="skeleton skeleton-text" style={{ width: '60%' }}></div>
                         </div>
                     </div>
                 ))}

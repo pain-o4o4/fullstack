@@ -5,7 +5,7 @@
 // ============================================================
 .breadcrumb-container {
     position: fixed;
-    top: 44px;
+    // top: 40px;
     left: 0;
     right: 0;
     max-width: 1240px;
@@ -14,7 +14,7 @@
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     z-index: 990;
-    padding: 56px 36px 0px;
+    padding: 50px 36px 0px;
     border: 1px solid rgba(0, 0, 0, 0.05);
     border-top: none;
     border-radius: 0 0 24px 24px;

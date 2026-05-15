@@ -39,7 +39,7 @@ let getAllSpecialtyService = async () => {
     return new Promise(async (resolve, reject) => {
         try {
             let data = await db.Specialty.findAll({
-                attributes: ['id', 'name', 'image', 'descriptionHTML', 'descriptionMarkdown']
+                attributes: ['id', 'name', 'image']
             });
 
             if (data && data.length > 0) {

@@ -41,7 +41,10 @@ let postCreateNewClinicService = (data) => {
 let getAllClinicService = () => {
     return new Promise(async (resolve, reject) => {
         try {
-            let data = await db.Clinic.findAll({ raw: true });
+            let data = await db.Clinic.findAll({ 
+                attributes: ['id', 'name', 'address', 'image'],
+                raw: true 
+            });
             if (data && data.length > 0) {
                 data = data.map((item) => {
                     if (item.image) {

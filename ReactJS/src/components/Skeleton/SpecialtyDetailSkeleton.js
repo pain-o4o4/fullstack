@@ -4,22 +4,25 @@ import './Skeleton.scss';
 const SpecialtyDetailSkeleton = () => {
     return (
         <div className="specialty-detail-skeleton-container">
-            <div className="specialty-banner-skeleton skeleton" style={{ height: '300px', width: '100%' }}></div>
-            <div className="description-specialty-skeleton" style={{ padding: '20px' }}>
-                <div className="skeleton skeleton-title" style={{ width: '40%' }}></div>
+            <div className="skeleton banner-skeleton"></div>
+            
+            <div className="info-skeleton">
+                <div className="skeleton skeleton-title"></div>
                 <div className="skeleton skeleton-text"></div>
-                <div className="skeleton skeleton-text"></div>
-                <div className="skeleton skeleton-text" style={{ width: '70%' }}></div>
+                <div className="skeleton skeleton-text" style={{ width: '90%' }}></div>
+                <div className="skeleton skeleton-text" style={{ width: '40%' }}></div>
             </div>
-            <div className="doctor-list-skeleton" style={{ padding: '20px' }}>
-                <div className="skeleton skeleton-title" style={{ width: '20%' }}></div>
+
+            <div className="doctor-list-skeleton">
+                <div className="skeleton skeleton-title" style={{ width: '250px', marginBottom: '30px' }}></div>
                 {[1, 2, 3].map((item) => (
-                    <div key={item} className="each-doctor-skeleton" style={{ display: 'flex', gap: '20px', marginBottom: '20px', border: '1px solid #eee', padding: '15px' }}>
-                        <div className="skeleton skeleton-avatar" style={{ width: '100px', height: '100px' }}></div>
-                        <div style={{ flex: 1 }}>
-                            <div className="skeleton skeleton-title" style={{ width: '50%' }}></div>
+                    <div key={item} className="each-doctor-skeleton">
+                        <div className="skeleton doc-left"></div>
+                        <div className="doc-right">
+                            <div className="skeleton skeleton-title" style={{ width: '40%' }}></div>
                             <div className="skeleton skeleton-text"></div>
-                            <div className="skeleton skeleton-text" style={{ width: '80%' }}></div>
+                            <div className="skeleton skeleton-text" style={{ width: '70%' }}></div>
+                            <div className="skeleton skeleton-btn" style={{ marginTop: '10px' }}></div>
                         </div>
                     </div>
                 ))}

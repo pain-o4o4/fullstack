@@ -472,7 +472,7 @@ let getProfileDoctorById = (doctorId) => {
                             model: db.Markdown,
                             as: "markdownData",
 
-                            attributes: ["description", "contentHTML", "contentMarkdown"]
+                            attributes: ["description"]
                         },
                         {
                             model: db.Allcode,

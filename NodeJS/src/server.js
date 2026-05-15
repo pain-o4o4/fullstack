@@ -8,6 +8,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import http from 'http';
 import initSocket from './socket/init';
+import compression from 'compression';
 
 require('dotenv').config();
 
@@ -17,6 +18,7 @@ require('dotenv').config();
 // 4. `io` được lưu lại để controller/service có thể dùng sau --- io - Server - App
 
 const app = express(); /// const app= springboot app get post delete http ngầm định 3000
+app.use(compression());
 app.use(cookieParser());
 app.use(cors({
     origin: process.env.URL_REACT,

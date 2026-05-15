@@ -34,11 +34,11 @@ class DetailDoctor extends Component {
                 currentDoctorId: id,
                 isLoading: true
             });
-            
+
             // Parallelize if possible, but here we need detailDoctor for specialtyId
             // We await the main detail first
             await this.props.getDetailDoctor(id);
-            
+
             // After detailDoctor is in Redux, it will trigger componentDidUpdate 
             // but we can also set isLoading false here if we want more control
         }
@@ -54,7 +54,7 @@ class DetailDoctor extends Component {
             if (detailDoctor && detailDoctor.doctorinforData && detailDoctor.doctorinforData.specialtyId) {
                 await this.fetchRelatedDoctors(detailDoctor.doctorinforData.specialtyId);
             }
-            
+
             // Set loading to false after both detail and related are fetched (or at least detail)
             this.setState({ isLoading: false });
         }
@@ -99,19 +99,19 @@ class DetailDoctor extends Component {
         let nameVi = '', nameEn = '';
 
         if (detailDoctor && detailDoctor.positionData) {
-            nameVi = `${detailDoctor.positionData.valueVi}, ${detailDoctor.lastName} ${detailDoctor.firstName}`;
-            nameEn = `${detailDoctor.positionData.valueEn}, ${detailDoctor.firstName} ${detailDoctor.lastName}`;
+            nameVi = `${detailDoctor.positionData.valueVi} ${detailDoctor.firstName} ${detailDoctor.lastName}`;
+            nameEn = `${detailDoctor.positionData.valueEn} ${detailDoctor.lastName} ${detailDoctor.firstName}`;
         }
 
         return (
             <React.Fragment>
                 <HomeHeader isShowBanner={false} />
-                <CustomBreadcrumb 
+                <CustomBreadcrumb
                     items={[
                         { label: <FormattedMessage id="homeheader.booking" />, link: '/select-service' },
                         { label: <FormattedMessage id="homeheader.Physician" />, link: '/all-doctor' },
                         { label: <FormattedMessage id="homepage.detail-doctor" /> }
-                    ]} 
+                    ]}
                 />
 
                 <div className='doctor-detail-container'>

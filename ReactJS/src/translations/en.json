@@ -331,6 +331,9 @@
         }
     },
     "patient": {
+        "detail-doctor": {
+            "no-schedule": "The doctor has no appointments on this day, please choose another date."
+        },
         "my-booking": {
             "title": "YOUR APPOINTMENTS",
             "time": "Time",
