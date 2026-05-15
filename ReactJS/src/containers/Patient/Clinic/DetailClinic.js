@@ -12,6 +12,7 @@ import ExtraInforDoctor from '../Doctor/ExtraInforDoctor';
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/CustomBreadcrumb';
 import HomeFooter from '../../HomePage/HomeFooter';
 import { getAllClinicService } from '../../../services/userService';
+import ClinicDetailSkeleton from '../../../components/Skeleton/ClinicDetailSkeleton';
 import _ from 'lodash';
 
 class DetailClinic extends Component {
@@ -23,7 +24,8 @@ class DetailClinic extends Component {
             avatarFromChild: '',
             listOtherClinics: [],
             currentPage: 1,
-            itemsPerPage: 6
+            itemsPerPage: 6,
+            isLoading: true
         }
     }
 
@@ -31,8 +33,13 @@ class DetailClinic extends Component {
         // Lấy id từ params của URL: /detail-clinic/:id
         if (this.props.params && this.props.params.id) {
             let id = this.props.params.id;
-            this.props.getDetailClinicById(id);
-            await this.fetchAllClinics();
+            this.setState({ isLoading: true });
+            
+            // Parallelize API calls
+            await Promise.all([
+                this.props.getDetailClinicById(id),
+                this.fetchAllClinics()
+            ]);
         }
     }
 
@@ -56,13 +63,15 @@ class DetailClinic extends Component {
 
             this.setState({
                 dataDetailClinic: data,
-                arrDoctorId: arrDoctorId
+                arrDoctorId: arrDoctorId,
+                isLoading: false
             })
         }
 
         // Fix: Handle URL parameter changes
         if (this.props.params && this.props.params.id && this.props.params.id !== prevProps.params.id) {
             let id = this.props.params.id;
+            this.setState({ isLoading: true });
             this.props.getDetailClinicById(id);
             window.scrollTo(0, 0);
         }
@@ -166,84 +175,90 @@ class DetailClinic extends Component {
                     ]} 
                 />
                 <div className="detail-clinic-body">
-                    {/* THÊM KHỐI BANNER NÀY VÀO */}
-                    {dataDetailClinic && dataDetailClinic.image && (
-                        <div
-                            className="clinic-banner"
-                            style={{ backgroundImage: `url(${dataDetailClinic.image})` }}
-                        >
-                            <div className="banner-overlay">
-                                <div className="clinic-name-inside">{dataDetailClinic.name}</div>
-                            </div>
-                        </div>
-                    )}
-                    <div className="clinic-description">
-                        {dataDetailClinic && !_.isEmpty(dataDetailClinic) && (
-                            <>
-                                {/* Tớ bỏ tên ở đây vì đã đưa lên banner cho sang rồi Duy nhé */}
-                                <div className="clinic-address">{dataDetailClinic.address}</div>
-                                <div dangerouslySetInnerHTML={{ __html: dataDetailClinic.descriptionHTML }}></div>
-                            </>
-                        )}
-                    </div>
-
-                    <div className="clinic-doctor-list">
-                        {arrDoctorId && arrDoctorId.length > 0 &&
-                            arrDoctorId.map((item, index) => {
-                                return (
-                                    <div className="each-doctor" key={index}>
-                                        <div
-                                            className="dt-content-left"
-                                            onClick={() => {
-                                                this.handleViewDetailDoctor(item.doctorId)
-                                            }}
-                                        >
-
-                                            <ProfileDoctor
-                                                doctorId={item.doctorId}
-                                                isShowDescriptionDoctor={true}
-                                                isShowLinkDetail={true}
-                                                isShowPrice={false}
-                                                doctorImageFromParent={this.handleGetImageFromChild}
-                                            />
-
-                                        </div>
-                                        <div className="dt-content-right">
-                                            {/* <ScheduleDoctor doctorIdFromParent={item.doctorId} /> */}
-                                            <ExtraInforDoctor doctorIdFromParent={item.doctorId} />
-                                        </div>
+                    {this.state.isLoading ? (
+                        <ClinicDetailSkeleton />
+                    ) : (
+                        <>
+                            {/* THÊM KHỐI BANNER NÀY VÀO */}
+                            {dataDetailClinic && dataDetailClinic.image && (
+                                <div
+                                    className="clinic-banner"
+                                    style={{ backgroundImage: `url(${dataDetailClinic.image})` }}
+                                >
+                                    <div className="banner-overlay">
+                                        <div className="clinic-name-inside">{dataDetailClinic.name}</div>
                                     </div>
-                                )
-                            })
-                        }
-                    </div>
+                                </div>
+                            )}
+                            <div className="clinic-description">
+                                {dataDetailClinic && !_.isEmpty(dataDetailClinic) && (
+                                    <>
+                                        {/* Tớ bỏ tên ở đây vì đã đưa lên banner cho sang rồi Duy nhé */}
+                                        <div className="clinic-address">{dataDetailClinic.address}</div>
+                                        <div dangerouslySetInnerHTML={{ __html: dataDetailClinic.descriptionHTML }}></div>
+                                    </>
+                                )}
+                            </div>
 
-                    {/* Other Clinics Section */}
-                    {filteredClinics && filteredClinics.length > 0 && (
-                        <div className="other-clinics-section">
-                            <div className="other-title">
-                                <FormattedMessage id="homepage.medical-facility" defaultMessage="Cơ sở y tế khác" />
+                            <div className="clinic-doctor-list">
+                                {arrDoctorId && arrDoctorId.length > 0 &&
+                                    arrDoctorId.map((item, index) => {
+                                        return (
+                                            <div className="each-doctor" key={index}>
+                                                <div
+                                                    className="dt-content-left"
+                                                    onClick={() => {
+                                                        this.handleViewDetailDoctor(item.doctorId)
+                                                    }}
+                                                >
+
+                                                    <ProfileDoctor
+                                                        doctorId={item.doctorId}
+                                                        isShowDescriptionDoctor={true}
+                                                        isShowLinkDetail={true}
+                                                        isShowPrice={false}
+                                                        doctorImageFromParent={this.handleGetImageFromChild}
+                                                    />
+
+                                                </div>
+                                                <div className="dt-content-right">
+                                                    {/* <ScheduleDoctor doctorIdFromParent={item.doctorId} /> */}
+                                                    <ExtraInforDoctor doctorIdFromParent={item.doctorId} />
+                                                </div>
+                                            </div>
+                                        )
+                                    })
+                                }
                             </div>
-                            <div className="other-list">
-                                {currentItems.map((item, index) => (
-                                    <div 
-                                        className="other-item" 
-                                        key={index}
-                                        onClick={() => this.handleViewOtherClinic(item.id)}
-                                    >
-                                        <div 
-                                            className="clinic-img"
-                                            style={{ backgroundImage: `url(${item.image})` }}
-                                        ></div>
-                                        <div className="clinic-info">
-                                            <div className="clinic-name">{item.name}</div>
-                                            <div className="clinic-address-small">{item.address}</div>
-                                        </div>
+
+                            {/* Other Clinics Section */}
+                            {filteredClinics && filteredClinics.length > 0 && (
+                                <div className="other-clinics-section">
+                                    <div className="other-title">
+                                        <FormattedMessage id="homepage.medical-facility" defaultMessage="Cơ sở y tế khác" />
                                     </div>
-                                ))}
-                            </div>
-                            {this.renderPagination(filteredClinics.length)}
-                        </div>
+                                    <div className="other-list">
+                                        {currentItems.map((item, index) => (
+                                            <div 
+                                                className="other-item" 
+                                                key={index}
+                                                onClick={() => this.handleViewOtherClinic(item.id)}
+                                            >
+                                                <div 
+                                                    className="clinic-img"
+                                                    style={{ backgroundImage: `url(${item.image})` }}
+                                                ></div>
+                                                <div className="clinic-info">
+                                                    <div className="clinic-name">{item.name}</div>
+                                                    <div className="clinic-address-small">{item.address}</div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    {this.renderPagination(filteredClinics.length)}
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
                 <HomeFooter />

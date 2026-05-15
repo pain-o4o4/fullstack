@@ -12,6 +12,7 @@ import ExtraInforDoctor from '../Doctor/ExtraInforDoctor';
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/CustomBreadcrumb';
 import HomeFooter from '../../HomePage/HomeFooter';
 import { getAllSpecialtyService } from '../../../services/userService';
+import SpecialtyDetailSkeleton from '../../../components/Skeleton/SpecialtyDetailSkeleton';
 import _ from 'lodash';
 
 class DetailSpecialty extends Component {
@@ -22,15 +23,23 @@ class DetailSpecialty extends Component {
             arrDoctorId: [],
             listOtherSpecialties: [],
             currentPage: 1,
-            itemsPerPage: 6
+            itemsPerPage: 6,
+            isLoading: true
         }
     }
 
     async componentDidMount() {
         if (this.props.params && this.props.params.id) {
             let id = this.props.params.id;
-            await this.props.getDetailSpecialtyById(id);
-            await this.fetchAllSpecialties();
+            this.setState({ isLoading: true });
+            
+            // Parallelize API calls
+            await Promise.all([
+                this.props.getDetailSpecialtyById(id),
+                this.fetchAllSpecialties()
+            ]);
+            
+            // isLoading will be set to false in componentDidUpdate when data arrives
         }
     }
 
@@ -49,14 +58,15 @@ class DetailSpecialty extends Component {
             if (data && !_.isEmpty(data)) {
                 this.setState({
                     dataDetailSpecialty: data,
-                    arrDoctorId: data.doctorSpecialty ? data.doctorSpecialty : []
+                    arrDoctorId: data.doctorSpecialty ? data.doctorSpecialty : [],
+                    isLoading: false
                 });
             }
         }
         if (this.props.params && this.props.params.id && this.props.params.id !== prevProps.params.id) {
             let id = this.props.params.id;
+            this.setState({ currentPage: 1, isLoading: true });
             await this.props.getDetailSpecialtyById(id);
-            this.setState({ currentPage: 1 });
             window.scrollTo(0, 0);
         }
     }
@@ -155,83 +165,89 @@ class DetailSpecialty extends Component {
                         ]} 
                     />
                     <div className="detail-specialty-body">
-                        {dataDetailSpecialty && dataDetailSpecialty.image && (
-                            <div
-                                className="specialty-banner"
-                                style={{ backgroundImage: `url(${dataDetailSpecialty.image})` }}
-                            >
-                                <div className="banner-overlay">
-                                    <div className="specialty-name">{dataDetailSpecialty.name}</div>
+                        {this.state.isLoading ? (
+                            <SpecialtyDetailSkeleton />
+                        ) : (
+                            <>
+                                {dataDetailSpecialty && dataDetailSpecialty.image && (
+                                    <div
+                                        className="specialty-banner"
+                                        style={{ backgroundImage: `url(${dataDetailSpecialty.image})` }}
+                                    >
+                                        <div className="banner-overlay">
+                                            <div className="specialty-name">{dataDetailSpecialty.name}</div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="description-specialty">
+                                    {dataDetailSpecialty && !_.isEmpty(dataDetailSpecialty) && (
+                                        <div dangerouslySetInnerHTML={{ __html: dataDetailSpecialty.descriptionHTML }}></div>
+                                    )}
                                 </div>
-                            </div>
-                        )}
 
-                        <div className="description-specialty">
-                            {dataDetailSpecialty && !_.isEmpty(dataDetailSpecialty) && (
-                                <div dangerouslySetInnerHTML={{ __html: dataDetailSpecialty.descriptionHTML }}></div>
-                            )}
-                        </div>
-
-                        <div className="specialty-doctor-list">
-                            <div className="list-title">
-                                <FormattedMessage id="specialty-detail.title" />
-                            </div>
-                            {arrDoctorId && arrDoctorId.length > 0 ?
-                                arrDoctorId.map((item, index) => {
-                                    return (
-                                        <div className="each-doctor" key={index}>
-                                            <div
-                                                className="dt-content-left"
-                                                onClick={() => {
-                                                    this.handleViewDetailDoctor(item.doctorId)
-                                                }}
-                                            >
-                                                <ProfileDoctor
-                                                    doctorId={item.doctorId}
-                                                    isShowDescription={true}
-                                                    isShowLinkDetail={true}
-                                                    isShowPrice={false}
-                                                />
-                                            </div>
-                                            <div className="dt-content-right">
-                                                <div className="doctor-extra-info">
-                                                    <ExtraInforDoctor doctorIdFromParent={item.doctorId} />
+                                <div className="specialty-doctor-list">
+                                    <div className="list-title">
+                                        <FormattedMessage id="specialty-detail.title" />
+                                    </div>
+                                    {arrDoctorId && arrDoctorId.length > 0 ?
+                                        arrDoctorId.map((item, index) => {
+                                            return (
+                                                <div className="each-doctor" key={index}>
+                                                    <div
+                                                        className="dt-content-left"
+                                                        onClick={() => {
+                                                            this.handleViewDetailDoctor(item.doctorId)
+                                                        }}
+                                                    >
+                                                        <ProfileDoctor
+                                                            doctorId={item.doctorId}
+                                                            isShowDescription={true}
+                                                            isShowLinkDetail={true}
+                                                            isShowPrice={false}
+                                                        />
+                                                    </div>
+                                                    <div className="dt-content-right">
+                                                        <div className="doctor-extra-info">
+                                                            <ExtraInforDoctor doctorIdFromParent={item.doctorId} />
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            )
+                                        })
+                                        : <div className="no-data">
+                                            <FormattedMessage id="specialty-detail.no-doctor" />
                                         </div>
-                                    )
-                                })
-                                : <div className="no-data">
-                                    <FormattedMessage id="specialty-detail.no-doctor" />
+                                    }
                                 </div>
-                            }
-                        </div>
 
-                        {filteredSpecialties && filteredSpecialties.length > 0 && (
-                            <div className="other-specialties-section">
-                                <div className="other-title">
-                                    <FormattedMessage id="homepage.specialty-popular" defaultMessage="Chuyên khoa khác" />
-                                </div>
-                                <div className="other-list">
-                                    {currentItems.map((item, index) => (
-                                        <div 
-                                            className="other-item" 
-                                            key={index}
-                                            onClick={() => this.handleViewOtherSpecialty(item.id)}
-                                        >
-                                            <div 
-                                                className="specialty-img"
-                                                style={{ backgroundImage: `url(${item.image})` }}
-                                            ></div>
-                                            <div className="specialty-info">
-                                                <div className="specialty-name">{item.name}</div>
-                                                <div className="specialty-desc-small">Chuyên khoa uy tín</div>
-                                            </div>
+                                {filteredSpecialties && filteredSpecialties.length > 0 && (
+                                    <div className="other-specialties-section">
+                                        <div className="other-title">
+                                            <FormattedMessage id="homepage.specialty-popular" defaultMessage="Chuyên khoa khác" />
                                         </div>
-                                    ))}
-                                </div>
-                                {this.renderPagination(filteredSpecialties.length)}
-                            </div>
+                                        <div className="other-list">
+                                            {currentItems.map((item, index) => (
+                                                <div 
+                                                    className="other-item" 
+                                                    key={index}
+                                                    onClick={() => this.handleViewOtherSpecialty(item.id)}
+                                                >
+                                                    <div 
+                                                        className="specialty-img"
+                                                        style={{ backgroundImage: `url(${item.image})` }}
+                                                    ></div>
+                                                    <div className="specialty-info">
+                                                        <div className="specialty-name">{item.name}</div>
+                                                        <div className="specialty-desc-small">Chuyên khoa uy tín</div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        {this.renderPagination(filteredSpecialties.length)}
+                                    </div>
+                                )}
+                            </>
                         )}
                     </div>
                 </div>

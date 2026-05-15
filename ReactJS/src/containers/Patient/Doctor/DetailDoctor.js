@@ -13,6 +13,7 @@ import CustomBreadcrumb from '../../../components/CustomBreadcrumb/CustomBreadcr
 import HomeFooter from '../../HomePage/HomeFooter';
 import ProfileDoctor from './ProfileDoctor';
 import { getDetailSpecialtyByIdService } from '../../../services/userService';
+import DoctorDetailSkeleton from '../../../components/Skeleton/DoctorDetailSkeleton';
 
 class DetailDoctor extends Component {
     constructor(props) {
@@ -21,38 +22,51 @@ class DetailDoctor extends Component {
             detailDoctor: {},
             currentDoctorId: this.props.params && this.props.params.id ? this.props.params.id : -1,
             selectedClinicData: null,
-            listRelatedDoctors: []
+            listRelatedDoctors: [],
+            isLoading: true
         }
     }
 
-    componentDidMount() {
-
+    async componentDidMount() {
         if (this.props.params && this.props.params.id) {
             let id = this.props.params.id;
             this.setState({
-                currentDoctorId: id // Thêm dòng này
+                currentDoctorId: id,
+                isLoading: true
             });
-            this.props.getDetailDoctor(id);
+            
+            // Parallelize if possible, but here we need detailDoctor for specialtyId
+            // We await the main detail first
+            await this.props.getDetailDoctor(id);
+            
+            // After detailDoctor is in Redux, it will trigger componentDidUpdate 
+            // but we can also set isLoading false here if we want more control
         }
     }
     async componentDidUpdate(prevProps, prevState, snapshot) {
         if (prevProps.detailDoctor !== this.props.detailDoctor) {
+            let detailDoctor = this.props.detailDoctor;
             this.setState({
-                detailDoctor: this.props.detailDoctor
+                detailDoctor: detailDoctor,
             })
 
             // Load related doctors when detailDoctor is available
-            if (this.props.detailDoctor && this.props.detailDoctor.doctorinforData && this.props.detailDoctor.doctorinforData.specialtyId) {
-                await this.fetchRelatedDoctors(this.props.detailDoctor.doctorinforData.specialtyId);
+            if (detailDoctor && detailDoctor.doctorinforData && detailDoctor.doctorinforData.specialtyId) {
+                await this.fetchRelatedDoctors(detailDoctor.doctorinforData.specialtyId);
             }
+            
+            // Set loading to false after both detail and related are fetched (or at least detail)
+            this.setState({ isLoading: false });
         }
         if (prevProps.params && this.props.params && prevProps.params.id !== this.props.params.id) {
             let id = this.props.params.id;
             this.setState({
-                currentDoctorId: id
+                currentDoctorId: id,
+                isLoading: true,
+                listRelatedDoctors: [] // Reset related list
             });
             this.props.getDetailDoctor(id);
-            window.scrollTo(0, 0); // Scroll to top when switching doctor
+            window.scrollTo(0, 0);
         }
     }
 
@@ -101,63 +115,69 @@ class DetailDoctor extends Component {
                 />
 
                 <div className='doctor-detail-container'>
-                    <div className='intro-doctor'>
-                        <div className='content-left'
-                            style={{ backgroundImage: `url(${detailDoctor && detailDoctor.image ? detailDoctor.image : ''})` }}>
-                        </div>
-                        <div className='content-right'>
-                            <div className='up'>
-                                {language === LANGUAGES.VI ? nameVi : nameEn}
+                    {this.state.isLoading ? (
+                        <DoctorDetailSkeleton />
+                    ) : (
+                        <>
+                            <div className='intro-doctor'>
+                                <div className='content-left'
+                                    style={{ backgroundImage: `url(${detailDoctor && detailDoctor.image ? detailDoctor.image : ''})` }}>
+                                </div>
+                                <div className='content-right'>
+                                    <div className='up'>
+                                        {language === LANGUAGES.VI ? nameVi : nameEn}
+                                    </div>
+                                    <div className='down'>
+                                        {detailDoctor && detailDoctor.markdownData && detailDoctor.markdownData.description
+                                            && <span>{detailDoctor.markdownData.description}</span>
+                                        }
+                                    </div>
+                                </div>
                             </div>
-                            <div className='down'>
-                                {detailDoctor && detailDoctor.markdownData && detailDoctor.markdownData.description
-                                    && <span>{detailDoctor.markdownData.description}</span>
+                            <div className='schedule-doctor'>
+                                <div className='content-left'>
+                                    <ScheduleDoctor
+                                        doctorIdFromParent={this.state.currentDoctorId}
+                                        handleClinicSelection={this.handleClinicSelection}
+                                    />
+                                </div>
+                                <div className='content-right'>
+                                    <ExtraInforDoctor
+                                        doctorIdFromParent={this.state.currentDoctorId}
+                                        clinicData={selectedClinicData}
+                                    />
+                                </div>
+                            </div>
+                            {/* Hiển thị nội dung Markdown bằng dangerouslySetInnerHTML */}
+                            <div className='detail-info-doctor'>
+                                {detailDoctor && detailDoctor.markdownData && detailDoctor.markdownData.contentHTML
+                                    && <div dangerouslySetInnerHTML={{ __html: detailDoctor.markdownData.contentHTML }}></div>
                                 }
                             </div>
-                        </div>
-                    </div>
-                    <div className='schedule-doctor'>
-                        <div className='content-left'>
-                            <ScheduleDoctor
-                                doctorIdFromParent={this.state.currentDoctorId}
-                                handleClinicSelection={this.handleClinicSelection}
-                            />
-                        </div>
-                        <div className='content-right'>
-                            <ExtraInforDoctor
-                                doctorIdFromParent={this.state.currentDoctorId}
-                                clinicData={selectedClinicData}
-                            />
-                        </div>
-                    </div>
-                    {/* Hiển thị nội dung Markdown bằng dangerouslySetInnerHTML */}
-                    <div className='detail-info-doctor'>
-                        {detailDoctor && detailDoctor.markdownData && detailDoctor.markdownData.contentHTML
-                            && <div dangerouslySetInnerHTML={{ __html: detailDoctor.markdownData.contentHTML }}></div>
-                        }
-                    </div>
 
-                    {/* Related Doctors Section */}
-                    {this.state.listRelatedDoctors && this.state.listRelatedDoctors.length > 0 && (
-                        <div className="related-doctors-section">
-                            <div className="related-title">
-                                <FormattedMessage id="homepage.outstanding-doctor" defaultMessage="Bác sĩ nổi bật" />
-                            </div>
-                            <div className="related-list">
-                                {this.state.listRelatedDoctors.map((item, index) => (
-                                    <div className="related-item" key={index} onClick={() => this.handleViewDetailDoctor(item)}>
-                                        <ProfileDoctor
-                                            doctorId={item.doctorId}
-                                            isShowDescription={true}
-                                            isShowPrice={false}
-                                        />
-                                        <div className="view-more">
-                                            <FormattedMessage id="homepage.more-info" defaultMessage="Xem thêm" />
-                                        </div>
+                            {/* Related Doctors Section */}
+                            {this.state.listRelatedDoctors && this.state.listRelatedDoctors.length > 0 && (
+                                <div className="related-doctors-section">
+                                    <div className="related-title">
+                                        <FormattedMessage id="homepage.outstanding-doctor" defaultMessage="Bác sĩ nổi bật" />
                                     </div>
-                                ))}
-                            </div>
-                        </div>
+                                    <div className="related-list">
+                                        {this.state.listRelatedDoctors.map((item, index) => (
+                                            <div className="related-item" key={index} onClick={() => this.handleViewDetailDoctor(item)}>
+                                                <ProfileDoctor
+                                                    doctorId={item.doctorId}
+                                                    isShowDescription={true}
+                                                    isShowPrice={false}
+                                                />
+                                                <div className="view-more">
+                                                    <FormattedMessage id="homepage.more-info" defaultMessage="Xem thêm" />
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
                 <HomeFooter />
