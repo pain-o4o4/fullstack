@@ -14,7 +14,7 @@ class BookingHistory extends Component {
         this.state = {
             listHistory: [],
             currentPage: 1,
-            pageSize: 5
+            pageSize: 10
         }
     }
 
@@ -48,10 +48,10 @@ class BookingHistory extends Component {
                         <FormattedMessage id="patient.history.title" defaultMessage="LỊCH SỬ KHÁM BỆNH" />
                     </div>
                     <div className="table-booking-content">
-                        <table className="table table-hover table-bordered mt-3">
-                            <thead className="thead-light">
+                        <table className="booking-table">
+                            <thead>
                                 <tr>
-                                    <th>STT</th>
+                                    <th className="col-stt">STT</th>
                                     <th><FormattedMessage id="patient.my-booking.time" defaultMessage="Thời gian" /></th>
                                     <th><FormattedMessage id="patient-detail.patient-name" defaultMessage="Bệnh nhân" /></th>
                                     <th><FormattedMessage id="patient-profile.phone-place" defaultMessage="Số điện thoại" /></th>
@@ -76,7 +76,7 @@ class BookingHistory extends Component {
                                         let clinicName = item.doctorBookingData.doctorinforData
                                             ? item.doctorBookingData.doctorinforData.nameClinic
                                             : 'N/A';
-                                        
+
                                         let formattedDate = '';
                                         if (item.date) {
                                             if (/^\d+$/.test(item.date)) {
@@ -88,40 +88,57 @@ class BookingHistory extends Component {
 
                                         return (
                                             <tr key={index} className={`status-${item.statusId}`}>
-                                                <td>{realIndex}</td>
+                                                <td className="col-stt">{realIndex}</td>
                                                 <td>
-                                                    <div className="time-display">
-                                                        {language === 'vi' ? item.timeTypeDataPatient.valueVi : item.timeTypeDataPatient.valueEn}
+                                                    <div className="cell-time">
+                                                        <span>{language === 'vi' ? item.timeTypeDataPatient.valueVi : item.timeTypeDataPatient.valueEn}</span>
                                                     </div>
-                                                    <div className="date-display">{formattedDate}</div>
+                                                    <div className="cell-date">
+                                                        <span>{formattedDate}</span>
+                                                    </div>
                                                 </td>
                                                 <td>
-                                                    <div style={{ fontWeight: '600', color: '#1d1d1f' }}>{patientName}</div>
+                                                    <div className="cell-patient">
+                                                        <div className="patient-info">
+                                                            <span className="patient-name">{patientName}</span>
+                                                            {item.patientBookingData?.email && (
+                                                                <span className="patient-email">{item.patientBookingData.email}</span>
+                                                            )}
+                                                        </div>
+                                                    </div>
                                                 </td>
-                                                <td>{item.patientBookingData?.phonenumber || 'N/A'}</td>
                                                 <td>
-                                                    <div className="doctor-name">{name}</div>
-                                                    <div className="clinic-address">{clinicName}</div>
+                                                    <div className="cell-phone">
+                                                        <span>{item.patientBookingData?.phonenumber || 'N/A'}</span>
+                                                    </div>
                                                 </td>
                                                 <td>
-                                                    <div style={{ fontSize: '13px', color: '#86868b', maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={item.reason}>
-                                                        {item.reason}
+                                                    <div className="cell-doctor">
+                                                        <div className="doctor-info">
+                                                            <span className="doctor-name">{name}</span>
+                                                            <span className="clinic-name">{clinicName}</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className="cell-reason" title={item.reason}>
+                                                        {item.reason || 'N/A'}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <span className={`status-badge ${item.statusId}`}>
-                                                        {item.statusId === 'S3' ? <FormattedMessage id="patient.my-booking.done" /> : 
-                                                         item.statusId === 'S4' ? <FormattedMessage id="patient.my-booking.cancelled" /> :
-                                                         item.statusId === 'S5' ? <FormattedMessage id="patient.my-booking.missed" /> :
-                                                         (language === 'vi' ? item.statusData.valueVi : item.statusData.valueEn)
+                                                        {item.statusId === 'S3' ? <FormattedMessage id="patient.my-booking.done" /> :
+                                                            item.statusId === 'S4' ? <FormattedMessage id="patient.my-booking.cancelled" /> :
+                                                                item.statusId === 'S5' ? <FormattedMessage id="patient.my-booking.missed" /> :
+                                                                    (language === 'vi' ? item.statusData.valueVi : item.statusData.valueEn)
                                                         }
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <button className="btn btn-outline-info btn-sm"
+                                                    <button className="btn-outline-info"
                                                         onClick={() => this.props.navigate('/patient/detail-schedule/' + item.id)}
                                                     >
-                                                        {language === 'vi' ? 'Xem lại' : 'Review'}
+                                                        <span>{language === 'vi' ? 'Xem lại' : 'Review'}</span>
                                                     </button>
                                                 </td>
                                             </tr>
@@ -140,16 +157,16 @@ class BookingHistory extends Component {
 
                     {listHistory && listHistory.length > pageSize &&
                         <div className="pagination-container">
-                            <button 
-                                className="btn-pagination" 
+                            <button
+                                className="btn-pagination"
                                 disabled={currentPage === 1}
                                 onClick={() => this.setState({ currentPage: currentPage - 1 })}
                             >
                                 <i className="fas fa-chevron-left"></i>
                             </button>
-                            
+
                             {[...Array(Math.ceil(listHistory.length / pageSize))].map((_, i) => (
-                                <button 
+                                <button
                                     key={i}
                                     className={`btn-pagination ${currentPage === i + 1 ? 'active' : ''}`}
                                     onClick={() => this.setState({ currentPage: i + 1 })}
@@ -158,8 +175,8 @@ class BookingHistory extends Component {
                                 </button>
                             ))}
 
-                            <button 
-                                className="btn-pagination" 
+                            <button
+                                className="btn-pagination"
                                 disabled={currentPage === Math.ceil(listHistory.length / pageSize)}
                                 onClick={() => this.setState({ currentPage: currentPage + 1 })}
                             >

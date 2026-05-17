@@ -2,160 +2,145 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background-color: #f5f5f5;
+    background-color: #ffffff; // Apple sử dụng nền trắng tinh khiết tuyệt đối cho toàn bộ trang pháp lý
 
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
     .legal-page-body {
         flex: 1;
-        padding: 6% 0 0 0;
+        padding: 120px 24px 80px 24px; // Spacing cực kỳ rộng rãi tạo cảm giác thoáng đạt
         display: flex;
         justify-content: center;
-        animation: fadeIn 0.8s ease-out;
+        animation: fadeIn 0.5s cubic-bezier(0.25, 1, 0.5, 1);
 
         .legal-content-wrapper {
-            max-width: 1240px;
-
+            max-width: 800px; // Tăng lên 800px theo yêu cầu để giao diện thoáng rộng hơn trên màn hình lớn
             width: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 12px 24px 0 0;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-            padding: 60px;
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            background: transparent; // Loại bỏ hoàn toàn chiếc hộp "Dashboard" giả tạo rẻ tiền
+            box-shadow: none; // Loại bỏ đổ bóng thô kệch
+            border: none; // Triệt tiêu mọi đường viền bao quanh
+            padding: 0; // Hài hòa trực tiếp với nền trắng trang web
 
             .legal-header {
-                margin-bottom: 45px;
-                text-align: center;
-                position: relative;
+                margin-bottom: 40px;
+                text-align: left;
+                border-bottom: 1px solid #d2d2d7; // Đường phân cách màu xám chuẩn của Apple
+                padding-bottom: 24px;
 
                 h1 {
-                    font-size: 42px;
-                    font-weight: 800;
-                    background-color: #000;
-                    -webkit-background-clip: text;
-                    -webkit-text-fill-color: transparent;
-                    margin-bottom: 15px;
-                    letter-spacing: -0.5px;
+                    font-size: 40px;
+                    font-weight: 700;
+                    color: #1d1d1f; // Signature Apple Dark Charcoal
+                    margin-bottom: 8px;
+                    letter-spacing: -0.02em;
+                    line-height: 1.1;
+
+                    @media (max-width: 768px) {
+                        font-size: 32px;
+                    }
                 }
 
                 .legal-meta {
-                    font-size: 15px;
-                    color: #718096;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 8px;
-
-                    &::before {
-                        content: '';
-                        width: 40px;
-                        height: 1px;
-                        background: #cbd5e0;
-                    }
-
-                    &::after {
-                        content: '';
-                        width: 40px;
-                        height: 1px;
-                        background: #cbd5e0;
-                    }
+                    font-size: 14px;
+                    color: #86868b; // Signature Apple Medium Gray
+                    font-weight: 400;
                 }
             }
 
             .legal-content {
-                color: #4a5568;
-                line-height: 1.8;
+                color: #1d1d1f; // Chữ tối màu sắc nét chuẩn tương phản
+                line-height: 1.62; // Khoảng cách dòng hoàn hảo cho khả năng hấp thụ text nhanh
                 font-size: 17px;
+                letter-spacing: -0.011em;
 
-                h1,
-                h2,
-                h3 {
-                    color: #1a202c;
-                    font-weight: 700;
-                    margin-top: 40px;
-                    margin-bottom: 20px;
-                    position: relative;
+                h2, h3, h4 {
+                    color: #1d1d1f;
+                    font-weight: 600;
+                    letter-spacing: -0.015em;
                 }
 
                 h2 {
-                    font-size: 26px;
-                    padding-bottom: 12px;
-                    border-bottom: 2px solid #edf2f7;
+                    font-size: 24px;
+                    margin-top: 48px;
+                    margin-bottom: 16px;
+                    border-bottom: none;
+                    padding-bottom: 0;
 
-                    &::after {
-                        content: '';
-                        position: absolute;
-                        bottom: -2px;
-                        left: 0;
-                        width: 60px;
-                        height: 2px;
-                        background: #4299e1;
+                    @media (max-width: 768px) {
+                        font-size: 20px;
                     }
                 }
 
                 h3 {
-                    font-size: 20px;
+                    font-size: 19px;
+                    margin-top: 36px;
+                    margin-bottom: 12px;
+                }
+
+                h4 {
+                    font-size: 16px;
+                    margin-top: 28px;
+                    margin-bottom: 10px;
                 }
 
                 p {
-                    margin-bottom: 24px;
+                    margin-top: 0;
+                    margin-bottom: 12px; // Giảm xuống 12px để gom các dòng ngắn (bullet point giả dạng paragraph) lại khít và đẹp mắt
+                    font-weight: 400;
                 }
 
-                ul,
-                ol {
+                ul, ol {
                     margin-bottom: 24px;
-                    padding-left: 25px;
+                    padding-left: 20px;
 
                     li {
                         margin-bottom: 12px;
-                        position: relative;
+                        color: #1d1d1f;
                     }
                 }
 
                 strong {
-                    color: #2d3748;
+                    color: #1d1d1f;
+                    font-weight: 600;
                 }
 
                 a {
-                    color: #3182ce;
+                    color: #0066cc; // Apple Signature Link Blue (Xanh lam thanh khiết)
                     text-decoration: none;
-                    font-weight: 500;
-                    border-bottom: 1px dashed transparent;
-                    transition: all 0.3s ease;
+                    transition: color 0.15s ease;
 
                     &:hover {
-                        color: #2c5282;
-                        border-bottom-color: #2c5282;
+                        text-decoration: underline; // Chỉ gạch chân khi tương tác
+                        color: #0044b3;
                     }
                 }
 
-                // Table support in markdown
+                // Thiết kế bảng phẳng tối giản bậc thầy (Apple Editorial Table)
                 table {
                     width: 100%;
                     border-collapse: collapse;
-                    margin: 30px 0;
-                    border-radius: 12px;
-                    overflow: hidden;
-                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
-
+                    margin: 40px 0;
+                    
                     th {
-                        background: #f7fafc;
-                        color: #2d3748;
+                        background: transparent;
+                        color: #1d1d1f;
                         font-weight: 600;
                         text-align: left;
-                        padding: 15px;
-                        border-bottom: 1px solid #edf2f7;
+                        padding: 12px 0;
+                        font-size: 15px;
+                        border-bottom: 2px solid #1d1d1f; // Đường kẻ đen đậm ở đầu bảng
                     }
 
                     td {
-                        padding: 15px;
-                        border-bottom: 1px solid #edf2f7;
-                        background: #fff;
+                        padding: 16px 0;
+                        font-size: 15px;
+                        color: #1d1d1f;
+                        border-bottom: 1px solid #d2d2d7; // Đường phân cách ngang siêu mảnh
+                        background: transparent;
                     }
 
                     tr:last-child td {
-                        border-bottom: none;
+                        border-bottom: 1px solid #1d1d1f; // Đường đóng đáy bảng đen lịch lãm
                     }
                 }
             }
@@ -166,33 +151,10 @@
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(8px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
-    }
-}
-
-// Responsive
-@media (max-width: 768px) {
-    .legal-page-container {
-        .legal-page-body {
-            padding: 30px 15px;
-
-            .legal-content-wrapper {
-                padding: 30px;
-                border-radius: 16px;
-
-                .legal-header h1 {
-                    font-size: 30px;
-                }
-
-                .legal-content {
-                    font-size: 16px;
-                }
-            }
-        }
     }
 }

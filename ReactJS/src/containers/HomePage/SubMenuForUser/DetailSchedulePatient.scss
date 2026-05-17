@@ -1,9 +1,9 @@
 .detail-schedule-container {
-    background-color: #f5f5f7;
+    background-color: #f9fafb; // Matching sleek modern neutral background
     min-height: 100vh;
-    padding-top: 50px;
+    padding-top: 120px; // Clearance for HomeHeader
     padding-bottom: 80px;
-    font-family: 'Inter', -apple-system, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
     .loading-container {
         display: flex;
@@ -12,135 +12,224 @@
         align-items: center;
         height: 60vh;
         gap: 20px;
-        color: #86868b;
+        color: #9ca3af;
+        font-size: 15px;
 
         .spinner {
             width: 40px;
             height: 40px;
-            border: 3px solid rgba(0, 113, 227, 0.1);
-            border-top-color: #0071e3;
+            border: 3px solid rgba(37, 99, 235, 0.1);
+            border-top-color: #2563eb;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
     }
 
     .detail-schedule-body {
-        max-width: 1000px;
+        max-width: 1240px; // Perfect alignment with HomeHeader
         margin: 0 auto;
-        padding: 40px 20px;
+        padding: 0 24px;
 
         .back-button {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            color: #86868b;
+            gap: 8px;
+            color: #4b5563;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
-            margin-bottom: 30px;
+            margin-bottom: 24px;
             padding: 8px 16px;
-            border-radius: 50px;
-            background: white;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 8px;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+
+            i {
+                font-size: 12px;
+                transition: transform 0.2s ease;
+            }
 
             &:hover {
-                color: #1d1d1f;
-                background: #fbfbfd;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-                transform: translateX(-5px);
+                color: #111827;
+                background: #f9fafb;
+                border-color: #d1d5db;
+
+                i {
+                    transform: translateX(-3px);
+                }
             }
         }
 
         .detail-card {
-            background: white;
-            border-radius: 24px;
-            padding: 60px;
-            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.04);
-            border: 1px solid rgba(0, 0, 0, 0.02);
+            background: #ffffff;
+            border-radius: 16px; // Unified bo-góc matching table card
+            padding: 40px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
 
             .header-detail-row {
                 display: flex;
                 justify-content: space-between;
-                align-items: flex-start;
-                margin-bottom: 50px;
-                padding-bottom: 30px;
-                border-bottom: 1px solid #f5f5f7;
+                align-items: center;
+                margin-bottom: 32px;
+                padding-bottom: 20px;
+                border-bottom: 1px solid #f3f4f6;
 
-                .title-wrapper {
-                    .title {
-                        font-size: 36px;
-                        font-weight: 800;
-                        color: #1d1d1f;
-                        letter-spacing: -1.5px;
-                        margin: 0 0 8px 0;
-                    }
-
-                    .subtitle {
-                        color: #86868b;
-                        font-size: 15px;
-                    }
+                .title {
+                    font-size: 24px; // Streamlined header typography
+                    font-weight: 700;
+                    color: #111827;
+                    letter-spacing: -0.5px;
+                    margin: 0;
                 }
 
                 .status-tag {
-                    padding: 10px 20px;
-                    border-radius: 50px;
+                    padding: 6px 14px;
+                    border-radius: 9999px;
                     font-size: 13px;
-                    font-weight: 700;
-                    text-transform: uppercase;
-                    letter-spacing: 0.5px;
+                    font-weight: 600;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    text-transform: none;
 
+                    &::before {
+                        content: '';
+                        display: inline-block;
+                        width: 6px;
+                        height: 6px;
+                        border-radius: 50%;
+                    }
+
+                    // Pending / Lịch hẹn mới / Chờ thanh toán (Tông màu sâu đạt chuẩn WCAG AA tương phản > 5.5:1)
                     &.S1 {
-                        background: #fff3cd;
-                        color: #856404;
+                        background: #fef3c7 !important;
+                        color: #78350f !important;
+                        &::before { background: #d97706; }
                     }
 
-                    // Pending
+                    // Confirmed / Đã xác nhận / Đã thanh toán (Tông màu tương phản cao)
                     &.S2 {
-                        background: #d4edda;
-                        color: #155724;
+                        background: #d1fae5 !important;
+                        color: #065f46 !important;
+                        &::before { background: #059669; }
                     }
 
-                    // Confirmed
+                    // Done / Đã khám xong (Tông màu tương phản cao)
                     &.S3 {
-                        background: #e2e3e5;
-                        color: #383d41;
+                        background: #dbeafe !important;
+                        color: #1e40af !important;
+                        &::before { background: #2563eb; }
                     }
 
-                    // Done
+                    // Cancelled / Đã hủy (Tông màu sẫm cực kỳ rõ ràng)
                     &.S4 {
-                        background: #f8d7da;
-                        color: #721c24;
+                        background: #fee2e2 !important;
+                        color: #991b1b !important;
+                        &::before { background: #dc2626; }
                     }
 
-                    // Cancelled
+                    // Missed / Lỡ hẹn (Tông xám đậm chuẩn)
                     &.S5 {
-                        background: #d1ecf1;
-                        color: #0c5460;
+                        background: #f3f4f6 !important;
+                        color: #374151 !important;
+                        &::before { background: #4b5563; }
                     }
-
-                    // Missed
                 }
             }
 
             .info-grid {
                 display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 60px;
+                grid-template-columns: 1.2fr 1fr; // Phân bổ tỷ lệ cân đối theo luồng thị giác của Apple
+                gap: 24px;
 
-                @media (max-width: 768px) {
+                @media (max-width: 992px) {
                     grid-template-columns: 1fr;
-                    gap: 40px;
+                    gap: 24px;
+                }
+
+                .info-column {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 24px;
+                    height: 100%; // Đảm bảo cột kéo dài hết chiều cao hàng của Grid
                 }
 
                 .info-section {
+                    display: flex;
+                    flex-direction: column;
+
+                    &.master-card {
+                        background: #f9fafb; // Nền phụ dịu nhẹ tạo chiều sâu phân tầng
+                        border: 1px solid #e5e7eb;
+                        border-radius: 16px; // Bo góc mềm mại kiểu Apple hiện đại
+                        padding: 24px;
+                        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+                        &:hover {
+                            transform: translateY(-2px);
+                            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+                            border-color: #d1d5db;
+                            background: #ffffff; // Chuyển màu nền sang trắng tinh khôi cực kỳ sống động
+                        }
+                    }
+
+                    // Styles cho Avatar Header Row (Doctor & Patient)
+                    .provider-header-row, .patient-header-row {
+                        display: flex;
+                        align-items: center;
+                        gap: 16px;
+                        margin-bottom: 20px;
+                        padding-bottom: 16px;
+                        border-bottom: 1px dashed #e5e7eb;
+
+                        .provider-avatar, .patient-avatar {
+                            width: 56px;
+                            height: 56px;
+                            border-radius: 50%;
+                            object-fit: cover;
+                            border: 2px solid #ffffff;
+                            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+
+                            &.monogram {
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                font-size: 22px;
+                                font-weight: 700;
+                                color: #ffffff;
+                                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+                            }
+                        }
+
+                        .provider-avatar.monogram {
+                            background: linear-gradient(135deg, #60a5fa, #2563eb); // Xanh dương biểu trưng cho Y tế & Bác sĩ
+                        }
+
+                        .patient-avatar.monogram {
+                            background: linear-gradient(135deg, #34d399, #059669); // Xanh ngọc biểu trưng cho Bệnh nhân & Hồ sơ
+                        }
+
+                        .provider-name-group, .patient-name-group {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 2px;
+
+                            .label {
+                                margin-bottom: 0;
+                            }
+                        }
+                    }
+
                     .section-title {
-                        font-size: 14px;
+                        font-size: 11px;
                         font-weight: 700;
-                        color: #86868b;
-                        margin-bottom: 24px;
+                        color: #6b7280; // Nhãn xám tương phản tốt
+                        margin-bottom: 20px;
                         text-transform: uppercase;
-                        letter-spacing: 1px;
+                        letter-spacing: 0.08em;
                         display: flex;
                         align-items: center;
                         gap: 10px;
@@ -148,86 +237,176 @@
                         &::after {
                             content: '';
                             height: 1px;
-                            background: #f2f2f7;
+                            background: #e5e7eb;
                             flex-grow: 1;
                         }
                     }
 
-                    &.full-width {
-                        grid-column: 1 / -1;
-                    }
-
                     .info-item {
                         display: flex;
-                        justify-content: space-between;
-                        padding: 12px 0;
-                        border-bottom: 1px solid rgba(242, 242, 247, 0.5);
-                        font-size: 16px;
+                        flex-direction: column;
+                        align-items: flex-start;
+                        justify-content: flex-start;
+                        padding: 8px 0; 
+                        font-size: 15px;
+
+                        &.price-divider {
+                            border-top: 1px dashed #e5e7eb; // Đường cắt chỉ mảnh tinh tế thay vì viền cứng
+                            padding-top: 16px;
+                            margin-top: 12px;
+                        }
 
                         .label {
-                            color: #86868b;
-                            font-weight: 500;
+                            color: #6b7280;
+                            font-size: 11px;
+                            font-weight: 700;
+                            text-transform: uppercase;
+                            letter-spacing: 0.5px;
+                            margin-bottom: 4px;
                         }
 
                         .value {
-                            color: #1d1d1f;
+                            color: #111827;
+                            font-size: 15px;
                             font-weight: 600;
-                            text-align: right;
+                            text-align: left;
+                            word-break: break-word;
+                            white-space: normal;
+                            line-height: 1.5;
 
                             &.bold {
                                 font-weight: 700;
+                                color: #2563eb;
+                            }
+
+                            &.name-highlight {
+                                font-size: 17px;
+                                font-weight: 700;
+                                color: #111827;
                             }
 
                             &.price {
-                                color: #ff3b30;
+                                color: #dc2626;
                                 font-weight: 800;
-                                font-size: 20px;
+                                font-size: 22px;
                                 letter-spacing: -0.5px;
                             }
+
+                            &.address-text {
+                                font-size: 14px;
+                                color: #374151;
+                                font-weight: 500;
+                            }
+
+                            &.email-text {
+                                font-size: 14px;
+                                color: #374151;
+                                font-weight: 500;
+                                word-break: break-all;
+                            }
+
+                            &.phone-text {
+                                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                                font-weight: 600;
+                            }
+
+                            &.highlight-text {
+                                color: #111827;
+                                font-weight: 700;
+                                font-size: 16px;
+                            }
+
+                            &.id-badge {
+                                background: #e5e7eb;
+                                color: #374151;
+                                padding: 3px 8px;
+                                border-radius: 6px;
+                                font-family: 'SFMono-Regular', Consolas, Menlo, monospace;
+                                font-weight: 700;
+                                font-size: 13px;
+                            }
+                        }
+                    }
+
+                    // CSS cho phần nút hành động trực tiếp trên Card
+                    .card-action-container {
+                        margin-top: 20px;
+                        width: 100%;
+
+                        .btn-pay-now-master {
+                            width: 100%;
+                            background: #2563eb;
+                            color: white;
+                            border: none;
+                            padding: 12px 20px;
+                            border-radius: 10px;
+                            font-size: 14px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            transition: all 0.2s ease;
+                            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+
+                            &:hover {
+                                background: #1d4ed8;
+                                transform: translateY(-1px);
+                                box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+                            }
+
+                            &:active {
+                                transform: translateY(0);
+                            }
+                        }
+                    }
+
+                    // CSS riêng cho phần Lý do khám dạng Aesthetic Callout lồng trong Patient Card
+                    .reason-callout-container {
+                        border-top: 1px dashed #e5e7eb;
+                        margin-top: 20px;
+                        padding-top: 16px;
+                        width: 100%;
+
+                        .reason-label {
+                            color: #6b7280;
+                            font-size: 11px;
+                            font-weight: 700;
+                            text-transform: uppercase;
+                            letter-spacing: 0.5px;
+                            display: block;
+                            margin-bottom: 8px;
                         }
 
-                        &:last-child {
-                            border-bottom: none;
+                        .reason-content-box {
+                            background: #ffffff; // Nền hộp trắng nổi bật trên nền xám
+                            border-radius: 8px;
+                            padding: 14px 18px;
+                            border: 1px solid #e5e7eb;
+                            font-size: 14px;
+                            color: #374151;
+                            line-height: 1.6;
+                            font-weight: 500;
+                            transition: all 0.25s ease;
                         }
                     }
-                }
-            }
 
-            .action-footer {
-                margin-top: 60px;
-                padding-top: 40px;
-                border-top: 1px solid #f5f5f7;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 15px;
+                    // Tự động giãn chiều cao bằng tổng cột trái & dồn Lý do khám xuống đáy
+                    &.patient-card {
+                        flex: 1;
+                        display: flex;
+                        flex-direction: column;
 
-                .btn-pay-now {
-                    background: #0071e3;
-                    color: white;
-                    border: none;
-                    padding: 18px 60px;
-                    border-radius: 16px;
-                    font-size: 17px;
-                    font-weight: 700;
-                    cursor: pointer;
-                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                    box-shadow: 0 8px 24px rgba(0, 113, 227, 0.2);
-
-                    &:hover {
-                        background: #0077ed;
-                        transform: translateY(-2px);
-                        box-shadow: 0 12px 32px rgba(0, 113, 227, 0.3);
+                        .reason-callout-container {
+                            margin-top: auto !important; // Pushes symptoms callout to the absolute bottom!
+                            padding-top: 20px;
+                        }
                     }
 
-                    &:active {
-                        transform: translateY(0);
+                    // Tương tác đảo chiều màu sắc lý do khi hover thẻ bệnh nhân
+                    &.patient-card:hover {
+                        .reason-content-box {
+                            background: #f9fafb; // Đảo chiều màu sắc lý do khám cực kỳ tinh tế
+                            border-color: #d1d5db;
+                        }
                     }
-                }
-
-                .hint-text {
-                    color: #86868b;
-                    font-size: 13px;
                 }
             }
         }
@@ -241,13 +420,13 @@
 }
 
 .animate-slide-up {
-    animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes slideUp {
     from {
         opacity: 0;
-        transform: translateY(40px);
+        transform: translateY(20px);
     }
 
     to {

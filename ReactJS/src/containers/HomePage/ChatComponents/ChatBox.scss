@@ -570,11 +570,13 @@
     min-width: max-content;
 
     .dcd-msg--doctor & {
-        left: 0;
+        right: 0;
+        left: auto;
     }
 
     .dcd-msg--patient & {
-        right: 0;
+        left: 0;
+        right: auto;
     }
 
     .dcd-popover-item {

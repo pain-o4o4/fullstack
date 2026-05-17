@@ -524,7 +524,7 @@ let getDetailSchedulePatient = async (bookingId) => {
                         {
                             model: db.User,
                             as: 'patientBookingData',
-                            attributes: ['firstName', 'lastName', 'email', 'phonenumber', 'address', 'gender'],
+                            attributes: ['firstName', 'lastName', 'email', 'phonenumber', 'address', 'gender', 'image'],
                             include: [
                                 { model: db.Allcode, as: 'genderData', attributes: ['valueVi', 'valueEn'] }
                             ]
@@ -543,6 +543,10 @@ let getDetailSchedulePatient = async (bookingId) => {
 
                 if (data && data.doctorBookingData && data.doctorBookingData.image) {
                     data.doctorBookingData.image = Buffer.from(data.doctorBookingData.image, 'base64').toString('binary');
+                }
+
+                if (data && data.patientBookingData && data.patientBookingData.image) {
+                    data.patientBookingData.image = Buffer.from(data.patientBookingData.image, 'base64').toString('binary');
                 }
 
                 resolve({

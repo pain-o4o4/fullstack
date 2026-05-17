@@ -15,10 +15,10 @@ class PrivacyPolicy extends Component {
 
     render() {
         let { allHandbooks } = this.props;
-        
+
         // Tìm bài viết có tên "Chính sách bảo mật"
-        let privacyPolicy = allHandbooks && allHandbooks.length > 0 
-            ? allHandbooks.find(item => item.name === 'Chính sách bảo mật') 
+        let privacyPolicy = allHandbooks && allHandbooks.length > 0
+            ? allHandbooks.find(item => item.name === 'Chính sách bảo mật')
             : null;
 
         let htmlContent = privacyPolicy ? privacyPolicy.descriptionHTML : 'Đang tải nội dung...';
@@ -31,7 +31,7 @@ class PrivacyPolicy extends Component {
                         <div className="legal-header">
                             <h1>Chính sách bảo mật</h1>
                             <div className="legal-meta">
-                                Cập nhật lần cuối: 5 tháng 10 năm 2023
+                                Cập nhật lần cuối: 17 tháng 5 năm 2026
                             </div>
                         </div>
                         <div className="legal-content markdown-body" dangerouslySetInnerHTML={{ __html: htmlContent }}>

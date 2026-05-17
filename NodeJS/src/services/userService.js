@@ -389,9 +389,9 @@ let deleteUserById = (id, force = false) => {
                 }
                 // 2. Patient or Admin role (Admins can also book as patients)
                 if (user.roleId === 'R3' || user.roleId === 'R1') {
-                    let hasHistory = await db.History.findOne({ where: { patientId: id } });
                     let hasBookings = await db.Booking.findOne({ where: { patientId: id } });
-                    if (hasHistory || hasBookings) hasData = true;
+                    
+                    if (hasBookings) hasData = true;
                 }
 
                 if (hasData) {

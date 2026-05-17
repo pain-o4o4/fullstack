@@ -18,7 +18,7 @@ class MyBooking extends Component {
             listAppointments: [],
             isVerifying: false,
             currentPage: 1,
-            pageSize: 5
+            pageSize: 10
         }
     }
 
@@ -100,10 +100,10 @@ class MyBooking extends Component {
                         <FormattedMessage id="patient.my-booking.title" defaultMessage="LỊCH HẸN CỦA BẠN" />
                     </div>
                     <div className="table-booking-content">
-                        <table className="table table-hover table-bordered mt-3">
-                            <thead className="thead-light">
+                        <table className="booking-table">
+                            <thead>
                                 <tr>
-                                    <th>STT</th>
+                                    <th className="col-stt">STT</th>
                                     <th><FormattedMessage id="patient.my-booking.time" defaultMessage="Thời gian" /></th>
                                     <th><FormattedMessage id="patient-detail.patient-name" defaultMessage="Bệnh nhân" /></th>
                                     <th><FormattedMessage id="patient-profile.phone-place" defaultMessage="Số điện thoại" /></th>
@@ -121,7 +121,6 @@ class MyBooking extends Component {
                                             ? `${item.doctorBookingData.lastName} ${item.doctorBookingData.firstName}`
                                             : `${item.doctorBookingData.firstName} ${item.doctorBookingData.lastName}`;
 
-
                                         let patientName = item.patientBookingData
                                             ? `${item.patientBookingData.lastName} ${item.patientBookingData.firstName}`
                                             : 'N/A';
@@ -129,10 +128,6 @@ class MyBooking extends Component {
                                         let clinicName = item.doctorBookingData.doctorinforData
                                             ? item.doctorBookingData.doctorinforData.nameClinic
                                             : 'N/A';
-                                        let clinicAddress = item.doctorBookingData.doctorinforData
-                                            ? item.doctorBookingData.doctorinforData.addressClinic
-                                            : '';
-
 
                                         let formattedDate = '';
                                         if (item.date) {
@@ -154,24 +149,41 @@ class MyBooking extends Component {
                                                     }
                                                 }}
                                             >
-                                                <td>{realIndex}</td>
+                                                <td className="col-stt">{realIndex}</td>
                                                 <td>
-                                                    <div className="time-display">
-                                                        {language === 'vi' ? item.timeTypeDataPatient.valueVi : item.timeTypeDataPatient.valueEn}
+                                                    <div className="cell-time">
+                                                        <span>{language === 'vi' ? item.timeTypeDataPatient.valueVi : item.timeTypeDataPatient.valueEn}</span>
                                                     </div>
-                                                    <div className="date-display">{formattedDate}</div>
+                                                    <div className="cell-date">
+                                                        <span>{formattedDate}</span>
+                                                    </div>
                                                 </td>
                                                 <td>
-                                                    <div style={{ fontWeight: '600', color: '#1d1d1f' }}>{patientName}</div>
+                                                    <div className="cell-patient">
+                                                        <div className="patient-info">
+                                                            <span className="patient-name">{patientName}</span>
+                                                            {item.patientBookingData?.email && (
+                                                                <span className="patient-email">{item.patientBookingData.email}</span>
+                                                            )}
+                                                        </div>
+                                                    </div>
                                                 </td>
-                                                <td>{item.patientBookingData?.phonenumber || 'N/A'}</td>
                                                 <td>
-                                                    <div className="doctor-name">{name}</div>
-                                                    <div className="clinic-address">{clinicName}</div>
+                                                    <div className="cell-phone">
+                                                        <span>{item.patientBookingData?.phonenumber || 'N/A'}</span>
+                                                    </div>
                                                 </td>
                                                 <td>
-                                                    <div style={{ fontSize: '13px', color: '#86868b', maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={item.reason}>
-                                                        {item.reason}
+                                                    <div className="cell-doctor">
+                                                        <div className="doctor-info">
+                                                            <span className="doctor-name">{name}</span>
+                                                            <span className="clinic-name">{clinicName}</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className="cell-reason" title={item.reason}>
+                                                        {item.reason || 'N/A'}
                                                     </div>
                                                 </td>
                                                 <td>
@@ -187,13 +199,15 @@ class MyBooking extends Component {
                                                 </td>
                                                 <td>
                                                     {item.statusId === 'S1' ?
-                                                        <span className="text-primary" style={{ fontWeight: '600', cursor: 'pointer' }}>
-                                                            {language === 'vi' ? 'Thanh toán ngay \u2192' : 'Pay now \u2192'}
-                                                        </span>
+                                                        <button className="action-btn pay-now">
+                                                            <span>{language === 'vi' ? 'Thanh toán' : 'Pay'}</span>
+                                                            <i className="fas fa-arrow-right"></i>
+                                                        </button>
                                                         :
-                                                        <span className="text-secondary" style={{ cursor: 'pointer' }}>
-                                                            {language === 'vi' ? 'Xem chi tiết \u2192' : 'View details \u2192'}
-                                                        </span>
+                                                        <button className="action-btn view-detail">
+                                                            <span>{language === 'vi' ? 'Chi tiết' : 'Details'}</span>
+                                                            <i className="fas fa-chevron-right"></i>
+                                                        </button>
                                                     }
                                                 </td>
                                             </tr>

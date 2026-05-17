@@ -47,19 +47,81 @@ class DetailSchedulePatient extends Component {
             </div>
         );
 
+        // Helper function for Capitalizing Addresses & Names (Title Case)
+        const formatTitleCase = (str) => {
+            if (!str) return 'N/A';
+            return str.trim()
+                .toLowerCase()
+                .split(' ')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+        };
+
+        // Helper function for formatting Phone Numbers (0987 654 321)
+        const formatPhone = (phone) => {
+            if (!phone) return 'N/A';
+            let cleaned = phone.replace(/\D/g, '');
+            if (cleaned.length === 10) {
+                return cleaned.replace(/(\d{4})(\d{3})(\d{3})/, '$1 $2 $3');
+            }
+            if (cleaned.length === 11) {
+                return cleaned.replace(/(\d{4})(\d{4})(\d{3})/, '$1 $2 $3');
+            }
+            return phone;
+        };
+
+        // Helper function for professional Currency Formatting
+        const formatCurrency = (priceVi, priceEn) => {
+            if (!priceVi) return 'N/A';
+            if (language === LANGUAGES.VI) {
+                return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(Number(priceVi));
+            } else {
+                return `$${priceEn || '0'}`;
+            }
+        };
+
+        // Helper function for decoding base64/buffer user avatar
+        const decodeAvatar = (imgObj) => {
+            if (!imgObj) return '';
+            try {
+                if (typeof imgObj === 'string') {
+                    return imgObj.startsWith('data:') ? imgObj : `data:image/jpeg;base64,${imgObj}`;
+                }
+                if (imgObj.type === 'Buffer' || imgObj.data) {
+                    let binary = '';
+                    let bytes = new Uint8Array(imgObj.data);
+                    let len = bytes.byteLength;
+                    for (let i = 0; i < len; i++) {
+                        binary += String.fromCharCode(bytes[i]);
+                    }
+                    return `data:image/jpeg;base64,${btoa(binary)}`;
+                }
+            } catch (e) {
+                console.error("Error decoding avatar: ", e);
+            }
+            return '';
+        };
+
         let doctorName = '';
         if (detailBooking.doctorBookingData) {
+            let docLastName = formatTitleCase(detailBooking.doctorBookingData.lastName);
+            let docFirstName = formatTitleCase(detailBooking.doctorBookingData.firstName);
             doctorName = language === LANGUAGES.VI
-                ? `${detailBooking.doctorBookingData.lastName} ${detailBooking.doctorBookingData.firstName}`
-                : `${detailBooking.doctorBookingData.firstName} ${detailBooking.doctorBookingData.lastName}`;
+                ? `${docLastName} ${docFirstName}`
+                : `${docFirstName} ${docLastName}`;
         }
 
         let patientName = '';
         if (detailBooking.patientBookingData) {
+            let patLastName = formatTitleCase(detailBooking.patientBookingData.lastName);
+            let patFirstName = formatTitleCase(detailBooking.patientBookingData.firstName);
             patientName = language === LANGUAGES.VI
-                ? `${detailBooking.patientBookingData.lastName} ${detailBooking.patientBookingData.firstName}`
-                : `${detailBooking.patientBookingData.firstName} ${detailBooking.patientBookingData.lastName}`;
+                ? `${patLastName} ${patFirstName}`
+                : `${patFirstName} ${patLastName}`;
         }
+
+        let doctorAvatar = decodeAvatar(detailBooking.doctorBookingData?.image);
+        let patientAvatar = decodeAvatar(detailBooking.patientBookingData?.image);
 
         let statusClass = detailBooking.statusId || '';
         let dateStr = '';
@@ -89,111 +151,136 @@ class DetailSchedulePatient extends Component {
                         </div>
 
                         <div className="info-grid">
-                            <div className="info-section">
-                                <h3 className="section-title"><FormattedMessage id="patient-detail.doctor-info" /></h3>
-                                <div className="info-item">
-                                    <span className="label"><FormattedMessage id="patient-detail.doctor-name" />:</span>
-                                    <span className="value bold">{doctorName}</span>
+                            {/* Cột trái: Bác sĩ & Lịch khám */}
+                            <div className="info-column">
+                                {/* Card 1: Bác sĩ & Địa điểm (Who & Where - Đặt lên đầu để tạo điểm neo nhận thức) */}
+                                <div className="info-section master-card provider-card">
+                                    <h3 className="section-title"><FormattedMessage id="patient-detail.doctor-info" /></h3>
+                                    
+                                    <div className="provider-header-row">
+                                        {doctorAvatar ? (
+                                            <img src={doctorAvatar} className="provider-avatar" alt={doctorName} />
+                                        ) : (
+                                            <div className="provider-avatar monogram">
+                                                {doctorName ? doctorName.split(' ').pop().charAt(0).toUpperCase() : 'D'}
+                                            </div>
+                                        )}
+                                        <div className="provider-name-group">
+                                            <span className="label"><FormattedMessage id="patient-detail.doctor-name" /></span>
+                                            <span className="value bold">{doctorName}</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="info-item">
+                                        <span className="label"><FormattedMessage id="patient-detail.clinic-info" /></span>
+                                        <span className="value">
+                                            {formatTitleCase(detailBooking.doctorBookingData?.doctorinforData?.nameClinic)}
+                                        </span>
+                                    </div>
+                                    <div className="info-item">
+                                        <span className="label"><FormattedMessage id="patient.my-booking.address" /></span>
+                                        <span className="value address-text">
+                                            {formatTitleCase(detailBooking.doctorBookingData?.doctorinforData?.addressClinic)}
+                                        </span>
+                                    </div>
                                 </div>
-                                <div className="info-item">
-                                    <span className="label"><FormattedMessage id="patient-detail.clinic-info" />:</span>
-                                    <span className="value">
-                                        {detailBooking.doctorBookingData?.doctorinforData?.nameClinic}
-                                    </span>
-                                </div>
-                                <div className="info-item">
-                                    <span className="label"><FormattedMessage id="patient.my-booking.address" />:</span>
-                                    <span className="value">
-                                        {detailBooking.doctorBookingData?.doctorinforData?.addressClinic}
-                                    </span>
+
+                                {/* Card 2: Lịch khám & Thanh toán (When & How much - Đặt bên dưới để kết thúc bằng Nút hành động thanh toán) */}
+                                <div className="info-section master-card appointment-card">
+                                    <h3 className="section-title"><FormattedMessage id="patient-detail.appointment-info" /></h3>
+                                    <div className="info-item">
+                                        <span className="label"><FormattedMessage id="manage-patient.date" /></span>
+                                        <span className="value highlight-text">{dateStr}</span>
+                                    </div>
+                                    <div className="info-item">
+                                        <span className="label"><FormattedMessage id="manage-patient.time" /></span>
+                                        <span className="value highlight-text">
+                                            {language === LANGUAGES.VI ? detailBooking.timeTypeDataPatient?.valueVi : detailBooking.timeTypeDataPatient?.valueEn}
+                                        </span>
+                                    </div>
+                                    <div className="info-item">
+                                        <span className="label"><FormattedMessage id="patient-detail.appointment-id" /></span>
+                                        <span className="value id-badge">#{detailBooking.id}</span>
+                                    </div>
+                                    
+                                    <div className="info-item price-divider">
+                                        <span className="label"><FormattedMessage id="patient-detail.price" /></span>
+                                        <span className="value price">
+                                            {formatCurrency(
+                                                detailBooking.doctorBookingData?.doctorinforData?.priceTypeData?.valueVi,
+                                                detailBooking.doctorBookingData?.doctorinforData?.priceTypeData?.valueEn
+                                            )}
+                                        </span>
+                                    </div>
+                                    <div className="info-item">
+                                        <span className="label"><FormattedMessage id="patient-detail.payment-method" /></span>
+                                        <span className="value">
+                                            {detailBooking.doctorBookingData?.doctorinforData?.paymentTypeData ?
+                                                (language === LANGUAGES.VI ?
+                                                    detailBooking.doctorBookingData.doctorinforData.paymentTypeData.valueVi :
+                                                    detailBooking.doctorBookingData.doctorinforData.paymentTypeData.valueEn)
+                                                : <FormattedMessage id="patient-detail.not-found" />}
+                                        </span>
+                                    </div>
+
+                                    {detailBooking.statusId === 'S1' && (
+                                        <div className="card-action-container">
+                                            <button className="btn-pay-now-master" onClick={() => this.props.navigate(`/patient/payment?bookingId=${detailBooking.id}`)}>
+                                                <FormattedMessage id="patient.my-booking.pending" defaultMessage="Thanh toán ngay" />
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
-                            <div className="info-section">
-                                <h3 className="section-title"><FormattedMessage id="patient-detail.appointment-info" /></h3>
-                                <div className="info-item">
-                                    <span className="label"><FormattedMessage id="manage-patient.date" />:</span>
-                                    <span className="value">{dateStr}</span>
-                                </div>
+                            {/* Cột phải: Hồ sơ người bệnh & Triệu chứng */}
+                            <div className="info-column">
+                                <div className="info-section master-card patient-card">
+                                    <h3 className="section-title"><FormattedMessage id="patient-profile.name-label" /></h3>
+                                    
+                                    <div className="patient-header-row">
+                                        {patientAvatar ? (
+                                            <img src={patientAvatar} className="patient-avatar" alt={patientName} />
+                                        ) : (
+                                            <div className="patient-avatar monogram">
+                                                {patientName ? patientName.split(' ').pop().charAt(0).toUpperCase() : 'P'}
+                                            </div>
+                                        )}
+                                        <div className="patient-name-group">
+                                            <span className="label"><FormattedMessage id="patient-detail.patient-name" /></span>
+                                            <span className="value name-highlight">{patientName}</span>
+                                        </div>
+                                    </div>
 
-                                <div className="info-item">
-                                    <span className="label"><FormattedMessage id="manage-patient.time" />:</span>
-                                    <span className="value">
-                                        {language === LANGUAGES.VI ? detailBooking.timeTypeDataPatient?.valueVi : detailBooking.timeTypeDataPatient?.valueEn}
-                                    </span>
-                                </div>
-                                <div className="info-item">
-                                    <span className="label"><FormattedMessage id="patient-detail.appointment-id" />:</span>
-                                    <span className="value">#{detailBooking.id}</span>
+                                    <div className="info-item">
+                                        <span className="label">Email</span>
+                                        <span className="value email-text">{detailBooking.patientBookingData?.email?.toLowerCase()}</span>
+                                    </div>
+                                    <div className="info-item">
+                                        <span className="label"><FormattedMessage id="patient-profile.phone-place" /></span>
+                                        <span className="value phone-text">{formatPhone(detailBooking.patientBookingData?.phonenumber)}</span>
+                                    </div>
+                                    <div className="info-item">
+                                        <span className="label"><FormattedMessage id="patient.booking-modal.gender" /></span>
+                                        <span className="value">
+                                            {language === LANGUAGES.VI ? detailBooking.patientBookingData?.genderData?.valueVi : detailBooking.patientBookingData?.genderData?.valueEn}
+                                        </span>
+                                    </div>
+                                    <div className="info-item">
+                                        <span className="label"><FormattedMessage id="patient.my-booking.address" /></span>
+                                        <span className="value address-text">{formatTitleCase(detailBooking.patientBookingData?.address)}</span>
+                                    </div>
+
+                                    {/* Lý do khám lồng hợp nhất bên trong Patient Card dưới dạng Aesthetic Callout (Tránh trùng viền kép) */}
+                                    <div className="reason-callout-container">
+                                        <span className="reason-label"><FormattedMessage id="schedule-doctor.reason" /></span>
+                                        <div className="reason-content-box">
+                                            {detailBooking.reason || <FormattedMessage id="patient-detail.not-found" defaultMessage="Không có lý do khám" />}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="info-section full-width">
-                                <h3 className="section-title"><FormattedMessage id="patient-profile.name-label" /></h3>
-                                <div className="info-item">
-                                    <span className="label"><FormattedMessage id="patient-detail.patient-name" />:</span>
-                                    <span className="value">{patientName}</span>
-                                </div>
-                                <div className="info-item">
-                                    <span className="label">Email:</span>
-                                    <span className="value">{detailBooking.patientBookingData?.email}</span>
-                                </div>
-                                <div className="info-item">
-                                    <span className="label"><FormattedMessage id="patient-profile.phone-place" />:</span>
-                                    <span className="value">{detailBooking.patientBookingData?.phonenumber}</span>
-                                </div>
-                                <div className="info-item">
-                                    <span className="label"><FormattedMessage id="patient.booking-modal.gender" defaultMessage="Giới tính" />:</span>
-                                    <span className="value">
-                                        {language === LANGUAGES.VI ? detailBooking.patientBookingData?.genderData?.valueVi : detailBooking.patientBookingData?.genderData?.valueEn}
-                                    </span>
-                                </div>
-                                {/* <div className="info-item">
-                                    <span className="label"><FormattedMessage id="patient.booking-modal.birthday" />:</span>
-                                    <span className="value">{dateStr}</span>
-                                </div> */}
-                                <div className="info-item">
-                                    <span className="label"><FormattedMessage id="patient.my-booking.address" />:</span>
-                                    <span className="value">{detailBooking.patientBookingData?.address}</span>
-                                </div>
-                                <div className="info-item full-width mt-2">
-                                    <span className="label"><FormattedMessage id="schedule-doctor.reason" />:</span>
-                                    <div className="value-reason">{detailBooking.reason}</div>
-                                </div>
-                            </div>
-                            <div className="info-section">
-                                <h3 className="section-title"><FormattedMessage id="patient-detail.payment-info" /></h3>
-                                <div className="info-item">
-                                    <span className="label"><FormattedMessage id="patient-detail.price" />:</span>
-                                    <span className="value price">
-                                        {detailBooking.doctorBookingData?.doctorinforData?.priceTypeData ?
-                                            (language === LANGUAGES.VI ?
-                                                detailBooking.doctorBookingData.doctorinforData.priceTypeData.valueVi + ' VND' :
-                                                detailBooking.doctorBookingData.doctorinforData.priceTypeData.valueEn + ' $')
-                                            : <FormattedMessage id="patient-detail.not-found" />}
-                                    </span>
-                                </div>
-                                <div className="info-item">
-                                    <span className="label"><FormattedMessage id="patient-detail.payment-method" />:</span>
-                                    <span className="value">
-                                        {detailBooking.doctorBookingData?.doctorinforData?.paymentTypeData ?
-                                            (language === LANGUAGES.VI ?
-                                                detailBooking.doctorBookingData.doctorinforData.paymentTypeData.valueVi :
-                                                detailBooking.doctorBookingData.doctorinforData.paymentTypeData.valueEn)
-                                            : <FormattedMessage id="patient-detail.not-found" />}
-                                    </span>
-                                </div>
-                            </div>
-
-
                         </div>
-
-                        {detailBooking.statusId === 'S1' && (
-                            <div className="action-footer">
-                                <button className="btn-pay-now" onClick={() => this.props.navigate(`/patient/payment?bookingId=${detailBooking.id}`)}>
-                                    <FormattedMessage id="patient.my-booking.pending" defaultMessage="Thanh toán ngay" />
-                                </button>
-                            </div>
-                        )}
                     </div>
                 </div>
             </div>
