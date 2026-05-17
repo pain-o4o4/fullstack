@@ -57,9 +57,9 @@ class ChatActionsMenu extends Component {
 
         if (filterTab === 'AISUPPORT') return null;
 
-        // Lấy động hoàn toàn từ Database (Admin & Doctor)
+        // Chỉ hiển thị các mẫu Thủ công (MANUAL) hoặc chưa có type
         const displayReplies = (quickReplies && quickReplies.length > 0)
-            ? quickReplies.map(r => r.content)
+            ? quickReplies.filter(r => !r.type || r.type === 'MANUAL')
             : [];
 
         return (
@@ -84,12 +84,6 @@ class ChatActionsMenu extends Component {
                                     <div className="item-label">Tin nhắn nhanh</div>
                                     <div className="item-icon-wrap quick"><i className="fas fa-bolt"></i></div>
                                 </div>
-                                <div className="menu-item" onClick={() => this.handleAction('AUTO')}>
-                                    <div className="item-label">Trả lời tự động</div>
-                                    <div className={`apple-switch ${isAutoReplyActive ? 'on' : ''}`}>
-                                        <div className="switch-handle"></div>
-                                    </div>
-                                </div>
                             </div>
                         ) : (
                             <div className="menu-quick-replies">
@@ -98,16 +92,17 @@ class ChatActionsMenu extends Component {
                                     <span>Tin nhắn nhanh</span>
                                 </div>
                                 <div className="quick-list">
-                                    {displayReplies.map((text, index) => (
+                                    {displayReplies.map((item, index) => (
                                         <div
                                             key={index}
                                             className="quick-item"
+                                            title={item.content}
                                             onClick={() => {
-                                                onSelectQuickReply(text);
+                                                onSelectQuickReply(item.content);
                                                 this.setState({ isOpen: false });
                                             }}
                                         >
-                                            {text}
+                                            {item.title || "Mẫu tin nhắn"}
                                         </div>
                                     ))}
                                 </div>

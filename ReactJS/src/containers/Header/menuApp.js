@@ -15,7 +15,7 @@ export const adminMenu = [
             { name: 'menu.admin.manage-clinic', link: '/system/manage-clinic' },
 
             { name: 'menu.admin.manage-handbook', link: '/system/manage-handbook' },
-
+            { name: 'menu.doctor.manage-booking', link: '/system/manage-booking' }, // Global management for Admin
         ]
     },
     { // Quản lý Giao tiếp

@@ -86,7 +86,13 @@ export const PERMISSIONS = {
         '/api/get-quick-replies',
         '/api/save-quick-reply',
         '/api/delete-quick-reply',
-        '/api/update-reaction'
+        '/api/get-all-global-quick-replies',
+        '/api/save-global-quick-reply',
+        '/api/update-reaction',
+        '/api/get-list-booking-history',
+        '/api/update-booking',
+        '/api/update-booking-status',
+        '/api/delete-booking'
     ],
 
     [ROLES.DOCTOR]: [
@@ -104,7 +110,11 @@ export const PERMISSIONS = {
         '/api/get-quick-replies',
         '/api/save-quick-reply',
         '/api/delete-quick-reply',
-        '/api/update-reaction'
+        '/api/get-all-global-quick-replies',
+        '/api/update-reaction',
+        '/api/get-list-booking-history',
+        '/api/update-booking',
+        '/api/delete-booking'
     ],
 
     [ROLES.PATIENT]: [

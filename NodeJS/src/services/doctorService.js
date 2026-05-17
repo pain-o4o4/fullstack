@@ -6,6 +6,7 @@ import { Op } from 'sequelize';
 import moment from 'moment'
 import clinic from "../../models/clinic";
 import { getIO } from "../socket";
+import emailService from "./emailService";
 // const { Op } = require('sequelize');
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE
 
@@ -639,10 +640,9 @@ let updateBookingStatus = (data) => {
                     });
                 }
 
-                // Nếu chuyển sang S3 (Đã khám xong), gửi email kết quả
-                if (data.statusId === 'S3' && oldStatus !== 'S3') {
+                // Gửi email khi chuyển trạng thái (S3: Đã khám, S5: Lỡ hẹn)
+                if ((data.statusId === 'S3' || data.statusId === 'S5') && oldStatus !== data.statusId) {
                     try {
-                        // Lấy email từ DB để không phụ thuộc vào dữ liệu Frontend gửi lên
                         const bookingWithEmail = await db.Booking.findOne({
                             where: { id: appointment.id },
                             include: [
@@ -659,20 +659,32 @@ let updateBookingStatus = (data) => {
                             || `${bookingWithEmail?.patientBookingData?.lastName || ''} ${bookingWithEmail?.patientBookingData?.firstName || ''}`.trim();
 
                         if (receiverEmail) {
-                            await emailService.sendRemedyEmail({
-                                receiverEmail: receiverEmail,
-                                patientName: patientName,
-                                time: data.time || '',
-                                doctorName: data.doctorName || '',
-                                clinicName: data.clinicName || 'BookingCare',
-                                language: data.language || 'vi'
-                            });
-                            console.log(`>>> [Doctor] Remedy email sent to ${receiverEmail}`);
-                        } else {
-                            console.warn('>>> [Doctor] Cannot send remedy email: no receiver email found.');
+                            if (data.statusId === 'S3') {
+                                await emailService.sendRemedyEmail({
+                                    receiverEmail: receiverEmail,
+                                    patientName: patientName,
+                                    time: data.time || '',
+                                    doctorName: data.doctorName || '',
+                                    clinicName: data.clinicName || 'BookingCare',
+                                    language: data.language || 'vi'
+                                });
+                            } else if (data.statusId === 'S5') {
+                                // Gửi email thông báo lỡ hẹn (Nếu có template)
+                                // Tạm thời dùng template đơn giản hoặc remedy template với note khác
+                                await emailService.sendSimpleEmail({
+                                    receiverEmail: receiverEmail,
+                                    patientName: patientName,
+                                    time: data.time || '',
+                                    doctorName: data.doctorName || '',
+                                    clinicName: data.clinicName || 'BookingCare',
+                                    language: data.language || 'vi',
+                                    statusId: 'S5'
+                                });
+                            }
+                            console.log(`>>> [Doctor] Email sent to ${receiverEmail} for status ${data.statusId}`);
                         }
                     } catch (e) {
-                        console.error(">>> [Doctor] Remedy email failed (non-critical):", e.message);
+                        console.error(">>> [Doctor] Email failed (non-critical):", e.message);
                     }
                 }
 
@@ -682,6 +694,183 @@ let updateBookingStatus = (data) => {
             }
         } catch (error) {
             console.log(error);
+            reject(error);
+        }
+    })
+}
+
+let updateBookingService = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.id || !data.statusId) {
+                return resolve({
+                    errCode: 1,
+                    errMessage: "Missing required parameters!"
+                })
+            }
+            let booking = await db.Booking.findOne({
+                where: { id: data.id },
+                raw: false
+            });
+
+            if (booking) {
+                booking.statusId = data.statusId;
+                if (data.reason) booking.reason = data.reason;
+                if (data.date) booking.date = data.date;
+                if (data.timeType) booking.timeType = data.timeType;
+                
+                await booking.save();
+                resolve({
+                    errCode: 0,
+                    errMessage: "Update booking successfully!"
+                });
+            } else {
+                resolve({
+                    errCode: 2,
+                    errMessage: "Booking not found!"
+                });
+            }
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
+let deleteBookingService = (bookingId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let booking = await db.Booking.findOne({
+                where: { id: bookingId }
+            });
+
+            if (!booking) {
+                return resolve({
+                    errCode: 2,
+                    errMessage: "Booking not found!"
+                });
+            }
+
+            await db.Booking.destroy({
+                where: { id: bookingId }
+            });
+
+            resolve({
+                errCode: 0,
+                errMessage: "Delete booking successfully!"
+            });
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
+let getListBookingHistory = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.roleId) {
+                return resolve({
+                    errCode: 1,
+                    errMessage: "Missing required parameters!"
+                });
+            }
+
+            // === AUTO CLEANUP (from getListPatientForDoctor) ===
+            let nowMillis = moment().valueOf();
+            let todayStart = moment().startOf('day').valueOf();
+            let fifteenMins = 15 * 60 * 1000;
+
+            let cleanupWhere = { statusId: { [Op.in]: ['S1', 'S2'] } };
+            if (data.roleId === 'R2' && data.doctorId) {
+                cleanupWhere.doctorId = data.doctorId;
+            }
+
+            let allActive = await db.Booking.findAll({ where: cleanupWhere, raw: false });
+            for (let booking of allActive) {
+                const createdAt = new Date(booking.createdAt).getTime();
+                const bookingDate = booking.date.includes('/') ? moment(booking.date, 'DD/MM/YYYY').valueOf() : Number(booking.date);
+                if (booking.statusId === 'S1' && (nowMillis - createdAt > fifteenMins)) {
+                    booking.statusId = 'S4';
+                    await booking.save();
+                } else if (booking.statusId === 'S2' && (bookingDate < todayStart)) {
+                    booking.statusId = 'S5';
+                    await booking.save();
+                }
+            }
+            // === END CLEANUP ===
+
+            let whereCondition = {};
+            if (data.roleId === 'R2') { // Doctor
+                if (!data.doctorId) return resolve({ errCode: 1, errMessage: "Missing doctorId!" });
+                whereCondition.doctorId = data.doctorId;
+            } else if (data.doctorId && data.doctorId !== 'ALL') {
+                whereCondition.doctorId = data.doctorId;
+            }
+            
+            if (data.statusId && data.statusId !== 'ALL') {
+                whereCondition.statusId = data.statusId;
+            }
+
+            if (data.date && data.date !== 'ALL') {
+                let queryDate = moment(+data.date).startOf('day').format('DD/MM/YYYY');
+                whereCondition.date = queryDate;
+            }
+
+            if (data.searchKeyword) {
+                let keyword = `%${data.searchKeyword}%`;
+                whereCondition[Op.or] = [
+                    { '$patientBookingData.firstName$': { [Op.like]: keyword } },
+                    { '$patientBookingData.lastName$': { [Op.like]: keyword } },
+                    { '$patientBookingData.email$': { [Op.like]: keyword } }
+                ];
+            }
+
+            let page = data.page || 1;
+            let limit = data.limit || 10;
+            let offset = (page - 1) * limit;
+
+            let { count, rows } = await db.Booking.findAndCountAll({
+                where: whereCondition,
+                limit: +limit,
+                offset: +offset,
+                order: [['createdAt', 'DESC']],
+                include: [
+                    {
+                        model: db.User,
+                        as: 'patientBookingData',
+                        attributes: ['email', 'firstName', 'lastName', 'phonenumber', 'address'],
+                        include: [{ model: db.Allcode, as: 'genderData', attributes: ['valueEn', 'valueVi'] }]
+                    },
+                    { 
+                        model: db.User, 
+                        as: 'doctorBookingData', 
+                        attributes: ['firstName', 'lastName'],
+                        include: [
+                            {
+                                model: db.Doctor_infor,
+                                as: 'doctorinforData',
+                                attributes: ['specialtyId'],
+                                include: [
+                                    { model: db.Specialty, as: 'specialtyData', attributes: ['name'] }
+                                ]
+                            }
+                        ]
+                    },
+                    { model: db.Allcode, as: 'timeTypeDataPatient', attributes: ['valueEn', 'valueVi'] },
+                    { model: db.Allcode, as: 'statusData', attributes: ['valueEn', 'valueVi'] },
+                    { model: db.Clinic, as: 'clinicBookingData', attributes: ['name', 'address'] }
+                ],
+                raw: false,
+                nest: true
+            });
+
+            resolve({
+                errCode: 0,
+                data: rows,
+                total: count,
+                totalPages: Math.ceil(count / limit),
+                currentPage: +page
+            });
+        } catch (error) {
             reject(error);
         }
     })
@@ -697,5 +886,8 @@ export default {
     getExtraDoctorById: getExtraDoctorById,
     getProfileDoctorById: getProfileDoctorById,
     getListPatientForDoctor: getListPatientForDoctor,
-    updateBookingStatus: updateBookingStatus
+    updateBookingStatus: updateBookingStatus,
+    getListBookingHistory: getListBookingHistory,
+    updateBookingService: updateBookingService,
+    deleteBookingService: deleteBookingService
 };

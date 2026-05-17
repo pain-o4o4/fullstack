@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     language: DataTypes.STRING,
     subject: DataTypes.STRING,
     content: DataTypes.TEXT,
+    contentMarkdown: DataTypes.TEXT,
   }, {
     sequelize,
     modelName: 'EmailTemplate',

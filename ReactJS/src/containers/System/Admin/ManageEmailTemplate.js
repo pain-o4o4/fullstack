@@ -1,8 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { getAllEmailTemplatesApi, saveEmailTemplateApi, deleteEmailTemplateApi } from '../../../services/userService';
+import { getAllEmailTemplatesApi, saveEmailTemplateApi } from '../../../services/userService';
 import { toast } from 'react-toastify';
+import MarkdownIt from 'markdown-it';
+import MdEditor from 'react-markdown-editor-lite';
+import 'react-markdown-editor-lite/lib/index.css';
 import './ManageEmailTemplate.scss';
+
+const mdParser = new MarkdownIt();
 
 class ManageEmailTemplate extends Component {
     constructor(props) {
@@ -11,7 +16,8 @@ class ManageEmailTemplate extends Component {
             listTemplates: [],
             type: 'CONFIRMATION',
             subject: '',
-            content: '',
+            contentMarkdown: '',
+            contentHTML: '',
             language: 'vi',
             isEdit: false,
             editId: null
@@ -40,8 +46,8 @@ class ManageEmailTemplate extends Component {
     }
 
     handleSaveTemplate = async () => {
-        let { type, subject, content, language, isEdit, editId } = this.state;
-        if (!subject || !content) {
+        let { type, subject, contentHTML, contentMarkdown, language, isEdit, editId } = this.state;
+        if (!subject || !contentHTML) {
             toast.error('Tiêu đề và nội dung không được để trống!');
             return;
         }
@@ -50,7 +56,8 @@ class ManageEmailTemplate extends Component {
             id: isEdit ? editId : null,
             type: type,
             subject: subject,
-            content: content,
+            content: contentHTML, // We save HTML to DB for email sending
+            contentMarkdown: contentMarkdown, // Save markdown to retrieve and edit later
             language: language
         });
 
@@ -58,7 +65,8 @@ class ManageEmailTemplate extends Component {
             toast.success(isEdit ? 'Cập nhật mẫu thành công!' : 'Thêm mới mẫu thành công!');
             this.setState({
                 subject: '',
-                content: '',
+                contentHTML: '',
+                contentMarkdown: '',
                 isEdit: false,
                 editId: null
             });
@@ -72,24 +80,21 @@ class ManageEmailTemplate extends Component {
         this.setState({
             type: item.type,
             subject: item.subject,
-            content: item.content,
+            contentHTML: item.content || '',
+            contentMarkdown: item.contentMarkdown || '',
             language: item.language,
             isEdit: true,
             editId: item.id
         });
     }
 
-    handleDelete = async (id) => {
-        if (window.confirm('Bạn có chắc chắn muốn xóa mẫu email này?')) {
-            let res = await deleteEmailTemplateApi(id);
-            if (res && res.errCode === 0) {
-                toast.success('Xóa thành công!');
-                await this.fetchData();
-            } else {
-                toast.error('Lỗi khi xóa!');
-            }
-        }
+    handleEditorChange = ({ html, text }) => {
+        this.setState({
+            contentHTML: html,
+            contentMarkdown: text
+        })
     }
+
 
     render() {
         let { listTemplates, type, subject, content, language, isEdit } = this.state;
@@ -102,10 +107,8 @@ class ManageEmailTemplate extends Component {
                         <div className="col-12 mb-3">
                             <label className="form-label"><b>Chỉnh sửa / Thêm mới mẫu Email</b></label>
                             <div className="alert alert-warning">
-                                <b>Biến hỗ trợ (Copy và Paste vào nội dung):</b> <br/>
-                                <code>{'{{patientName}}'}</code>, <code>{'{{doctorName}}'}</code>, 
-                                <code>{'{{time}}'}</code>, <code>{'{{clinicName}}'}</code>, 
-                                <code>{'{{addressClinic}}'}</code>
+                                <b>Biến hỗ trợ chung:</b> <code>{'{{patientName}}'}</code>, <code>{'{{doctorName}}'}</code>, <code>{'{{time}}'}</code>, <code>{'{{clinicName}}'}</code>, <code>{'{{addressClinic}}'}</code><br/>
+                                <b>Biến cho Mã xác thực:</b> <code>{'{{code}}'}</code> (Mã OTP), <code>{'{{expireMinutes}}'}</code> (Thời gian hết hạn)
                             </div>
                         </div>
                         <div className="col-3 mb-3">
@@ -113,7 +116,8 @@ class ManageEmailTemplate extends Component {
                             <select className="form-select" value={type} onChange={(e) => this.handleOnChangeInput(e, 'type')}>
                                 <option value="CONFIRMATION">Xác nhận lịch hẹn</option>
                                 <option value="REMEDY">Kết quả khám bệnh</option>
-                                <option value="VERIFICATION_CODE">Mã xác thực đăng ký</option>
+                                <option value="MISSED">Thông báo lỡ hẹn</option>
+                                <option value="VERIFICATION">Mã xác thực đăng ký</option>
                             </select>
                         </div>
                         <div className="col-2 mb-3">
@@ -129,12 +133,15 @@ class ManageEmailTemplate extends Component {
                                 onChange={(event) => this.handleOnChangeInput(event, 'subject')}
                             />
                         </div>
-                        <div className="col-12 mb-3">
-                            <label>Nội dung HTML (Body)</label>
-                            <textarea className="form-control html-editor" rows="10" value={content}
-                                onChange={(event) => this.handleOnChangeInput(event, 'content')}
-                                placeholder="Nhập mã HTML vào đây..."
-                            ></textarea>
+                        <div className="col-12 mb-4">
+                            <label className="form-label"><b>Nội dung Email (Trình soạn thảo)</b></label>
+                            <MdEditor
+                                style={{ height: '400px' }}
+                                renderHTML={text => mdParser.render(text)}
+                                onChange={this.handleEditorChange}
+                                value={this.state.contentMarkdown}
+                                placeholder="Soạn thảo nội dung email tại đây..."
+                            />
                         </div>
                         <div className="col-12 text-end">
                             <button className={`btn px-5 ${isEdit ? 'btn-warning' : 'btn-primary'}`} 
@@ -164,7 +171,6 @@ class ManageEmailTemplate extends Component {
                                                 <td>{item.subject}</td>
                                                 <td className="text-center">
                                                     <button className="btn-edit" onClick={() => this.handleEdit(item)}><i className="fas fa-pencil-alt"></i></button>
-                                                    <button className="btn-delete" onClick={() => this.handleDelete(item.id)}><i className="fas fa-trash"></i></button>
                                                 </td>
                                             </tr>
                                         ))

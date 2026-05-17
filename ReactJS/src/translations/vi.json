@@ -440,5 +440,24 @@
         "error": "Hệ thống AI đang bận hoặc hết hạn mức. Vui lòng thử lại sau!",
         "refresh-title": "Làm mới chat",
         "typing": "Đang trả lời..."
+    },
+    "manage-booking": {
+        "title": "Quản lý Lịch sử Đặt lịch",
+        "title-admin": "Hệ thống Quản lý Booking Toàn cầu",
+        "doctor": "Bác sĩ",
+        "patient": "Bệnh nhân",
+        "date": "Ngày khám",
+        "time": "Khung giờ",
+        "status": "Trạng thái",
+        "actions": "Hành động",
+        "all-doctors": "Tất cả bác sĩ",
+        "all-status": "Tất cả trạng thái",
+        "search-placeholder": "Tìm kiếm bệnh nhân...",
+        "edit-title": "Cập nhật thông tin Booking",
+        "soft-delete-confirm": "Bạn có chắc chắn muốn ẩn booking này khỏi danh sách hiển thị không? (Xóa mềm)",
+        "no-data": "Không tìm thấy dữ liệu booking nào",
+        "total": "Tổng cộng",
+        "reason": "Lý do khám",
+        "clinic": "Phòng khám"
     }
 }

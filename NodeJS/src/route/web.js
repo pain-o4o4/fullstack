@@ -61,6 +61,9 @@ let initWebRoutes = (app) => {
     router.get('/api/get-profile-doctor-by-id', doctorController.getProfileDoctorById);
     router.get('/api/get-list-patient-for-doctor', doctorController.getListPatientForDoctor);
     router.put('/api/update-booking-status', doctorController.updateBookingStatus);
+    router.get('/api/get-list-booking-history', doctorController.getListBookingHistory);
+    router.put('/api/update-booking', doctorController.updateBooking);
+    router.delete('/api/delete-booking', doctorController.deleteBooking);
 
     // Specialty
     router.post('/api/create-new-specialty', specialtyController.postCreateNewSpecialty);
@@ -120,7 +123,7 @@ let initWebRoutes = (app) => {
     // Admin Communication Hub (New)
     router.get('/api/get-all-email-templates', adminController.handleGetAllEmailTemplates);
     router.post('/api/save-email-template', adminController.handleUpsertEmailTemplate);
-    router.delete('/api/delete-email-template', adminController.handleDeleteEmailTemplate);
+
     router.get('/api/get-all-global-quick-replies', adminController.handleGetAllGlobalQuickReplies);
     router.post('/api/save-global-quick-reply', adminController.handleUpsertGlobalQuickReply);
 

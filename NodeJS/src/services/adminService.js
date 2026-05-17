@@ -31,6 +31,7 @@ let upsertEmailTemplate = (data) => {
                         type: data.type,
                         subject: data.subject,
                         content: data.content,
+                        contentMarkdown: data.contentMarkdown,
                         language: data.language || 'vi'
                     }, {
                         where: { id: data.id }
@@ -40,35 +41,13 @@ let upsertEmailTemplate = (data) => {
                         type: data.type,
                         subject: data.subject,
                         content: data.content,
+                        contentMarkdown: data.contentMarkdown,
                         language: data.language || 'vi'
                     });
                 }
                 resolve({
                     errCode: 0,
                     errMessage: 'Save email template succeed!'
-                });
-            }
-        } catch (e) {
-            reject(e);
-        }
-    });
-};
-
-let deleteEmailTemplate = (id) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            if (!id) {
-                resolve({
-                    errCode: 1,
-                    errMessage: 'Missing required parameters!'
-                });
-            } else {
-                await db.EmailTemplate.destroy({
-                    where: { id: id }
-                });
-                resolve({
-                    errCode: 0,
-                    errMessage: 'Delete email template succeed!'
                 });
             }
         } catch (e) {
@@ -108,6 +87,7 @@ let upsertGlobalQuickReply = (data) => {
                     await db.QuickReply.update({
                         title: data.title,
                         content: data.content,
+                        type: data.type || 'MANUAL',
                         isGlobal: true
                     }, {
                         where: { id: data.id }
@@ -116,6 +96,7 @@ let upsertGlobalQuickReply = (data) => {
                     await db.QuickReply.create({
                         title: data.title,
                         content: data.content,
+                        type: data.type || 'MANUAL',
                         isGlobal: true,
                         doctorId: 0 // Admin created global
                     });
@@ -134,7 +115,6 @@ let upsertGlobalQuickReply = (data) => {
 module.exports = {
     getAllEmailTemplates: getAllEmailTemplates,
     upsertEmailTemplate: upsertEmailTemplate,
-    deleteEmailTemplate: deleteEmailTemplate,
     getAllGlobalQuickReplies: getAllGlobalQuickReplies,
     upsertGlobalQuickReply: upsertGlobalQuickReply
 };

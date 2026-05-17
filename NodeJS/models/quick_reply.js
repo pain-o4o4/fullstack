@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     content: DataTypes.TEXT,
     isGlobal: DataTypes.BOOLEAN,
     title: DataTypes.STRING,
+    type: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'QuickReply',

@@ -47,7 +47,7 @@ class ManageDoctor extends Component {
     componentDidMount() {
         this.props.fetchAllDoctors();
         this.props.getRequiredDoctorInfor();
-        
+
         let { userInfo } = this.props;
         if (userInfo && userInfo.roleId === USER_ROLE.DOCTOR) {
             let labelVi = `${userInfo.lastName} ${userInfo.firstName}`;
@@ -335,7 +335,7 @@ class ManageDoctor extends Component {
                                             value={selectedDoctor}
                                             onChange={this.handleChangeSelect}
                                             options={this.state.listAllDoctors}
-                                            placeholder={language === LANGUAGES.VI ? 'Tìm bác sĩ...' : 'Search doctor...'}
+                                            placeholder='Tìm bác sĩ...'
                                             menuPortalTarget={document.body}
                                             styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                         />

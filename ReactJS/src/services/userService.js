@@ -235,16 +235,24 @@ const saveEmailTemplateApi = (data) => {
     return axios.post('/api/save-email-template', data);
 }
 
-const deleteEmailTemplateApi = (id) => {
-    return axios.delete(`/api/delete-email-template?id=${id}`);
-}
-
 const getAllGlobalQuickRepliesApi = () => {
     return axios.get('/api/get-all-global-quick-replies');
 }
 
 const saveGlobalQuickReplyApi = (data) => {
     return axios.post('/api/save-global-quick-reply', data);
+}
+
+const getListBookingHistoryService = (data) => {
+    return axios.get(`/api/get-list-booking-history`, { params: data });
+}
+
+const updateBookingServiceManual = (data) => {
+    return axios.put('/api/update-booking', data);
+}
+
+const deleteBookingServiceManual = (id) => {
+    return axios.delete('/api/delete-booking', { data: { id } });
 }
 
 export {
@@ -304,7 +312,9 @@ export {
     updateMessageReactionApi,
     getAllEmailTemplatesApi,
     saveEmailTemplateApi,
-    deleteEmailTemplateApi,
     getAllGlobalQuickRepliesApi,
-    saveGlobalQuickReplyApi
+    saveGlobalQuickReplyApi,
+    getListBookingHistoryService,
+    updateBookingServiceManual,
+    deleteBookingServiceManual
 }

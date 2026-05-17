@@ -486,7 +486,7 @@ class UserManage extends Component {
                                                 </div>
                                                 <div className="user-info">
                                                     <div className="user-name">
-                                                        {item.lastName} {item.firstName}
+                                                        {item.firstName} {item.lastName}
                                                         {item.id === userInfo.id && <span className="you-badge">(Bạn)</span>}
                                                     </div>
                                                     <div className="user-email">{item.email}</div>

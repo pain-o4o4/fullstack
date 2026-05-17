@@ -321,8 +321,8 @@ class DoctorChat extends Component {
                 this.props.updateUnreadCount(totalUnreadSessions);
             }
 
-            // Lấy danh sách tin nhắn nhanh từ DB nếu là bác sĩ
-            if (userInfo.roleId === 'R2') {
+            // Lấy danh sách tin nhắn nhanh từ DB nếu là bác sĩ hoặc admin
+            if (userInfo.roleId === 'R2' || userInfo.roleId === 'R1') {
                 try {
                     let resQR = await getQuickRepliesApi(userInfo.id);
                     if (resQR && resQR.errCode === 0 && resQR.data) {

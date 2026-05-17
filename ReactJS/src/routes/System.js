@@ -13,6 +13,7 @@ import PatientProfile from '../containers/System/Patient/PatientProfile';
 import ManageHandbook from '../containers/System/Handbook/ManageHandbook';
 import ManageQuickReply from '../containers/System/Admin/ManageQuickReply';
 import ManageEmailTemplate from '../containers/System/Admin/ManageEmailTemplate';
+import ManageBooking from '../containers/System/Admin/ManageBooking';
 
 class System extends Component {
 
@@ -32,6 +33,7 @@ class System extends Component {
                             <Route path="manage-handbook" element={<UserIsAdmin><ManageHandbook /></UserIsAdmin>} />
                             <Route path="manage-quick-reply" element={<UserIsAdmin><ManageQuickReply /></UserIsAdmin>} />
                             <Route path="manage-email-template" element={<UserIsAdmin><ManageEmailTemplate /></UserIsAdmin>} />
+                            <Route path="manage-booking" element={<UserIsAdmin><ManageBooking /></UserIsAdmin>} />
                             <Route path="patient-profile" element={<UserIsPatientOrAdmin><PatientProfile /></UserIsPatientOrAdmin>} />
                             <Route path="*" element={<Navigate to="patient-profile" replace />} />
                         </Routes>

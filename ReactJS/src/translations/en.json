@@ -440,5 +440,24 @@
         "error": "AI system is busy or quota exceeded. Please try again later!",
         "refresh-title": "Refresh chat",
         "typing": "Typing..."
+    },
+    "manage-booking": {
+        "title": "Manage Booking History",
+        "title-admin": "Global Booking Management System",
+        "doctor": "Doctor",
+        "patient": "Patient",
+        "date": "Exam Date",
+        "time": "Time Slot",
+        "status": "Status",
+        "actions": "Actions",
+        "all-doctors": "All Doctors",
+        "all-status": "All Status",
+        "search-placeholder": "Search patients...",
+        "edit-title": "Update Booking Information",
+        "soft-delete-confirm": "Are you sure you want to hide this booking from the list? (Soft Delete)",
+        "no-data": "No booking data found",
+        "total": "Total",
+        "reason": "Reason",
+        "clinic": "Clinic"
     }
 }

@@ -26,18 +26,7 @@ let handleUpsertEmailTemplate = async (req, res) => {
     }
 };
 
-let handleDeleteEmailTemplate = async (req, res) => {
-    try {
-        let data = await adminService.deleteEmailTemplate(req.query.id);
-        return res.status(200).json(data);
-    } catch (e) {
-        console.log(e);
-        return res.status(200).json({
-            errCode: -1,
-            errMessage: 'Error from server'
-        });
-    }
-};
+
 
 let handleGetAllGlobalQuickReplies = async (req, res) => {
     try {
@@ -68,7 +57,7 @@ let handleUpsertGlobalQuickReply = async (req, res) => {
 module.exports = {
     handleGetAllEmailTemplates: handleGetAllEmailTemplates,
     handleUpsertEmailTemplate: handleUpsertEmailTemplate,
-    handleDeleteEmailTemplate: handleDeleteEmailTemplate,
+
     handleGetAllGlobalQuickReplies: handleGetAllGlobalQuickReplies,
     handleUpsertGlobalQuickReply: handleUpsertGlobalQuickReply
 };

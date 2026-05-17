@@ -2,8 +2,8 @@
 
 module.exports = {
     up: async (queryInterface, Sequelize) => {
-        const tableNames = ['User', 'Specialties', 'Clinic', 'handbooks'];
-        
+        const tableNames = ['User', 'Specialties', 'Clinic', 'handbooks', 'bookings'];
+
         for (const tableName of tableNames) {
             const tableDefinition = await queryInterface.describeTable(tableName);
             if (!tableDefinition.deletedAt) {
@@ -16,8 +16,8 @@ module.exports = {
     },
 
     down: async (queryInterface, Sequelize) => {
-        const tableNames = ['User', 'Specialties', 'Clinic', 'handbooks'];
-        
+        const tableNames = ['User', 'Specialties', 'Clinic', 'handbooks', 'bookings'];
+
         for (const tableName of tableNames) {
             const tableDefinition = await queryInterface.describeTable(tableName);
             if (tableDefinition.deletedAt) {

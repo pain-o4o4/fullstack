@@ -11,6 +11,7 @@ class ManageQuickReply extends Component {
             listReplies: [],
             title: '',
             content: '',
+            type: 'MANUAL',
             isEdit: false,
             editId: null
         }
@@ -38,7 +39,7 @@ class ManageQuickReply extends Component {
     }
 
     handleSaveReply = async () => {
-        let { title, content, isEdit, editId } = this.state;
+        let { title, content, type, isEdit, editId } = this.state;
         if (!content) {
             toast.error('Nội dung không được để trống!');
             return;
@@ -47,7 +48,8 @@ class ManageQuickReply extends Component {
         let res = await saveGlobalQuickReplyApi({
             id: isEdit ? editId : null,
             title: title,
-            content: content
+            content: content,
+            type: type
         });
 
         if (res && res.errCode === 0) {
@@ -55,6 +57,7 @@ class ManageQuickReply extends Component {
             this.setState({
                 title: '',
                 content: '',
+                type: 'MANUAL',
                 isEdit: false,
                 editId: null
             });
@@ -68,6 +71,7 @@ class ManageQuickReply extends Component {
         this.setState({
             title: item.title || '',
             content: item.content,
+            type: item.type || 'MANUAL',
             isEdit: true,
             editId: item.id
         });
@@ -89,6 +93,7 @@ class ManageQuickReply extends Component {
         this.setState({
             title: '',
             content: '',
+            type: 'MANUAL',
             isEdit: false,
             editId: null
         });
@@ -98,19 +103,28 @@ class ManageQuickReply extends Component {
         let { listReplies, title, content, isEdit } = this.state;
         return (
             <div className="manage-quick-reply-container">
-                <div className="title">QUẢN LÝ TIN NHẮN NHANH (GLOBAL)</div>
-                
+                <div className="title">QUẢN LÝ TIN NHẮN NHANH </div>
+
                 <div className="manage-quick-reply-body">
                     <div className="row section-add-new">
                         <div className="col-12 mb-3">
                             <label className="form-label">Thêm mẫu tin nhắn nhanh mới</label>
                             <div className="alert alert-info">
-                                <b>Biến hỗ trợ:</b> <br/>
-                                <code>{'{{doctorName}}'}</code>: Tên bác sĩ | 
-                                <code>{'{{specialty}}'}</code>: Chuyên khoa | 
+                                <b>Biến hỗ trợ:</b> <br />
+                                <code>{'{{doctorName}}'}</code>: Tên bác sĩ |
+                                <code>{'{{specialty}}'}</code>: Chuyên khoa |
                                 <code>{'{{clinicName}}'}</code>: Phòng khám |
                                 <code>{'{{patientName}}'}</code>: Tên bệnh nhân
                             </div>
+                        </div>
+                        <div className="col-3 mb-3">
+                            <label>Loại tin nhắn</label>
+                            <select className="form-select" value={this.state.type} onChange={(e) => this.handleOnChangeInput(e, 'type')}>
+                                <option value="MANUAL">Thủ công (Bác sĩ chọn)</option>
+                                <option value="AUTO_S2">Tự động (Khi đặt lịch & thanh toán thành công)</option>
+                                <option value="AUTO_S3">Tự động (Khi Đã khám xong)</option>
+                                <option value="AUTO_S5">Tự động (Khi Lỡ hẹn)</option>
+                            </select>
                         </div>
                         <div className="col-4 mb-3">
                             <label>Tiêu đề (Gợi nhớ)</label>
@@ -119,7 +133,7 @@ class ManageQuickReply extends Component {
                                 placeholder="VD: Chào hỏi, Hướng dẫn..."
                             />
                         </div>
-                        <div className="col-8 mb-3">
+                        <div className="col-5 mb-3">
                             <label>Nội dung tin nhắn</label>
                             <textarea className="form-control" rows="3" value={content}
                                 onChange={(event) => this.handleOnChangeInput(event, 'content')}
@@ -143,15 +157,22 @@ class ManageQuickReply extends Component {
                             <table className="table table-hover table-bordered shadow-sm">
                                 <thead className="table-dark">
                                     <tr>
-                                        <th style={{width: '20%'}}>Tiêu đề</th>
+                                        <th style={{ width: '15%' }}>Phân loại</th>
+                                        <th style={{ width: '20%' }}>Tiêu đề</th>
                                         <th>Nội dung mẫu</th>
-                                        <th style={{width: '15%'}}>Hành động</th>
+                                        <th style={{ width: '10%' }}>Hành động</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {listReplies && listReplies.length > 0 ? (
                                         listReplies.map((item, index) => (
                                             <tr key={index}>
+                                                <td>
+                                                    {item.type === 'AUTO_S2' && <span className="badge bg-info text-dark">Tự động (Thanh toán)</span>}
+                                                    {item.type === 'AUTO_S3' && <span className="badge bg-success">Tự động (Đã khám)</span>}
+                                                    {item.type === 'AUTO_S5' && <span className="badge bg-danger">Tự động (Lỡ hẹn)</span>}
+                                                    {(!item.type || item.type === 'MANUAL') && <span className="badge bg-secondary">Thủ công</span>}
+                                                </td>
                                                 <td className="fw-bold text-primary">{item.title || '---'}</td>
                                                 <td>{item.content}</td>
                                                 <td className="text-center">
@@ -162,7 +183,7 @@ class ManageQuickReply extends Component {
                                         ))
                                     ) : (
                                         <tr>
-                                            <td colSpan="3" className="text-center italic">Chưa có mẫu nào được tạo</td>
+                                            <td colSpan="4" className="text-center italic">Chưa có mẫu nào được tạo</td>
                                         </tr>
                                     )}
                                 </tbody>
