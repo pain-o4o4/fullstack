@@ -40,6 +40,35 @@ class ModalManageClinic extends Component {
         }
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevProps.currentClinic !== this.props.currentClinic || prevProps.isOpen !== this.props.isOpen) {
+            if (this.props.isOpen) {
+                let clinic = this.props.currentClinic;
+                if (clinic && Object.keys(clinic).length > 0 && this.props.action === 'EDIT') {
+                    this.setState({
+                        id: clinic.id,
+                        name: clinic.name,
+                        address: clinic.address,
+                        imageBase64: clinic.image,
+                        descriptionHTML: clinic.descriptionHTML,
+                        descriptionMarkdown: clinic.descriptionMarkdown,
+                        previewImgURL: clinic.image
+                    });
+                } else if (this.props.action === 'CREATE') {
+                    this.setState({
+                        id: '',
+                        name: '',
+                        address: '',
+                        imageBase64: '',
+                        descriptionHTML: '',
+                        descriptionMarkdown: '',
+                        previewImgURL: ''
+                    });
+                }
+            }
+        }
+    }
+
     handleOnChangeInput = (event, id) => {
         let copyState = { ...this.state };
         copyState[id] = event.target.value;
@@ -106,9 +135,7 @@ class ModalManageClinic extends Component {
                                     <i className="fas fa-upload"></i> <FormattedMessage id="manage-clinic.upload-img" />
                                 </label>
                                 {this.state.previewImgURL && (
-                                    <div className="preview-image" style={{
-                                        backgroundImage: `url(${this.state.previewImgURL})`
-                                    }}></div>
+                                    <img className="preview-image" src={this.state.previewImgURL} alt="Preview" />
                                 )}
                             </div>
                         </div>

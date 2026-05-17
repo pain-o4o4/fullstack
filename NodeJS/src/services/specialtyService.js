@@ -3,6 +3,7 @@ import db from "../../models/index"
 require("dotenv").config();
 import _ from "lodash";
 import { Op, where } from 'sequelize';
+import { parseImageFromDb, uploadImageToCloudinary, replaceImageOnCloudinary } from "../utils/imageUtils";
 import moment from 'moment'
 import emailService from "./emailService";
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE
@@ -18,12 +19,13 @@ let postCreateNewSpecialtyService = async (data) => {
                 })
             }
             else {
-                await db.Specialty.create({
-                    name: data.name,
-                    image: data.imageBase64,
-                    descriptionHTML: data.descriptionHTML,
-                    descriptionMarkdown: data.descriptionMarkdown
-                });
+                 let imageUrl = await uploadImageToCloudinary(data.imageBase64, 'specialties');
+                 await db.Specialty.create({
+                     name: data.name,
+                     image: imageUrl,
+                     descriptionHTML: data.descriptionHTML,
+                     descriptionMarkdown: data.descriptionMarkdown
+                 });
 
                 resolve({
                     errCode: 0,
@@ -44,9 +46,9 @@ let getAllSpecialtyService = async () => {
 
             if (data && data.length > 0) {
                 data = data.map((item) => {
-                    if (item.image) {
-                        item.image = Buffer.from(item.image, 'base64').toString('binary');
-                    }
+                     if (item.image) {
+                         item.image = parseImageFromDb(item.image);
+                     }
                     return item;
                 });
             }
@@ -85,9 +87,9 @@ let getSpecialtyByIdService = async (inputId) => {
                     nest: true
                 });
 
-                if (data && data.image) {
-                    data.image = Buffer.from(data.image, 'base64').toString('binary');
-                }
+                 if (data && data.image) {
+                     data.image = parseImageFromDb(data.image);
+                 }
                 resolve({
                     errCode: 0,
                     errMessage: 'OK',
@@ -159,9 +161,10 @@ let editSpecialtyService = (data) => {
                     specialty.descriptionHTML = data.descriptionHTML;
                     specialty.descriptionMarkdown = data.descriptionMarkdown;
 
-                    if (data.imageBase64) {
-                        specialty.image = data.imageBase64;
-                    }
+                     if (data.imageBase64) {
+                         let imageUrl = await replaceImageOnCloudinary(data.imageBase64, specialty.image, 'specialties');
+                         specialty.image = imageUrl;
+                     }
 
                     await specialty.save();
                     resolve({

@@ -1,5 +1,6 @@
 const { Op } = require('sequelize');
 import db from "../../models/index";
+import { parseImageFromDb } from "../utils/imageUtils";
 
 const searchAll = async (keyword) => {
     try {
@@ -38,17 +39,16 @@ const searchAll = async (keyword) => {
             })
         ]);
 
-        // Xử lý image: trả về imageUrl thay vì raw Buffer/Base64
+        // Xử lý image: trả về imageUrl (Cloudinary URL)
         const formatImage = (item) => {
             let itemData = item.dataValues || item;
-            let imageBase64 = null;
+            let imageUrl = null;
             if (itemData.image) {
-                imageBase64 = Buffer.from(itemData.image, 'base64').toString('binary');
+                imageUrl = parseImageFromDb(itemData.image);
             }
             return {
                 ...itemData,
-                image: imageBase64
-                // TODO: migrate image path to URL (CDN) thay vì BLOB
+                image: imageUrl
             }
         };
 

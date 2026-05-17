@@ -4,6 +4,7 @@ import db from "../../models/index"
 import bcrypt from "bcryptjs";
 import emailService from "./emailService";
 import jwt from "jsonwebtoken";
+import { parseImageFromDb, uploadImageToCloudinary, replaceImageOnCloudinary } from "../utils/imageUtils";
 
 const REGISTER_OTP_EXPIRE_MS = 5 * 60 * 1000;
 const MAX_VERIFY_ATTEMPTS = 5;
@@ -167,6 +168,7 @@ let verifyRegisterService = (data) => {
             }
 
             const payload = JSON.parse(otpRecord.payload || "{}");
+            let imageUrl = await uploadImageToCloudinary(payload.image, 'users');
             const createdUser = await db.User.create({
                 email: payload.email,
                 password: payload.password,
@@ -175,7 +177,7 @@ let verifyRegisterService = (data) => {
                 address: payload.address,
                 phonenumber: payload.phonenumber,
                 gender: payload.gender,
-                image: payload.image,
+                image: imageUrl,
                 roleId: payload.roleId || "R3",
                 positionId: payload.positionId || "P0",
                 isVerified: true
@@ -223,7 +225,7 @@ let handleUserLogin = (email, password) => {
                 });
 
                 if (user && user.image) {
-                    user.image = Buffer.from(user.image, 'base64').toString('binary');
+                    user.image = parseImageFromDb(user.image);
                 }
 
                 if (user) {
@@ -298,7 +300,14 @@ let getAllUsers = (userId) => {
                         exclude: ['password']
                     }
                 });
-
+                if (users && users.length > 0) {
+                    users = users.map(item => {
+                        if (item.image) {
+                            item.image = parseImageFromDb(item.image);
+                        }
+                        return item;
+                    });
+                }
             } else if (userId && userId !== 'ALL') {
                 {
                     users = await db.User.findOne({
@@ -307,6 +316,9 @@ let getAllUsers = (userId) => {
                             exclude: ['password']
                         }
                     });
+                    if (users && users.image) {
+                        users.image = parseImageFromDb(users.image);
+                    }
                 }
             }
             resolve(users);
@@ -338,6 +350,7 @@ let createNewUser = (data) => {
             }
             else {
                 let hashPasswordFromBcrypt = await hashUserPassword(data.password);
+                let imageUrl = await uploadImageToCloudinary(data.avatar, 'users');
                 await db.User.create({
                     email: data.email,
                     password: hashPasswordFromBcrypt,
@@ -346,7 +359,7 @@ let createNewUser = (data) => {
                     address: data.address,
                     phonenumber: data.phonenumber,
                     gender: data.gender,
-                    image: data.avatar,
+                    image: imageUrl,
                     roleId: data.roleId,
                     positionId: data.positionId,
                     isVerified: true
@@ -438,7 +451,8 @@ let updateUserData = (data) => {
                 user.positionId = data.positionId;
                 user.gender = data.gender;
                 if (data.avatar) {
-                    user.image = data.avatar;
+                    let imageUrl = await replaceImageOnCloudinary(data.avatar, user.image, 'users');
+                    user.image = imageUrl;
                 }
                 await user.save();
             } else {

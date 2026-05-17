@@ -108,7 +108,7 @@ class ChatBox extends Component {
                                     {isAIMode ? (
                                         <div className="dcd-header-avatar-placeholder ai"><i className="fas fa-robot"></i></div>
                                     ) : selectedDoctor.image ? (
-                                        <div className="dcd-header-avatar" style={{ backgroundImage: `url(${selectedDoctor.image})` }}></div>
+                                        <img className="dcd-header-avatar" src={selectedDoctor.image} alt="Avatar" />
                                     ) : (
                                         <div className="dcd-header-avatar-placeholder"><i className="fas fa-user-md"></i></div>
                                     )}
@@ -187,7 +187,7 @@ class ChatBox extends Component {
                                                                     <div className="dcd-msg-avatar-wrap">
                                                                         {isLastInBlock ? (
                                                                             selectedDoctor.image ? (
-                                                                                <div className="dcd-msg-avatar" style={{ backgroundImage: `url(${selectedDoctor.image})` }}></div>
+                                                                                <img className="dcd-msg-avatar" src={selectedDoctor.image} alt="Avatar" />
                                                                             ) : (
                                                                                 <div className="dcd-msg-avatar-placeholder"><i className="fas fa-user-md"></i></div>
                                                                             )

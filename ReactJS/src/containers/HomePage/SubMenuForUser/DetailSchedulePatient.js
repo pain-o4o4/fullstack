@@ -80,25 +80,10 @@ class DetailSchedulePatient extends Component {
             }
         };
 
-        // Helper function for decoding base64/buffer user avatar
+        // All image data is now Cloudinary URLs from Backend
         const decodeAvatar = (imgObj) => {
             if (!imgObj) return '';
-            try {
-                if (typeof imgObj === 'string') {
-                    return imgObj.startsWith('data:') ? imgObj : `data:image/jpeg;base64,${imgObj}`;
-                }
-                if (imgObj.type === 'Buffer' || imgObj.data) {
-                    let binary = '';
-                    let bytes = new Uint8Array(imgObj.data);
-                    let len = bytes.byteLength;
-                    for (let i = 0; i < len; i++) {
-                        binary += String.fromCharCode(bytes[i]);
-                    }
-                    return `data:image/jpeg;base64,${btoa(binary)}`;
-                }
-            } catch (e) {
-                console.error("Error decoding avatar: ", e);
-            }
+            if (typeof imgObj === 'string') return imgObj;
             return '';
         };
 

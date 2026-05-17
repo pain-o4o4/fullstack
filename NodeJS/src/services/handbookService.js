@@ -1,4 +1,5 @@
 import db from "../../models/index";
+import { parseImageFromDb, uploadImageToCloudinary, replaceImageOnCloudinary } from "../utils/imageUtils";
 
 let createHandbook = (data) => {
     return new Promise(async (resolve, reject) => {
@@ -9,9 +10,10 @@ let createHandbook = (data) => {
                     errMessage: "Missing required parameters!"
                 });
             } else {
+                let imageUrl = await uploadImageToCloudinary(data.imageBase64, 'handbooks');
                 await db.Handbook.create({
                     name: data.name,
-                    image: data.imageBase64,
+                    image: imageUrl,
                     descriptionHTML: data.descriptionHTML,
                     descriptionMarkdown: data.descriptionMarkdown
                 });
@@ -33,20 +35,12 @@ let getAllHandbook = () => {
             let data = await db.Handbook.findAll({
                 order: [['createdAt', 'DESC']]
             });
-            if (data && data.length > 0) {
-                data = data.map(item => {
-                    if (item.image) {
-                        // If it starts with 'http' it's already a URL, don't decode
-                        const imgStr = item.image.toString();
-                        if (imgStr.startsWith('http')) {
-                            item.image = imgStr;
-                        } else {
-                            item.image = Buffer.from(item.image, 'base64').toString('binary');
-                        }
-                    }
-                    return item;
-                });
-            }
+            data = data.map(item => {
+                if (item.image) {
+                    item.image = parseImageFromDb(item.image);
+                }
+                return item;
+            });
             resolve({
                 errCode: 0,
                 errMessage: "OK",
@@ -71,12 +65,7 @@ let getDetailHandbookById = (id) => {
                     where: { id: id }
                 });
                 if (data && data.image) {
-                    const imgStr = data.image.toString();
-                    if (!imgStr.startsWith('http')) {
-                        data.image = Buffer.from(data.image, 'base64').toString('binary');
-                    } else {
-                        data.image = imgStr;
-                    }
+                    data.image = parseImageFromDb(data.image);
                 }
                 resolve({
                     errCode: 0,
@@ -131,10 +120,11 @@ let updateHandbookData = (data) => {
                 raw: false
             })
             if (handbook) {
+                let imageUrl = await replaceImageOnCloudinary(data.imageBase64, handbook.image, 'handbooks');
                 handbook.name = data.name;
                 handbook.descriptionHTML = data.descriptionHTML;
                 handbook.descriptionMarkdown = data.descriptionMarkdown;
-                handbook.image = data.imageBase64;
+                handbook.image = imageUrl;
                 await handbook.save();
                 resolve({
                     errCode: 0,

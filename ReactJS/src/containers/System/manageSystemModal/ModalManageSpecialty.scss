@@ -143,8 +143,7 @@
                 width: 140px;
                 height: 90px;
                 border-radius: 12px;
-                background-size: cover;
-                background-position: center;
+                object-fit: cover;
                 box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
                 border: 1px solid rgba(0, 0, 0, 0.05);
             }

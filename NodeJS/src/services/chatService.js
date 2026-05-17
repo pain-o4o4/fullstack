@@ -1,5 +1,6 @@
 import db from "../../models/index";
 import { Op } from 'sequelize';
+import { parseImageFromDb, uploadImageToCloudinary } from "../utils/imageUtils";
 
 let sendMessage = (data) => {
     return new Promise(async (resolve, reject) => {
@@ -42,11 +43,12 @@ let sendMessage = (data) => {
                     }
                 }
 
+                let imageUrl = await uploadImageToCloudinary(data.image, 'chat');
                 let newMessage = await db.Message.create({
                     senderId: data.senderId,
                     receiverId: data.receiverId,
                     text: data.text || '',
-                    image: data.image || null,
+                    image: imageUrl || null,
                     isRead: 0,
                     deletedBySender: false,
                     deletedByReceiver: false,
@@ -66,10 +68,10 @@ let sendMessage = (data) => {
 
                 let result = messageWithParent.get({ plain: true });
                 if (result.image) {
-                    result.image = Buffer.from(result.image, 'base64').toString('binary');
+                    result.image = parseImageFromDb(result.image);
                 }
                 if (result.parentData && result.parentData.image) {
-                    result.parentData.image = Buffer.from(result.parentData.image, 'base64').toString('binary');
+                    result.parentData.image = parseImageFromDb(result.parentData.image);
                 }
 
                 resolve({
@@ -123,10 +125,10 @@ let getMessages = (senderId, receiverId) => {
                     messages = messages.map(item => {
                         let obj = item.get({ plain: true });
                         if (obj.image) {
-                            obj.image = Buffer.from(obj.image, 'base64').toString('binary');
+                            obj.image = parseImageFromDb(obj.image);
                         }
                         if (obj.parentData && obj.parentData.image) {
-                            obj.parentData.image = Buffer.from(obj.parentData.image, 'base64').toString('binary');
+                            obj.parentData.image = parseImageFromDb(obj.parentData.image);
                         }
                         return obj;
                     });
@@ -187,9 +189,7 @@ let getChatHistorySidebar = (userId) => {
                         if (partnerInfo) {
                             let imageBinary = '';
                             if (partnerInfo.image) {
-                                // imageBinary = Buffer.from(partnerInfo.image.toString(), 'base64').toString('binary');
-                                // imageBinary = Buffer.from(partnerInfo.image, 'base64').toString('binary');
-                                imageBinary = Buffer.from(partnerInfo.image, 'base64').toString('binary'); //cmnn
+                                imageBinary = parseImageFromDb(partnerInfo.image);
                             }
                             // Đếm số tin nhắn chưa đọc từ đối tác này gửi cho currentUserId
                             let unreadCount = await db.Message.count({
@@ -278,13 +278,11 @@ let searchUsersForChat = (userId, query) => {
                     });
                 }
 
-                // Chuyển đổi ảnh sang chuẩn binary của dự án (Lưu ý: image trong DB là chuỗi base64)
+                // Chuyển đổi ảnh sang Cloudinary URL chuẩn
                 if (results && results.length > 0) {
                     results = results.map(item => {
                         if (item.image) {
-                            item.image = Buffer.from(item.image, 'base64').toString('binary'); //cmnn
-                            // imageBinary = Buffer.from(partnerInfo.image, 'base64').toString('binary');
-
+                            item.image = parseImageFromDb(item.image);
                         }
                         return item;
                     });

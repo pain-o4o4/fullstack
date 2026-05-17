@@ -12,19 +12,8 @@ import {
 import './UserManage.scss';
 import icon_icons from '../../assets/images/icon_icons.svg';
 
-const decodeBase64Buffer = (imgObj) => {
-    if (imgObj && imgObj.data) {
-        let bytes = new Uint8Array(imgObj.data);
-        let binary = '';
-        for (let i = 0; i < bytes.byteLength; i++) {
-            binary += String.fromCharCode(bytes[i]);
-        }
-        return binary;
-    } else if (typeof imgObj === 'string') {
-        return imgObj;
-    }
-    return '';
-};
+
+
 
 class UserManage extends Component {
     constructor(props) {
@@ -189,7 +178,7 @@ class UserManage extends Component {
     }
 
     handleEditUser = (user) => {
-        let imageBase64 = decodeBase64Buffer(user.image);
+        let imageBase64 = user.image || '';
 
         this.setState({
             isPopupOpen: true,
@@ -466,7 +455,7 @@ class UserManage extends Component {
                         </thead>
                         <tbody>
                             {displayUsers.map((item, index) => {
-                                let imageBase64 = decodeBase64Buffer(item.image);
+                                let imageBase64 = item.image || '';
                                 let isSelected = selectedUsers.includes(item.id);
                                 return (
                                     <tr key={item.id || index} className={`${isSelected ? 'selected-row' : ''} ${item.id === userInfo.id ? 'current-user-row' : ''}`}>

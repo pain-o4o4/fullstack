@@ -168,8 +168,6 @@
             width: 56px;
             height: 56px;
             border-radius: 50%;
-            background-size: cover;
-            background-position: center;
             background-color: #e4e6eb;
             border: 1px solid rgba(0, 0, 0, 0.05);
 
@@ -180,6 +178,11 @@
                 color: #8e8e93;
                 font-size: 24px;
             }
+        }
+
+        img.dcd-doc-avatar {
+            object-fit: cover;
+            display: block;
         }
 
         .dcd-online-dot {

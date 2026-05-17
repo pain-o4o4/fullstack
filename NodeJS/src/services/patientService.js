@@ -3,6 +3,7 @@ import db from "../../models/index"
 require("dotenv").config();
 import _ from "lodash";
 import { Op, where } from 'sequelize';
+import { parseImageFromDb, uploadImageToCloudinary } from "../utils/imageUtils";
 import moment from 'moment'
 import emailService from "./emailService";
 import { v4 as uuidv4 } from 'uuid';
@@ -541,13 +542,13 @@ let getDetailSchedulePatient = async (bookingId) => {
                     nest: true
                 });
 
-                if (data && data.doctorBookingData && data.doctorBookingData.image) {
-                    data.doctorBookingData.image = Buffer.from(data.doctorBookingData.image, 'base64').toString('binary');
-                }
-
-                if (data && data.patientBookingData && data.patientBookingData.image) {
-                    data.patientBookingData.image = Buffer.from(data.patientBookingData.image, 'base64').toString('binary');
-                }
+                 if (data && data.doctorBookingData && data.doctorBookingData.image) {
+                     data.doctorBookingData.image = parseImageFromDb(data.doctorBookingData.image);
+                 }
+ 
+                 if (data && data.patientBookingData && data.patientBookingData.image) {
+                     data.patientBookingData.image = parseImageFromDb(data.patientBookingData.image);
+                 }
 
                 resolve({
                     errCode: 0,
@@ -630,9 +631,10 @@ let postUpdatePatientService = (data) => {
                     }
                 });
 
-                if (data.image !== undefined) {
-                    updateData.image = data.image;
-                }
+                 if (data.image !== undefined) {
+                     let imageUrl = await uploadImageToCloudinary(data.image, 'users');
+                     updateData.image = imageUrl;
+                 }
                 // if (data.password !== undefined) {
                 //     let hashPasswordFromBcrypt = await hashUserPassword(data.password);
                 //     updateData.password = hashPasswordFromBcrypt;

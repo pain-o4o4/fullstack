@@ -82,15 +82,8 @@ class OutStandingDoctor extends Component {
                         <div className="maven-slider-wrapper" ref={this.scrollRef}>
                             {arrDoctors && arrDoctors.length > 0 &&
                                 arrDoctors.map((item, index) => {
-                                    // Handle image
-                                    let imageUrl = '';
-                                    if (item.image) {
-                                        if (typeof item.image === 'string' && item.image.startsWith('data:')) {
-                                            imageUrl = item.image;
-                                        } else {
-                                            imageUrl = `data:image/jpeg;base64,${item.image}`;
-                                        }
-                                    }
+                                    // Image is now a Cloudinary URL from Backend
+                                    let imageUrl = item.image || '';
 
                                     // Display name
                                     let nameVi = `${item.positionData.valueVi}, ${item.lastName} ${item.firstName}`;

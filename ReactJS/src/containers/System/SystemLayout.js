@@ -11,19 +11,7 @@ import icon_icons from '../../assets/images/icon_icons.svg';
 import { CommonUtils } from '../../utils';
 import { editUserService, getAllUsers } from '../../services/userService';
 import { toast } from 'react-toastify';
-const decodeBase64Buffer = (imgObj) => {
-    if (imgObj && imgObj.data) {
-        let bytes = new Uint8Array(imgObj.data);
-        let binary = '';
-        for (let i = 0; i < bytes.byteLength; i++) {
-            binary += String.fromCharCode(bytes[i]);
-        }
-        return binary;
-    } else if (typeof imgObj === 'string') {
-        return imgObj;
-    }
-    return '';
-};
+
 class SystemLayout extends Component {
     constructor(props) {
         super(props);
@@ -160,7 +148,7 @@ class SystemLayout extends Component {
                         <aside className={`sidebar ${this.state.isOpenSidebar ? 'open' : ''}`}>
                             <div className="user-profile-summary">
                                 <label htmlFor="upload-sys-avatar" className="avatar-circle" style={{ cursor: 'pointer', position: 'relative' }}>
-                                    <img src={userInfo && userInfo.image ? decodeBase64Buffer(userInfo.image) : icon_icons} alt="avatar" />
+                                    <img src={userInfo && userInfo.image ? userInfo.image : icon_icons} alt="avatar" />
                                     <div className="avatar-edit-overlay">
                                         <i className="fas fa-camera"></i>
                                     </div>

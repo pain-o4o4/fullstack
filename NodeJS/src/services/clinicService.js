@@ -3,6 +3,7 @@ import db from "../../models/index"
 require("dotenv").config();
 import _ from "lodash";
 import { Op, where } from 'sequelize';
+import { parseImageFromDb, uploadImageToCloudinary, replaceImageOnCloudinary } from "../utils/imageUtils";
 import moment from 'moment'
 import emailService from "./emailService";
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE
@@ -21,13 +22,14 @@ let postCreateNewClinicService = (data) => {
                 })
             }
             else {
-                await db.Clinic.create({
-                    name: data.name,
-                    address: data.address,
-                    image: data.imageBase64,
-                    descriptionHTML: data.descriptionHTML,
-                    descriptionMarkdown: data.descriptionMarkdown
-                });
+                 let imageUrl = await uploadImageToCloudinary(data.imageBase64, 'clinics');
+                 await db.Clinic.create({
+                     name: data.name,
+                     address: data.address,
+                     image: imageUrl,
+                     descriptionHTML: data.descriptionHTML,
+                     descriptionMarkdown: data.descriptionMarkdown
+                 });
                 resolve({
                     errCode: 0,
                     errMessage: 'Save clinic success!'
@@ -46,13 +48,12 @@ let getAllClinicService = () => {
                 raw: true 
             });
             if (data && data.length > 0) {
-                data = data.map((item) => {
-                    if (item.image) {
-
-                        item.image = Buffer.from(item.image, 'base64').toString('binary');
-                    }
-                    return item;
-                });
+                 data = data.map((item) => {
+                     if (item.image) {
+                         item.image = parseImageFromDb(item.image);
+                     }
+                     return item;
+                 });
             }
             resolve({
                 errCode: 0,
@@ -85,9 +86,9 @@ let getDetailClinicByIdService = (id) => {
                     raw: false,
                     nest: true
                 });
-                if (data && data.image) {
-                    data.image = Buffer.from(data.image, 'base64').toString('binary');
-                }
+                 if (data && data.image) {
+                     data.image = parseImageFromDb(data.image);
+                 }
                 resolve({
                     errCode: 0,
                     data: data
@@ -156,9 +157,10 @@ let editClinicService = (data) => {
                     clinic.descriptionHTML = data.descriptionHTML;
                     clinic.descriptionMarkdown = data.descriptionMarkdown;
 
-                    if (data.imageBase64) {
-                        clinic.image = data.imageBase64;
-                    }
+                     if (data.imageBase64) {
+                         let imageUrl = await replaceImageOnCloudinary(data.imageBase64, clinic.image, 'clinics');
+                         clinic.image = imageUrl;
+                     }
 
                     await clinic.save();
                     resolve({

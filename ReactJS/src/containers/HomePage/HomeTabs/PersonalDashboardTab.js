@@ -40,20 +40,7 @@ class PersonalDashboardTab extends Component {
         }
     }
 
-    // Decode buffer image như HomeHeader
-    decodeBase64Buffer = (imgObj) => {
-        if (imgObj && imgObj.data) {
-            let bytes = new Uint8Array(imgObj.data);
-            let binary = '';
-            for (let i = 0; i < bytes.byteLength; i++) {
-                binary += String.fromCharCode(bytes[i]);
-            }
-            return `data:image/jpeg;base64,${btoa(binary)}`;
-        } else if (typeof imgObj === 'string') {
-            return imgObj;
-        }
-        return '';
-    };
+
 
     // Lấy chữ viết tắt từ tên (Apple Contacts style)
     getInitials = (firstName, lastName) => {
@@ -83,7 +70,7 @@ class PersonalDashboardTab extends Component {
         // Decode avatar
         let avatarSrc = '';
         if (userInfo && userInfo.image) {
-            avatarSrc = this.decodeBase64Buffer(userInfo.image);
+            avatarSrc = userInfo.image;
         }
 
         const fullName = userInfo

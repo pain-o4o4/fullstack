@@ -38,6 +38,33 @@ class ModalManageHandbook extends Component {
         }
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevProps.currentHandbook !== this.props.currentHandbook || prevProps.isOpen !== this.props.isOpen) {
+            if (this.props.isOpen) {
+                let handbook = this.props.currentHandbook;
+                if (handbook && Object.keys(handbook).length > 0 && this.props.action === 'EDIT') {
+                    this.setState({
+                        id: handbook.id,
+                        name: handbook.name,
+                        imageBase64: handbook.image,
+                        descriptionHTML: handbook.descriptionHTML,
+                        descriptionMarkdown: handbook.descriptionMarkdown,
+                        previewImgURL: handbook.image
+                    });
+                } else if (this.props.action === 'CREATE') {
+                    this.setState({
+                        id: '',
+                        name: '',
+                        imageBase64: '',
+                        descriptionHTML: '',
+                        descriptionMarkdown: '',
+                        previewImgURL: ''
+                    });
+                }
+            }
+        }
+    }
+
     handleOnChangeInput = (event, id) => {
         let copyState = { ...this.state };
         copyState[id] = event.target.value;
@@ -98,9 +125,7 @@ class ModalManageHandbook extends Component {
                                     <i className="fas fa-upload"></i> <FormattedMessage id="manage-specialty.upload-img" />
                                 </label>
                                 {this.state.previewImgURL && (
-                                    <div className="preview-image" style={{
-                                        backgroundImage: `url(${this.state.previewImgURL})`
-                                    }}></div>
+                                    <img className="preview-image" src={this.state.previewImgURL} alt="Preview" />
                                 )}
                             </div>
                         </div>

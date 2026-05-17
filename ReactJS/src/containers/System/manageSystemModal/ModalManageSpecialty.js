@@ -38,6 +38,33 @@ class ModalManageSpecialty extends Component {
         }
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevProps.currentSpecialty !== this.props.currentSpecialty || prevProps.isOpen !== this.props.isOpen) {
+            if (this.props.isOpen) {
+                let specialty = this.props.currentSpecialty;
+                if (specialty && Object.keys(specialty).length > 0 && this.props.action === 'EDIT') {
+                    this.setState({
+                        id: specialty.id,
+                        name: specialty.name,
+                        imageBase64: specialty.image,
+                        descriptionHTML: specialty.descriptionHTML,
+                        descriptionMarkdown: specialty.descriptionMarkdown,
+                        previewImgURL: specialty.image
+                    });
+                } else if (this.props.action === 'CREATE') {
+                    this.setState({
+                        id: '',
+                        name: '',
+                        imageBase64: '',
+                        descriptionHTML: '',
+                        descriptionMarkdown: '',
+                        previewImgURL: ''
+                    });
+                }
+            }
+        }
+    }
+
     handleOnChangeInput = (event, id) => {
         let copyState = { ...this.state };
         copyState[id] = event.target.value;
@@ -99,9 +126,7 @@ class ModalManageSpecialty extends Component {
                                     <i className="fas fa-upload"></i> <FormattedMessage id="manage-specialty.upload-img" />
                                 </label>
                                 {this.state.previewImgURL && (
-                                    <div className="preview-image" style={{
-                                        backgroundImage: `url(${this.state.previewImgURL})`
-                                    }}></div>
+                                    <img className="preview-image" src={this.state.previewImgURL} alt="Preview" />
                                 )}
                             </div>
                         </div>

@@ -30,9 +30,7 @@ class DetailHandbook extends Component {
         if (this.props.detailHandbook !== prevProps.detailHandbook) {
             let data = this.props.detailHandbook;
             if (data && data.image) {
-                if (typeof data.image === 'string' && !data.image.startsWith('data:')) {
-                    data.image = `data:image/jpeg;base64,${data.image}`;
-                }
+                // Image is now a Cloudinary URL from Backend — no decoding needed
             }
             this.setState({
                 dataDetailHandbook: data

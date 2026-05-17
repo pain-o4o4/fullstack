@@ -312,7 +312,7 @@ class DoctorChat extends Component {
                         name: `${item.lastName} ${item.firstName}`,
                         lastMsg: item.text,
                         time: new Date(item.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
-                        avatar: item.image, // Base64 image from DB
+                        avatar: item.image, // Cloudinary URL from Backend
                         unreadCount: item.unreadCount || 0,
                         online: true, // Tạm thời để true
                     }))

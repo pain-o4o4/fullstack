@@ -3,6 +3,7 @@ import db from "../../models/index"
 require("dotenv").config();
 import _ from "lodash";
 import { Op } from 'sequelize';
+import { parseImageFromDb } from "../utils/imageUtils";
 import moment from 'moment'
 import clinic from "../../models/clinic";
 import { getIO } from "../socket";
@@ -39,7 +40,7 @@ let getTopDoctorHomeService = (limit) => {
             if (users && users.length > 0) {
                 users.map(item => {
                     if (item.image) {
-                        item.image = Buffer.from(item.image, 'base64').toString('binary');
+                        item.image = parseImageFromDb(item.image);
                     }
                     return item;
                 })
@@ -81,7 +82,7 @@ let getAllDoctorsService = () => {
             if (doctors && doctors.length > 0) {
                 doctors = doctors.map(item => {
                     if (item.image) {
-                        item.image = Buffer.from(item.image, 'base64').toString('binary');
+                        item.image = parseImageFromDb(item.image);
                     }
                     return item;
                 });
@@ -266,7 +267,7 @@ let getDetailDoctorByIdService = (idInput) => {
                 nest: true,
             });
             if (infor && infor.image) {
-                infor.image = Buffer.from(infor.image, 'base64').toString('binary');
+                infor.image = parseImageFromDb(infor.image);
             }
             if (!infor) { infor = {} }
             resolve({
@@ -487,10 +488,10 @@ let getProfileDoctorById = (doctorId) => {
                                 exclude: ["id", "doctorId"]
                             },
                             include: [
-                                { model: db.Allcode, as: "priceTypeData", attributes: ["valueEn", "valueVi"] },
-                                { model: db.Allcode, as: "provinceTypeData", attributes: ["valueEn", "valueVi"] },
-                                { model: db.Allcode, as: "paymentTypeData", attributes: ["valueEn", "valueVi"] },
-                                { model: db.Clinic, as: "clinicData", attributes: ["name", "address"] },
+                                { model: db.Allcode, as: "priceTypeData", attributes: ['valueEn', 'valueVi'] },
+                                { model: db.Allcode, as: "provinceTypeData", attributes: ['valueEn', 'valueVi'] },
+                                { model: db.Allcode, as: "paymentTypeData", attributes: ['valueEn', 'valueVi'] },
+                                { model: db.Clinic, as: "clinicData", attributes: ['name', 'address'] },
                             ]
 
                         }
@@ -499,7 +500,7 @@ let getProfileDoctorById = (doctorId) => {
                     nest: true,
                 })
                 if (data && data.image) {
-                    data.image = Buffer.from(data.image, 'base64').toString('binary');
+                    data.image = parseImageFromDb(data.image);
                 }
                 if (!data) data = {};
                 resolve({

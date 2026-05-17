@@ -478,9 +478,12 @@
         width: 28px;
         height: 28px;
         border-radius: 50%;
-        background-size: cover;
-        background-position: center;
         border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    img.dcd-msg-avatar {
+        object-fit: cover;
+        display: block;
     }
 
     .dcd-msg-avatar-placeholder {

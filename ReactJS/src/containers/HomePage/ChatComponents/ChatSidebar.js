@@ -172,7 +172,7 @@ class ChatSidebar extends Component {
                             >
                                 <div className="dcd-doc-avatar-wrap">
                                     {d.image ? (
-                                        <div className="dcd-doc-avatar" style={{ backgroundImage: `url(${d.image})` }}></div>
+                                        <img className="dcd-doc-avatar" src={d.image} alt="Avatar" />
                                     ) : (
                                         <div className="dcd-doc-avatar dcd-avatar-none">
                                             <i className="fas fa-user"></i>
@@ -261,7 +261,7 @@ class ChatSidebar extends Component {
                                                 </div>
                                             )}
                                             {chat.avatar ? (
-                                                <div className="dcd-doc-avatar" style={{ backgroundImage: `url(${chat.avatar})` }}></div>
+                                                <img className="dcd-doc-avatar" src={chat.avatar} alt="Avatar" />
                                             ) : (
                                                 <div className="dcd-doc-avatar dcd-avatar-none">
                                                     <i className="fas fa-user"></i>

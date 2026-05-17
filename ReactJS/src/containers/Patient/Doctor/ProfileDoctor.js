@@ -35,11 +35,7 @@ class ProfileDoctor extends Component {
                     this.props.doctorNameFromParent(res.data.lastName + ' ' + res.data.firstName);
                 }
 
-                if (result && result.image) {
-                    if (typeof result.image === 'string' && !result.image.startsWith('data:')) {
-                        result.image = `data:image/jpeg;base64,${result.image}`;
-                    }
-                }
+                // Image is now a Cloudinary URL from Backend — no decoding needed
 
 
                 // GỬI ẢNH LÊN CHO CHA Ở ĐÂY

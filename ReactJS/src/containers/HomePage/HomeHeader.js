@@ -261,20 +261,12 @@ class HomeHeader extends Component {
         else this.props.navigate('/home');
     }
 
-    decodeBase64Buffer = (imgObj) => {
-        if (imgObj && imgObj.data) {
-            let bytes = new Uint8Array(imgObj.data);
-            let binary = '';
-            for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
-            return binary;
-        } else if (typeof imgObj === 'string') return imgObj;
-        return '';
-    };
+
 
     render() {
         let { isLoggedIn, userInfo } = this.props;
         let { isOpenUserMenu, isOpenSearch } = this.state;
-        let imageBase64 = userInfo && userInfo.image ? this.decodeBase64Buffer(userInfo.image) : '';
+        let imageBase64 = userInfo && userInfo.image ? userInfo.image : '';
 
         return (
             <React.Fragment>
