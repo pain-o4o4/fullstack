@@ -1,5 +1,4 @@
 import express from "express"
-import homeController, { getHomePage } from "../controller/homeController"
 import userController from "../controller/userController"
 import doctorController from "../controller/doctorController"
 import patientController from "../controller/patientController"
@@ -39,7 +38,7 @@ let initWebRoutes = (app) => {
     // Global Search
     router.get('/api/search', searchRateLimiter, validateSearch, searchController.handleGlobalSearch);
 
-    // Users
+    // Usersll
     router.post("/api/register", userController.createRegister);
     router.post('/api/login', userController.handleLogin);
     router.post('/api/refresh-token', userController.handleRefreshToken);
@@ -104,7 +103,7 @@ let initWebRoutes = (app) => {
     router.get('/api/get-chat-history', chatbotController.handleGetChatHistory);
     router.post('/api/save-chat-message', chatbotController.handleSaveMessage);
     router.post('/api/delete-chat-session', chatbotController.handleDeleteChatSession);
-    
+
     // Chat
     router.post('/api/send-message', chatController.handleSendMessage);
     router.get('/api/get-messages', chatController.handleGetMessages);
