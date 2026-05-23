@@ -97,13 +97,13 @@ class ModalEditUser extends Component {
             // Nếu vẫn lệch, thử thêm: modalClassName="custom-modal-fix"
             >
                 <ModalHeader toggle={() => this.toggle()}>
-                    Edit A New User
+                    <FormattedMessage id="manage-user.modal-update" />
                 </ModalHeader>
 
                 <ModalBody>
                     <div className="modal-user-body">
                         <div className="input-container">
-                            <label>Email</label>
+                            <label><FormattedMessage id="manage-user.email" /></label>
                             <input
                                 type="email"  // sửa type cho đúng
                                 onChange={(e) => this.handleOnChangeInput(e, "email")}
@@ -113,7 +113,7 @@ class ModalEditUser extends Component {
                             />
                         </div>
                         <div className="input-container">
-                            <label>Password</label>
+                            <label><FormattedMessage id="manage-user.password" /></label>
                             <input
                                 type="password"  // sửa type cho đúng
                                 onChange={(e) => this.handleOnChangeInput(e, "password")}
@@ -131,7 +131,7 @@ class ModalEditUser extends Component {
                             />
                         </div> */}
                         <div className="input-container">
-                            <label>First Name</label>
+                            <label><FormattedMessage id="manage-user.first-name" /></label>
                             <input
                                 type="text"
                                 onChange={(e) => this.handleOnChangeInput(e, "firstName")}
@@ -139,7 +139,7 @@ class ModalEditUser extends Component {
                             />
                         </div>
                         <div className="input-container">
-                            <label>Last Name</label>
+                            <label><FormattedMessage id="manage-user.last-name" /></label>
                             <input
                                 type="text"
                                 onChange={(e) => this.handleOnChangeInput(e, "lastName")}
@@ -147,7 +147,7 @@ class ModalEditUser extends Component {
                             />
                         </div>
                         <div className="input-container">
-                            <label>Phone Number</label>
+                            <label><FormattedMessage id="manage-user.phone-number" /></label>
                             <input
                                 type="tel"    // sửa từ password → tel cho phone
                                 onChange={(e) => this.handleOnChangeInput(e, "phonenumber")}
@@ -156,7 +156,7 @@ class ModalEditUser extends Component {
                             />
                         </div>
                         <div className="input-container max-width-input">
-                            <label>Address</label>
+                            <label><FormattedMessage id="manage-user.address" /></label>
                             <input
                                 type="text"
                                 onChange={(e) => this.handleOnChangeInput(e, "address")}
@@ -169,10 +169,10 @@ class ModalEditUser extends Component {
 
                 <ModalFooter>
                     <Button color="secondary" className="px-4" onClick={() => this.toggle()}>
-                        Close
+                        <FormattedMessage id="manage-user.btn-cancel" />
                     </Button>
                     <Button color="primary" className="px-4" onClick={() => this.handleSaveUser()}>
-                        Save Changes
+                        <FormattedMessage id="manage-user.btn-update" />
                     </Button>
                 </ModalFooter>
             </Modal>

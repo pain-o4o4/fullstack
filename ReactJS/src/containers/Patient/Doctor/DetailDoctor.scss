@@ -1,118 +1,373 @@
-/* Tổng thể container */
 .doctor-detail-container {
     background-color: #ffffff;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 40px 20px;
+    padding: 120px 20px 40px; // Standard top padding for fixed header
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
-.intro-doctor {
-    display: flex;
-    gap: 30px;
-    margin-bottom: 50px;
-    padding-bottom: 30px;
-    border-bottom: 1px solid #f5f5f7;
 
-    .content-left {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%; // Hình tròn kiểu Apple Profile
-        background-position: center;
-        background-size: cover;
-        background-repeat: no-repeat;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-    }
-
-    .content-right {
-        flex: 1;
+    .intro-doctor {
         display: flex;
-        flex-direction: column;
-        justify-content: center;
+        gap: 40px;
+        margin-bottom: 60px;
+        padding: 40px 0;
+        border-bottom: 1px solid #f2f2f7;
 
-        .up {
-            font-size: 28px;
+        .content-left {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: 4px solid #fff;
+            flex-shrink: 0;
+        }
+
+        .content-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            .up {
+                font-size: 32px;
+                font-weight: 700;
+                color: #1d1d1f;
+                letter-spacing: -1px;
+                margin-bottom: 12px;
+                line-height: 1.2;
+            }
+
+            .down {
+                font-size: 17px;
+                color: #48484a;
+                line-height: 1.6;
+                max-width: 800px;
+            }
+        }
+    }
+
+    /* Schedule & Extra Info Section */
+    .schedule-doctor {
+        display: flex;
+        gap: 40px;
+        background: #fbfbfd;
+        padding: 40px;
+        border-radius: 24px;
+        margin-bottom: 60px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.02);
+
+        .content-left {
+            flex: 1.5;
+            border-right: 1px solid #f2f2f7;
+            padding-right: 40px;
+        }
+
+        .content-right {
+            flex: 1;
+            padding-left: 10px;
+        }
+    }
+
+    /* Nội dung Markdown phía dưới */
+    .detail-info-doctor {
+        padding: 40px 0;
+        color: #1d1d1f;
+        line-height: 1.8;
+        font-size: 18px;
+        border-top: 1px solid #f2f2f7;
+
+        h2,
+        h3 {
             font-weight: 700;
-            color: #1d1d1f;
+            margin-top: 40px;
+            margin-bottom: 20px;
             letter-spacing: -0.5px;
-            margin-bottom: 10px;
         }
 
-        .down {
-            font-size: 16px;
-            color: #48484a;
-            line-height: 1.5;
-            max-width: 800px;
+        p {
+            margin-bottom: 24px;
+            color: #424245;
+        }
+
+        img {
+            max-width: 100%;
+            border-radius: 16px;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
     }
 }
 
-/* Schedule & Extra Info Section */
-.schedule-doctor {
-    display: flex;
-    gap: 40px;
-    background: #f5f5f7; // Nền xám nhạt nhẹ nhàng
-    padding: 30px;
-    border-radius: 24px; // Bo góc lớn kiểu iOS
-    margin-bottom: 50px;
-
-    .content-left {
-        flex: 1;
-        border-right: 1px solid #e5e5e7;
-        padding-right: 20px;
-    }
-
-    .content-right {
-        flex: 1;
-        padding-left: 20px;
-    }
-}
-
-/* Nội dung Markdown phía dưới */
-.detail-info-doctor {
-    padding: 20px;
-    color: #1d1d1f;
-    line-height: 1.6;
-    font-size: 17px;
-
-    /* Tùy chỉnh lại các thẻ HTML bên trong dangerouslySetInnerHTML */
-    h2, h3 {
-        font-weight: 600;
-        margin-top: 30px;
-        margin-bottom: 15px;
-        letter-spacing: -0.3px;
-    }
-
-    p { margin-bottom: 15px; color: #424245; }
-}
-
-}
-
-/* Breadcrumb phong cách Apple */
+/* 
+   IMPORTANT: DO NOT MODIFY .breadcrumb-container 
+   AS PER USER REQUEST TO KEEP IT UNCHANGED
+*/
 .breadcrumb-container {
-    padding: 0 20%;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(15px); // Hiệu ứng kính mờ đặc trưng
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    padding: 12px 0;
-    border-bottom: 1px solid #f2f2f2;
+    position: fixed;
+    top: 40px;
+    left: 0;
+    right: 0;
+    max-width: 1180px;
+    margin: 0 auto;
+    background: #f4f5f8;
+    z-index: 990;
+    padding: 44px 32px 14px;
+    border: none;
+    border-radius: 0 0 32px 32px;
+    box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.06);
+
+    animation: slideDownBreadcrumb 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transform-origin: top center;
+    display: flex;
+    justify-content: center;
 
     .breadcrumb {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 0 20px;
         font-size: 14px;
-        color: #86868b;
+        color: #4b5563;
+        display: flex;
+        align-items: center;
 
         .home-link {
             cursor: pointer;
+            color: #0071e3;
+            font-weight: 500;
             transition: color 0.2s;
-            &:hover { color: #0071e3; } // Apple Blue
+
+            &:hover {
+                color: #005bb5;
+            }
         }
 
-        .separator { margin: 0 8px; color: #d2d2d7; }
-        .current-page { color: #1d1d1f; font-weight: 500; }
+        .separator {
+            margin: 0 10px;
+            color: #d1d5db;
+            font-size: 12px;
+        }
+
+        .current-page {
+            color: #4c40e6;
+            font-weight: 600;
+        }
     }
 }
 
-/* Intro Doctor Section */
+@keyframes slideDownBreadcrumb {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// ============================================================
+// RESPONSIVE OVERRIDES (TABLET - MAX 1024PX)
+// ============================================================
+@media (max-width: 1024px) {
+    .doctor-detail-container {
+        padding: 100px 32px 40px;
+
+        .intro-doctor {
+            gap: 30px;
+
+            .content-left {
+                width: 130px;
+                height: 130px;
+            }
+
+            .content-right .up {
+                font-size: 28px;
+            }
+        }
+
+        .schedule-doctor {
+            padding: 30px;
+            gap: 30px;
+
+            .content-left {
+                padding-right: 30px;
+            }
+        }
+    }
+
+    .related-doctors-section {
+        padding: 40px 32px;
+
+        .related-list {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+}
+
+// ============================================================
+// RESPONSIVE OVERRIDES (MOBILE)
+// ============================================================
+@media (max-width: 768px) {
+    .doctor-detail-container {
+        padding-top: 70px;
+
+        .intro-doctor {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 24px;
+            padding: 32px 16px;
+
+            .content-left {
+                width: 120px;
+                height: 120px;
+            }
+
+            .content-right {
+                .up {
+                    font-size: 24px;
+                    margin-bottom: 8px;
+                }
+
+                .down {
+                    font-size: 15px;
+                }
+            }
+        }
+
+        .schedule-doctor {
+            flex-direction: column;
+            padding: 24px 16px;
+            gap: 32px;
+            border-radius: 12px;
+            margin: 0 16px 40px;
+
+            .content-left {
+                padding-right: 0;
+                border-right: none;
+                border-bottom: 1px solid #f2f2f7;
+                padding-bottom: 32px;
+            }
+
+            .content-right {
+                padding-left: 0;
+            }
+        }
+
+        .detail-info-doctor {
+            padding: 32px 16px;
+            font-size: 16px;
+
+            h2,
+            h3 {
+                font-size: 20px;
+            }
+        }
+    }
+}
+
+// ============================================================
+// RELATED DOCTORS SECTION STYLES
+// ============================================================
+.related-doctors-section {
+    padding: 60px 0;
+    border-top: 1px solid #f2f2f7;
+    margin-top: 40px;
+
+    .related-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1d1d1f;
+        margin-bottom: 32px;
+        letter-spacing: -0.5px;
+    }
+
+    .related-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 24px;
+
+        .related-item {
+            background: #ffffff;
+            border: 1px solid #f2f2f7;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+
+            &:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+                border-color: #0071e3;
+            }
+
+            .profile-doctor-container {
+                padding: 0;
+
+                .intro-doctor {
+                    margin-bottom: 0;
+                    padding: 0;
+                    border-bottom: none !important;
+                    gap: 16px;
+
+                    .content-left {
+                        width: 80px;
+                        height: 80px;
+                        box-shadow: none;
+                        border: 2px solid #f2f2f7;
+                    }
+
+                    .content-right {
+                        .up {
+                            font-size: 18px !important;
+                            margin-bottom: 4px;
+                            letter-spacing: -0.5px;
+                        }
+
+                        .down {
+                            font-size: 14px;
+                            line-height: 1.4;
+                            display: -webkit-box;
+                            -webkit-line-clamp: 2;
+                            -webkit-box-orient: vertical;
+                            overflow: hidden;
+                            color: #86868b;
+                        }
+                    }
+                }
+            }
+
+            .view-more {
+                margin-top: 15px;
+                text-align: right;
+                font-size: 14px;
+                font-weight: 600;
+                color: #0071e3;
+                opacity: 0;
+                transform: translateX(-10px);
+                transition: all 0.3s ease;
+
+                &::after {
+                    content: '→';
+                    margin-left: 5px;
+                }
+            }
+
+            &:hover .view-more {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .related-doctors-section {
+        margin: 40px 16px;
+
+        .related-list {
+            grid-template-columns: 1fr;
+        }
+    }
+}

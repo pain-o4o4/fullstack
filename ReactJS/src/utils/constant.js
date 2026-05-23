@@ -1,25 +1,35 @@
-import { REGISTER } from "redux-persist";
+
 
 export const path = {
     HOME: '/',
     HOMEPAGE: '/home',
     LOGIN: '/login',
     REGISTER: '/register',
+    REGISTER_VERIFY_OTP: '/register/verify-otp',
     LOG_OUT: '/logout',
     SYSTEM: '/system',
-    ADMIN: '/admin',
+    // ADMIN: '/admin',
 
     DETAIL_DOCTOR: '/detail-doctor/:id',
     DETAIL_SPECIALTY: '/detail-specialty/:id',
     DETAIL_CLINIC: '/detail-clinic/:id',
+    DETAIL_HANDBOOK: '/detail-handbook/:id',
     DOCTOR: '/doctor',
 
     ALL_CLINIC: '/all-clinic',
     ALL_DOCTOR: '/all-doctor',
     ALL_SPECIALTY: '/all-specialty',
+    ALL_HANDBOOK: '/all-handbook',
+    SELECT_SERVICE: '/select-service',
+    PROCESS_BOOKING: '/process-booking',
 
-    SETTINGS: '/patient/settings',
+    AI_SUPPORT: '/ai-support',
+    PRIVACY_POLICY: '/privacy-policy',
+    TERMS_OF_USE: '/terms-of-use',
+
+    SETTINGS: '/system/patient-profile',
     MY_BOOKING: '/patient/my-booking',
+    DETAIL_SCHEDULE_PATIENT: '/patient/detail-schedule/:bookingId',
     BOOKING_HISTORY: '/patient/history',
     PAYMENT: '/patient/payment',
     VERIFY_EMAIL_BOOKING: '/verify-booking',

@@ -1,0 +1,62 @@
+name: Build and Deploy BookingCare to AWS EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # GIAI ĐOẠN 1: CONTINUOUS INTEGRATION (CI) - KIỂM TRA CHẤT LƯỢNG CODE & BUILD
+  ci:
+    name: Continuous Integration (Build Test)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install NodeJS Dependencies
+        run: |
+          cd NodeJS
+          npm install
+
+      - name: Run Build Test (Babel Compilation Check)
+        run: |
+          cd NodeJS
+          npm run build # Biên dịch thử ES6 sang ES5, nếu có lỗi cú pháp pipeline sẽ lập tức dừng lại ở đây!
+
+  # GIAI ĐOẠN 2: CONTINUOUS DEPLOYMENT (CD) - TRIỂN KHAI LÊN VPS AWS
+  deploy:
+    name: Continuous Deployment (AWS Deploy)
+    needs: ci # CHỈ chạy CD khi và chỉ khi giai đoạn CI ở trên thành công
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Deploy to AWS EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USER }}
+          key: ${{ secrets.AWS_SSH_KEY }}
+          port: 22
+          script: |
+            # 1. Di chuyển vào thư mục dự án trên AWS
+            cd ~/bookingcare
+            
+            # 2. Đồng bộ code mới nhất từ GitHub
+            git pull origin main
+            
+            # 3. Khởi chạy Docker Compose để build và cập nhật container không gián đoạn
+            docker compose up -d --build
+            
+            # 4. Dọn dẹp các Docker image cũ/rác để tránh đầy bộ nhớ
+            docker image prune -f
+

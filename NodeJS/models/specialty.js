@@ -10,9 +10,6 @@ module.exports = (sequelize, DataTypes) => {
          * The `models/index` file will call this method automatically.
          */
         static associate(models) {
-            specialty.hasMany(models.doctor_clinic_specialty, {
-                foreignKey: 'specialtyId'
-            });
             specialty.hasMany(models.Doctor_infor, {
                 foreignKey: 'specialtyId',
                 as: 'doctorSpecialty'
@@ -27,7 +24,8 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         sequelize,
         modelName: 'Specialty',
-        tableName: 'Specialties'
+        tableName: 'Specialties',
+        paranoid: true,
     });
     return specialty;
 };

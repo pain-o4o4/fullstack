@@ -4,11 +4,16 @@ import { getScheduleByDate } from '../../../services/userService'
 import { LANGUAGES } from '../../../utils/constant'
 import './ScheduleDoctor.scss'
 import moment from 'moment'
-import { withRouter } from 'react-router'; // hoặc 'react-router-dom'
+import { withRouter } from '../../../components/Navigator';
 import 'moment/locale/vi';
 import calendar_icon from '../../../assets/images/calendar_icon.svg'
 import { FormattedMessage } from 'react-intl';
 import BookingModal from './Modal/BookingModal';
+import _ from 'lodash';
+import { toast } from 'react-toastify';
+import { withSocket } from '../../../hoc/withSocket';
+import * as actions from '../../../store/actions';
+
 class ScheduleDoctor extends Component {
     constructor(props) {
         super(props);
@@ -18,8 +23,8 @@ class ScheduleDoctor extends Component {
             allTime: [],
             allAvalabelTime: [],
             isTheModalOpen: false,
-
-            dataTimeModal: {}
+            dataTimeModal: {},
+            currentDate: null
         }
     }
     // 1. Tạo một hàm riêng để build mảng ngày
@@ -30,7 +35,9 @@ class ScheduleDoctor extends Component {
             if (i === 0) {
                 // Nếu là ngày hiện tại, hiển thị "Hôm nay" thay vì "Thứ ..."
                 let ddMM = moment(new Date()).format('DD/MM');
-                object.label = language === LANGUAGES.VI ? `Hôm nay - ${ddMM}` : `Today - ${ddMM}`;
+                let todayVi = `Hôm nay - ${ddMM}`;
+                let todayEn = `Today - ${ddMM}`;
+                object.label = language === LANGUAGES.VI ? todayVi : todayEn;
             } else {
                 let label = moment(new Date()).add(i, 'days').locale(language).format('ddd - DD/MM');
                 object.label = label.charAt(0).toUpperCase() + label.slice(1);
@@ -48,15 +55,47 @@ class ScheduleDoctor extends Component {
         this.setState({
             allDay: allDay
         });
-        if (this.props.match && this.props.match.params.id) {
-            let doctorId = this.props.match.params.id;
+        if (this.props.params && this.props.params.id) {
+            let doctorId = this.props.params.id;
             let today = allDay[0].value;
+            this.setState({ currentDate: today });
 
             let res = await getScheduleByDate(doctorId, today);
             if (res && res.errCode === 0) {
                 this.setState({
                     allAvalabelTime: res.data ? res.data : []
                 });
+                // Mặc định chọn clinic đầu tiên nếu có dữ liệu
+                if (res.data && res.data.length > 0 && res.data[0].clinicData) {
+                    this.props.handleClinicSelection(res.data[0].clinicData);
+                }
+            }
+        }
+
+        // Lắng nghe sự kiện đồng bộ từ Socket
+        if (this.props.socket) {
+            this.props.socket.on('system_data_changed', this.handleSystemDataChanged);
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.props.socket) {
+            this.props.socket.off('system_data_changed', this.handleSystemDataChanged);
+        }
+    }
+
+    handleSystemDataChanged = async (data) => {
+        // Cập nhật lại lịch khám nếu có ai đó vừa đặt lịch hoặc bác sĩ cập nhật lịch
+        if (data && (data.entity === 'BOOKING' || data.entity === 'SCHEDULE')) {
+            console.log('[Socket] Reloading schedule data...', data);
+            if (this.props.params && this.props.params.id && this.state.currentDate) {
+                let doctorId = this.props.params.id;
+                let res = await getScheduleByDate(doctorId, this.state.currentDate);
+                if (res && res.errCode === 0) {
+                    this.setState({
+                        allAvalabelTime: res.data ? res.data : []
+                    });
+                }
             }
         }
     }
@@ -68,38 +107,57 @@ class ScheduleDoctor extends Component {
                 allDay: allDay
             });
         }
-        if (this.props.match.params.id !== prevProps.match.params.id) {
-            let doctorId = this.props.match.params.id;
+        if (this.props.params && prevProps.params && this.props.params.id !== prevProps.params.id) {
+            let doctorId = this.props.params.id;
             let today = this.state.allDay[0].value;
+            this.setState({ currentDate: today });
             let res = await getScheduleByDate(doctorId, today);
             if (res && res.errCode === 0) {
                 this.setState({
                     allAvalabelTime: res.data ? res.data : []
                 });
+                if (res.data && res.data.length > 0 && res.data[0].clinicData) {
+                    this.props.handleClinicSelection(res.data[0].clinicData);
+                }
             }
         }
     }
     handleChangeSelect = async (e) => {
-        if (this.props.match && this.props.match.params.id) {
-            let doctorId = this.props.match.params.id;
+        if (this.props.params && this.props.params.id) {
+            let doctorId = this.props.params.id;
             let date = e.target.value;
+            this.setState({ currentDate: date });
             let res = await getScheduleByDate(doctorId, date);
-            // if (res && res.errCode === 0) {
-            //     this.setState({
-            //         allAvalabelTime: res.data ? res.data : []
-            //     })
-            // }
+
             this.setState({
                 allAvalabelTime: res.data
             })
+            if (res.data && res.data.length > 0 && res.data[0].clinicData) {
+                this.props.handleClinicSelection(res.data[0].clinicData);
+            }
             console.log('check  getScheduleByDate(doctorId, date);', doctorId, "date", date, "res get form api", res);
         }
     }
     handleClickSheduleTime = (time) => {
+        let { userInfo, isLoggedIn, language } = this.props;
+
+        // Chặn bác sĩ đặt lịch
+        if (isLoggedIn && userInfo && userInfo.roleId === 'R2') {
+            toast.warning(
+                language === 'vi'
+                    ? 'Bác sĩ không thể đặt lịch khám bệnh!'
+                    : 'Doctors cannot book appointments!'
+            );
+            return;
+        }
+
         this.setState({
             isTheModalOpen: true,
             dataTimeModal: time
         })
+        if (time.clinicData) {
+            this.props.handleClinicSelection(time.clinicData);
+        }
     }
     closeModal = () => {
         this.setState({
@@ -109,14 +167,14 @@ class ScheduleDoctor extends Component {
     render() {
         let { allDay, allAvalabelTime, isTheModalOpen, dataTimeModal } = this.state
         let { language } = this.props
-        // console.log('check state', this.state.allAvalabelTime);
-        let doctorId = this.props.match && this.props.match.params ? this.props.match.params.id : '';
-        console.log('check doctorId', this.state);
+        let doctorId = this.props.params ? this.props.params.id : '';
+
+        // Nhóm lịch theo clinicId
+        let groupedTime = _.groupBy(allAvalabelTime, (item) => item.clinicData ? item.clinicData.id : 'unknown');
+
         return (
             <React.Fragment>
-                {/* <HomeHeader isShowBanner={false} /> */}
                 <div className="schedule-doctor-container">
-
                     <div className='all-schedule'>
                         <select
                             onChange={(e) => this.handleChangeSelect(e)}
@@ -131,36 +189,58 @@ class ScheduleDoctor extends Component {
                                         </option>
                                     )
                                 })}
-
                         </select>
                     </div>
-                    <div className='all-schedule-time'></div>
                     <div className='text-calendar'>
                         <span>
                             <img src={calendar_icon} alt="calendar" />
                             <FormattedMessage id="schedule-doctor.calendar" />
                         </span>
-
                     </div>
                     <div className="time-content">
-                        {allAvalabelTime && allAvalabelTime.length > 0 &&
-                            allAvalabelTime.map((item, index) => {
+                        {allAvalabelTime && allAvalabelTime.length > 0 ?
+                            Object.keys(groupedTime).map((clinicId, clinicIndex) => {
+                                let clinicData = groupedTime[clinicId][0].clinicData;
                                 return (
-                                    <button
-                                        key={index}
-                                        className="time-content-btn"
-                                        onClick={() => {
-                                            console.log("Dữ liệu item khi click:", item);
-                                            this.handleClickSheduleTime(item);
-                                        }}
-                                    >
-                                        {language === 'vi'
-                                            ? item.timeTypeData.valueVi
-                                            : item.timeTypeData.valueEn
-                                        }
-                                    </button>
+                                    <div key={clinicId} className="clinic-group">
+                                        {clinicData && (
+                                            <div className="clinic-name-header">
+                                                <i className="fas fa-hospital"></i> {clinicData.name}
+                                            </div>
+                                        )}
+                                        <div className="time-grid">
+                                            {groupedTime[clinicId]
+                                                .filter(item => item.isFull !== true) // CHỈ HIỆN NHỮNG SLOT CHƯA ĐẦY
+                                                .map((item, index) => {
+                                                    return (
+                                                        <button
+                                                            key={index}
+                                                            className="time-slot-btn"
+                                                            onMouseEnter={() => {
+                                                                if (item.clinicData) this.props.handleClinicSelection(item.clinicData);
+                                                            }}
+                                                            onClick={() => {
+                                                                this.handleClickSheduleTime(item);
+                                                            }}
+                                                        >
+                                                            <span className="time-label">
+                                                                {language === 'vi'
+                                                                    ? item.timeTypeData.valueVi
+                                                                    : item.timeTypeData.valueEn
+                                                                }
+                                                            </span>
+                                                        </button>
+                                                    )
+                                                })}
+                                        </div>
+                                    </div>
                                 )
-                            })}
+                            })
+                            :
+                            <div className="no-schedule">
+                                <FormattedMessage id="patient.detail-doctor.no-schedule" />
+                            </div>
+                        }
                     </div>
                 </div>
                 <>
@@ -195,4 +275,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 // import { withRouter } from 'react-router'; // hoặc 'react-router-dom'
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ScheduleDoctor));
+export default withRouter(withSocket(connect(mapStateToProps, mapDispatchToProps)(ScheduleDoctor)));

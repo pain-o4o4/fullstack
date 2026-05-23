@@ -3,6 +3,7 @@ import db from "../../models/index"
 require("dotenv").config();
 import _ from "lodash";
 import { Op, where } from 'sequelize';
+import { parseImageFromDb, uploadImageToCloudinary, replaceImageOnCloudinary } from "../utils/imageUtils";
 import moment from 'moment'
 import emailService from "./emailService";
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE
@@ -18,12 +19,13 @@ let postCreateNewSpecialtyService = async (data) => {
                 })
             }
             else {
-                await db.Specialty.create({
-                    name: data.name,
-                    image: data.imageBase64,
-                    descriptionHTML: data.descriptionHTML,
-                    descriptionMarkdown: data.descriptionMarkdown
-                });
+                 let imageUrl = await uploadImageToCloudinary(data.imageBase64, 'specialties');
+                 await db.Specialty.create({
+                     name: data.name,
+                     image: imageUrl,
+                     descriptionHTML: data.descriptionHTML,
+                     descriptionMarkdown: data.descriptionMarkdown
+                 });
 
                 resolve({
                     errCode: 0,
@@ -39,14 +41,14 @@ let getAllSpecialtyService = async () => {
     return new Promise(async (resolve, reject) => {
         try {
             let data = await db.Specialty.findAll({
-                attributes: ['id', 'name', 'image', 'descriptionHTML', 'descriptionMarkdown']
+                attributes: ['id', 'name', 'image']
             });
 
             if (data && data.length > 0) {
                 data = data.map((item) => {
-                    if (item.image) {
-                        item.image = Buffer.from(item.image, 'base64').toString('binary');
-                    }
+                     if (item.image) {
+                         item.image = parseImageFromDb(item.image);
+                     }
                     return item;
                 });
             }
@@ -85,9 +87,9 @@ let getSpecialtyByIdService = async (inputId) => {
                     nest: true
                 });
 
-                if (data && data.image) {
-                    data.image = Buffer.from(data.image, 'base64').toString('binary');
-                }
+                 if (data && data.image) {
+                     data.image = parseImageFromDb(data.image);
+                 }
                 resolve({
                     errCode: 0,
                     errMessage: 'OK',
@@ -100,8 +102,91 @@ let getSpecialtyByIdService = async (inputId) => {
         }
     })
 }
+
+let deleteSpecialtyService = (specialtyId, force = false) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let specialty = await db.Specialty.findOne({
+                where: { id: specialtyId }
+            });
+            if (!specialty) {
+                resolve({
+                    errCode: 2,
+                    errMessage: "The specialty doesn't exist"
+                });
+                return;
+            }
+
+            // CHECK FOR DEPENDENCIES IF NOT FORCED
+            if (!force) {
+                let hasDoctors = await db.Doctor_infor.findOne({ where: { specialtyId: specialtyId } });
+                if (hasDoctors) {
+                    resolve({
+                        errCode: 5,
+                        errMessage: "This specialty has associated doctors. Soft deleting will hide the specialty but preserve doctor records. Do you want to proceed?"
+                    });
+                    return;
+                }
+            }
+
+            // SOFT DELETE (Paranoid mode)
+            await specialty.destroy();
+
+            resolve({
+                errCode: 0,
+                errMessage: 'The specialty is deleted'
+            })
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+let editSpecialtyService = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.id || !data.name || !data.descriptionHTML || !data.descriptionMarkdown) {
+                resolve({
+                    errCode: 1,
+                    errMessage: "Missing required parameters!"
+                })
+            } else {
+                let specialty = await db.Specialty.findOne({
+                    where: { id: data.id },
+                    raw: false
+                });
+
+                if (specialty) {
+                    specialty.name = data.name;
+                    specialty.descriptionHTML = data.descriptionHTML;
+                    specialty.descriptionMarkdown = data.descriptionMarkdown;
+
+                     if (data.imageBase64) {
+                         let imageUrl = await replaceImageOnCloudinary(data.imageBase64, specialty.image, 'specialties');
+                         specialty.image = imageUrl;
+                     }
+
+                    await specialty.save();
+                    resolve({
+                        errCode: 0,
+                        errMessage: "Update the specialty succeeds!"
+                    });
+                } else {
+                    resolve({
+                        errCode: 1,
+                        errMessage: "Specialty not found!"
+                    });
+                }
+            }
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
 export default {
     postCreateNewSpecialtyService,
     getAllSpecialtyService,
-    getSpecialtyByIdService
+    getSpecialtyByIdService,
+    deleteSpecialtyService,
+    editSpecialtyService
 }

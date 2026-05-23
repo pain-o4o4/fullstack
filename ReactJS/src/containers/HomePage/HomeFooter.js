@@ -1,48 +1,65 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-// import { HomeFooterData } from '.\Section\Data\HomeFooterData';   // Đúng
+import { FormattedMessage } from 'react-intl';
+import { Link } from 'react-router-dom';
+import { path } from '../../utils';
+import './HomeFooter.scss';
 
 class HomeFooter extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-
-        }
-    }
     render() {
-
         return (
-            // let
-            <React.Fragment>
-                <div className="section-homefooter">
-                    <div className="footer-content">
-                        <p>&copy; 2026 BookingCare. All rights reserved.
-                            <a href="#!"> Terms of Use</a> |
-                            <a href="#!"> Privacy Policy</a>
-                        </p>
+            <footer className="hm-footer">
+                <div className="hm-footer-top">
+                    <div className="hm-footer-col">
+                        <div className="hm-footer-logo">
+                            <div className="logo-icon">
+                                <span className="logo-dot dot-1"></span>
+                                <span className="logo-dot dot-2"></span>
+                                <span className="logo-dot dot-3"></span>
+                            </div>
+                            <span className="logo-text">BookingCare</span>
+                        </div>
+                        <div className="hm-footer-desc">
+                            <FormattedMessage id="homefooter.desc" />
+                        </div>
+                    </div>
+                    <div className="hm-footer-col">
+                        <div className="footer-title"><FormattedMessage id="homefooter.address" /></div>
+                        <div className="footer-text">28 Thành Thái, Cầu Giấy, Hà Nội</div>
+                        <div className="footer-text">Tel: 096-6226-404</div>
+                    </div>
+                    <div className="hm-footer-col">
+                        <div className="footer-title"><FormattedMessage id="homefooter.contact" /></div>
+                        <div className="footer-text">Email: support@bookingcare.vn</div>
+                        <div className="footer-text">Website: bookingcare.vn</div>
+                    </div>
+                    <div className="hm-footer-col">
+                        <div className="footer-title"><FormattedMessage id="homefooter.follow-us" /></div>
                         <div className="social-links">
-                            <a target="_blank" href="https://www.facebook.com/milah.o6o4/directory_links"><i className="fab fa-facebook-square"></i></a>
-                            <a target="_blank" href="https://www.instagram.com/pain.o4o4?fbclid=IwY2xjawQzdS9leHRuA2FlbQIxMABicmlkETFDRWZJNXhOMmU4MnBjYU16c3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHj0Et49carKwZLSL3GCzoX-5eaVl8rr7kntJqG6_5Vx3Eyv47maOdrwYaIJM_aem_PPPexNdm2TmlM3XqbtE5Xg"><i className="fab fa-youtube"></i></a>
+                            <a href="#!"><i className="fab fa-facebook"></i></a>
+                            <a href="#!"><i className="fab fa-linkedin"></i></a>
+                            <a href="#!"><i className="fab fa-instagram"></i></a>
                         </div>
                     </div>
                 </div>
-            </React.Fragment>
+                <div className="hm-footer-bottom">
+                    <div className="footer-copyright">
+                        <FormattedMessage id="homefooter.copyright" />
+                    </div>
+                    <div className="footer-legal">
+                        <Link to={path.PRIVACY_POLICY}><FormattedMessage id="homefooter.privacy" defaultMessage="Chính sách bảo mật" /></Link>
+                        <Link to={path.TERMS_OF_USE}><FormattedMessage id="homefooter.terms" defaultMessage="Điều khoản sử dụng" /></Link>
+                    </div>
+                </div>
+            </footer>
         );
     }
-
 }
 
 const mapStateToProps = state => {
     return {
-        isLoggedIn: state.user.isLoggedIn,
         language: state.app.language
     };
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(HomeFooter);
+export default connect(mapStateToProps)(HomeFooter);

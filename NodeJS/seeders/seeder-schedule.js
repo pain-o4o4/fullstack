@@ -3,16 +3,15 @@
 module.exports = {
     up: async (queryInterface, Sequelize) => {
         // Xóa dữ liệu cũ để tránh trùng lặp
-        await queryInterface.bulkDelete('Schedule', null, {});
+        await queryInterface.bulkDelete('schedules', null, {});
 
-        return queryInterface.bulkInsert('Schedule', [
+        return queryInterface.bulkInsert('schedules', [
             {
-                statusId: 'S1',
-                doctorId: 2,
-                patientId: 3,
+                currentNumber: 0,
+                maxNumber: 10,
                 date: '1713024000000',
                 timeType: 'T1',
-                token: 'random-token-123',
+                doctorId: 2,
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
@@ -20,6 +19,6 @@ module.exports = {
     },
 
     down: async (queryInterface, Sequelize) => {
-        return queryInterface.bulkDelete('Schedule', null, {});
+        return queryInterface.bulkDelete('schedules', null, {});
     }
 };

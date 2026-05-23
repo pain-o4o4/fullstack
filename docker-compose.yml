@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  mysql-db:
+    image: mysql:8.0
+    container_name: bookingcare-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpassword123}
+      MYSQL_DATABASE: ${DB_NAME:-bookingcare}
+      MYSQL_USER: ${DB_USER:-bookingcare_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-dbpassword123}
+    ports:
+      # Tối ưu 1: Chỉ cho phép kết nối nội bộ từ máy bạn, chặn đứng hacker từ Internet
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    # Tối ưu 2: Bộ kiểm tra sức khỏe của Database
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u${DB_USER:-bookingcare_user}", "-p${DB_PASSWORD:-dbpassword123}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - bookingcare-net
+
+  nodejs-backend:
+    image: ${DOCKER_HUB_USERNAME}/bookingcare-backend:latest
+    container_name: bookingcare-backend
+    restart: always
+    build:
+      context: ./NodeJS
+      dockerfile: Dockerfile
+    ports:
+      - "2004:2004"
+    # Tối ưu 3: Chỉ khởi động Backend KHI và CHỈ KHI Database báo HEALTHY (đã sẵn sàng)
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    environment:
+      - PORT=2004
+      - NODE_ENV=production
+      - DB_HOST=mysql-db
+      - DB_PORT=3306
+      - DB_NAME=${DB_NAME:-bookingcare}
+      - DB_USER=${DB_USER:-bookingcare_user}
+      - DB_PASSWORD=${DB_PASSWORD:-dbpassword123}
+      - URL_REACT=${URL_REACT}
+      - MAX_NUMBER_SCHEDULE=${MAX_NUMBER_SCHEDULE:-10}
+      - EMAIL_APP=${EMAIL_APP}
+      - EMAIL_APP_PASSWORD=${EMAIL_APP_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN:-15m}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+      - JWT_REFRESH_EXPIRES_IN=${JWT_REFRESH_EXPIRES_IN:-7d}
+      - PAYOS_CLIENT_ID=${PAYOS_CLIENT_ID}
+      - PAYOS_API_KEY=${PAYOS_API_KEY}
+      - PAYOS_CHECKSUM_KEY=${PAYOS_CHECKSUM_KEY}
+      - AI_API_KEY=${AI_API_KEY}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - GOOGLE_MODEL_NAME=${GOOGLE_MODEL_NAME}
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+    networks:
+      - bookingcare-net
+
+volumes:
+  mysql-data:
+
+networks:
+  bookingcare-net:
+    driver: bridge

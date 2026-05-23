@@ -1,5 +1,5 @@
 import db from "../../models/index"
-import CRUDservice from "../services/CRUDservice"
+import crudService from "../services/crudService"
 let getHomePage = async (req, res) => {
     try {
         let data = await db.User.findAll()
@@ -17,11 +17,11 @@ let getCRUD = (req, res) => {
     return res.render("crud.ejs")
 }
 let postCRUD = async (req, res) => {
-    let message = await CRUDservice.createNewUser(req.body)
+    let message = await crudService.createNewUser(req.body)
     return res.redirect("/crud");
 }
 let displayGetCRUD = async (req, res) => {
-    let data = await CRUDservice.getAllUser()
+    let data = await crudService.getAllUser()
     console.log(">>> check data: ", data)
     return res.render("displayCRUD.ejs", {
         data: JSON.stringify(data)
@@ -31,7 +31,7 @@ let editCRUD = async (req, res) => {
     let userId = req.params.id;
     console.log("id:", req.params.id)
     if (userId) {
-        let userData = await CRUDservice.getUserInfoById(userId);
+        let userData = await crudService.getUserInfoById(userId);
         console.log(">>> check userData: ", userData);
         return res.render("editCRUD.ejs", {
             user: userData
@@ -45,7 +45,7 @@ let editCRUD = async (req, res) => {
 let deleteCRUD = (req, res) => {
     let userId = req.params.id;
     if (userId) {
-        CRUDservice.deleteUserById(userId)
+        crudService.deleteUserById(userId)
         return res.redirect("/get-crud")
     } else {
         return res.send("User not found!")
@@ -54,7 +54,7 @@ let deleteCRUD = (req, res) => {
 let putCRUD = async (req, res) => {
     let data = req.body;
     // Add logic to update user information in the database
-    let allUsers = await CRUDservice.updateUserData(data);
+    let allUsers = await crudService.updateUserData(data);
     return res.render("displayCRUD.ejs", {
         data: JSON.stringify(allUsers)
     });

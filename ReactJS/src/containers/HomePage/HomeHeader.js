@@ -1,74 +1,241 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import './HomeHeader.scss';
 import { FormattedMessage } from 'react-intl';
-
-import search from '../../assets/images/search.svg';
-import user_login from '../../assets/images/user_login.svg';
-import translate from '../../assets/images/translate.svg';
-
-import ModalSearchHeader from './ModalSearchHeader.js';
-import { changeLanguageApp } from "../../store/actions";
+import { LANGUAGES } from '../../utils/constant';
+import './HomeHeader.scss';
+import * as actions from "../../store/actions";
 import { path } from '../../utils/constant';
-import { withRouter } from 'react-router';
+import { withRouter } from '../../components/Navigator';
 import UserMenuPopup from '../HomePage/SubMenuForUser/UserMenuPopup';
+import backgroundBanner from '../../assets/images/backgroundBanner.avif';
+import GlobalSearch from '../../components/GlobalSearch/GlobalSearch';
+import DoctorChat from './ChatComponents/DoctorChat';
+import bannerService from '../../assets/images/bannerService.png';
+import { stopTimer } from '../../auth/TokenRefreshManager';
+import axios from 'axios';
+
+// ============================================================
+// SUB-COMPONENT: MOBILE SIDEBAR (Dành riêng cho Mobile)
+// ============================================================
+class MobileSidebarInternal extends Component {
+    handleLogout = () => {
+        stopTimer();
+        localStorage.removeItem('token');
+        axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/logout`, {}, { withCredentials: true }).catch(() => { });
+        this.props.processLogout();
+        this.props.onClose();
+    }
+
+    render() {
+        const { isOpen, onClose, userInfo, isLoggedIn, language, imageBase64, handleViewList } = this.props;
+
+        return (
+            <React.Fragment>
+                <div className={`hm-mobile-sidebar-overlay ${isOpen ? 'active' : ''}`} onClick={onClose}></div>
+                <div className={`hm-mobile-sidebar ${isOpen ? 'open' : ''}`}>
+                    <div className="sidebar-header">
+                        <div className="sidebar-logo" onClick={() => { handleViewList('HOME'); onClose(); }}>
+                            <div className="logo-icon">
+                                <span className="logo-dot dot-1"></span>
+                                <span className="logo-dot dot-2"></span>
+                                <span className="logo-dot dot-3"></span>
+                            </div>
+                            <div className="brand-wrapper">
+                                <span className="brand-name">BookingCare</span>
+                                <span className="brand-sub">Đặt lịch khám bệnh</span>
+                            </div>
+                        </div>
+                        <div className="close-sidebar-wrapper" onClick={onClose}>
+                            <i className="fas fa-times"></i>
+                        </div>
+                    </div>
+
+                    <div className="sidebar-content">
+                        <div className="sidebar-profile-section">
+                            {isLoggedIn ? (
+                                <div className="user-profile-card">
+                                    <div className="avatar-wrapper">
+                                        {imageBase64 ? (
+                                            <img src={imageBase64} alt="Avatar" />
+                                        ) : (
+                                            <i className="fas fa-user-circle"></i>
+                                        )}
+                                    </div>
+                                    <div className="user-info">
+                                        <div className="name">{userInfo?.firstName} {userInfo?.lastName}</div>
+                                        <div className="email">{userInfo?.email}</div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="login-prompt-card" onClick={() => { handleViewList('LOGIN'); onClose(); }}>
+                                    <div className="avatar-wrapper">
+                                        <i className="fas fa-user-circle"></i>
+                                    </div>
+                                    <div className="user-info">
+                                        <div className="name">Khách hàng</div>
+                                        <div className="email">Đăng nhập để nhận thêm ưu đãi</div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <ul className="sidebar-menu">
+                            <li className="menu-group-label">Chính</li>
+                            <li className="sidebar-item" onClick={() => { handleViewList('HOME'); onClose(); }}>
+                                <i className="fas fa-home"></i>
+                                <FormattedMessage id="homeheader.home" />
+                            </li>
+                            <li className="sidebar-item" onClick={() => { handleViewList('SELECT_SERVICE'); onClose(); }}>
+                                <i className="fas fa-calendar-alt"></i>
+                                <FormattedMessage id="homeheader.booking" />
+                            </li>
+                            <li className="sidebar-item" onClick={() => { handleViewList('HANDBOOK'); onClose(); }}>
+                                <i className="fas fa-book"></i>
+                                <FormattedMessage id="homeheader.handbook-nav" />
+                            </li>
+
+                            <li className="menu-group-label">Cá nhân</li>
+                            {isLoggedIn && (
+                                <React.Fragment>
+                                    <li className="sidebar-item" onClick={() => { handleViewList('SETTINGS'); onClose(); }}>
+                                        <i className="fas fa-user-cog"></i>
+                                        <span>Chỉnh sửa thông tin</span>
+                                    </li>
+                                    {userInfo?.roleId !== 'R2' && (
+                                        <React.Fragment>
+                                            <li className="sidebar-item" onClick={() => { handleViewList('MY_BOOKING'); onClose(); }}>
+                                                <i className="fas fa-calendar-check"></i>
+                                                <span>Lịch khám của tôi</span>
+                                            </li>
+                                            <li className="sidebar-item" onClick={() => { handleViewList('BOOKING_HISTORY'); onClose(); }}>
+                                                <i className="fas fa-history"></i>
+                                                <span>Lịch sử khám</span>
+                                            </li>
+                                        </React.Fragment>
+                                    )}
+                                </React.Fragment>
+                            )}
+
+
+                            <li className="menu-group-label">Thông tin</li>
+                            <li className="sidebar-item" onClick={() => { handleViewList('PRIVACY_POLICY'); onClose(); }}>
+                                <i className="fas fa-user-shield"></i>
+                                <span>Chính sách bảo mật</span>
+                            </li>
+                            <li className="sidebar-item" onClick={() => { handleViewList('TERMS_OF_USE'); onClose(); }}>
+                                <i className="fas fa-file-contract"></i>
+                                <span>Điều khoản sử dụng</span>
+                            </li>
+
+                            <div className="sidebar-actions">
+                                {isLoggedIn ? (
+                                    <button className="logout-btn" onClick={this.handleLogout}>
+                                        <i className="fas fa-sign-out-alt"></i>
+                                        <span>Đăng xuất</span>
+                                    </button>
+                                ) : (
+                                    <button className="login-btn" onClick={() => { handleViewList('LOGIN'); onClose(); }}>
+                                        <i className="fas fa-sign-in-alt"></i>
+                                        <span>Đăng nhập</span>
+                                    </button>
+                                )}
+                            </div>
+                        </ul>
+                    </div>
+
+                    <div className="sidebar-footer">
+                        <div className="lang-switch">
+                            <span className={language === LANGUAGES.VI ? 'active' : ''} onClick={() => this.props.changeLanguage(LANGUAGES.VI)}>VN</span>
+                            <span className="divider">|</span>
+                            <span className={language === LANGUAGES.EN ? 'active' : ''} onClick={() => this.props.changeLanguage(LANGUAGES.EN)}>EN</span>
+                        </div>
+                    </div>
+                </div>
+            </React.Fragment>
+        );
+    }
+}
+
+// Kết nối Redux cho Sidebar
+const SidebarConnected = connect(
+    state => ({ language: state.app.language }),
+    dispatch => ({
+        changeLanguage: (lang) => dispatch(actions.changeLanguageApp(lang)),
+        processLogout: () => dispatch(actions.processLogout()),
+        openChatWithTab: (tab) => dispatch(actions.openChatWithTab(tab)),
+    })
+)(MobileSidebarInternal);
+
+
+// ============================================================
+// MAIN COMPONENT: HOME HEADER
+// ============================================================
 class HomeHeader extends Component {
     constructor(props) {
         super(props);
         this.wrapperRef = React.createRef();
         this.state = {
-            isShowSearch: false,
             isOpenUserMenu: false,
+            isOpenSearch: false,
+            isOpenDoctorChat: false,
+            isOpenSidebar: false,
         }
     }
+
+    toggleSidebar = () => {
+        const nextState = !this.state.isOpenSidebar;
+        this.setState({ isOpenSidebar: nextState, isOpenSearch: false });
+        document.body.style.overflow = nextState ? 'hidden' : 'unset';
+    }
+
+    toggleSearch = (isOpen) => {
+        this.setState({ isOpenSearch: isOpen, isOpenSidebar: false });
+        if (window.innerWidth <= 768) {
+            document.body.style.overflow = isOpen ? 'hidden' : 'unset';
+        }
+    }
+
     toggleUserMenu = () => {
         this.setState({ isOpenUserMenu: !this.state.isOpenUserMenu });
     }
-    toggleShowSearchModal = () => {
-        this.setState({
-            isShowSearch: !this.state.isShowSearch
-        });
+
+    changeLanguage = (language) => {
+        this.props.changeLanguageAppRedux(language);
     }
-    changeLanguage = () => {
-        let { language } = this.props;
-        let nextLanguage = language === 'vi' ? 'en' : 'vi';
-        this.props.changeLanguageAppRedux(nextLanguage);
-    }
-    // Hàm bật/tắt search
-    handleToggleSearch = () => {
-        this.setState({
-            isShowSearch: true
-        });
-    }
+
     componentDidMount() {
         document.addEventListener('mousedown', this.handleClickOutside);
+        document.addEventListener('keydown', this.handleGlobalKeyDown);
     }
 
     componentWillUnmount() {
         document.removeEventListener('mousedown', this.handleClickOutside);
+        document.removeEventListener('keydown', this.handleGlobalKeyDown);
+        document.body.style.overflow = 'unset'; // Trả lại scroll khi unmount
+    }
+
+    handleGlobalKeyDown = (event) => {
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+            event.preventDefault();
+            this.setState({ isOpenSearch: true });
+        }
     }
 
     handleClickOutside = (event) => {
-        // Thêm check this.wrapperRef.current để chắc chắn nó đã tồn tại
         if (this.wrapperRef && this.wrapperRef.current && !this.wrapperRef.current.contains(event.target)) {
             this.setState({ isOpenUserMenu: false });
         }
     }
 
     handleViewList = (type) => {
-        const { history, isLoggedIn, userInfo } = this.props;
-
+        const { navigate, isLoggedIn, userInfo } = this.props;
         if (type === 'LOGIN') {
             if (!isLoggedIn) {
-                history.push(path.LOGIN);
+                this.props.navigate(path.LOGIN);
             } else {
-                if (userInfo && userInfo.roleId === 'R1') {
-                    history.push('/system/user-manage');
-                } else if (userInfo && userInfo.roleId === 'R2') {
-                    history.push('/doctor/manage-schedule');
-                } else {
-                    history.push('/home');
-                }
+                if (userInfo?.roleId === 'R1') navigate('/system/user-manage');
+                else if (userInfo?.roleId === 'R2') navigate('/doctor/manage-schedule');
+                else navigate('/home');
             }
             return;
         }
@@ -76,159 +243,175 @@ class HomeHeader extends Component {
             SPECIALTY: path.ALL_SPECIALTY,
             CLINIC: path.ALL_CLINIC,
             PHYSICIAN: path.ALL_DOCTOR,
+            HANDBOOK: path.ALL_HANDBOOK,
+
             HOME: path.HOMEPAGE,
             REGISTER: path.REGISTER,
+            PROCESS_BOOKING: path.PROCESS_BOOKING,
             SETTINGS: path.SETTINGS,
             MY_BOOKING: path.MY_BOOKING,
             BOOKING_HISTORY: path.BOOKING_HISTORY,
-        };
+            SELECT_SERVICE: path.SELECT_SERVICE,
 
-        if (routeMap[type]) {
-            history.push(routeMap[type]);
-        } else {
-            history.push('/home');
-        }
+            AI_SUPPORT: path.AI_SUPPORT,
+            PRIVACY_POLICY: path.PRIVACY_POLICY,
+            TERMS_OF_USE: path.TERMS_OF_USE,
+        };
+        if (routeMap[type]) navigate(routeMap[type]);
+        else this.props.navigate('/home');
     }
+
+
+
     render() {
-        console.log(">>> check props: ", this.props.userInfo);
         let { isLoggedIn, userInfo } = this.props;
+        let { isOpenUserMenu, isOpenSearch } = this.state;
+        let imageBase64 = userInfo && userInfo.image ? userInfo.image : '';
+
         return (
             <React.Fragment>
-
-                <div className='home-header-container'>
-                    <div className='home-header-content'>
-                        <div className='left-content'>
-                            <div className='header-logo'
-                                onClick={() => this.handleViewList('HOME')}
-                            ></div>
+                <div className="hm-header">
+                    <div className="hm-header-pill">
+                        <div className="hm-header-logo" onClick={() => this.handleViewList('HOME')}>
+                            <div className="logo-icon">
+                                <span className="logo-dot dot-1"></span>
+                                <span className="logo-dot dot-2"></span>
+                                <span className="logo-dot dot-3"></span>
+                            </div>
+                            <div className="brand-wrapper">
+                                <span className="brand-name">BookingCare</span>
+                                <span className="brand-sub">Đặt lịch khám bệnh</span>
+                            </div>
                         </div>
-                        <div className='center-content'>
-                            {this.state.isShowSearch ? (
-                                /* KHI BẬT SEARCH: Chỉ vẽ Component Search */
-                                <ModalSearchHeader
-                                    toggleFromParent={this.toggleShowSearchModal}
-                                />
-                            ) : (
-                                /* KHI TẮT SEARCH: Chỉ vẽ 4 khối div Menu */
-                                <React.Fragment>
-                                    <div className="menu-content">
-                                        <div className='child-content'
-                                            onClick={() => this.handleViewList('SPECIALTY')}
-                                        >
-                                            <FormattedMessage id="homeheader.MedicalSpecialty" defaultMessage="Medical Specialty" />
-                                        </div>
-                                        <div className='child-content'
-                                            onClick={() => this.handleViewList('CLINIC')}
-                                        >
-                                            <FormattedMessage id="homeheader.MedicalFacility" defaultMessage="Medical Facility" />
-                                        </div>
-                                        <div className='child-content'
-                                            onClick={() => this.handleViewList('PHYSICIAN')}
-                                        >
-                                            <FormattedMessage id="homeheader.Physician" defaultMessage="Physician" />
-                                        </div>
-                                        <div className='child-content'
-                                            onClick={() => this.handleViewList('SERVICE')}
 
-                                        >
-                                            <FormattedMessage id="homeheader.ServicePackage" defaultMessage="Service Package" />
-                                        </div>
-                                    </div>
-                                </React.Fragment>
-                            )}
-                        </div>
-                        <div className="right-content">
-                            {!isLoggedIn ? <div className="login-group"
-                                onClick={() => this.toggleUserMenu()}
-                            >
-                                <img src={user_login} className="icon-user" alt="User" />
-                                <span className="text-login">
+                        {isOpenSearch ? (
+                            <GlobalSearch isOpen={isOpenSearch} onClose={() => this.toggleSearch(false)} />
+                        ) : (
+                            <div className="hm-header-nav">
+                                <div className="hm-nav-list">
+                                    <div className="hm-nav-item" onClick={() => this.handleViewList('HOME')}><span className="nav-link"><FormattedMessage id="homeheader.home" /></span></div>
+                                    <div className="hm-nav-item" onClick={() => this.handleViewList('SELECT_SERVICE')}><span className="nav-link"><FormattedMessage id="homeheader.booking" /></span></div>
+                                    <div className="hm-nav-item" onClick={() => this.handleViewList('PROCESS_BOOKING')}><span className="nav-link"><FormattedMessage id="homeheader.process-booking" /></span></div>
+                                    <div className="hm-nav-item" onClick={() => this.handleViewList('HANDBOOK')}><span className="nav-link"><FormattedMessage id="homeheader.handbook-nav" /></span></div>
+                                </div>
+                            </div>
+                        )}
 
-                                    <FormattedMessage id="header.login" defaultMessage="Log in" />
-                                </span>
-                            </div> :
-                                <span className='welcome'
-                                    onClick={() => this.toggleUserMenu()}
-                                >
-                                    <img src={userInfo.image} className="icon-user" alt="User" />
-                                </span>
-                            }
-                            {this.state.isOpenUserMenu && (
-                                <UserMenuPopup
-                                    handleViewList={this.handleViewList}
-                                />
+                        <div className="hm-header-actions">
+                            {/* Search trigger removed from desktop header, will be visible on mobile via SCSS */}
+                            {!isOpenSearch && (
+                                <div className="nav-sign-in search-trigger" onClick={() => this.toggleSearch(true)}>
+                                    <i className="fas fa-search search-icon"></i>
+                                </div>
                             )}
-                            <img src={search} className="icon-search" alt="icon-search" onClick={() => this.handleToggleSearch()} />
-                            <img
-                                src={translate}
-                                className="icon-translate"
-                                alt="Translate"
-                                onClick={() => this.changeLanguage()}
-                            />
+
+                            <button id="btn-chat-doctor" className="hm-chat-doctor-btn" onClick={() => this.props.toggleChat()}>
+                                <i className="far fa-comments"></i>
+                                <span>Chat </span>
+                                {this.props.totalUnreadCount > 0 && <span className="chat-badge-count">{this.props.totalUnreadCount}</span>}
+                            </button>
+
+                            <div className="user-menu-wrapper" ref={this.wrapperRef}>
+                                <div className="mobile-sidebar-trigger" onClick={this.toggleSidebar}><i className="fas fa-bars"></i></div>
+                                {!isLoggedIn ? (
+                                    <div className="nav-sign-in desktop-only" onClick={() => this.handleViewList('LOGIN')}><i className="fas fa-user-circle auth-icon"></i><FormattedMessage id="homeheader.login" /></div>
+                                ) : (
+                                    <div className="nav-sign-in desktop-only" onClick={() => this.toggleUserMenu()}>{imageBase64 ? <img src={imageBase64} className="user-avatar" alt="Avatar" /> : <i className="fas fa-user-circle auth-icon"></i>}</div>
+                                )}
+                                {isOpenUserMenu && <UserMenuPopup handleViewList={this.handleViewList} />}
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                {this.props.isShowBanner === true && <div className="home-header-line">
-                    <div className="clinical-trial-section">
-                        <div className="clinical-trial-container">
-                            <div className="enrolling-badge">
-                                <span className="icon">👥</span>
-                                300+ studies actively enrolling
-                            </div>
-                            <h1 className="main-title">
-                                Find your perfect <span>clinical trial match</span>
-                            </h1>
+                {this.props.isShowBanner === true && (
+                    <div className="hm-hero" id="strona-glowna">
+                        <div className="hm-hero-bg">
+                            <div className="hero-bg-image" style={{ backgroundImage: `url(${bannerService})` }}></div>
+                            <div className="hero-bg-overlay"></div>
+                        </div>
+                        <div className="hm-hero-inner">
+                            <div className="hm-hero-text">
+                                <div className="hero-badge"><span className="badge-dot"></span>Nền tảng Y tế Số #1 Việt Nam</div>
+                                <h1 className="hero-headline">Chăm sóc sức khỏe<span className="hero-accent"> thông minh</span></h1>
 
-                            {/* Mô tả nhỏ */}
-                            <p className="subtitle">
-                                Join 2+ million people shaping the future of healthcare.
-                            </p>
+                                <div className="hero-search-wrapper">
+                                    <GlobalSearch isHero={true} />
+                                </div>
+
+                                <div className="hero-actions">
+                                    <a href="tel:0966226404" className="call-button">
+                                        <i className="fas fa-phone-alt"></i>
+                                        Liên hệ ngay
+                                    </a>
+                                    <div className="hero-quick-tags">
+                                        <span>Tìm kiếm nhanh:</span>
+                                        <button onClick={() => this.handleViewList('SPECIALTY')}>Chuyên khoa</button>
+                                        <button onClick={() => this.handleViewList('PHYSICIAN')}>Bác sĩ</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    {this.props.isShowBanner === false && <div className="welcome-container">
-                        <div className="services-grid">
-                            {[
-                                { icon: "https://img.icons8.com/color/96/doctor-male.png", title: "Search the service/<br />consultant" },
-                                { icon: "https://img.icons8.com/color/96/calendar.png", title: "Book an appointment" },
-                                { icon: "https://img.icons8.com/color/96/stethoscope.png", title: "Consult online/<br />Visit in-person" },
-                                { icon: "https://img.icons8.com/color/96/doctor-male.png", title: "Search the service/<br />consultant" },
-                                { icon: "https://img.icons8.com/color/96/calendar.png", title: "Book an appointment" },
-                                { icon: "https://img.icons8.com/color/96/stethoscope.png", title: "Consult online/<br />Visit in-person" }
-                            ].map((item, index) => (
-                                <div key={index} className="service-card">
-                                    <div className="icon-circle">
-                                        <img src={item.icon} alt="Service" />
-                                    </div>
-                                    <h3 dangerouslySetInnerHTML={{ __html: item.title }} />
-                                </div>
-                            ))}
+                )}
+
+                <DoctorChat isOpen={this.props.isOpenDoctorChat} onClose={() => this.props.toggleChat()} />
+
+                <SidebarConnected
+                    isOpen={this.state.isOpenSidebar}
+                    onClose={this.toggleSidebar}
+                    userInfo={userInfo}
+                    isLoggedIn={isLoggedIn}
+                    imageBase64={imageBase64}
+                    handleViewList={this.handleViewList}
+                />
+
+                {/* BOTTOM NAVIGATION BAR (Mobile Only) */}
+                {(!isOpenSearch && !this.state.isOpenSidebar && !this.props.isOpenDoctorChat) && (
+                    <div className="hm-bottom-nav">
+                        <div className={`nav-item ${!isOpenSearch ? 'active' : ''}`} onClick={() => { this.handleViewList('HOME'); this.toggleSearch(false); }}>
+                            <i className="fas fa-home"></i>
+                            <span>Trang chủ</span>
                         </div>
-
-                    </div>}
-                </div>}
-
+                        <div className={`nav-item ${isOpenSearch ? 'active' : ''}`} onClick={() => this.toggleSearch(true)}>
+                            <i className="fas fa-search"></i>
+                            <span>Tìm kiếm</span>
+                        </div>
+                        <div className="nav-item chat-item" onClick={() => this.props.toggleChat()}>
+                            <div className="icon-wrapper">
+                                <i className="fas fa-comment-medical"></i>
+                                {this.props.totalUnreadCount > 0 && <span className="badge">{this.props.totalUnreadCount}</span>}
+                            </div>
+                            <span>Hỗ trợ</span>
+                        </div>
+                        <div className="nav-item" onClick={this.toggleSidebar}>
+                            {isLoggedIn && imageBase64 ? (
+                                <img src={imageBase64} className="user-avatar-nav" alt="Profile" />
+                            ) : (
+                                <i className="fas fa-user-circle"></i>
+                            )}
+                            <span>Cá nhân</span>
+                        </div>
+                    </div>
+                )}
             </React.Fragment>
         );
     }
-
 }
 
-const mapStateToProps = state => {
-    return {
-        isLoggedIn: state.user.isLoggedIn,
-        language: state.app.language,
-        userInfo: state.user.userInfo
-    };
-};
+const mapStateToProps = state => ({
+    isLoggedIn: state.user.isLoggedIn,
+    language: state.app.language,
+    userInfo: state.user.userInfo,
+    isOpenDoctorChat: state.app.isOpenDoctorChat,
+    totalUnreadCount: state.socket.totalUnreadCount
+});
 
-const mapDispatchToProps = dispatch => {
-    return {
-        changeLanguageAppRedux: (language) => dispatch(changeLanguageApp(language))
-    };
-};
+const mapDispatchToProps = dispatch => ({
+    changeLanguageAppRedux: (language) => dispatch(actions.changeLanguageApp(language)),
+    toggleChat: () => dispatch(actions.toggleChat()),
+    openChatWithTab: (tab) => dispatch(actions.openChatWithTab(tab)),
+    processLogout: () => dispatch(actions.processLogout())
+});
 
-// export default connect(mapStateToProps, mapDispatchToProps)(HomeHeader);
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(HomeHeader));
-
-{/* <img src={menu} className="menu-icon" alt="Menu" /> */ }

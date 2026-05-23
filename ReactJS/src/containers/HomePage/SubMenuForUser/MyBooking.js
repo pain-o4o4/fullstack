@@ -2,22 +2,69 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import * as action from '../../../store/actions'
 import HomeHeader from '../../HomePage/HomeHeader'
-import { withRouter } from 'react-router';
+import { withRouter } from '../../../components/Navigator';
 import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
 import { LANGUAGES } from '../../../utils';
 import './MyBooking.scss'
-import { getAllAppointmentsByIdService } from '../../../services/userService'
+import { getAllAppointmentsByIdService, verifyPaymentStatus } from '../../../services/userService'
+import { toast } from 'react-toastify';
+import { withSocket } from '../../../hoc/withSocket';
 
 class MyBooking extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            listAppointments: []
+            listAppointments: [],
+            isVerifying: false,
+            currentPage: 1,
+            pageSize: 10
         }
     }
 
     async componentDidMount() {
+        const query = new URLSearchParams(this.props.location.search);
+        const status = query.get('status');
+        const orderCode = query.get('orderCode');
+
+        // Nếu quay về từ PayOS với trạng thái PAID -> verify trước
+        if (status === 'PAID' && orderCode) {
+            this.setState({ isVerifying: true });
+            try {
+                let verifyRes = await verifyPaymentStatus(orderCode);
+                if (verifyRes && verifyRes.errCode === 0) {
+                    console.log(this.props.language === LANGUAGES.VI ? "Thanh toán thành công!" : "Payment successful!");
+                }
+            } catch (e) {
+                console.error('Verify payment error:', e);
+            }
+            // Xóa query params sau khi verify xong
+            this.props.navigate('/patient/my-booking', { replace: true });
+            this.setState({ isVerifying: false });
+        }
+
+        // Luôn load lại danh sách SAU KHI verify (hoặc nếu không cần verify)
+        this.fetchAppointments();
+
+        if (this.props.socket) {
+            this.props.socket.on('system_data_changed', this.handleSystemDataChanged);
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.props.socket) {
+            this.props.socket.off('system_data_changed', this.handleSystemDataChanged);
+        }
+    }
+
+    handleSystemDataChanged = (data) => {
+        if (data && data.entity === 'BOOKING') {
+            console.log('[Socket] Reloading patient appointments due to remote change...', data);
+            this.fetchAppointments();
+        }
+    }
+
+    fetchAppointments = async () => {
         if (this.props.userInfo && this.props.userInfo.id) {
             let id = this.props.userInfo.id;
             let res = await getAllAppointmentsByIdService(id);
@@ -31,7 +78,7 @@ class MyBooking extends Component {
 
     async componentDidUpdate(prevProps, prevState, snapshot) {
         if (prevProps.userInfo !== this.props.userInfo && this.props.userInfo && this.props.userInfo.id) {
-            await getAllAppointmentsByIdService(this.props.userInfo.id);
+            this.fetchAppointments();
         }
 
         if (prevProps.detailAppointment !== this.props.detailAppointment) {
@@ -42,7 +89,7 @@ class MyBooking extends Component {
     }
 
     render() {
-        let { listAppointments } = this.state;
+        let { listAppointments, currentPage, pageSize } = this.state;
         let { language } = this.props;
 
         return (
@@ -53,66 +100,122 @@ class MyBooking extends Component {
                         <FormattedMessage id="patient.my-booking.title" defaultMessage="LỊCH HẸN CỦA BẠN" />
                     </div>
                     <div className="table-booking-content">
-                        <table className="table table-hover table-bordered mt-3">
-                            <thead className="thead-light">
+                        <table className="booking-table">
+                            <thead>
                                 <tr>
-                                    <th>STT</th>
+                                    <th className="col-stt">STT</th>
                                     <th><FormattedMessage id="patient.my-booking.time" defaultMessage="Thời gian" /></th>
+                                    <th><FormattedMessage id="patient-detail.patient-name" defaultMessage="Bệnh nhân" /></th>
+                                    <th><FormattedMessage id="patient-profile.phone-place" defaultMessage="Số điện thoại" /></th>
                                     <th><FormattedMessage id="patient.my-booking.doctor" defaultMessage="Bác sĩ" /></th>
-                                    <th><FormattedMessage id="patient.my-booking.clinic" defaultMessage="Phòng khám" /></th>
+                                    <th><FormattedMessage id="schedule-doctor.reason" defaultMessage="Lý do" /></th>
                                     <th><FormattedMessage id="patient.my-booking.status" defaultMessage="Trạng thái" /></th>
                                     <th><FormattedMessage id="patient.my-booking.actions" defaultMessage="Thao tác" /></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {listAppointments && listAppointments.length > 0 ?
-                                    listAppointments.map((item, index) => {
-
+                                    listAppointments.slice((currentPage - 1) * pageSize, currentPage * pageSize).map((item, index) => {
+                                        const realIndex = (currentPage - 1) * pageSize + index + 1;
                                         let name = language === 'vi'
                                             ? `${item.doctorBookingData.lastName} ${item.doctorBookingData.firstName}`
                                             : `${item.doctorBookingData.firstName} ${item.doctorBookingData.lastName}`;
 
+                                        let patientName = item.patientBookingData
+                                            ? `${item.patientBookingData.lastName} ${item.patientBookingData.firstName}`
+                                            : 'N/A';
 
                                         let clinicName = item.doctorBookingData.doctorinforData
                                             ? item.doctorBookingData.doctorinforData.nameClinic
                                             : 'N/A';
-                                        let clinicAddress = item.doctorBookingData.doctorinforData
-                                            ? item.doctorBookingData.doctorinforData.addressClinic
-                                            : '';
 
-
-                                        let formattedDate = moment(new Date(parseInt(item.date))).format('DD/MM/YYYY');
+                                        let formattedDate = '';
+                                        if (item.date) {
+                                            if (/^\d+$/.test(item.date)) {
+                                                formattedDate = moment(Number(item.date)).format('DD/MM/YYYY');
+                                            } else {
+                                                formattedDate = item.date;
+                                            }
+                                        }
 
                                         return (
-                                            <tr key={index}>
-                                                <td>{index + 1}</td>
+                                            <tr key={index}
+                                                className={`pointer-row status-${item.statusId}`}
+                                                onClick={() => {
+                                                    if (item.statusId === 'S1') {
+                                                        this.props.navigate(`/patient/payment?bookingId=${item.id}`);
+                                                    } else {
+                                                        this.props.navigate('/patient/detail-schedule/' + item.id);
+                                                    }
+                                                }}
+                                            >
+                                                <td className="col-stt">{realIndex}</td>
                                                 <td>
-                                                    <div className="time-display">
-                                                        {language === 'vi' ? item.timeTypeDataPatient.valueVi : item.timeTypeDataPatient.valueEn}
+                                                    <div className="cell-time">
+                                                        <span>{language === 'vi' ? item.timeTypeDataPatient.valueVi : item.timeTypeDataPatient.valueEn}</span>
                                                     </div>
-                                                    <div className="date-display">{formattedDate}</div>
+                                                    <div className="cell-date">
+                                                        <span>{formattedDate}</span>
+                                                    </div>
                                                 </td>
-                                                <td className="doctor-name">{name}</td>
                                                 <td>
-                                                    <strong>{clinicName}</strong>
-                                                    <div className="clinic-address">{clinicAddress}</div>
+                                                    <div className="cell-patient">
+                                                        <div className="patient-info">
+                                                            <span className="patient-name">{patientName}</span>
+                                                            {item.patientBookingData?.email && (
+                                                                <span className="patient-email">{item.patientBookingData.email}</span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className="cell-phone">
+                                                        <span>{item.patientBookingData?.phonenumber || 'N/A'}</span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className="cell-doctor">
+                                                        <div className="doctor-info">
+                                                            <span className="doctor-name">{name}</span>
+                                                            <span className="clinic-name">{clinicName}</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className="cell-reason" title={item.reason}>
+                                                        {item.reason || 'N/A'}
+                                                    </div>
                                                 </td>
                                                 <td>
                                                     <span className={`status-badge ${item.statusId}`}>
-                                                        {language === 'vi' ? item.statusData.valueVi : item.statusData.valueEn}
+                                                        {item.statusId === 'S1' ? <FormattedMessage id="patient.my-booking.pending" /> :
+                                                            item.statusId === 'S2' ? <FormattedMessage id="patient.my-booking.confirmed" /> :
+                                                                item.statusId === 'S3' ? <FormattedMessage id="patient.my-booking.done" /> :
+                                                                    item.statusId === 'S4' ? <FormattedMessage id="patient.my-booking.cancelled" /> :
+                                                                        item.statusId === 'S5' ? <FormattedMessage id="patient.my-booking.missed" /> :
+                                                                            (language === 'vi' ? item.statusData.valueVi : item.statusData.valueEn)
+                                                        }
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <button className="btn-cancel-booking" onClick={() => this.handleCancelBooking(item)}>
-                                                        <FormattedMessage id="patient.my-booking.cancel" defaultMessage="Hủy lịch" />
-                                                    </button>
+                                                    {item.statusId === 'S1' ?
+                                                        <button className="action-btn pay-now">
+                                                            <span>{language === 'vi' ? 'Thanh toán' : 'Pay'}</span>
+                                                            <i className="fas fa-arrow-right"></i>
+                                                        </button>
+                                                        :
+                                                        <button className="action-btn view-detail">
+                                                            <span>{language === 'vi' ? 'Chi tiết' : 'Details'}</span>
+                                                            <i className="fas fa-chevron-right"></i>
+                                                        </button>
+                                                    }
                                                 </td>
                                             </tr>
                                         )
                                     })
                                     :
                                     <tr>
-                                        <td colSpan="6" className="text-center no-data">
+                                        <td colSpan="8" className="text-center no-data">
                                             <FormattedMessage id="patient.my-booking.no-data" defaultMessage="Bạn chưa có lịch hẹn nào." />
                                         </td>
                                     </tr>
@@ -120,6 +223,36 @@ class MyBooking extends Component {
                             </tbody>
                         </table>
                     </div>
+
+                    {listAppointments && listAppointments.length > pageSize &&
+                        <div className="pagination-container">
+                            <button
+                                className="btn-pagination"
+                                disabled={currentPage === 1}
+                                onClick={() => this.setState({ currentPage: currentPage - 1 })}
+                            >
+                                <i className="fas fa-chevron-left"></i>
+                            </button>
+
+                            {[...Array(Math.ceil(listAppointments.length / pageSize))].map((_, i) => (
+                                <button
+                                    key={i}
+                                    className={`btn-pagination ${currentPage === i + 1 ? 'active' : ''}`}
+                                    onClick={() => this.setState({ currentPage: i + 1 })}
+                                >
+                                    {i + 1}
+                                </button>
+                            ))}
+
+                            <button
+                                className="btn-pagination"
+                                disabled={currentPage === Math.ceil(listAppointments.length / pageSize)}
+                                onClick={() => this.setState({ currentPage: currentPage + 1 })}
+                            >
+                                <i className="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    }
                 </div>
             </div>
         );
@@ -140,4 +273,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(MyBooking));
+export default withSocket(withRouter(connect(mapStateToProps, mapDispatchToProps)(MyBooking)));

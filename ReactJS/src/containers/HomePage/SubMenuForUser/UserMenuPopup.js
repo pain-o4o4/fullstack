@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { FormattedMessage } from 'react-intl';
 import * as actions from "../../../store/actions";
+import { stopTimer } from '../../../auth/TokenRefreshManager';
+import axios from 'axios';
 import './UserMenuPopup.scss';
 
 class UserMenuPopup extends Component {
@@ -24,11 +26,20 @@ class UserMenuPopup extends Component {
     handleViewList = (page) => {
         this.props.handleViewList(page)
     }
+
+    // Xử lý đăng xuất: Dừng timer → Xóa cookie server → Dispatch logout
+    handleLogout = () => {
+        stopTimer();
+        localStorage.removeItem('token');
+        axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/logout`, {}, { withCredentials: true }).catch(() => { });
+        this.props.processLogout();
+    }
+
     render() {
-        const { isLoggedIn, userInfo, handleViewList, processLogout } = this.props;
+        const { isLoggedIn, userInfo, handleViewList } = this.props;
 
         return (
-            <div className="apple-popup-menu">
+            <div className="popup-menu">
                 {isLoggedIn ? (
                     <React.Fragment>
                         <div className="menu-header">
@@ -53,9 +64,24 @@ class UserMenuPopup extends Component {
 
                             <div className="divider"></div>
 
-                            <div className="menu-item logout" onClick={processLogout}>
+                            <div className="menu-item" onClick={() => handleViewList('AI_SUPPORT')}>
+                                <i className="fas fa-robot"></i>
+                                <span>Trợ lý AI</span>
+                            </div>
+                            <div className="menu-item" onClick={() => handleViewList('PRIVACY_POLICY')}>
+                                <i className="fas fa-user-shield"></i>
+                                <span>Chính sách bảo mật</span>
+                            </div>
+                            <div className="menu-item" onClick={() => handleViewList('TERMS_OF_USE')}>
+                                <i className="fas fa-file-contract"></i>
+                                <span>Điều khoản sử dụng</span>
+                            </div>
+
+                            <div className="divider"></div>
+
+                            <div className="menu-item logout" onClick={this.handleLogout}>
                                 <i className="fas fa-sign-out-alt"></i>
-                                <span>Đăng xuất (Sign Out)</span>
+                                <span>Đăng xuất</span>
                             </div>
                         </div>
                     </React.Fragment>
@@ -63,11 +89,26 @@ class UserMenuPopup extends Component {
                     <div className="menu-body">
                         <div className="menu-item" onClick={() => handleViewList('LOGIN')}>
                             <i className="fas fa-sign-in-alt"></i>
-                            <span>Đăng nhập (Log In)</span>
+                            <span>Đăng nhập</span>
                         </div>
                         <div className="menu-item" onClick={() => handleViewList('REGISTER')}>
                             <i className="fas fa-user-plus"></i>
-                            <span>Đăng ký (Sign Up)</span>
+                            <span>Đăng ký</span>
+                        </div>
+
+                        <div className="divider"></div>
+
+                        <div className="menu-item" onClick={() => handleViewList('AI_SUPPORT')}>
+                            <i className="fas fa-robot"></i>
+                            <span>Trợ lý AI</span>
+                        </div>
+                        <div className="menu-item" onClick={() => handleViewList('PRIVACY_POLICY')}>
+                            <i className="fas fa-user-shield"></i>
+                            <span>Chính sách bảo mật</span>
+                        </div>
+                        <div className="menu-item" onClick={() => handleViewList('TERMS_OF_USE')}>
+                            <i className="fas fa-file-contract"></i>
+                            <span>Điều khoản sử dụng</span>
                         </div>
                     </div>
                 )}

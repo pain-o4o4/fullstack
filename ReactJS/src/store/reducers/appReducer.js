@@ -13,10 +13,12 @@ const initialState = {
     systemMenuPath: '/system/user-manage',
     contentOfConfirmModal: {
         ...initContentOfConfirmModal
-    }
+    },
+    isOpenDoctorChat: false,
+    doctorChatTab: 'ALL'
 }
 
-const appReducer = (state = initialState, action) => {
+const appReducer = (state = initialState, action = {}) => {
     switch (action.type) {
         case actionTypes.APP_START_UP_COMPLETE:
             return {
@@ -36,6 +38,17 @@ const appReducer = (state = initialState, action) => {
             return {
                 ...state,
                 language: action.language // en, vi
+            }
+        case actionTypes.TOGGLE_CHAT:
+            return {
+                ...state,
+                isOpenDoctorChat: !state.isOpenDoctorChat
+            }
+        case actionTypes.OPEN_CHAT_WITH_TAB:
+            return {
+                ...state,
+                isOpenDoctorChat: true,
+                doctorChatTab: action.tab
             }
         default:
             return state;

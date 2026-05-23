@@ -1,74 +1,139 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import './Handbook.scss';
-// import { FormattedMessage } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import Slider from 'react-slick';
-import { HandBookData } from './Data/HandBookData';   // Đúng
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
+import { getAllHandbookService } from '../../../services/userService';
+import { withRouter } from '../../../components/Navigator';
+import { path } from '../../../utils/constant';
+import * as actions from '../../../store/actions'
+import '../../Navigation/MavenSlider.scss';
+import { SectionSkeleton } from '../../Navigation/SelectService';
+
+const DOT_COLORS = ['#00d1b2', '#34d399', '#818cf8', '#fbbf24', '#f472b6'];
+
 class HandBook extends Component {
     constructor(props) {
         super(props);
+        this.scrollRef = React.createRef();
+        let handbooks = this.props.allHandbooks || [];
         this.state = {
-
+            dataHandbook: handbooks.filter(item =>
+                item.name !== 'Chính sách bảo mật' && item.name !== 'Điều khoản sử dụng'
+            ),
+            isLoading: !this.props.allHandbooks || this.props.allHandbooks.length === 0
         }
     }
 
+    scrollLeft = () => {
+        if (this.scrollRef.current) {
+            this.scrollRef.current.scrollBy({ left: -300, behavior: 'smooth' });
+        }
+    }
 
+    scrollRight = () => {
+        if (this.scrollRef.current) {
+            this.scrollRef.current.scrollBy({ left: 300, behavior: 'smooth' });
+        }
+    }
+
+    async componentDidMount() {
+        if (!this.props.allHandbooks || this.props.allHandbooks.length === 0) {
+            this.props.fetchAllHandbooks();
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevProps.allHandbooks !== this.props.allHandbooks) {
+            let filteredData = (this.props.allHandbooks || []).filter(item =>
+                item.name !== 'Chính sách bảo mật' && item.name !== 'Điều khoản sử dụng'
+            );
+            this.setState({
+                dataHandbook: filteredData,
+                isLoading: false
+            })
+        }
+    }
+
+    handleViewDetailHandbook = (item) => {
+        if (this.props.navigate) {
+            this.props.navigate(`/detail-handbook/${item.id}`)
+        }
+    }
 
     render() {
+        let { dataHandbook, isLoading } = this.state;
+
+        if (isLoading) {
+            return <SectionSkeleton />;
+        }
 
         return (
-            // let
             <React.Fragment>
-                <div className='section-handbook'>
+                <div className='section-maven'>
                     <div className='section-header'>
-                        <span className='title-section'>Handbook</span>
-                        <button className='btn-section'>More</button>
+                        <span className='title-section'>
+                            <FormattedMessage id="homepage.handbook" />
+                        </span>
+                        <div className='header-actions'>
+                            <button className='btn-nav' onClick={this.scrollLeft}><i className="fas fa-chevron-left"></i></button>
+                            <button className='btn-nav' onClick={this.scrollRight}><i className="fas fa-chevron-right"></i></button>
+                            <button className='btn-section'
+                                onClick={() => this.props.navigate && this.props.navigate(path.ALL_HANDBOOK)}
+                            >
+                                <FormattedMessage id="homepage.more" />
+                            </button>
+                        </div>
                     </div>
                     <div className='section-body'>
-                        <Slider {...this.props.settings}>
-                            {HandBookData.map((item, index) => {
-                                return (
-                                    <div className='section-customize' key={index}>
-                                        <div
-                                            className='bg-image'
-                                            style={{ backgroundImage: `url(${item.img})` }}
-                                        >
-                                            <div className='content-overlay'>
-                                                <div className='section-name'>{item.name}</div>
-                                                <div className='section-desc'>{item.address}</div>
+                        <div className="maven-slider-wrapper" ref={this.scrollRef}>
+                            {dataHandbook && dataHandbook.length > 0 &&
+                                dataHandbook.map((item, index) => {
+                                    let dotColor = DOT_COLORS[index % DOT_COLORS.length];
 
-                                                <div className='section-action'>
-                                                    <button className='btn-learn-more'>Information</button>
+                                    return (
+                                        <div className="maven-card" key={index} onClick={() => this.handleViewDetailHandbook(item)}>
+                                            <div className="maven-card-bg" style={{ backgroundImage: `url(${item.image})` }}></div>
+                                            <div className="maven-card-overlay"></div>
+
+                                            <div className="maven-card-indicator">
+                                                <span className="dot" style={{ backgroundColor: dotColor }}></span>
+                                            </div>
+
+                                            <div className="maven-card-content">
+                                                <h3 className="maven-card-title">{item.name}</h3>
+                                                <div className="maven-card-reveal">
+                                                    <p className="maven-card-desc">
+                                                        <FormattedMessage id="homepage.handbook" />
+                                                    </p>
+                                                    <button className="maven-card-btn" style={{ backgroundColor: dotColor, color: '#fff' }}>
+                                                        Learn more
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-
-                                )
-                            })}
-
-                        </Slider>
+                                    )
+                                })}
+                        </div>
                     </div>
                 </div>
             </React.Fragment>
         );
     }
-
 }
+
 
 const mapStateToProps = state => {
     return {
         isLoggedIn: state.user.isLoggedIn,
-        language: state.app.language
+        language: state.app.language,
+        allHandbooks: state.admin.allHandbooks
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-
+        fetchAllHandbooks: () => dispatch(actions.fetchAllHandbooks())
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(HandBook);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(HandBook));

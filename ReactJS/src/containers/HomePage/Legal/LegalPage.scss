@@ -1,0 +1,160 @@
+.legal-page-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff; // Apple sử dụng nền trắng tinh khiết tuyệt đối cho toàn bộ trang pháp lý
+
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+    .legal-page-body {
+        flex: 1;
+        padding: 120px 24px 80px 24px; // Spacing cực kỳ rộng rãi tạo cảm giác thoáng đạt
+        display: flex;
+        justify-content: center;
+        animation: fadeIn 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+
+        .legal-content-wrapper {
+            max-width: 800px; // Tăng lên 800px theo yêu cầu để giao diện thoáng rộng hơn trên màn hình lớn
+            width: 100%;
+            background: transparent; // Loại bỏ hoàn toàn chiếc hộp "Dashboard" giả tạo rẻ tiền
+            box-shadow: none; // Loại bỏ đổ bóng thô kệch
+            border: none; // Triệt tiêu mọi đường viền bao quanh
+            padding: 0; // Hài hòa trực tiếp với nền trắng trang web
+
+            .legal-header {
+                margin-bottom: 40px;
+                text-align: left;
+                border-bottom: 1px solid #d2d2d7; // Đường phân cách màu xám chuẩn của Apple
+                padding-bottom: 24px;
+
+                h1 {
+                    font-size: 40px;
+                    font-weight: 700;
+                    color: #1d1d1f; // Signature Apple Dark Charcoal
+                    margin-bottom: 8px;
+                    letter-spacing: -0.02em;
+                    line-height: 1.1;
+
+                    @media (max-width: 768px) {
+                        font-size: 32px;
+                    }
+                }
+
+                .legal-meta {
+                    font-size: 14px;
+                    color: #86868b; // Signature Apple Medium Gray
+                    font-weight: 400;
+                }
+            }
+
+            .legal-content {
+                color: #1d1d1f; // Chữ tối màu sắc nét chuẩn tương phản
+                line-height: 1.62; // Khoảng cách dòng hoàn hảo cho khả năng hấp thụ text nhanh
+                font-size: 17px;
+                letter-spacing: -0.011em;
+
+                h2, h3, h4 {
+                    color: #1d1d1f;
+                    font-weight: 600;
+                    letter-spacing: -0.015em;
+                }
+
+                h2 {
+                    font-size: 24px;
+                    margin-top: 48px;
+                    margin-bottom: 16px;
+                    border-bottom: none;
+                    padding-bottom: 0;
+
+                    @media (max-width: 768px) {
+                        font-size: 20px;
+                    }
+                }
+
+                h3 {
+                    font-size: 19px;
+                    margin-top: 36px;
+                    margin-bottom: 12px;
+                }
+
+                h4 {
+                    font-size: 16px;
+                    margin-top: 28px;
+                    margin-bottom: 10px;
+                }
+
+                p {
+                    margin-top: 0;
+                    margin-bottom: 12px; // Giảm xuống 12px để gom các dòng ngắn (bullet point giả dạng paragraph) lại khít và đẹp mắt
+                    font-weight: 400;
+                }
+
+                ul, ol {
+                    margin-bottom: 24px;
+                    padding-left: 20px;
+
+                    li {
+                        margin-bottom: 12px;
+                        color: #1d1d1f;
+                    }
+                }
+
+                strong {
+                    color: #1d1d1f;
+                    font-weight: 600;
+                }
+
+                a {
+                    color: #0066cc; // Apple Signature Link Blue (Xanh lam thanh khiết)
+                    text-decoration: none;
+                    transition: color 0.15s ease;
+
+                    &:hover {
+                        text-decoration: underline; // Chỉ gạch chân khi tương tác
+                        color: #0044b3;
+                    }
+                }
+
+                // Thiết kế bảng phẳng tối giản bậc thầy (Apple Editorial Table)
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin: 40px 0;
+                    
+                    th {
+                        background: transparent;
+                        color: #1d1d1f;
+                        font-weight: 600;
+                        text-align: left;
+                        padding: 12px 0;
+                        font-size: 15px;
+                        border-bottom: 2px solid #1d1d1f; // Đường kẻ đen đậm ở đầu bảng
+                    }
+
+                    td {
+                        padding: 16px 0;
+                        font-size: 15px;
+                        color: #1d1d1f;
+                        border-bottom: 1px solid #d2d2d7; // Đường phân cách ngang siêu mảnh
+                        background: transparent;
+                    }
+
+                    tr:last-child td {
+                        border-bottom: 1px solid #1d1d1f; // Đường đóng đáy bảng đen lịch lãm
+                    }
+                }
+            }
+        }
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

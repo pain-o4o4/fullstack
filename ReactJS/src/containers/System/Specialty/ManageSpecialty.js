@@ -1,173 +1,346 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
-import { getManageSpecialtyById } from '../../../services/userService';
-import { LANGUAGES } from '../../../utils/constant';
-import { withRouter } from 'react-router';
 import { FormattedMessage } from 'react-intl';
+import {
+    getAllSpecialtyService,
+    deleteSpecialtyService,
+    postCreateNewSpecialtyService,
+    editSpecialtyService
+} from '../../../services/userService';
+import ModalManageSpecialty from '../manageSystemModal/ModalManageSpecialty';
+import { withSocket } from '../../../hoc/withSocket';
 import './ManageSpecialty.scss';
-import MarkdownIt from 'markdown-it/index.js';
-import MdEditor from 'react-markdown-editor-lite';
-import 'react-markdown-editor-lite/lib/index.css';
-import Lightbox from 'react-image-lightbox';
-import 'react-image-lightbox/style.css';
-import CommonUtils from '../../../utils/CommonUtils';
-import { postCreateNewSpecialtyService } from '../../../services/userService'
-import { toast } from 'react-toastify'
-
-
-
-
-const mdParser = new MarkdownIt(/* Markdown-it options */);
+import { toast } from 'react-toastify';
 
 class ManageSpecialty extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: '',
-            imageBase64: '',
-            descriptionHTML: '',
-            descriptionMarkdown: '',
-            previewImgURL: '',
-            isOpen: false
+            arrSpecialties: [],
+            isModalOpen: false,
+            action: 'CREATE',
+            specialtyEdit: {},
+
+            currentPage: 1,
+            pageSize: 7,
+            searchTerm: '',
+            selectedSpecialties: [], // Track selected IDs
+            showBulkDeleteConfirm: false,
+            specialtyToForceDelete: null,
+            isForceDelete: false
+        };
+    }
+
+    async componentDidMount() {
+        await this.getAllSpecialties();
+        if (this.props.socket) {
+            this.props.socket.on('system_data_changed', this.handleSystemDataChanged);
         }
     }
 
-    handleOnChangeInput = (event, id) => {
-        let stateCopy = { ...this.state };
-        stateCopy[id] = event.target.value;
-        this.setState({ ...stateCopy });
+    componentWillUnmount() {
+        if (this.props.socket) {
+            this.props.socket.off('system_data_changed', this.handleSystemDataChanged);
+        }
     }
 
-    handleEditorChange = ({ html, text }) => {
-        this.setState({
-            descriptionHTML: html,
-            descriptionMarkdown: text,
-        })
+    handleSystemDataChanged = (data) => {
+        if (data && data.entity === 'SPECIALTY') {
+            this.getAllSpecialties();
+        }
     }
 
-    handleOnChangeImage = async (event) => {
-        let data = event.target.files;
-        let file = data[0];
-        if (file) {
-            let base64 = await CommonUtils.getBase64(file);
-            let objectUrl = URL.createObjectURL(file);
+    getAllSpecialties = async () => {
+        let response = await getAllSpecialtyService();
+        if (response && response.errCode === 0) {
             this.setState({
-                previewImgURL: objectUrl,
-                imageBase64: base64
-            })
+                arrSpecialties: response.data || []
+            });
         }
     }
 
-    handleSaveNewSpecialty = async () => {
-        // 1. Validate sơ bộ ở FE
-        if (!this.state.name || !this.state.imageBase64 || !this.state.descriptionMarkdown) {
-            toast.error("Vui lòng nhập đầy đủ thông tin!");
+    handleAddNewSpecialty = () => {
+        this.setState({
+            isModalOpen: true,
+            action: 'CREATE',
+            specialtyEdit: {}
+        });
+    }
+
+    handleEditSpecialty = (specialty) => {
+        this.setState({
+            isModalOpen: true,
+            action: 'EDIT',
+            specialtyEdit: specialty
+        });
+    }
+
+    handleSaveSpecialty = async (data) => {
+        try {
+            let res;
+            if (this.state.action === 'CREATE') {
+                res = await postCreateNewSpecialtyService(data);
+            } else {
+                res = await editSpecialtyService(data);
+            }
+
+            if (res && res.errCode === 0) {
+                toast.success(this.state.action === 'CREATE' ? 'Thêm chuyên khoa thành công!' : 'Cập nhật chuyên khoa thành công!');
+                this.setState({ isModalOpen: false });
+                await this.getAllSpecialties();
+            } else {
+                toast.error(res.errMessage || 'Error saving specialty');
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error('Error saving specialty');
+        }
+    }
+
+    handleSelectSpecialty = (id) => {
+        let { selectedSpecialties } = this.state;
+        if (selectedSpecialties.includes(id)) {
+            this.setState({ selectedSpecialties: selectedSpecialties.filter(sid => sid !== id) });
+        } else {
+            this.setState({ selectedSpecialties: [...selectedSpecialties, id] });
+        }
+    }
+
+    handleSelectAll = (displaySpecialties) => {
+        let { selectedSpecialties } = this.state;
+        let allIdsOnPage = displaySpecialties.map(s => s.id);
+        let allSelected = allIdsOnPage.every(id => selectedSpecialties.includes(id));
+
+        if (allSelected) {
+            this.setState({ selectedSpecialties: selectedSpecialties.filter(id => !allIdsOnPage.includes(id)) });
+        } else {
+            this.setState({ selectedSpecialties: [...new Set([...selectedSpecialties, ...allIdsOnPage])] });
+        }
+    }
+
+    handleBulkDelete = () => {
+        if (this.state.selectedSpecialties.length > 0) {
+            this.setState({ showBulkDeleteConfirm: true, specialtyToForceDelete: null, isForceDelete: false });
+        }
+    }
+
+    confirmBulkDelete = async (force = false) => {
+        let { selectedSpecialties } = this.state;
+        let errors = [];
+        let hasWarning = false;
+
+        for (let id of selectedSpecialties) {
+            let res = await deleteSpecialtyService(id, force);
+            if (res && res.errCode === 5) {
+                hasWarning = true;
+            } else if (res && res.errCode !== 0) {
+                errors.push(res.errMessage || `Specialty ID ${id} error`);
+            }
+        }
+
+        if (hasWarning && !force) {
+            this.setState({ isForceDelete: true, showBulkDeleteConfirm: true });
             return;
         }
 
-        console.log('>>> Check state save:', this.state);
+        if (errors.length > 0 && !hasWarning) alert(errors.join('\n'));
 
-        // 2. Gọi API
-        let res = await postCreateNewSpecialtyService({
-            name: this.state.name,
-            imageBase64: this.state.imageBase64,
-            descriptionHTML: this.state.descriptionHTML,
-            descriptionMarkdown: this.state.descriptionMarkdown
-        });
-        console.log('>>> Check res save specialty:', res);
-        // 3. Xử lý kết quả trả về
-        if (res && res.errCode === 0) {
-            toast.success("Add new specialty succeed!");
-            // Reset form về trạng thái trống
-            this.setState({
-                name: '',
-                imageBase64: '',
-                descriptionHTML: '',
-                descriptionMarkdown: '',
-                previewImgURL: '',
-                isOpen: false
-            });
-        } else {
-            toast.error("Add new specialty error!");
-            console.log('>>> Check error response:', res);
+        this.setState({ selectedSpecialties: [], showBulkDeleteConfirm: false, isForceDelete: false });
+        await this.getAllSpecialties();
+    }
+
+    handleCancelBulkDelete = () => {
+        this.setState({ showBulkDeleteConfirm: false, specialtyToForceDelete: null, isForceDelete: false });
+    }
+
+    getProcessedSpecialties = () => {
+        let { arrSpecialties, searchTerm } = this.state;
+        let filtered = [...arrSpecialties];
+        if (searchTerm) {
+            let term = searchTerm.toLowerCase();
+            filtered = filtered.filter(s => 
+                s.name.toLowerCase().includes(term)
+            );
         }
+        return filtered;
     }
-    openPreviewImage = () => {
-        if (!this.state.previewImgURL) return; // Không có ảnh thì không mở
-        this.setState({
-            isOpen: true
-        })
-    }
+
     render() {
+        let { isModalOpen, action, specialtyEdit, currentPage, pageSize, searchTerm, selectedSpecialties } = this.state;
+
+        let processedSpecialties = this.getProcessedSpecialties();
+        let displaySpecialties = processedSpecialties.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+        let totalPages = Math.ceil(processedSpecialties.length / pageSize);
+        let isAllSelected = displaySpecialties.length > 0 && displaySpecialties.every(s => selectedSpecialties.includes(s.id));
+
         return (
-            <div className="manage-specialty-container">
-                <div className="manage-specialty-title"><FormattedMessage id="manage-specialty.title" /></div>
-                <div className="add-new-specialty row">
-                    <div className="col-6 form-group">
-                        <label><FormattedMessage id="manage-specialty.name" /></label>
-                        <input className="form-control" type="text"
-                            value={this.state.name}
-                            onChange={(event) => this.handleOnChangeInput(event, 'name')}
-                        />
+            <div className="apple-specialty-manage">
+                <div className="manage-header">
+                    <div className="header-info">
+                        <h1>Quản lý Chuyên khoa</h1>
+                        <span>{processedSpecialties.length} chuyên khoa</span>
                     </div>
-                    <div className="col-6 form-group">
-                        <label><FormattedMessage id="manage-specialty.image" /></label>
-                        <div className="preview-img-container">
-                            <input id="previewImg" type="file" hidden
-                                onChange={(event) => this.handleOnChangeImage(event)}
-                            />
-                            <label className="label-upload" htmlFor="previewImg">
-                                <FormattedMessage id="manage-specialty.image-place" />
-                                <i className="fas fa-upload"></i></label>
-                            <div className="preview-image"
-                                style={{ backgroundImage: `url(${this.state.previewImgURL})` }}
-                                onClick={() => this.openPreviewImage()}
-                            ></div>
-                        </div>
-                    </div>
-                    <div className="col-12">
-                        <MdEditor
-                            style={{ height: '300px' }}
-                            renderHTML={text => mdParser.render(text)}
-                            onChange={this.handleEditorChange}
-                            value={this.state.descriptionMarkdown}
-                        />
-                    </div>
-                    <div className="col-12">
-                        <button className="btn-save-specialty"
-                            onClick={() => this.handleSaveNewSpecialty()}
-                        >
-                            <FormattedMessage id="manage-specialty.save" />
+                    <div className="header-btns">
+                        <button className="btn-add" onClick={this.handleAddNewSpecialty}>
+                            <i className="fas fa-plus"></i> Thêm chuyên khoa
                         </button>
                     </div>
                 </div>
 
-                {this.state.isOpen === true &&
-                    <Lightbox
-                        mainSrc={this.state.previewImgURL}
-                        onCloseRequest={() => this.setState({ isOpen: false })}
-                    />
-                }
+                <div className="manage-toolbar">
+                    <div className="search-wrapper">
+                        <i className="fas fa-search"></i>
+                        <input 
+                            type="text" 
+                            placeholder="Tìm kiếm theo tên chuyên khoa..." 
+                            value={searchTerm}
+                            onChange={(e) => this.setState({ searchTerm: e.target.value, currentPage: 1 })}
+                        />
+                    </div>
+                </div>
+
+                <div className="table-wrapper">
+                    <table className="clean-table">
+                        <thead>
+                            <tr>
+                                <th className="check-col">
+                                    <input 
+                                        type="checkbox" 
+                                        checked={isAllSelected}
+                                        onChange={() => this.handleSelectAll(displaySpecialties)}
+                                    />
+                                </th>
+                                <th className="id-col">ID</th>
+                                <th className="name-col">Chuyên khoa</th>
+                                <th className="actions-col">
+                                    {selectedSpecialties.length > 0 ? (
+                                        <div className="header-bulk-actions">
+                                            <button className="btn-cancel-select" onClick={() => this.setState({ selectedSpecialties: [] })}>
+                                                <i className="fas fa-times"></i>
+                                            </button>
+                                            <button className="btn-bulk-delete" onClick={this.handleBulkDelete}>
+                                                <i className="fas fa-trash-alt"></i>
+                                                <span>{selectedSpecialties.length}</span>
+                                            </button>
+                                        </div>
+                                    ) : "Hành động"}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {displaySpecialties.map((item, index) => {
+                                let isSelected = selectedSpecialties.includes(item.id);
+                                return (
+                                    <tr key={item.id} className={isSelected ? 'selected-row' : ''}>
+                                        <td className="check-col">
+                                            <input 
+                                                type="checkbox" 
+                                                checked={isSelected}
+                                                onChange={() => this.handleSelectSpecialty(item.id)}
+                                            />
+                                        </td>
+                                        <td className="id-col">#{item.id}</td>
+                                        <td>
+                                            <div className="specialty-cell">
+                                                <div className="specialty-image">
+                                                    <img src={item.image} alt="specialty" />
+                                                </div>
+                                                <div className="specialty-info">
+                                                    <div className="specialty-name">{item.name}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div className="action-btns">
+                                                <button className="edit" onClick={() => this.handleEditSpecialty(item)}><i className="fas fa-pencil-alt"></i></button>
+                                                <button className="delete" onClick={() => {
+                                                    this.setState({ specialtyToForceDelete: item, showBulkDeleteConfirm: true, isForceDelete: false });
+                                                }}><i className="fas fa-trash"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div className="pagination-bar">
+                    <button disabled={currentPage === 1} onClick={() => this.setState({ currentPage: currentPage - 1 })}><i className="fas fa-chevron-left"></i></button>
+                    <span>{currentPage} / {totalPages || 1}</span>
+                    <button disabled={currentPage === totalPages} onClick={() => this.setState({ currentPage: currentPage + 1 })}><i className="fas fa-chevron-right"></i></button>
+                </div>
+
+                <ModalManageSpecialty 
+                    isOpen={isModalOpen}
+                    action={action}
+                    currentSpecialty={specialtyEdit}
+                    toggleFromParent={() => {
+                        this.setState({ isModalOpen: false });
+                    }}
+                    saveSpecialty={this.handleSaveSpecialty}
+                />
+
+                <div style={{ display: 'none' }}>
+                    {this.handleDeleteSpecialty = async (specialty, force = false) => {
+                        try {
+                            let res = await deleteSpecialtyService(specialty.id, force);
+                            if (res && res.errCode === 0) {
+                                this.setState({
+                                    selectedSpecialties: this.state.selectedSpecialties.filter(id => id !== specialty.id),
+                                    showBulkDeleteConfirm: false,
+                                    specialtyToForceDelete: null,
+                                    isForceDelete: false
+                                });
+                                await this.getAllSpecialties();
+                                toast.success('Xóa chuyên khoa thành công!');
+                            } else if (res && res.errCode === 5) {
+                                this.setState({
+                                    showBulkDeleteConfirm: true,
+                                    specialtyToForceDelete: specialty,
+                                    isForceDelete: true
+                                });
+                            } else {
+                                toast.error(res.errMessage);
+                            }
+                        } catch (error) {
+                            console.log(error);
+                        }
+                    }}
+                </div>
+
+                {/* CONFIRM DELETE POPUP */}
+                {this.state.showBulkDeleteConfirm && (
+                    <div className="apple-confirm-overlay">
+                        <div className="apple-confirm-popup">
+                            <div className="popup-title">
+                                {this.state.isForceDelete ? "Cảnh báo dữ liệu!" : (this.state.specialtyToForceDelete ? "Xóa chuyên khoa?" : `Xóa ${selectedSpecialties.length} chuyên khoa?`)}
+                            </div>
+                            <div className="popup-desc">
+                                {this.state.isForceDelete ? 
+                                    "Chuyên khoa này đang có các bác sĩ đang công tác. Bạn có chắc chắn muốn xóa mềm?" : 
+                                    "Những dữ liệu được chọn sẽ bị xóa khỏi hệ thống. Hành động này không thể hoàn tác."}
+                            </div>
+                            <div className="popup-actions">
+                                <button className="btn-cancel" onClick={this.handleCancelBulkDelete}>Hủy</button>
+                                <button className="btn-delete" onClick={() => {
+                                    if (this.state.specialtyToForceDelete) {
+                                        this.handleDeleteSpecialty(this.state.specialtyToForceDelete, true);
+                                    } else {
+                                        this.confirmBulkDelete(this.state.isForceDelete);
+                                    }
+                                }}>Xác nhận xóa</button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
-        )
+        );
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        // language: state.app.language,
-        // // ManageSpecialty: state.admin.ManageSpecialty
+const mapStateToProps = state => ({
+    language: state.app.language,
+});
 
-    };
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-
-        // getManageSpecialty: (id) => dispatch(action.getManageSpecialty(id))
-    };
-};
-
-// import { withRouter } from 'react-router'; // hoặc 'react-router-dom'
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ManageSpecialty));
-
+export default withSocket(connect(mapStateToProps)(ManageSpecialty));

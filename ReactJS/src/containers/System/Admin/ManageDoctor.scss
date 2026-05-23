@@ -1,313 +1,179 @@
-$apple-blue: #0071e3;
-$apple-bg: #f5f5f7;
-$apple-black: #1d1d1f;
-$apple-gray: #86868b;
-.manage-doctor{
-    background: $apple-bg;
-    padding: 40px 15% 80px; // Đưa padding ra ngoài cùng để căn giữa toàn bộ trang
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-    .more_info, 
-    .more_info_extra, 
-    .manage-doctor-editor {
-        background: #ffffff;
-        padding: 30px;
-        border-radius: 24px; // Thống nhất bo góc lớn
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+.manage-doctor-container {
+    padding: 30px;
+    background-color: transparent;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    color: #1d1d1f;
+    animation: fadeIn 0.4s ease;
+
+    .manage-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         margin-bottom: 24px;
-        border: 1px solid rgba(0, 0, 0, 0.05);
-    }
-    .manage-doctor-container {
-    .manage-doctor-title {
-        font-size: 28px;
-        font-weight: 700;
-        color: $apple-black;
-        margin-bottom: 32px;
-        letter-spacing: -0.5px;
-        text-align: center;
+        padding: 0 10px;
+
+        .header-info {
+            h1 {
+                font-size: 28px;
+                font-weight: 700;
+                letter-spacing: -0.022em;
+                margin: 0;
+            }
+
+            span {
+                font-size: 15px;
+                color: #86868b;
+                font-weight: 400;
+            }
+        }
     }
 
-    
-
-    .more_info {
+    .doctor-main-layout {
         display: flex;
-        gap: 24px;
-        .content-left { flex: 2; }
-        .content-right { flex: 1; }
-        textarea.form-control { height: 100px; resize: none; }
-    }
+        flex-direction: column;
+        gap: 30px;
+        flex: 1;
 
-    /* Định dạng Label & Input */
-    label {
-        font-size: 13px;
-        font-weight: 600;
-        color: $apple-gray;
-        margin-bottom: 8px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        display: block;
-    }
+        // Top Section: Info Cards Grid
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+            gap: 30px;
 
-    .form-control {
-        height: 42px !important;
-        background-color: $apple-bg !important;
-        border: 2px solid transparent !important;
-        border-radius: 12px !important;
-        padding: 0 15px !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            .info-card {
+                &.full-width {
+                    grid-column: 1 / -1;
+                }
+                background: rgba(255, 255, 255, 0.7);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                border-radius: 12px;
+                border: 1px solid rgba(255, 255, 255, 0.4);
+                padding: 24px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+                transition: all 0.3s;
 
-        &:focus {
-            background-color: #ffffff !important;
-            border-color: $apple-blue !important;
-            box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1) !important;
-        }
-    }
-
-    /* === Tùy chỉnh React Select đồng bộ === */
-    .apple-select__control {
-        background-color: $apple-bg !important;
-        border: 2px solid transparent !important;
-        border-radius: 12px !important;
-        min-height: 42px !important;
-        height: 42px !important;
-        box-shadow: none !important;
-
-        &--is-focused {
-            background-color: #fff !important;
-            border-color: $apple-blue !important;
-            box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1) !important;
-        }
-    }
-
-    .apple-select__indicator-separator { display: none; }
-    .apple-select__menu {
-        border-radius: 12px !important;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
-    }
-
-    /* Nút Save/Edit kiểu Pill chuẩn Apple */
-    .save-content {
-        display: flex;
-        justify-content: center;
-        padding-top: 10px;
-
-        .btn-save {
-            min-width: 120px;
-            height: 44px;
-            background: $apple-blue;
-            color: #fff;
-            border: none;
-            border-radius: 999px;
-            font-weight: 600;
-            font-size: 15px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-
-            &:hover {
-                background: #005bb5;
-                transform: scale(1.02);
-            }
-
-            &:active {
-                transform: scale(0.96);
-            }
-        }
-    }
-}
-.more_info_extra {
-    .form-group {
-        margin-bottom: 20px;
-
-        label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #86868b;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        // Tùy chỉnh input text (Clinic, Address, Note)
-        .form-control {
-            height: 42px !important; // Khớp độ cao với Select
-            background-color: #f5f5f7 !important;
-            border: 2px solid transparent !important;
-            border-radius: 12px !important;
-            padding: 0 15px !important;
-            font-size: 15px !important;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-
-            &:focus {
-                background-color: #ffffff !important;
-                border-color: #0071e3 !important;
-                box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1) !important;
-                outline: none !important;
-            }
-        }
-    }
-
-    /* Tùy chỉnh các thanh Select (Price, Payment, Province) */
-    .apple-select__control {
-        background-color: #f5f5f7 !important;
-        border: 2px solid transparent !important;
-        border-radius: 12px !important;
-        min-height: 42px !important;
-        height: 42px !important;
-        box-shadow: none !important;
-        cursor: pointer;
-        transition: all 0.3s ease !important;
-
-        &--is-focused {
-            background-color: #ffffff !important;
-            border-color: #0071e3 !important;
-            box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1) !important;
-        }
-    }
-
-    .apple-select__placeholder {
-        color: #86868b !important;
-        font-size: 15px;
-    }
-
-    .apple-select__single-value {
-        color: #1d1d1f !important;
-        font-size: 15px;
-    }
-
-    .apple-select__indicator-separator {
-        display: none; // Bỏ gạch dọc cho tinh tế
-    }
-
-    .apple-select__menu {
-        border-radius: 12px !important;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
-        border: 1px solid rgba(0,0,0,0.05);
-    }
-}
-
-.manage-doctor-editor {
-    background: #ffffff;
-    border-radius: 24px; // Bo góc lớn đồng bộ với các khối trên
-    overflow: hidden; // Quan trọng: Để Editor không đè lên góc bo của khối cha
-    border: 1px solid rgba(0, 0, 0, 0.05); // Viền siêu mảnh
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-    margin-top: 24px;
-    margin-bottom: 32px;
-
-    /* Tùy chỉnh trực tiếp vào class của thư viện MdEditor */
-    .rc-md-editor {
-        border: none !important; // Bỏ viền mặc định thô cứng
-        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-
-        // Tùy chỉnh thanh công cụ (Toolbar)
-        .rc-md-navigation {
-            background-color: #f5f5f7 !important; // Màu xám nhạt Apple
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
-            padding: 8px 0;
-            
-            .button {
-                color: #424245 !important;
                 &:hover {
-                    color: #0071e3 !important; // Hover hiện màu xanh Apple
+                    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+                    transform: translateY(-2px);
+                }
+
+                .card-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 20px;
+
+                    .card-title {
+                        font-size: 16px;
+                        font-weight: 700;
+                        color: #1d1d1f;
+                        text-transform: uppercase;
+                        letter-spacing: 0.05em;
+                    }
+
+                    i { color: #0071e3; font-size: 18px; }
+                }
+
+                .card-body {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 16px;
+
+                    .input-group-apple {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 8px;
+
+                        label {
+                            font-size: 13px;
+                            font-weight: 600;
+                            color: #86868b;
+                        }
+
+                        input, textarea {
+                            width: 100%;
+                            border: none;
+                            background: #f5f5f7;
+                            padding: 12px 16px;
+                            border-radius: 12px;
+                            font-size: 15px;
+                            outline: none;
+                            transition: all 0.2s;
+                            &:focus { background: #e5e5ea; box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1); }
+                        }
+                        textarea { resize: none; min-height: 80px; }
+                    }
                 }
             }
         }
 
-        // Tùy chỉnh vùng nhập liệu và preview
-        .editor-container {
-            .section {
-                background-color: #ffffff;
+        // Bottom Section: Markdown Editor
+        .editor-section {
+            background: #ffffff;
+            border-radius: 24px;
+            border: 1px solid #d2d2d7;
+            padding: 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+            .section-header {
+                margin-bottom: 24px;
+                h2 { font-size: 20px; font-weight: 700; margin: 0; }
+                p { font-size: 14px; color: #86868b; margin: 4px 0 0 0; }
+            }
+
+            .custom-md-editor {
+                border: 1px solid #e5e5ea;
+                border-radius: 16px;
+                overflow: hidden;
+                height: 500px !important;
+
+                .rc-md-navigation {
+                    background: #f5f5f7;
+                    border-bottom: 1px solid #e5e5ea;
+                }
             }
         }
-
-        // Thanh trạng thái dưới cùng (nếu có)
-        .section-footer {
-            background-color: #f5f5f7 !important;
-            color: #86868b;
-        }
-    }
-}
-
-.save-content {
-    display: flex;
-    justify-content: center;
-    padding-bottom: 30px;
-
-    button {
-        border-radius: 999px;
-        padding: 10px 28px;
-        font-weight: 500;
-        border: none;
-        height: 37px;
-        width: 88px;
-        padding: 0;
-        border-radius: 999px; // pill button
-        font-size: 14px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s ease;
-
-        &:hover {
-            opacity: 0.8;
-            background: #005bb5;
-        }
-
-        &:active {
-            transform: scale(0.96);
-        }
-    }
-}
-}
-.apple-select {
-    &__control {
-        border-radius: 12px !important;
-        border: 1px solid #e5e5e7 !important;
-        min-height: 44px;
-        box-shadow: none !important;
-
-        &:hover {
-            border-color: #0071e3 !important;
-        }
     }
 
-    &__control--is-focused {
-        border-color: #0071e3 !important;
-        box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15) !important;
-    }
+    .footer-actions {
+        margin-top: 30px;
+        padding-top: 24px;
+        border-top: 1px solid #f2f2f7;
+        display: flex;
+        justify-content: flex-end;
+        gap: 16px;
 
-    &__value-container {
-        padding: 0 10px;
-        font-size: 14px;
-    }
-
-    &__placeholder {
-        color: #6e6e73;
-    }
-
-    &__indicator-separator {
-        display: none;
-    }
-
-    &__menu {
-        border-radius: 12px;
-        overflow: hidden;
-        border: 1px solid #e5e5e7;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-    }
-
-    &__option {
-        padding: 10px 12px;
-        border-radius: 8px;
-
-        &--is-focused {
-            background: #f5f5f7;
-        }
-
-        &--is-selected {
+        .btn-save-doctor {
             background: #0071e3;
-            color: #fff;
+            color: white;
+            border: none;
+            padding: 14px 48px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 113, 227, 0.2);
+
+            &:hover {
+                background: #0077ed;
+                transform: translateY(-1px);
+                box-shadow: 0 8px 20px rgba(0, 113, 227, 0.3);
+            }
+
+            &:active { transform: translateY(0); }
+            &.update { background: #34c759; box-shadow: 0 4px 12px rgba(52, 199, 89, 0.2); &:hover { background: #30b753; } }
         }
     }
 }
+
+// Reuse global react-select-menu fix
+.react-select__menu {
+    z-index: 9999 !important;
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

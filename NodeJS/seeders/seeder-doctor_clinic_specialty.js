@@ -7,12 +7,9 @@ module.exports = {
 
         return queryInterface.bulkInsert('doctor_clinic_specialty', [
             {
-                statusId: 'S1',
                 doctorId: 2,
-                patientId: 3,
-                date: '1713024000000',
-                timeType: 'T1',
-                token: 'random-token-123',
+                clinicId: 1,
+                specialtyId: 1,
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },

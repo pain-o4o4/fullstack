@@ -1,17 +1,14 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { Route, Switch } from 'react-router-dom';
-import { ConnectedRouter as Router } from 'connected-react-router';
-import { history } from '../redux'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { IntlProvider } from 'react-intl';
-import { language } from '../utils'
 
 import {
-    userIsAdmin, userIsDoctor,
-    userIsNotAuthenticated,
-    userIsAuthenticated,
-    userIsPatientOrAdmin
+    UserIsAdmin, UserIsDoctor,
+    UserIsNotAuthenticated,
+    UserIsAuthenticated,
+    UserIsPatientOrAdmin
 }
     from '../hoc/authentication';
 import { path } from '../utils'
@@ -19,32 +16,41 @@ import { path } from '../utils'
 import Home from '../routes/Home';
 import Login from './Auth/Login';
 import Register from './Auth/Register.js';
+import RegisterVerify from './Auth/RegisterVerify.js';
 import System from '../routes/System';
-import Admin from '../routes/Admin';
 import HomePage from './HomePage/HomePage.js'
 import Doctor from '../routes/Doctor'
 import { CustomToastCloseButton } from '../components/CustomToast';
 import ConfirmModal from '../components/ConfirmModal';
 import CustomScrollbars from '../components/CustomScrollbars';
 import VerifyEmail from '../containers/Patient/VerifyEmail.js';
+import ResilienceBanner from './App/ResilienceBanner';
 
 import DetailDoctor from './Patient/Doctor/DetailDoctor.js';
 import DetailSpecialty from './Patient/Specialty/DetailSpecialty.js';
 import DetailClinic from './Patient/Clinic/DetailClinic.js';
+import DetailHandbook from './Patient/Handbook/DetailHandbook.js';
 
 import AllSpecialty from '../containers/Navigation/AllSpecialty.js';
 import AllClinic from '../containers/Navigation/AllClinics.js';
 import AllDoctor from '../containers/Navigation/AllDoctor.js';
+import AllHandbook from '../containers/Navigation/AllHandbook.js';
+import ProcessBooking from '../containers/Navigation/ProcessBooking.js';
+import SelectService from '../containers/Navigation/SelectService.js';
 
-import PatientSettings from './HomePage/SubMenuForUser/PatientSettings';
 import MyBooking from './HomePage/SubMenuForUser/MyBooking';
 import BookingHistory from './HomePage/SubMenuForUser/BookingHistory';
+import DetailSchedulePatient from './HomePage/SubMenuForUser/DetailSchedulePatient';
 import Payment from '../containers/Patient/Doctor/Modal/Payment';
+import AISupportPage from './HomePage/AISupportPage';
+// import ChatBot from './ChatBot/ChatBot';
+import PrivacyPolicy from './HomePage/Legal/PrivacyPolicy';
+import TermsOfUse from './HomePage/Legal/TermsOfUse';
+
 class App extends Component {
     state = {
         bootstrapped: false
     };
-
 
     handlePersistorState = () => {
         const { persistor } = this.props;
@@ -79,7 +85,7 @@ class App extends Component {
     }
 
     render() {
-        let { language } = this.props;
+        let { language, isLoggedIn } = this.props;
         if (!this.state.bootstrapped) {
             return null;
         }
@@ -87,43 +93,52 @@ class App extends Component {
         return (
             <Fragment>
 
-                <Router history={history}>
+                <BrowserRouter>
                     <div className="main-container">
+                        <ResilienceBanner />
                         <ConfirmModal />
-                        {/* {this.props.isLoggedIn && <Header />} */}
                         <div className="content-container">
                             <CustomScrollbars style={{ height: '100vh', width: '100%' }}>
-                                <Switch>
-                                    <Route path={path.HOME} exact component={(Home)} />
+                                <Routes>
+                                    <Route path={path.HOME} element={<Home />} />
 
                                     {/* //check roleId */}
-                                    <Route path={path.LOGIN} component={userIsNotAuthenticated(Login)} />
-                                    <Route path={path.REGISTER} component={userIsNotAuthenticated(Register)} />
-                                    <Route path={path.SYSTEM} component={userIsAdmin(System)} />
-                                    <Route path={path.DOCTOR} component={userIsDoctor(Doctor)} />
-                                    <Route path={path.ADMIN} component={userIsAdmin(Admin)} />
-                                    {/* <Route path={'/patient'} component={userIsPatient(PatientProfile)} /> */}
+                                    <Route path={path.LOGIN} element={<UserIsNotAuthenticated><Login /></UserIsNotAuthenticated>} />
+                                    <Route path={path.REGISTER} element={<UserIsNotAuthenticated><Register /></UserIsNotAuthenticated>} />
+                                    <Route path={path.REGISTER_VERIFY_OTP} element={<UserIsNotAuthenticated><RegisterVerify /></UserIsNotAuthenticated>} />
+                                    <Route path={path.SYSTEM + '/*'} element={<UserIsAuthenticated><System /></UserIsAuthenticated>} />
+                                    <Route path={path.DOCTOR + '/*'} element={<UserIsDoctor><Doctor /></UserIsDoctor>} />
 
-                                    //submenuforuser
-                                    <Route path={path.SETTINGS} component={userIsAuthenticated(PatientSettings)} />
-                                    <Route path={path.MY_BOOKING} component={userIsPatientOrAdmin(MyBooking)} />
-                                    <Route path={path.BOOKING_HISTORY} component={userIsPatientOrAdmin(BookingHistory)} />
+                                    {/* submenuforuser */}
+                                    {/* <Route path={path.SETTINGS} element={<UserIsAuthenticated><PatientSettings /></UserIsAuthenticated>} /> */}
+                                    <Route path={path.MY_BOOKING} element={<UserIsPatientOrAdmin><MyBooking /></UserIsPatientOrAdmin>} />
+                                    <Route path={path.DETAIL_SCHEDULE_PATIENT} element={<UserIsPatientOrAdmin><DetailSchedulePatient /></UserIsPatientOrAdmin>} />
+                                    <Route path={path.BOOKING_HISTORY} element={<UserIsPatientOrAdmin><BookingHistory /></UserIsPatientOrAdmin>} />
 
-                                    //checkmail
-                                    <Route path={path.VERIFY_EMAIL_BOOKING} component={VerifyEmail} />
-                                    <Route path={path.PAYMENT} component={userIsPatientOrAdmin(Payment)} />
-                                    //user
-                                    <Route path={path.HOMEPAGE} component={HomePage} />
-                                    <Route path={path.DETAIL_DOCTOR} component={DetailDoctor} />
-                                    <Route path={path.DETAIL_SPECIALTY} component={DetailSpecialty} />
-                                    <Route path={path.DETAIL_CLINIC} component={DetailClinic} />
+                                    {/* checkmail */}
+                                    <Route path={path.VERIFY_EMAIL_BOOKING} element={<VerifyEmail />} />
+                                    <Route path={path.PAYMENT} element={<UserIsPatientOrAdmin><Payment /></UserIsPatientOrAdmin>} />
 
-                                    <Route path={path.ALL_SPECIALTY} component={AllSpecialty} />
-                                    <Route path={path.ALL_CLINIC} component={AllClinic} />
-                                    <Route path={path.ALL_DOCTOR} component={AllDoctor} />
+                                    {/* user */}
+                                    <Route path={path.HOMEPAGE} element={<HomePage />} />
+                                    <Route path={path.DETAIL_DOCTOR} element={<DetailDoctor />} />
+                                    <Route path={path.DETAIL_SPECIALTY} element={<DetailSpecialty />} />
+                                    <Route path={path.DETAIL_CLINIC} element={<DetailClinic />} />
+                                    <Route path={path.DETAIL_HANDBOOK} element={<DetailHandbook />} />
+
+                                    <Route path={path.ALL_SPECIALTY} element={<AllSpecialty />} />
+                                    <Route path={path.ALL_CLINIC} element={<AllClinic />} />
+                                    <Route path={path.ALL_DOCTOR} element={<AllDoctor />} />
+                                    <Route path={path.ALL_HANDBOOK} element={<AllHandbook />} />
+                                    <Route path={path.SELECT_SERVICE} element={<SelectService />} />
+                                    <Route path={path.PROCESS_BOOKING} element={<ProcessBooking />} />
+
+                                    <Route path={path.AI_SUPPORT} element={<UserIsAuthenticated><AISupportPage /></UserIsAuthenticated>} />
+                                    <Route path={path.PRIVACY_POLICY} element={<PrivacyPolicy />} />
+                                    <Route path={path.TERMS_OF_USE} element={<TermsOfUse />} />
 
 
-                                </Switch>
+                                </Routes>
                             </CustomScrollbars>
                         </div>
                         <ToastContainer
@@ -137,8 +152,9 @@ class App extends Component {
                             draggable
                             pauseOnHover
                         />
+                        {/* {isLoggedIn && <ChatBot />} */}
                     </div>
-                </Router>
+                </BrowserRouter>
             </Fragment>
         )
     }

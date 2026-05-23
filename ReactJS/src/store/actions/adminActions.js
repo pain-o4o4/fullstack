@@ -6,9 +6,14 @@ import {
     postInforDoctorService, getDetailDoctorByIdService,
     getAllSpecialtyService, getAllClinicService,
     getDetailClinicByIdService, getDetailSpecialtyByIdService,
-    getAllAppointmentsByIdService
+    getAllAppointmentsByIdService, getAllHandbookService,
+    getDetailHandbookByIdService, getHistoryAppointmentByIdService,
+    postChatWithAIService
 } from '../../services/userService';
 import { toast } from 'react-toastify';
+import { LANGUAGES } from '../../utils';
+import { updateChatHistory, clearChatHistoryAction, postChatWithAIFail } from './chatActions';
+
 export const fetchGenderStart = () => {
     return async (dispatch, getState) => {
         dispatch({
@@ -100,17 +105,17 @@ export const createNewUser = (data) => {
             let res = await createNewUsersService(data);
             console.log('res', res)
             if (res && res.errCode === 0) {
-                toast.success('Create a new user succeed!');
+                console.log('Create a new user succeed!');
                 dispatch(saveUserSuccess(res.data));
                 dispatch(fetchAllUserStart());
             } else {
                 dispatch(saveUserFail());
-                toast.error('Create a new user fail!');
+                console.log('Create a new user fail!');
             }
         } catch (e) {
             dispatch(saveUserFail());
             console.log('fetchGenderStart error: ', e);
-            toast.error('Create a new user fail!');
+            console.log('Create a new user fail!');
         }
     };
 };
@@ -159,17 +164,17 @@ export const deleteUser = (userId) => {
             let res = await deleteUserService(userId);
             console.log('res', res)
             if (res && res.errCode === 0) {
-                toast.success('Delete user succeed!');
+                console.log('Delete user succeed!');
                 dispatch(deleteUserSuccess());
                 dispatch(fetchAllUserStart());
             } else {
                 dispatch(deleteUserFail());
-                toast.error('Delete user fail!');
+                console.log('Delete user fail!');
             }
         } catch (e) {
             dispatch(deleteUserFail());
             console.log('deleteUserFail error: ', e);
-            toast.error('Delete user fail!');
+            console.log('Delete user fail!');
         }
     };
 };
@@ -188,17 +193,17 @@ export const editUser = (data) => {
             console.log('res editUserService', res)
             console.log('>>> Check action type:', actionTypes.EDIT_USER_SUCCESS);
             if (res && res.errCode === 0) {
-                toast.success('editUserSuccess user succeed!');
+                console.log('editUserSuccess user succeed!');
                 dispatch(editUserSuccess());
                 dispatch(fetchAllUserStart());
             } else {
                 dispatch(editUserFail());
-                toast.error('editUserFail user fail!');
+                console.log('editUserFail user fail!');
             }
         } catch (e) {
             dispatch(editUserFail());
             console.log('editUserFail error: ', e);
-            toast.error('editUserFail user fail!');
+            console.log('editUserFail user fail!');
         }
     };
 };
@@ -269,18 +274,19 @@ export const saveDetailDoctor = (data) => {
                 dispatch({
                     type: actionTypes.POST_DETAIL_DOCTORS_SUCCESS,
                 });
-                toast.success('Update detail doctor succeed!');
+                console.log('Cập nhật thông tin bác sĩ thành công!');
                 dispatch(fetchAllDoctors());
                 dispatch(fecthAllSpecialties())
             } else {
                 dispatch({
                     type: actionTypes.POST_DETAIL_DOCTORS_FAIL
                 });
-                toast.error('Update detail doctor fail!');
+                // Hiện thị đúng errMessage từ server (VD: thông báo chặn khi đổi Bệnh viện)
+                console.log(res?.errMessage || 'Cập nhật thông tin bác sĩ thất bại!');
             }
         } catch (e) {
             console.error('saveDetailDoctors error:', e);
-            toast.error('Update detail doctor fail!');
+            console.log('Cập nhật thông tin bác sĩ thất bại!');
             dispatch({
                 type: actionTypes.POST_DETAIL_DOCTORS_FAIL
             });
@@ -311,6 +317,29 @@ export const getDetailDoctor = (id) => {
         }
     }
 }
+
+export const fetchAllHandbooks = () => {
+    return async (dispatch, getState) => {
+        try {
+            let res = await getAllHandbookService();
+            if (res && res.errCode === 0) {
+                dispatch({
+                    type: actionTypes.FETCH_ALL_HANDBOOKS_SUCCESS,
+                    dataHandbooks: res.data
+                });
+            } else {
+                dispatch({
+                    type: actionTypes.FETCH_ALL_HANDBOOKS_FAILED
+                });
+            }
+        } catch (e) {
+            console.log('fetchAllHandbooks error: ', e);
+            dispatch({
+                type: actionTypes.FETCH_ALL_HANDBOOKS_FAILED
+            });
+        }
+    };
+};
 export const fetchAllScheduleTime = () => {
     return async (dispatch, getState) => {
         try {
@@ -403,18 +432,18 @@ export const fecthAllClinics = () => {
             let res = await getAllClinicService();
             if (res && res.errCode === 0) {
                 dispatch({
-                    type: actionTypes.FETCH_ALL_CLINIC_SUCCESS,
+                    type: actionTypes.FETCH_ALL_CLINICS_SUCCESS,
                     data: res.data
                 })
             } else {
                 dispatch({
-                    type: actionTypes.FETCH_ALL_CLINIC_FAIL
+                    type: actionTypes.FETCH_ALL_CLINICS_FAILED
                 })
             }
         } catch (e) {
             console.log('fetchSpecialty error: ', e);
             dispatch({
-                type: actionTypes.FETCH_ALL_CLINIC_FAIL
+                type: actionTypes.FETCH_ALL_CLINICS_FAILED
             })
         }
     }
@@ -485,6 +514,30 @@ export const getAllAppointmentsById = (id) => {
         }
     }
 }
+
+export const getHistoryAppointmentById = (id) => {
+    return async (dispatch, getState) => {
+        try {
+            let res = await getHistoryAppointmentByIdService(id);
+            if (res && res.errCode === 0) {
+                dispatch({
+                    type: actionTypes.FETCH_HISTORY_APPOINTMENT_SUCCESS,
+                    data: res.data
+                })
+            } else {
+                dispatch({
+                    type: actionTypes.FETCH_HISTORY_APPOINTMENT_FAILED,
+                })
+            }
+        } catch (e) {
+            console.log('FETCH_HISTORY_APPOINTMENT_FAILED: ', e)
+            dispatch({
+                type: actionTypes.FETCH_HISTORY_APPOINTMENT_FAILED,
+            })
+        }
+    }
+}
+
 // adminAction.js
 // adminAction.js
 export const saveBookingData = (data, callback) => {
@@ -501,3 +554,85 @@ export const saveBookingData = (data, callback) => {
         }
     }
 }
+
+export const fetchDetailHandbookById = (id) => {
+    return async (dispatch, getState) => {
+        try {
+            let res = await getDetailHandbookByIdService(id);
+            if (res && res.errCode === 0) {
+                dispatch({
+                    type: actionTypes.FETCH_DETAIL_HANDBOOK_SUCCESS,
+                    dataHandbook: res.data
+                });
+            } else {
+                dispatch({
+                    type: actionTypes.FETCH_DETAIL_HANDBOOK_FAILED
+                });
+            }
+        } catch (e) {
+            console.log('fetchDetailHandbookById error: ', e);
+            dispatch({
+                type: actionTypes.FETCH_DETAIL_HANDBOOK_FAILED
+            });
+        }
+    };
+};
+
+export const postChatWithAI = (userQuery) => {
+    return async (dispatch, getState) => {
+        try {
+            let currentHistory = getState().admin.chatHistory || [];
+            let newUserMsg = { role: 'user', content: userQuery };
+            let updatedHistoryWithUser = [...currentHistory, newUserMsg];
+
+            dispatch(updateChatHistory(updatedHistoryWithUser));
+
+            const language = getState().app.language;
+            const userInfo = getState().user.userInfo;
+
+            // Lấy ID người dùng, nếu chưa đăng nhập thì dùng ID mặc định hoặc random
+            const userId = userInfo ? userInfo.id : 'guest_' + Math.random().toString(36).substr(2, 9);
+            const sessionId = 'session_' + userId; // Dùng 1 session mặc định cho người dùng
+
+            let res = await postChatWithAIService({
+                userQuery: userQuery,
+                language: language,
+                userId: userId,
+                sessionId: sessionId
+            });
+
+            if (res && res.errCode === 0) {
+                let newAiMsg = { role: 'assistant', content: res.data };
+                let finalHistory = [...updatedHistoryWithUser, newAiMsg];
+
+                localStorage.setItem('CHAT_HISTORY', JSON.stringify(finalHistory));
+
+                dispatch(updateChatHistory(finalHistory));
+            } else {
+                const errorMsgContent = language === LANGUAGES.VI
+                    ? 'Hệ thống AI đang bận hoặc hết hạn mức. Vui lòng thử lại sau!'
+                    : 'AI system is busy or quota exceeded. Please try again later!';
+
+                let errorMsg = { role: 'assistant', content: errorMsgContent };
+                dispatch(updateChatHistory([...updatedHistoryWithUser, errorMsg]));
+            }
+        } catch (e) {
+            console.log('postChatWithAI error: ', e);
+            const language = getState().app.language;
+            const errorMsgContent = language === LANGUAGES.VI
+                ? 'Đã có lỗi xảy ra khi kết nối tới AI.'
+                : 'An error occurred while connecting to AI.';
+
+            let errorMsg = { role: 'assistant', content: errorMsgContent };
+            dispatch(updateChatHistory([...getState().admin.chatHistory, errorMsg]));
+            dispatch(postChatWithAIFail(errorMsgContent));
+        }
+    };
+};
+
+export const clearChatHistory = () => {
+    return (dispatch) => {
+        localStorage.removeItem('CHAT_HISTORY');
+        dispatch(clearChatHistoryAction());
+    };
+};

@@ -1,43 +1,46 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { UserIsAdmin, UserIsPatientOrAdmin } from '../hoc/authentication';
+
 import UserManage from '../containers/System/UserManage';
-import UserRedux from '../containers/System/Admin/UserRedux';
 import ManageDoctor from '../containers/System/Admin/ManageDoctor';
-// import RegisterPackageGroupOrAcc from '../containers/System/RegisterPackageGroupOrAcc';
-import Header from '../containers/Header/Header';
+import SystemLayout from '../containers/System/SystemLayout';
 import ManageSpecialty from '../containers/System/Specialty/ManageSpecialty';
 import ManageClinic from '../containers/System/Clinic/ManageClinic';
 import ManageSchedule from '../containers/System/Doctor/ManageSchedule';
+import PatientProfile from '../containers/System/Patient/PatientProfile';
+import ManageHandbook from '../containers/System/Handbook/ManageHandbook';
+import ManageQuickReply from '../containers/System/Admin/ManageQuickReply';
+import ManageEmailTemplate from '../containers/System/Admin/ManageEmailTemplate';
+import ManageBooking from '../containers/System/Admin/ManageBooking';
 
 class System extends Component {
 
     render() {
-        // {this.props.isLoggedIn && <Header />}
+        const { isLoggedIn } = this.props;
 
-        const { systemMenuPath, isLoggedIn } = this.props;
-        // if (isLoggedIn && userInfo && userInfo.roleId !== 'R1') {
-        //     return <Redirect to="/home" />; // Đá về trang chủ ngay lập tức
-        // }
         return (
             <React.Fragment>
-                {isLoggedIn && <Header />}
-                <div className="system-container">
-                    <div className="system-list">
-
-                        <Switch>
-                            <Route path="/system/user-manage" component={UserManage} />
-                            <Route path="/system/crud-redux" component={UserRedux} />
-                            <Route path="/system/manage-doctor" component={ManageDoctor} />
-                            <Route path="/system/manage-specialty" component={ManageSpecialty} />
-                            <Route path="/system/manage-clinic" component={ManageClinic} />
-                            <Route path="/system/manage-schedule" component={ManageSchedule} />
-
-
-                            <Redirect from="/system" to="/system/user-manage" />
-                        </Switch>
-                    </div>
-                </div>
+                {isLoggedIn ? (
+                    <SystemLayout>
+                        <Routes>
+                            <Route path="user-manage" element={<UserIsAdmin><UserManage /></UserIsAdmin>} />
+                            <Route path="manage-doctor" element={<UserIsAdmin><ManageDoctor /></UserIsAdmin>} />
+                            <Route path="manage-specialty" element={<UserIsAdmin><ManageSpecialty /></UserIsAdmin>} />
+                            <Route path="manage-clinic" element={<UserIsAdmin><ManageClinic /></UserIsAdmin>} />
+                            <Route path="manage-schedule" element={<UserIsAdmin><ManageSchedule /></UserIsAdmin>} />
+                            <Route path="manage-handbook" element={<UserIsAdmin><ManageHandbook /></UserIsAdmin>} />
+                            <Route path="manage-quick-reply" element={<UserIsAdmin><ManageQuickReply /></UserIsAdmin>} />
+                            <Route path="manage-email-template" element={<UserIsAdmin><ManageEmailTemplate /></UserIsAdmin>} />
+                            <Route path="manage-booking" element={<UserIsAdmin><ManageBooking /></UserIsAdmin>} />
+                            <Route path="patient-profile" element={<UserIsPatientOrAdmin><PatientProfile /></UserIsPatientOrAdmin>} />
+                            <Route path="*" element={<Navigate to="patient-profile" replace />} />
+                        </Routes>
+                    </SystemLayout>
+                ) : (
+                    <Navigate to="/login" replace />
+                )}
             </React.Fragment>
         );
     }
@@ -47,15 +50,7 @@ const mapStateToProps = state => {
     return {
         systemMenuPath: state.app.systemMenuPath,
         isLoggedIn: state.user.isLoggedIn,
-        // userInfo: state.user.userInfo
-
     };
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(System);
+export default connect(mapStateToProps)(System);

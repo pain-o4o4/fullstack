@@ -1,38 +1,135 @@
 // src/config/permissions.js
-const ROLES = {
+
+export const ROLES = {
     ADMIN: 'R1',
     DOCTOR: 'R2',
     PATIENT: 'R3'
 };
 
-const PERMISSIONS = {
+// ==========================================
+// DANH SÁCH API CÔNG KHAI (KHÔNG YÊU CẦU ĐĂNG NHẬP)
+// ==========================================
+export const PUBLIC_PATHS = [
+    // Auth & Utilities
+    '/api/login',
+    '/api/register',
+    '/api/refresh-token',
+    '/api/logout',
+    '/api/allcode',
+    '/api/search',
+
+    // Xem thông tin (Trang chủ & Chi tiết)
+    '/api/top-doctor-home',
+    '/api/get-all-doctors',
+    '/api/get-detail-doctor-by-id',
+    '/api/get-schedule-doctor-by-date',
+    '/api/get-extra-infor-doctor-by-id',
+    '/api/get-profile-doctor-by-id',
+
+    '/api/get-all-specialty',
+    '/api/get-detail-specialty-by-id',
+
+    '/api/get-all-clinic',
+    '/api/get-detail-clinic-by-id',
+
+    '/api/get-handbook',
+    '/api/get-detail-handbook-by-id',
+
+    // Luồng tương tác của khách vãng lai / webhook
+    '/api/verify-book-appointment',
+    '/api/payos-webhook',
+    '/api/verify-payment-status',
+    '/api/chat-with-ai',
+    '/api/get-chat-sessions',
+    '/api/get-chat-history',
+    '/api/save-chat-message',
+    '/api/get-system-statistics'
+];
+
+// ==========================================
+// DANH SÁCH PHÂN QUYỀN (CHỈ DÀNH CHO NHỮNG ROLE NÀY)
+// ==========================================
+export const PERMISSIONS = {
     [ROLES.ADMIN]: [
+        // Quản lý Users
         '/api/get-all-users',
         '/api/edit-user',
         '/api/delete-user',
         '/api/create-new-user',
-        '/api/allcode',
-        '/api/save-infor-doctor' // Admin cũng có thể sửa thông tin bác sĩ
+        '/api/update-patient',
+
+        // Quản lý Bác sĩ (Admin có thể hỗ trợ)
+        '/api/save-infor-doctor',
+        '/api/bulk-create-schedule',
+
+        // Quản lý Chuyên khoa
+        '/api/create-new-specialty',
+        '/api/delete-specialty',
+        '/api/edit-specialty',
+
+        // Quản lý Phòng khám
+        '/api/create-new-clinic',
+        '/api/delete-clinic',
+        '/api/edit-clinic',
+
+        // Quản lý Cẩm nang
+        '/api/create-new-handbook',
+        '/api/delete-handbook',
+        '/api/edit-handbook',
+        '/api/chat-with-ai',
+        '/api/send-message',
+        '/api/get-messages',
+        '/api/get-chat-history-sidebar',
+        '/api/search-users-for-chat',
+        '/api/delete-conversation',
+        '/api/mark-messages-as-read',
+        '/api/get-quick-replies',
+        '/api/save-quick-reply',
+        '/api/delete-quick-reply',
+        '/api/get-all-global-quick-replies',
+        '/api/save-global-quick-reply',
+        '/api/update-reaction',
+        '/api/get-list-booking-history',
+        '/api/update-booking',
+        '/api/update-booking-status',
+        '/api/delete-booking'
     ],
+
     [ROLES.DOCTOR]: [
         '/api/save-infor-doctor',
         '/api/bulk-create-schedule',
-        '/api/get-schedule-doctor-by-date'
+        '/api/get-list-patient-for-doctor',
+        '/api/update-booking-status',
+        '/api/chat-with-ai',
+        '/api/send-message',
+        '/api/get-messages',
+        '/api/get-chat-history-sidebar',
+        '/api/search-users-for-chat',
+        '/api/delete-conversation',
+        '/api/mark-messages-as-read',
+        '/api/get-quick-replies',
+        '/api/save-quick-reply',
+        '/api/delete-quick-reply',
+        '/api/get-all-global-quick-replies',
+        '/api/update-reaction',
+        '/api/get-list-booking-history',
+        '/api/update-booking',
+        '/api/delete-booking'
     ],
+
     [ROLES.PATIENT]: [
-        '/api/patient-book-appointment'
+        '/api/patient-book-appointment',
+        '/api/get-all-appointments-by-id',
+        '/api/get-history-appointment-by-id',
+        '/api/get-detail-schedule-patient',
+        '/api/update-patient',
+        '/api/chat-with-ai',
+        '/api/send-message',
+        '/api/get-messages',
+        '/api/get-chat-history-sidebar',
+        '/api/search-users-for-chat',
+        '/api/delete-conversation',
+        '/api/mark-messages-as-read',
+        '/api/update-reaction'
     ]
 };
-
-// Những API mà ai cũng được vào (không cần check role)
-const PUBLIC_PATHS = [
-    '/api/login',
-    '/api/top-doctor-home',
-    '/api/get-all-doctors',
-    '/api/get-detail-doctor-by-id',
-    '/api/get-extra-infor-doctor-by-id',
-    '/api/get-profile-doctor-by-id',
-    '/api/verify-book-appointment'
-];
-
-module.exports = { PERMISSIONS, PUBLIC_PATHS, ROLES };

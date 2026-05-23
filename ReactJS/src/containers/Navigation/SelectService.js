@@ -1,0 +1,328 @@
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { FormattedMessage } from 'react-intl';
+import { withRouter } from '../../components/Navigator';
+import HomeHeader from '../HomePage/HomeHeader';
+import HomeFooter from '../HomePage/HomeFooter';
+import Specialty from '../HomePage/Section/Specialty';
+import MedicalFacility from '../HomePage/Section/MedicalFacility';
+import OutStandingDoctor from '../HomePage/Section/OutStandingDoctor';
+import HandBook from '../HomePage/Section/HandBook';
+import GlobalSearch from '../../components/GlobalSearch/GlobalSearch';
+import './SelectService.scss';
+import backgroundBanner from '../../assets/images/premium_medical_banner.png';
+import * as action from '../../store/actions';
+
+const TAB_CONFIG = [
+    { id: 'all', label: 'Tất cả', icon: 'fas fa-th-large' },
+    { id: 'doctor', label: 'Đặt khám bác sĩ', icon: 'fas fa-user-md' },
+    { id: 'specialty', label: 'Đặt khám chuyên khoa', icon: 'fas fa-notes-medical' },
+    { id: 'clinic', label: 'Đặt khám bệnh viện', icon: 'fas fa-hospital' },
+];
+
+class SelectService extends Component {
+    constructor(props) {
+        super(props);
+        this.tabsRef = React.createRef();
+        this.state = {
+            activeTab: 'all',
+            currentPage: 1,
+            itemsPerPage: 10,
+        };
+    }
+
+    componentDidMount() {
+        window.scrollTo(0, 0);
+        this.props.fetchAllDoctors();
+        this.props.fecthAllSpecialties();
+        this.props.fecthAllClinics();
+    }
+
+    handleTabChange = (tabId) => {
+        this.setState({ activeTab: tabId, currentPage: 1 });
+        if (this.tabsRef.current) {
+            this.tabsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    handlePageChange = (page) => {
+        this.setState({ currentPage: page });
+        if (this.tabsRef.current) {
+            this.tabsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    renderPagination = (totalItems) => {
+        const { currentPage, itemsPerPage } = this.state;
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        if (totalPages <= 1) return null;
+
+        let pages = [];
+        const maxVisiblePages = 5;
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+        if (endPage - startPage < maxVisiblePages - 1) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            pages.push(i);
+        }
+
+        return (
+            <div className="pagination-container">
+                <button
+                    className="btn-pagination"
+                    disabled={currentPage === 1}
+                    onClick={() => this.handlePageChange(currentPage - 1)}
+                >
+                    <i className="fas fa-chevron-left"></i>
+                </button>
+
+                {startPage > 1 && <span className="pagination-ellipsis">...</span>}
+
+                {pages.map(page => (
+                    <button
+                        key={page}
+                        className={`btn-pagination ${currentPage === page ? 'active' : ''}`}
+                        onClick={() => this.handlePageChange(page)}
+                    >
+                        {page}
+                    </button>
+                ))}
+
+                {endPage < totalPages && <span className="pagination-ellipsis">...</span>}
+
+                <button
+                    className="btn-pagination"
+                    disabled={currentPage === totalPages}
+                    onClick={() => this.handlePageChange(currentPage + 1)}
+                >
+                    <i className="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        );
+    }
+
+    renderDoctorList = () => {
+        const { allDoctors, language, navigate } = this.props;
+        const { currentPage, itemsPerPage } = this.state;
+
+        if (!allDoctors || allDoctors.length === 0) return <SectionSkeleton items={4} />;
+
+        const indexOfLastItem = currentPage * itemsPerPage;
+        const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+        const currentItems = allDoctors.slice(indexOfFirstItem, indexOfLastItem);
+
+        return (
+            <div className="service-list-view">
+                <div className="list-items">
+                    {currentItems.map((item, index) => {
+                        let nameVi = `${item.positionData?.valueVi || 'Bác sĩ'}, ${item.lastName} ${item.firstName}`;
+                        let nameEn = `${item.positionData?.valueEn || 'Doctor'}, ${item.firstName} ${item.lastName}`;
+                        return (
+                            <div key={index} className="service-list-card doctor" onClick={() => navigate(`/detail-doctor/${item.id}`)}>
+                                <div className="card-image" style={{ backgroundImage: `url(${item.image})` }}></div>
+                                <div className="card-info">
+                                    <h3 className="card-name">{language === 'vi' ? nameVi : nameEn}</h3>
+                                    <p className="card-desc">{item.Doctor_Infor?.specialtyData?.name || 'Chuyên gia y tế'}</p>
+                                    <div className="card-meta">
+                                        <span><i className="fas fa-map-marker-alt"></i> Hà Nội</span>
+                                        <span><i className="fas fa-user-check"></i> Đang làm việc</span>
+                                    </div>
+                                </div>
+                                <div className="card-actions">
+                                    <button className="btn-book">Đặt lịch khám <i className="fas fa-chevron-right"></i></button>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+                {this.renderPagination(allDoctors.length)}
+            </div>
+        );
+    }
+
+    renderSpecialtyList = () => {
+        const { allSpecialties, navigate } = this.props;
+        const { currentPage, itemsPerPage } = this.state;
+
+        if (!allSpecialties || allSpecialties.length === 0) return <SectionSkeleton items={4} />;
+
+        const indexOfLastItem = currentPage * itemsPerPage;
+        const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+        const currentItems = allSpecialties.slice(indexOfFirstItem, indexOfLastItem);
+
+        return (
+            <div className="service-list-view">
+                <div className="list-items">
+                    {currentItems.map((item, index) => (
+                        <div key={index} className="service-list-card" onClick={() => navigate(`/detail-specialty/${item.id}`)}>
+                            <div className="card-image" style={{ backgroundImage: `url(${item.image})` }}></div>
+                            <div className="card-info">
+                                <h3 className="card-name">{item.name}</h3>
+                                <p className="card-desc">Chuyên khoa uy tín</p>
+                                <div className="card-meta">
+                                    <span><i className="fas fa-check-circle"></i> Đội ngũ bác sĩ giỏi</span>
+                                </div>
+                            </div>
+                            <div className="card-actions">
+                                <button className="btn-book">Xem chi tiết <i className="fas fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                {this.renderPagination(allSpecialties.length)}
+            </div>
+        );
+    }
+
+    renderClinicList = () => {
+        const { allClinics, navigate } = this.props;
+        const { currentPage, itemsPerPage } = this.state;
+
+        if (!allClinics || allClinics.length === 0) return <SectionSkeleton items={4} />;
+
+        const indexOfLastItem = currentPage * itemsPerPage;
+        const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+        const currentItems = allClinics.slice(indexOfFirstItem, indexOfLastItem);
+
+        return (
+            <div className="service-list-view">
+                <div className="list-items">
+                    {currentItems.map((item, index) => (
+                        <div key={index} className="service-list-card" onClick={() => navigate(`/detail-clinic/${item.id}`)}>
+                            <div className="card-image" style={{ backgroundImage: `url(${item.image})` }}></div>
+                            <div className="card-info">
+                                <h3 className="card-name">{item.name}</h3>
+                                <p className="card-desc">{item.address}</p>
+                                <div className="card-meta">
+                                    <span><i className="fas fa-hospital"></i> Cơ sở vật chất hiện đại</span>
+                                </div>
+                            </div>
+                            <div className="card-actions">
+                                <button className="btn-book">Xem chi tiết <i className="fas fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                {this.renderPagination(allClinics.length)}
+            </div>
+        );
+    }
+
+    render() {
+        const { activeTab } = this.state;
+        const settings = {
+            dots: false,
+            infinite: false,
+            speed: 500,
+            slidesToShow: 4,
+            slidesToScroll: 1,
+            responsive: [
+                { breakpoint: 1024, settings: { slidesToShow: 3, slidesToScroll: 1 } },
+                { breakpoint: 768, settings: { slidesToShow: 2, slidesToScroll: 1 } },
+                { breakpoint: 480, settings: { slidesToShow: 1, slidesToScroll: 1 } }
+            ]
+        };
+
+        return (
+            <React.Fragment>
+                <HomeHeader isShowBanner={false} />
+                <div className="select-service-container fade-in">
+                    <div className="select-service-banner">
+                        <img src={backgroundBanner} alt="Banner" className="banner-img" />
+                        <div className="banner-content">
+                            <div className="hero-badge">
+                                <span className="badge-dot"></span>
+                                Nền tảng y tế số tin cậy nhất Việt Nam
+                            </div>
+                            <h1 className="banner-title"><FormattedMessage id="select-service.title" /></h1>
+                            <p className="banner-desc"><FormattedMessage id="select-service.desc" /></p>
+
+                            <div className="banner-search-wrapper">
+                                <GlobalSearch isHero={true} />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="hm-tabs-section" ref={this.tabsRef}>
+                        <div className="hm-tabs-container">
+                            <div className="hm-segmented-bar">
+                                {TAB_CONFIG.map(tab => (
+                                    <button
+                                        key={tab.id}
+                                        className={`hm-tab-btn ${activeTab === tab.id ? 'active' : ''}`}
+                                        onClick={() => this.handleTabChange(tab.id)}
+                                    >
+                                        <i className={tab.icon}></i>
+                                        <span>{tab.label}</span>
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className="select-service-content">
+                                {activeTab === 'all' && (
+                                    <div className="fade-in">
+                                        <Specialty settings={settings} />
+                                        <MedicalFacility settings={settings} />
+                                        <OutStandingDoctor settings={settings} />
+                                        <HandBook settings={settings} />
+                                    </div>
+                                )}
+                                {activeTab === 'doctor' && this.renderDoctorList()}
+                                {activeTab === 'specialty' && this.renderSpecialtyList()}
+                                {activeTab === 'clinic' && this.renderClinicList()}
+                            </div>
+                        </div>
+                    </div>
+
+                    <HomeFooter />
+                </div>
+            </React.Fragment>
+        );
+    }
+}
+
+export const SectionSkeleton = ({ items = 4 }) => {
+    return (
+        <div className="section-skeleton">
+            <div className="skeleton-header">
+                <div className="skeleton-title"></div>
+                <div className="skeleton-actions">
+                    <div className="skeleton-btn-nav"></div>
+                    <div className="skeleton-btn-nav"></div>
+                    <div className="skeleton-btn-more"></div>
+                </div>
+            </div>
+            <div className="skeleton-body">
+                {[...Array(items)].map((_, index) => (
+                    <div className="skeleton-card" key={index}>
+                        <div className="skeleton-card-img"></div>
+                        <div className="skeleton-card-content">
+                            <div className="skeleton-card-line short"></div>
+                            <div className="skeleton-card-line"></div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+const mapStateToProps = state => ({
+    language: state.app.language,
+    allDoctors: state.admin.allDoctors,
+    allSpecialties: state.admin.allSpecialties,
+    allClinics: state.admin.allClinics,
+});
+
+const mapDispatchToProps = dispatch => ({
+    fetchAllDoctors: () => dispatch(action.fetchAllDoctors()),
+    fecthAllSpecialties: () => dispatch(action.fecthAllSpecialties()),
+    fecthAllClinics: () => dispatch(action.fecthAllClinics()),
+});
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SelectService));

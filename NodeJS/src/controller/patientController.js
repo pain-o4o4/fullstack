@@ -73,10 +73,59 @@ let postUpdatePatient = async (req, res) => {
         });
     }
 }
+
+let getDetailSchedulePatient = async (req, res) => {
+    try {
+        let infor = await patientService.getDetailSchedulePatient(req.query.bookingId);
+        return res.status(200).json(infor);
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server'
+        });
+    }
+}
+
+let handleVerifyPayment = async (req, res) => {
+    try {
+        let response = await patientService.verifyPaymentStatusService(req.body.orderCode);
+        return res.status(200).json(response);
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server'
+        });
+    }
+}
+
+let getHistoryAppointmentById = async (req, res) => {
+    try {
+        let idPatient = req.query.id
+        if (!idPatient) {
+            return res.status(200).json({
+                errCode: 1,
+                errMessage: 'Missing required parameter: id'
+            });
+        }
+        let response = await patientService.getHistoryAppointmentByIdService(idPatient);
+        return res.status(200).json(response);
+    } catch (error) {
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server',
+        });
+    }
+}
+
 export default {
     postBookAppointment,
     postVerifyAppointment,
-    getAllAppointmentsById,
+    getAllAppointmentsById: getAllAppointmentsById,
     handlePayOSWebhook,
-    postUpdatePatient
+    postUpdatePatient: postUpdatePatient,
+    getDetailSchedulePatient: getDetailSchedulePatient,
+    handleVerifyPayment: handleVerifyPayment,
+    getHistoryAppointmentById: getHistoryAppointmentById
 }

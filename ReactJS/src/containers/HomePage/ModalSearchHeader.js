@@ -25,7 +25,7 @@ class ModalSearchHeader extends Component {
 
                     <input
                         type="text"
-                        placeholder="Search by keyword or phrase"
+                        placeholder="Tìm kiếm theo từ khóa hoặc cụm từ"
                         autoFocus
                     />
                 </div>

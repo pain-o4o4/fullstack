@@ -1,48 +1,39 @@
-
-
-
-
-
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
-class ModalCreateUser extends Component {
+import './ModalCreateUser.scss';
 
+class ModalCreateUser extends Component {
     constructor(props) {
         super(props);
         this.state = {
             email: '',
             password: '',
             firstName: '',
-            phonenumber: '',
             lastName: '',
+            phonenumber: '',
             address: ''
         }
     }
 
     componentDidMount() {
     }
+
     toggle = () => {
         this.props.toggleFromParent();
     }
-    handleOnChangeInput = (event, id) => {
-        // 1. Lấy giá trị người dùng vừa gõ
-        let value = event.target.value;
 
-        // 2. Cập nhật state theo kiểu "computed property name"
-        // Cách này không cần tạo biến copyState trung gian, React sẽ tự hiểu
+    handleOnChangeInput = (event, id) => {
+        let value = event.target.value;
         this.setState({
             [id]: value
-        }, () => {
-            // (Tùy chọn) In ra để kiểm tra xem state đã cập nhật đúng chưa
-            // console.log('check state: ', this.state);
         });
     }
-    // Kiểm tra dữ liệu trước khi gửi cho Cha
+
     checkValidateInput = () => {
         let isValid = true;
-        let arrInput = ['email', 'password', 'phonenumber', 'firstName', 'lastName', 'address'];
+        let arrInput = ['email', 'password', 'firstName', 'lastName', 'phonenumber', 'address'];
         for (let i = 0; i < arrInput.length; i++) {
             if (!this.state[arrInput[i]]) {
                 isValid = false;
@@ -56,123 +47,103 @@ class ModalCreateUser extends Component {
     handleAddNewUser = () => {
         let isValid = this.checkValidateInput();
         if (isValid === true) {
-            // // Gửi dữ liệu sang Cha (UserManage.js) thông qua props
-            console.log('This is PROPS: ', this.props)
-            this.props.createNewUser(this.state);
-
-            // // Sau khi gửi xong, xóa sạch dữ liệu trong ô input để lần sau nhập mới
-            // this.setState({
-            //     email: '', password: '', phonenumber: '', firstName: '', lastName: '', address: ''
-            // });
-            console.log('Add Success: ', this.state);
-
+            this.props.createNewuser(this.state);
         }
     }
+
     render() {
         return (
             <Modal
                 isOpen={this.props.isOpen}
-                toggle={() => this.toggle()}
-                size="lg"                    // hoặc "md" nếu muốn nhỏ hơn, giống Apple hơn
+                toggle={() => { this.toggle() }}
+                className={'modal-user-container'}
+                size="lg"
                 centered
-                backdrop="static"            // optional: ngăn click ngoài đóng (giống Apple alert)
-                className="modal-add-new-user"
-                fade={true}
-            // Nếu vẫn lệch, thử thêm: modalClassName="custom-modal-fix"
             >
-                <ModalHeader toggle={() => this.toggle()}>
-                    Create A New User
+                <ModalHeader toggle={() => { this.toggle() }}>
+                    <FormattedMessage id="system.user-manage.add" defaultMessage="Tạo người dùng mới" />
                 </ModalHeader>
-
                 <ModalBody>
-                    <div className="modal-user-body">
-                        <div className="input-container">
-                            <label>Email</label>
-                            <input
-                                type="email"  // sửa type cho đúng
-                                onChange={(e) => this.handleOnChangeInput(e, "email")}
-                                value={this.state.email}
-                                placeholder="example@domain.com"
-                            />
-                        </div>
-                        <div className="input-container">
-                            <label>Password</label>
-                            <input
-                                type="password"  // sửa type cho đúng
-                                onChange={(e) => this.handleOnChangeInput(e, "password")}
-                                value={this.state.password}
-                            />
-                        </div>
-
-                        {/*<div className="input-container">
-                            <label>Gender</label>
-                            <input
-                                type="tel"    // 
-                                onChange={(e) => this.handleOnChangeInput(e, "gender")}
-                                value={this.state.gender}
-                            />
-                        </div> */}
-                        <div className="input-container">
-                            <label>First Name</label>
-                            <input
-                                type="text"
-                                onChange={(e) => this.handleOnChangeInput(e, "firstName")}
-                                value={this.state.firstName}
-                            />
-                        </div>
-                        <div className="input-container">
-                            <label>Last Name</label>
-                            <input
-                                type="text"
-                                onChange={(e) => this.handleOnChangeInput(e, "lastName")}
-                                value={this.state.lastName}
-                            />
-                        </div>
-                        <div className="input-container">
-                            <label>Phone Number</label>
-                            <input
-                                type="tel"    // sửa từ password → tel cho phone
-                                onChange={(e) => this.handleOnChangeInput(e, "phonenumber")}
-                                value={this.state.phonenumber}
-                                placeholder="+84 ..."
-                            />
-                        </div>
-                        <div className="input-container max-width-input">
-                            <label>Address</label>
-                            <input
-                                type="text"
-                                onChange={(e) => this.handleOnChangeInput(e, "address")}
-                                value={this.state.address}
-                                placeholder="123 Example Street..."
-                            />
+                    <div className="user-redux-body">
+                        <div className="container">
+                            <div className="row">
+                                <div className="col-6 input-container">
+                                    <label>Email</label>
+                                    <input
+                                        type="email"
+                                        onChange={(event) => { this.handleOnChangeInput(event, "email") }}
+                                        value={this.state.email}
+                                        placeholder="email@example.com"
+                                    />
+                                </div>
+                                <div className="col-6 input-container">
+                                    <label><FormattedMessage id="system.user-manage.password" defaultMessage="Mật khẩu" /></label>
+                                    <input
+                                        type="password"
+                                        onChange={(event) => { this.handleOnChangeInput(event, "password") }}
+                                        value={this.state.password}
+                                        placeholder="••••••••"
+                                    />
+                                </div>
+                                <div className="col-6 input-container">
+                                    <label><FormattedMessage id="system.user-manage.first-name" defaultMessage="Tên" /></label>
+                                    <input
+                                        type="text"
+                                        onChange={(event) => { this.handleOnChangeInput(event, "firstName") }}
+                                        value={this.state.firstName}
+                                    />
+                                </div>
+                                <div className="col-6 input-container">
+                                    <label><FormattedMessage id="system.user-manage.last-name" defaultMessage="Họ" /></label>
+                                    <input
+                                        type="text"
+                                        onChange={(event) => { this.handleOnChangeInput(event, "lastName") }}
+                                        value={this.state.lastName}
+                                    />
+                                </div>
+                                <div className="col-6 input-container">
+                                    <label><FormattedMessage id="system.user-manage.phone-number" defaultMessage="Số điện thoại" /></label>
+                                    <input
+                                        type="text"
+                                        onChange={(event) => { this.handleOnChangeInput(event, "phonenumber") }}
+                                        value={this.state.phonenumber}
+                                    />
+                                </div>
+                                <div className="col-6 input-container">
+                                    <label><FormattedMessage id="system.user-manage.address" defaultMessage="Địa chỉ" /></label>
+                                    <input
+                                        type="text"
+                                        onChange={(event) => { this.handleOnChangeInput(event, "address") }}
+                                        value={this.state.address}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </ModalBody>
-
                 <ModalFooter>
-                    <Button color="secondary" className="px-4" onClick={() => this.toggle()}>
-                        Close
-                    </Button>
-                    <Button color="primary" className="px-4" onClick={() => this.handleAddNewUser()}>
-                        Add New
-                    </Button>
+                    <button
+                        className="btn-save-user"
+                        onClick={() => { this.handleAddNewUser() }}>
+                        <FormattedMessage id="system.user-manage.add-btn" defaultMessage="Lưu thay đổi" />
+                    </button>
+                    <button
+                        className="btn-cancel-user"
+                        onClick={() => { this.toggle() }}>
+                        <FormattedMessage id="system.user-manage.cancel-btn" defaultMessage="Hủy" />
+                    </button>
                 </ModalFooter>
             </Modal>
         )
     }
-
 }
 
 const mapStateToProps = state => {
-    return {
-    };
+    return {};
 };
 
 const mapDispatchToProps = dispatch => {
-    return {
-    };
+    return {};
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ModalCreateUser);
-
-

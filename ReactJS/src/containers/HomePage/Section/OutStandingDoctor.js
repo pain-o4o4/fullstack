@@ -1,90 +1,123 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import './OutStandingDoctor.scss';
-// import { FormattedMessage } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import Slider from 'react-slick';
-import { OutStandingDoctorData } from './Data/OutStandingDoctorData';   // Đúng
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import * as actions from '../../../store/actions'
-import { LANGUAGES } from '../../../utils/constant'
-import { withRouter } from 'react-router'
+import { LANGUAGES, path } from '../../../utils/constant'
+import { withRouter } from '../../../components/Navigator';
+import '../../Navigation/MavenSlider.scss';
+import { SectionSkeleton } from '../../Navigation/SelectService';
+
+const DOT_COLORS = ['#00d1b2', '#34d399', '#818cf8', '#fbbf24', '#f472b6'];
+
 class OutStandingDoctor extends Component {
     constructor(props) {
         super(props);
+        this.scrollRef = React.createRef();
         this.state = {
-            arrDoctors: []
+            arrDoctors: this.props.topDoctors || [],
+            isLoading: !this.props.topDoctors || this.props.topDoctors.length === 0
         }
     }
 
+    scrollLeft = () => {
+        if (this.scrollRef.current) {
+            this.scrollRef.current.scrollBy({ left: -300, behavior: 'smooth' });
+        }
+    }
+
+    scrollRight = () => {
+        if (this.scrollRef.current) {
+            this.scrollRef.current.scrollBy({ left: 300, behavior: 'smooth' });
+        }
+    }
 
     componentDidMount() {
-        this.props.loadTopDoctors();
-        console.log('this.props.topDoctors', this.props.topDoctors)
-        // loadTopDoctors: () => dispatch(actions.fetchTopDoctor()),
-
+        if (!this.props.topDoctors || this.props.topDoctors.length === 0) {
+            this.props.loadTopDoctors();
+        }
     }
     componentDidUpdate(prevProps, prevState, snapshot) {
 
         if (prevProps.topDoctors !== this.props.topDoctors) {
-            console.log('>>> Data mới từ Redux:', this.props.topDoctors);
             this.setState({
-                arrDoctors: this.props.topDoctors
+                arrDoctors: this.props.topDoctors,
+                isLoading: false
             })
         }
     }
     handleViewDetailDoctor = (doctor) => {
-        if (this.props.history) {
-            this.props.history.push(`/detail-doctor/${doctor.id}`)
+        if (this.props.navigate) {
+            this.props.navigate(`/detail-doctor/${doctor.id}`);
         }
     }
     render() {
-        let { arrDoctors } = this.state;
+        let { arrDoctors, isLoading } = this.state;
         let { language } = this.props;
+
+        if (isLoading) {
+            return <SectionSkeleton />;
+        }
 
         return (
             <React.Fragment>
-                <div className='section-OutStandingDoctor'>
+                <div className='section-maven'>
                     <div className='section-header'>
-                        <span className='title-section'>Bác sĩ nổi bật tuần qua</span>
-                        <button className='btn-section'>Xem thêm</button>
+                        <span className='title-section'>
+                            <FormattedMessage id="homepage.doctor" />
+                        </span>
+                        <div className='header-actions'>
+                            <button className='btn-nav' onClick={this.scrollLeft}><i className="fas fa-chevron-left"></i></button>
+                            <button className='btn-nav' onClick={this.scrollRight}><i className="fas fa-chevron-right"></i></button>
+                            <button className='btn-section'
+                                onClick={() => this.props.navigate && this.props.navigate(path.ALL_DOCTOR)}
+                            >
+                                <FormattedMessage id="homepage.more" />
+                            </button>
+                        </div>
                     </div>
                     <div className='section-body'>
-                        <Slider {...this.props.settings}>
+                        <div className="maven-slider-wrapper" ref={this.scrollRef}>
                             {arrDoctors && arrDoctors.length > 0 &&
                                 arrDoctors.map((item, index) => {
-                                    // Xử lý ảnh
-                                    let imageBase64 = '';
-                                    if (item.image) {
-                                        imageBase64 = Buffer.from(item.image, 'base64').toString('binary');
-                                    }
+                                    // Image is now a Cloudinary URL from Backend
+                                    let imageUrl = item.image || '';
 
-                                    // Hiển thị chức danh + tên
+                                    // Display name
                                     let nameVi = `${item.positionData.valueVi}, ${item.lastName} ${item.firstName}`;
                                     let nameEn = `${item.positionData.valueEn}, ${item.firstName} ${item.lastName}`;
+                                    let finalName = language === LANGUAGES.VI ? nameVi : nameEn;
+
+                                    // Rotate colors
+                                    let dotColor = DOT_COLORS[index % DOT_COLORS.length];
 
                                     return (
-                                        <div className='section-customize' key={index}
-                                            onClick={() => this.handleViewDetailDoctor(item)}>
-                                            <div className='customize-border'>
-                                                <div className='outer-bg'>
-                                                    {/* Kiểm tra nếu có ảnh thì hiển thị, không thì để ảnh mặc định */}
-                                                    <div className='bg-image'
-                                                        style={{ backgroundImage: `url(${imageBase64})` }}>
-                                                    </div>
-                                                </div>
-                                                <div className='position text-center'>
-                                                    <div className='section-name'>
-                                                        {language === LANGUAGES.VI ? nameVi : nameEn}
-                                                    </div>
-                                                    <div className='section-desc'>Cơ xương khớp</div>
+                                        <div className="maven-card" key={index} onClick={() => this.handleViewDetailDoctor(item)}>
+                                            <div className="maven-card-bg" style={{ backgroundImage: `url(${imageUrl})` }}></div>
+                                            <div className="maven-card-overlay"></div>
+
+                                            <div className="maven-card-indicator">
+                                                <span className="dot" style={{ backgroundColor: dotColor }}></span>
+                                            </div>
+
+                                            <div className="maven-card-content">
+                                                <h3 className="maven-card-title">{finalName}</h3>
+                                                <div className="maven-card-reveal">
+                                                    <p className="maven-card-desc">
+                                                        <FormattedMessage id="homepage.medical-specialty" />
+                                                    </p>
+                                                    <button className="maven-card-btn" style={{ backgroundColor: dotColor, color: '#fff' }}>
+                                                        Learn more
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
                                     )
                                 })
                             }
-                        </Slider>
+                        </div>
                     </div>
                 </div>
             </React.Fragment>
@@ -92,6 +125,7 @@ class OutStandingDoctor extends Component {
     }
 
 }
+
 
 const mapStateToProps = state => {
     return {

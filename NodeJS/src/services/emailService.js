@@ -1,5 +1,7 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config();
+import db from '../../models/index';
+import { replacePlaceholders } from '../utils/templateUtils';
 
 let sendSimpleEmail = async (dataSend) => {
     let transporter = nodemailer.createTransport({
@@ -12,65 +14,97 @@ let sendSimpleEmail = async (dataSend) => {
         },
     });
 
-    let info = await transporter.sendMail({
-        from: '"BookingCare 🏥" <64anhsden@gmail.com>',
-        to: dataSend.receiverEmail,
-        subject: dataSend.language === 'vi' ? "Xác nhận lịch hẹn khám bệnh" : "Confirmation of medical appointment",
-        html: getBodyHTMLEmail(dataSend),
+    // Lấy template từ DB dựa trên statusId hoặc mặc định là CONFIRMATION
+    let templateType = 'CONFIRMATION';
+    if (dataSend.statusId === 'S5') templateType = 'MISSED';
+    
+    let template = await db.EmailTemplate.findOne({
+        where: { type: templateType, language: dataSend.language || 'vi' }
     });
 
-    console.log("Message sent: %s", info.messageId);
+    if (template) {
+        let subject = template.subject;
+        let htmlContent = replacePlaceholders(template.content, dataSend);
+
+        let info = await transporter.sendMail({
+            from: '"BookingCare 🏥" <64anhsden@gmail.com>',
+            to: dataSend.receiverEmail,
+            subject: subject,
+            html: htmlContent,
+        });
+        console.log("Message sent: %s", info.messageId);
+    } else {
+        console.error(`[EmailService] Missing template in DB for type: ${templateType}, language: ${dataSend.language || 'vi'}`);
+    }
 }
 
-let getBodyHTMLEmail = (dataSend) => {
-    let result = '';
-    if (dataSend.language === 'vi') {
-        result = `
-            <div style="font-family: Arial, sans-serif; color: #333;">
-                <h3 style="color: #1c246d;">XÁC NHẬN THANH TOÁN THÀNH CÔNG! 🏥</h3>
-                <p>Xin chào <b>${dataSend.patientName}</b>,</p>
-                <p>Hệ thống BookingCare đã nhận được thanh toán cho lịch hẹn của bạn.</p>
-                
-                <div style="background-color: #f7f7f7; padding: 15px; border-radius: 10px; border: 1px solid #eee;">
-                    <p style="margin: 5px 0;"><b>Bác sĩ:</b> ${dataSend.doctorName}</p>
-                    <p style="margin: 5px 0;"><b>Thời gian:</b> ${dataSend.time}</p>
-                    <p style="margin: 5px 0;"><b>Phòng khám:</b> ${dataSend.clinicName}</p>
-                    <p style="margin: 5px 0;"><b>Địa chỉ:</b> ${dataSend.addressClinic}</p>
-                </div>
 
-                <p style="color: #27ae60; font-weight: bold;">Trạng thái: Đã xác nhận & Thanh toán thành công.</p>
-                <p>Bạn không cần phải thực hiện thêm bất kỳ thao tác nào khác. Vui lòng đến phòng khám đúng giờ hẹn.</p>
-                
-                <p>Cảm ơn bạn đã tin tưởng dịch vụ của chúng tôi!</p>
-                <div style="margin-top: 20px; font-size: 0.8rem; color: #888;">
-                    Đây là email tự động, vui lòng không phản hồi email này.
-                </div>
-            </div>
-        `;
+let sendRemedyEmail = async (dataSend) => {
+    let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        auth: {
+            user: process.env.EMAIL_APP,
+            pass: process.env.EMAIL_APP_PASSWORD,
+        },
+    });
+
+    // Lấy template từ DB
+    let template = await db.EmailTemplate.findOne({
+        where: { type: 'REMEDY', language: dataSend.language || 'vi' }
+    });
+
+    if (template) {
+        let subject = template.subject;
+        let htmlContent = replacePlaceholders(template.content, dataSend);
+
+        let info = await transporter.sendMail({
+            from: '"BookingCare 🏥" <64anhsden@gmail.com>',
+            to: dataSend.receiverEmail,
+            subject: subject,
+            html: htmlContent,
+        });
+        console.log("Message sent: %s", info.messageId);
     } else {
-        result = `
-            <div style="font-family: Arial, sans-serif; color: #333;">
-                <h3 style="color: #1c246d;">PAYMENT CONFIRMED SUCCESSFULLY! 🏥</h3>
-                <p>Dear <b>${dataSend.patientName}</b>,</p>
-                <p>BookingCare system has received payment for your appointment.</p>
-                
-                <div style="background-color: #f7f7f7; padding: 15px; border-radius: 10px; border: 1px solid #eee;">
-                    <p style="margin: 5px 0;"><b>Doctor:</b> ${dataSend.doctorName}</p>
-                    <p style="margin: 5px 0;"><b>Time:</b> ${dataSend.time}</p>
-                    <p style="margin: 5px 0;"><b>Clinic:</b> ${dataSend.clinicName}</p>
-                    <p style="margin: 5px 0;"><b>Address:</b> ${dataSend.addressClinic}</p>
-                </div>
-
-                <p style="color: #27ae60; font-weight: bold;">Status: Confirmed & Paid.</p>
-                <p>You do not need to take any further action. Please arrive at the clinic on time.</p>
-                
-                <p>Thank you for choosing us!</p>
-            </div>
-        `;
+        console.error(`[EmailService] Missing template in DB for type: REMEDY, language: ${dataSend.language || 'vi'}`);
     }
-    return result;
+}
+
+
+let sendRegisterVerificationCodeEmail = async (dataSend) => {
+    let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        auth: {
+            user: process.env.EMAIL_APP,
+            pass: process.env.EMAIL_APP_PASSWORD,
+        },
+    });
+
+    // Lấy template từ DB
+    let template = await db.EmailTemplate.findOne({
+        where: { type: 'VERIFICATION', language: dataSend.language || 'vi' }
+    });
+
+    if (template) {
+        let subject = template.subject;
+        let htmlContent = replacePlaceholders(template.content, dataSend);
+
+        await transporter.sendMail({
+            from: '"BookingCare 🏥" <64anhsden@gmail.com>',
+            to: dataSend.receiverEmail,
+            subject: subject,
+            html: htmlContent,
+        });
+    } else {
+        console.error(`[EmailService] Missing template in DB for type: VERIFICATION, language: ${dataSend.language || 'vi'}`);
+    }
 }
 
 export default {
-    sendSimpleEmail: sendSimpleEmail
+    sendSimpleEmail: sendSimpleEmail,
+    sendRemedyEmail: sendRemedyEmail,
+    sendRegisterVerificationCodeEmail: sendRegisterVerificationCodeEmail
 }

@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { getProfileDoctorById } from '../../../services/userService'
 import { LANGUAGES } from '../../../utils/constant'
-import { withRouter } from 'react-router'; // hoặc 'react-router-dom'
+import { withRouter } from '../../../components/Navigator'; // hoặc 'react-router-dom'
 import { FormattedMessage } from 'react-intl';
 import './ProfileDoctor.scss'
 import { FormattedNumber } from 'react-intl';
-import DatePicker from '../../../../src/components/Input/DatePicker';
+import _ from 'lodash';
 class ProfileDoctor extends Component {
     constructor(props) {
         super(props);
@@ -35,9 +35,7 @@ class ProfileDoctor extends Component {
                     this.props.doctorNameFromParent(res.data.lastName + ' ' + res.data.firstName);
                 }
 
-                if (result && result.image) {
-                    result.image = Buffer.from(result.image, 'base64').toString('binary');
-                }
+                // Image is now a Cloudinary URL from Backend — no decoding needed
 
 
                 // GỬI ẢNH LÊN CHO CHA Ở ĐÂY
@@ -89,6 +87,16 @@ class ProfileDoctor extends Component {
                                             <span>{dataProfile.markdownData
                                                 .description}</span>
                                         )}
+
+                                    {/* Single Clinic Display */}
+                                    <div className="multi-infor">
+                                        {dataProfile && dataProfile.doctorinforData && dataProfile.doctorinforData.clinicData && (
+                                            <div className="clinics">
+                                                {/* <i className="fas fa-hospital-alt"></i> */}
+                                                <span className="clinic-tag">{dataProfile.doctorinforData.clinicData.name}</span>
+                                            </div>
+                                        )}
+                                    </div>
                                 </>
                                 :
                                 <>

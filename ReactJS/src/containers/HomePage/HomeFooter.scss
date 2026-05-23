@@ -1,0 +1,143 @@
+@use './HomePage.scss' as *;
+
+// ============================================================
+// BASE STYLES (LAPTOP/DESKTOP)
+// ============================================================
+
+.hm-footer {
+    background-color: #000000;
+    color: #ffffff;
+    padding: 80px 40px 40px;
+
+    .hm-footer-top {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 40px;
+        padding-bottom: 60px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .hm-footer-col {
+        .hm-footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            margin-bottom: 24px;
+            color: $apple-blue;
+
+            .logo-icon {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+
+                .logo-dot {
+                    display: block;
+                    border-radius: 50%;
+                    background: $apple-blue;
+
+                    &.dot-1 { width: 6px; height: 6px; opacity: 1; }
+                    &.dot-2 { width: 8px; height: 8px; opacity: 0.7; }
+                    &.dot-3 { width: 4px; height: 4px; opacity: 0.4; }
+                }
+            }
+        }
+
+        .hm-footer-desc {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #a1a1a6;
+        }
+
+        .footer-title {
+            font-size: 15px;
+            text-transform: none; // Better reading speed
+            font-weight: 700;
+            margin-bottom: 24px;
+            letter-spacing: 0.2px;
+        }
+
+        .footer-text {
+            font-size: 16px;
+            color: #a1a1a6;
+            margin-bottom: 12px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 20px;
+            
+            a {
+                font-size: 20px;
+                color: #ffffff;
+                transition: color 0.2s;
+                
+                &:hover {
+                    color: $apple-blue;
+                }
+            }
+        }
+    }
+
+    .hm-footer-bottom {
+        max-width: 1200px;
+        margin: 40px auto 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 14px;
+        color: #86868b;
+
+        .footer-legal {
+            display: flex;
+            gap: 30px;
+            
+            a {
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
+}
+
+// ============================================================
+// RESPONSIVE OVERRIDES (TABLET - MAX 992PX)
+// ============================================================
+@media (max-width: 1024px) {
+    .hm-footer {
+        padding: 60px 24px 30px;
+        .hm-footer-top {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+        .hm-footer-bottom {
+            margin-top: 30px;
+            flex-direction: column;
+            gap: 20px;
+            text-align: center;
+        }
+    }
+}
+
+// ============================================================
+// RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
+// ============================================================
+@media (max-width: 768px) {
+    .hm-footer .hm-footer-bottom {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+}
+
+// ============================================================
+// RESPONSIVE OVERRIDES (SMALL MOBILE - MAX 576PX)
+// ============================================================
+@media (max-width: 576px) {
+    .hm-footer .hm-footer-top {
+        grid-template-columns: 1fr;
+    }
+}

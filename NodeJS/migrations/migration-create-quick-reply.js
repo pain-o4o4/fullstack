@@ -1,0 +1,36 @@
+'use strict';
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable('QuickReplies', {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: Sequelize.INTEGER
+      },
+      doctorId: {
+        type: Sequelize.INTEGER
+      },
+      content: {
+        type: Sequelize.TEXT
+      },
+      title: {
+        type: Sequelize.STRING
+      },
+      isGlobal: {
+        type: Sequelize.BOOLEAN
+      },
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      }
+    });
+  },
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.dropTable('QuickReplies');
+  }
+};

@@ -1,23 +1,16 @@
 'use strict';
 
 module.exports = {
-    // Lệnh chạy khi dùng: npx sequelize-cli db:seed:all
     up: async (queryInterface, Sequelize) => {
-        // Để không bị duplicate ở local, luôn xóa trước khi nạp
-        await queryInterface.bulkDelete('Allcode', null, {});
-
-        return queryInterface.bulkInsert('Allcode', [
+        const data = [
             { type: 'ROLE', keyMap: 'R1', valueEn: 'Admin', valueVi: 'Quản trị viên' },
             { type: 'ROLE', keyMap: 'R2', valueEn: 'Doctor', valueVi: 'Bác sĩ' },
             { type: 'ROLE', keyMap: 'R3', valueEn: 'Patient', valueVi: 'Bệnh nhân' },
-
-            // STATUS
             { type: 'STATUS', keyMap: 'S1', valueEn: 'New', valueVi: 'Lịch hẹn mới' },
             { type: 'STATUS', keyMap: 'S2', valueEn: 'Confirmed', valueVi: 'Đã xác nhận' },
             { type: 'STATUS', keyMap: 'S3', valueEn: 'Done', valueVi: 'Đã khám xong' },
             { type: 'STATUS', keyMap: 'S4', valueEn: 'Cancel', valueVi: 'Đã hủy' },
-
-            // TIME
+            { type: 'STATUS', keyMap: 'S5', valueEn: 'Missed', valueVi: 'Lỡ hẹn' },
             { type: 'TIME', keyMap: 'T1', valueEn: '8:00 AM - 9:00 AM', valueVi: '8:00 - 9:00' },
             { type: 'TIME', keyMap: 'T2', valueEn: '9:00 AM - 10:00 AM', valueVi: '9:00 - 10:00' },
             { type: 'TIME', keyMap: 'T3', valueEn: '10:00 AM - 11:00 AM', valueVi: '10:00 - 11:00' },
@@ -26,20 +19,14 @@ module.exports = {
             { type: 'TIME', keyMap: 'T6', valueEn: '2:00 PM - 3:00 PM', valueVi: '14:00 - 15:00' },
             { type: 'TIME', keyMap: 'T7', valueEn: '3:00 PM - 4:00 PM', valueVi: '15:00 - 16:00' },
             { type: 'TIME', keyMap: 'T8', valueEn: '4:00 PM - 5:00 PM', valueVi: '16:00 - 17:00' },
-
-            // POSITION
             { type: 'POSITION', keyMap: 'P0', valueEn: 'None', valueVi: 'Bác sĩ' },
             { type: 'POSITION', keyMap: 'P1', valueEn: 'Master', valueVi: 'Thạc sĩ' },
             { type: 'POSITION', keyMap: 'P2', valueEn: 'Doctor', valueVi: 'Tiến sĩ' },
             { type: 'POSITION', keyMap: 'P3', valueEn: 'Associate Professor', valueVi: 'Phó giáo sư' },
             { type: 'POSITION', keyMap: 'P4', valueEn: 'Professor', valueVi: 'Giáo sư' },
-
-            // GENDER
             { type: 'GENDER', keyMap: 'M', valueEn: 'Male', valueVi: 'Nam' },
             { type: 'GENDER', keyMap: 'F', valueEn: 'Female', valueVi: 'Nữ' },
             { type: 'GENDER', keyMap: 'O', valueEn: 'Other', valueVi: 'Khác' },
-
-            // PRICE
             { type: 'PRICE', keyMap: 'PRI1', valueEn: '10', valueVi: '200000' },
             { type: 'PRICE', keyMap: 'PRI2', valueEn: '15', valueVi: '250000' },
             { type: 'PRICE', keyMap: 'PRI3', valueEn: '20', valueVi: '300000' },
@@ -47,13 +34,9 @@ module.exports = {
             { type: 'PRICE', keyMap: 'PRI5', valueEn: '30', valueVi: '400000' },
             { type: 'PRICE', keyMap: 'PRI6', valueEn: '35', valueVi: '450000' },
             { type: 'PRICE', keyMap: 'PRI7', valueEn: '40', valueVi: '500000' },
-
-            // PAYMENT
             { type: 'PAYMENT', keyMap: 'PAY1', valueEn: 'Cash', valueVi: 'Tiền mặt' },
             { type: 'PAYMENT', keyMap: 'PAY2', valueEn: 'Credit card', valueVi: 'Thẻ ATM' },
             { type: 'PAYMENT', keyMap: 'PAY3', valueEn: 'All payment method', valueVi: 'Tất cả' },
-
-            // PROVINCE
             { type: 'PROVINCE', keyMap: 'PRO1', valueEn: 'Ha Noi', valueVi: 'Hà Nội' },
             { type: 'PROVINCE', keyMap: 'PRO2', valueEn: 'Ho Chi Minh', valueVi: 'Hồ Chí Minh' },
             { type: 'PROVINCE', keyMap: 'PRO3', valueEn: 'Da Nang', valueVi: 'Đà Nẵng' },
@@ -64,11 +47,23 @@ module.exports = {
             { type: 'PROVINCE', keyMap: 'PRO8', valueEn: 'Hue', valueVi: 'Thừa Thiên Huế' },
             { type: 'PROVINCE', keyMap: 'PRO9', valueEn: 'Quang Binh', valueVi: 'Quảng Bình' },
             { type: 'PROVINCE', keyMap: 'PRO10', valueEn: 'Khanh Hoa', valueVi: 'Khánh Hòa' },
-        ]);
+        ];
+
+        for (let item of data) {
+            const exists = await queryInterface.sequelize.query(
+                `SELECT id FROM allcode WHERE type = '${item.type}' AND keyMap = '${item.keyMap}' LIMIT 1;`
+            );
+            if (exists[0].length === 0) {
+                await queryInterface.bulkInsert('allcode', [{
+                    ...item,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                }]);
+            }
+        }
     },
 
-    // Lệnh chạy khi dùng: npx sequelize-cli db:seed:undo
     down: async (queryInterface, Sequelize) => {
-        return queryInterface.bulkDelete('Allcode', null, {});
+        // Skip
     }
 };

@@ -113,6 +113,66 @@ let getProfileDoctorById = async (req, res) => {
         });
     }
 }
+let getListPatientForDoctor = async (req, res) => {
+    try {
+        let infor = await doctorService.getListPatientForDoctor(req.query.doctorId, req.query.date);
+        return res.status(200).json(infor);
+    } catch (error) {
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server'
+        });
+    }
+}
+
+let updateBookingStatus = async (req, res) => {
+    try {
+        let infor = await doctorService.updateBookingStatus(req.body);
+        return res.status(200).json(infor);
+    } catch (error) {
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server'
+        });
+    }
+}
+
+let getListBookingHistory = async (req, res) => {
+    try {
+        let response = await doctorService.getListBookingHistory(req.query);
+        return res.status(200).json(response);
+    } catch (error) {
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server'
+        });
+    }
+}
+
+let updateBooking = async (req, res) => {
+    try {
+        let response = await doctorService.updateBookingService(req.body);
+        return res.status(200).json(response);
+    } catch (error) {
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server'
+        });
+    }
+}
+
+let deleteBooking = async (req, res) => {
+    try {
+        let response = await doctorService.deleteBookingService(req.body.id);
+        return res.status(200).json(response);
+    } catch (error) {
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from server'
+        });
+    }
+}
+
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getAllDoctors: getAllDoctors,
@@ -122,4 +182,9 @@ module.exports = {
     getScheduleByDate: getScheduleByDate,
     getExtraDoctorById: getExtraDoctorById,
     getProfileDoctorById: getProfileDoctorById,
+    getListPatientForDoctor: getListPatientForDoctor,
+    updateBookingStatus: updateBookingStatus,
+    getListBookingHistory: getListBookingHistory,
+    updateBooking: updateBooking,
+    deleteBooking: deleteBooking
 }

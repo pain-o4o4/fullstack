@@ -1,0 +1,204 @@
+.clinic-flow-tab {
+    padding: 24px 0;
+    min-height: 700px;
+    transition: all 0.3s ease;
+
+    .cf-header {
+        margin-bottom: 40px;
+        text-align: center;
+
+        .cf-eyebrow {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: #0071e3;
+            margin-bottom: 8px;
+        }
+
+        .cf-title {
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: -1.2px;
+            color: #1d1d1f;
+            margin: 0 0 10px;
+            span {
+                color: #0071e3;
+            }
+        }
+
+        .cf-subtitle {
+            font-size: 16px;
+            color: #86868b;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+    }
+
+    .cf-utilities-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 32px;
+
+        @media (max-width: 1024px) {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        @media (max-width: 540px) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .cf-util-card {
+        background: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        border-radius: 16px;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.28s ease;
+
+        &:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+            border-color: var(--accent);
+        }
+
+        .util-tag {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--accent);
+            background: rgba(0, 0, 0, 0.03);
+            padding: 4px 10px;
+            border-radius: 16px;
+            width: fit-content;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .util-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0 0 8px;
+            letter-spacing: -0.4px;
+        }
+
+        .util-desc {
+            font-size: 13px;
+            color: #86868b;
+            line-height: 1.5;
+            margin-bottom: 24px;
+            flex: 1;
+        }
+
+        .util-visual {
+            height: 80px;
+            background: #f5f5f7;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+
+            .util-shape {
+                width: 32px;
+                height: 32px;
+                background: var(--accent);
+                opacity: 0.2;
+                border-radius: 12px;
+                transform: rotate(45deg);
+            }
+        }
+
+        .util-action {
+            background: none;
+            border: none;
+            padding: 0;
+            color: var(--accent);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: left;
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    .cf-ecosystem-banner {
+        background: #1d1d1f;
+        border-radius: 16px;
+        padding: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: #ffffff;
+
+        h4 {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0 0 4px;
+        }
+        p {
+            font-size: 14px;
+            opacity: 0.6;
+            margin: 0;
+        }
+
+        .eco-visual {
+            display: flex;
+            gap: 12px;
+            .eco-node {
+                width: 12px;
+                height: 12px;
+                background: #ffffff;
+                border-radius: 50%;
+                opacity: 0.2;
+                animation: ecoPulse 2s infinite;
+                &:nth-child(2) {
+                    animation-delay: 0.3s;
+                }
+                &:nth-child(3) {
+                    animation-delay: 0.6s;
+                }
+            }
+        }
+    }
+
+    @media (max-width: 1024px) {
+        .cf-header {
+            .cf-title { font-size: 32px; }
+            .cf-subtitle { font-size: 15px; }
+        }
+
+        .cf-utilities-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .cf-ecosystem-banner {
+            flex-direction: column;
+            text-align: center;
+            gap: 20px;
+            padding: 24px;
+        }
+    }
+
+    @media (max-width: 540px) {
+        min-height: 600px;
+    }
+}
+
+@keyframes ecoPulse {
+    0%,
+    100% {
+        opacity: 0.1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(1.2);
+    }
+}

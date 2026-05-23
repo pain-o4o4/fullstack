@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
 
       User.hasMany(models.Booking, { foreignKey: 'doctorId', as: 'doctorBookingData' });
       User.hasMany(models.Booking, { foreignKey: 'patientId', as: 'patientBookingData' });
+
     }
   }
   User.init({
@@ -37,11 +38,12 @@ module.exports = (sequelize, DataTypes) => {
     image: DataTypes.BLOB('long'),
     roleId: DataTypes.STRING,
     positionId: DataTypes.STRING,
+    isVerified: DataTypes.BOOLEAN,
   }, {
     sequelize,
     modelName: 'User',
-    // tableName: 'users',
-    freezeTableName: true, // Thêm dòng này để giữ nguyên tên bảng là 'User'  
+    freezeTableName: true,
+    paranoid: true,
   });
   return User;
 };
