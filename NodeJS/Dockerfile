@@ -39,8 +39,10 @@ RUN npm install --omit=dev && npm cache clean --force
 # Copy thư mục đã được biên dịch từ STAGE 1 sang STAGE 2
 COPY --from=builder /app/build ./build
 
-# (Tùy chọn) Copy thêm thư mục cấu hình nếu cần ngoài src
-# COPY .env .env
+# Copy các thư mục cấu hình và database cần thiết nằm ngoài src
+COPY --from=builder /app/models ./models
+COPY --from=builder /app/config ./config
+COPY --from=builder /app/migrations ./migrations
 
 # Chuyển sang user "node" (không có quyền root) để tăng cường bảo mật
 USER node
