@@ -57,6 +57,7 @@ let sendMessage = (data) => {
 
                 // Lấy lại tin nhắn kèm parentData để trả về (Hỗ trợ hiển thị Reply ngay lập tức)
                 let messageWithParent = await db.Message.findByPk(newMessage.id, {
+                    raw: false,
                     include: [
                         {
                             model: db.Message,
@@ -110,6 +111,7 @@ let getMessages = (senderId, receiverId) => {
                             }
                         ]
                     },
+                    raw: false,
                     include: [
                         {
                             model: db.Message,
@@ -446,7 +448,7 @@ let updateMessageReaction = (data) => {
                     errMessage: 'Missing required parameters!'
                 });
             } else {
-                let message = await db.Message.findByPk(data.messageId);
+                let message = await db.Message.findByPk(data.messageId, { raw: false });
                 if (message) {
                     let reactions = [];
                     if (message.reactions) {
