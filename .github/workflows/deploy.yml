@@ -3,7 +3,7 @@ name: Build and Deploy BookingCare to AWS EC2
 on:
   push:
     branches:
-      - fullstack_fix_logic_db
+      - main
 
 jobs:
   # GIAI ĐOẠN 1: CONTINUOUS INTEGRATION (CI) - KIỂM TRA CHẤT LƯỢNG CODE & BUILD
@@ -52,7 +52,7 @@ jobs:
             cd ~/bookingcare
             
             # 2. Đồng bộ code mới nhất từ GitHub
-            git pull origin fullstack_fix_logic_db
+            git pull origin main
             
             # 3. Khởi chạy Docker Compose để build và cập nhật container không gián đoạn
             docker compose up -d --build
