@@ -11,8 +11,8 @@ WORKDIR /app
 # Copy package và package-lock để cài đặt
 COPY package*.json ./
 
-# Cài đặt toàn bộ (bao gồm devDependencies) bằng npm ci
-RUN npm ci
+# Cài đặt toàn bộ (bao gồm devDependencies) bằng npm install
+RUN npm install
 
 # Copy toàn bộ source code vào
 COPY . .
@@ -34,7 +34,7 @@ RUN apk add --no-cache libc6-compat
 COPY package*.json ./
 
 # CHỈ cài đặt dependencies (Bỏ qua devDependencies -> giảm 50% dung lượng)
-RUN npm ci --omit=dev && npm cache clean --force
+RUN npm install --omit=dev && npm cache clean --force
 
 # Copy thư mục đã được biên dịch từ STAGE 1 sang STAGE 2
 COPY --from=builder /app/build ./build
