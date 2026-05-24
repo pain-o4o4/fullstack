@@ -12,7 +12,8 @@ class RegisterVerify extends Component {
         verificationCode: '',
         errMessage: '',
         isSubmitting: false,
-        isResending: false
+        isResending: false,
+        errors: {}
     };
 
     componentDidMount() {
@@ -21,16 +22,50 @@ class RegisterVerify extends Component {
         }
     }
 
+    validateField = (fieldName, value) => {
+        let { errors } = this.state;
+        const cleanVal = (value || '').replace(/[\s\-]/g, '');
+
+        if (fieldName === 'verificationCode') {
+            if (!cleanVal) {
+                errors.verificationCode = 'Vui lòng nhập mã OTP!';
+            } else if (!/^\d+$/.test(cleanVal)) {
+                errors.verificationCode = 'Mã OTP chỉ được chứa các chữ số!';
+            } else if (cleanVal.length !== 6) {
+                errors.verificationCode = 'Mã OTP phải có đúng 6 chữ số!';
+            } else {
+                delete errors.verificationCode;
+            }
+        }
+        this.setState({ errors, errMessage: '' });
+    };
+
     handleChange = (e) => {
-        this.setState({ verificationCode: e.target.value, errMessage: '' });
+        let val = e.target.value;
+        this.setState({ verificationCode: val }, () => {
+            this.validateField('verificationCode', val);
+        });
+    };
+
+    handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            const { verificationCode, errors } = this.state;
+            const cleanCode = (verificationCode || '').replace(/[\s\-]/g, '');
+            if (cleanCode.length === 6 && !errors.verificationCode) {
+                this.handleVerify();
+            }
+        }
     };
 
     handleVerify = async () => {
-        const code = (this.state.verificationCode || '').trim();
-        if (!code || code.length !== 6) {
-            this.setState({ errMessage: 'Vui lòng nhập mã OTP gồm 6 chữ số.' });
+        const code = (this.state.verificationCode || '').replace(/[\s\-]/g, '');
+        this.validateField('verificationCode', code);
+
+        if (Object.keys(this.state.errors).length > 0 || !code) {
             return;
         }
+
         this.setState({ isSubmitting: true });
         try {
             const res = await verifyRegisterOtp(this.props.registerEmail, code);
@@ -74,7 +109,7 @@ class RegisterVerify extends Component {
 
     render() {
         const { registerEmail } = this.props;
-        const { verificationCode, errMessage, isSubmitting, isResending } = this.state;
+        const { verificationCode, errMessage, errors, isSubmitting, isResending } = this.state;
 
         return (
             <div className="auth-split-container">
@@ -94,14 +129,17 @@ class RegisterVerify extends Component {
                             <div className="input">
                                 <input type="text" value={registerEmail || ''} disabled />
                             </div>
-                            <div className="input">
+                            <div className={`input ${errors.verificationCode ? 'has-error' : ''}`}>
                                 <input
                                     type="text"
+                                    name="verificationCode"
                                     placeholder="Mã OTP (6 chữ số)"
                                     value={verificationCode}
                                     onChange={this.handleChange}
+                                    onKeyDown={this.handleKeyDown}
                                 />
                             </div>
+                            {errors.verificationCode && <div className="inline-error">{errors.verificationCode}</div>}
                             <div className="error-message">{errMessage}</div>
                             <div className="submit-container">
                                 <button className="submit" onClick={this.handleVerify} disabled={isSubmitting}>

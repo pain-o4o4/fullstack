@@ -96,6 +96,7 @@ export const PERMISSIONS = {
     ],
 
     [ROLES.DOCTOR]: [
+        '/api/get-all-users',
         '/api/save-infor-doctor',
         '/api/bulk-create-schedule',
         '/api/get-list-patient-for-doctor',

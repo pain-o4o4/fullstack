@@ -74,6 +74,17 @@ let getAllDoctorsService = () => {
                         as: 'genderData',
                         attributes: ['valueEn', 'valueVi']
                     },
+                    {
+                        model: db.Doctor_infor,
+                        as: 'doctorinforData',
+                        attributes: { exclude: ["id", "createdAt", "updatedAt", "doctorId"] },
+                        include: [
+                            { model: db.Allcode, as: "priceTypeData", attributes: ["valueEn", "valueVi"] },
+                            { model: db.Allcode, as: "provinceTypeData", attributes: ["valueEn", "valueVi"] },
+                            { model: db.Clinic, as: "clinicData", attributes: ["id", "name"] },
+                            { model: db.Specialty, as: "specialtyData", attributes: ["id", "name"] },
+                        ]
+                    },
                 ],
                 raw: false,
                 nest: true
@@ -259,7 +270,8 @@ let getDetailDoctorByIdService = (idInput) => {
                             { model: db.Allcode, as: "priceTypeData", attributes: ["valueEn", "valueVi"] },
                             { model: db.Allcode, as: "provinceTypeData", attributes: ["valueEn", "valueVi"] },
                             { model: db.Allcode, as: "paymentTypeData", attributes: ["valueEn", "valueVi"] },
-                            { model: db.Clinic, as: "clinicData", attributes: ["name", "address"] },
+                            { model: db.Clinic, as: "clinicData", attributes: ["id", "name", "address"] },
+                            { model: db.Specialty, as: "specialtyData", attributes: ["id", "name"] },
                         ]
                     },
                 ],

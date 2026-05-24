@@ -1,45 +1,11 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { withRouter } from '../../../components/Navigator';
 import { getAllClinicService } from '../../../services/userService';
 import ExaminationPackages from './ExaminationPackages';
-import DoctorMiniChat from './DoctorMiniChat';
+import DoctorConsultationTab from './DoctorConsultationTab';
 import ChatBot from './ChatBot';
 import './ClinicFlowTab.scss';
-
-const UTILITIES = [
-    {
-        id: 'tele',
-        title: 'Chat với bác sĩ',
-        tag: 'Instant Chat',
-        desc: 'Kết nối và nhận tư vấn trực tiếp từ bác sĩ chuyên khoa qua tin nhắn.',
-        accent: '#0071e3',
-        action: 'DOCTOR_CHAT'
-    },
-    {
-        id: 'package',
-        title: 'Gói khám tổng quát',
-        tag: 'Tiết kiệm',
-        desc: 'Các gói khám đa dạng từ cơ bản đến chuyên sâu cho mọi lứa tuổi.',
-        accent: '#34c759',
-        action: 'PACKAGES'
-    },
-    {
-        id: 'lab',
-        title: 'AI tư vấn',
-        tag: 'Thông minh',
-        desc: 'Hỏi đáp triệu chứng và nhận gợi ý y tế từ trợ lý AI Gemini.',
-        accent: '#af52de',
-        action: 'AI_CHAT'
-    },
-    {
-        id: 'pharmacy',
-        title: 'Nhà thuốc số',
-        tag: 'Giao nhanh',
-        desc: 'Mua thuốc theo toa bác sĩ và thực phẩm chức năng chính hãng.',
-        accent: '#ff9500',
-        action: 'PHARMACY'
-    }
-];
 
 class ClinicFlowTab extends Component {
     constructor(props) {
@@ -52,6 +18,13 @@ class ClinicFlowTab extends Component {
     }
 
     async componentDidMount() {
+        // Listen for quick chat trigger from detailed doctor page
+        const triggerChat = localStorage.getItem('telehealth_trigger_chat');
+        if (triggerChat === 'true') {
+            localStorage.removeItem('telehealth_trigger_chat');
+            this.setState({ activeView: 'DOCTOR_CHAT' });
+        }
+
         try {
             let res = await getAllClinicService();
             if (res && res.errCode === 0) {
@@ -62,6 +35,51 @@ class ClinicFlowTab extends Component {
         } catch (e) {
             console.error(e);
         }
+    }
+
+    getUtilities = (language) => {
+        return [
+            {
+                id: 'tele',
+                title: language === 'vi' ? 'Tư vấn trực tuyến' : 'Telehealth Consultation',
+                tag: 'Telehealth',
+                desc: language === 'vi'
+                    ? 'Đặt lịch hẹn trực tuyến và nhận tư vấn chuyên sâu từ bác sĩ chuyên khoa.'
+                    : 'Book online appointments and receive in-depth expert consultation.',
+                accent: '#0071e3',
+                action: 'DOCTOR_CHAT'
+            },
+            {
+                id: 'package',
+                title: language === 'vi' ? 'Gói khám tổng quát' : 'General Checkup Packages',
+                tag: language === 'vi' ? 'Tiết kiệm' : 'Savings',
+                desc: language === 'vi'
+                    ? 'Các gói khám đa dạng từ cơ bản đến chuyên sâu cho mọi lứa tuổi.'
+                    : 'Diverse checkup packages from basic to advanced for all ages.',
+                accent: '#34c759',
+                action: 'PACKAGES'
+            },
+            {
+                id: 'lab',
+                title: language === 'vi' ? 'AI tư vấn' : 'AI Assistant',
+                tag: language === 'vi' ? 'Thông minh' : 'Smart AI',
+                desc: language === 'vi'
+                    ? 'Hỏi đáp triệu chứng và nhận gợi ý y tế từ trợ lý AI Gemini.'
+                    : 'Check symptoms and get smart medical suggestions from Gemini AI.',
+                accent: '#af52de',
+                action: 'AI_CHAT'
+            },
+            {
+                id: 'pharmacy',
+                title: language === 'vi' ? 'Nhà thuốc số' : 'Digital Pharmacy',
+                tag: language === 'vi' ? 'Giao nhanh' : 'Fast Delivery',
+                desc: language === 'vi'
+                    ? 'Mua thuốc theo toa bác sĩ và thực phẩm chức năng chính hãng.'
+                    : 'Buy prescription medicine and genuine health supplements.',
+                accent: '#ff9500',
+                action: 'PHARMACY'
+            }
+        ];
     }
 
     handleCardClick = (action) => {
@@ -89,7 +107,7 @@ class ClinicFlowTab extends Component {
             case 'PACKAGES':
                 return <ExaminationPackages onBack={() => this.setState({ activeView: 'MAIN' })} />;
             case 'DOCTOR_CHAT':
-                return <DoctorMiniChat onBack={() => this.setState({ activeView: 'MAIN' })} />;
+                return <DoctorConsultationTab onBack={() => this.setState({ activeView: 'MAIN' })} />;
             case 'AI_CHAT':
                 return <ChatBot onBack={() => this.setState({ activeView: 'MAIN' })} />;
             default:
@@ -99,6 +117,8 @@ class ClinicFlowTab extends Component {
 
     render() {
         const { activeView, numClinics, numPharmacies } = this.state;
+        const { language } = this.props;
+        const utilitiesList = this.getUtilities(language);
 
         return (
             <div className="clinic-flow-tab">
@@ -107,13 +127,25 @@ class ClinicFlowTab extends Component {
                 ) : (
                     <>
                         <div className="cf-header">
-                            <div className="cf-eyebrow">Dịch vụ nền tảng</div>
-                            <h2 className="cf-title">Tiện ích <span>Y tế Số</span></h2>
-                            <p className="cf-subtitle">Giải pháp chăm sóc sức khỏe toàn diện, hỗ trợ bạn ở mọi nơi.</p>
+                            <div className="cf-eyebrow">
+                                {language === 'vi' ? 'Dịch vụ nền tảng' : 'Platform Services'}
+                            </div>
+                            <h2 className="cf-title">
+                                {language === 'vi' ? (
+                                    <>Tiện ích <span>Y tế Số</span></>
+                                ) : (
+                                    <>Digital <span>Healthcare Services</span></>
+                                )}
+                            </h2>
+                            <p className="cf-subtitle">
+                                {language === 'vi'
+                                    ? 'Giải pháp chăm sóc sức khỏe toàn diện, hỗ trợ bạn ở mọi nơi.'
+                                    : 'Comprehensive healthcare solutions, supporting you everywhere.'}
+                            </p>
                         </div>
 
                         <div className="cf-utilities-grid">
-                            {UTILITIES.map((util) => (
+                            {utilitiesList.map((util) => (
                                 <div
                                     key={util.id}
                                     className="cf-util-card"
@@ -128,15 +160,21 @@ class ClinicFlowTab extends Component {
                                         <div className="util-shape"></div>
                                     </div>
 
-                                    <button className="util-action">Khám phá ngay <i className="fas fa-arrow-right"></i></button>
+                                    <button className="util-action">
+                                        {language === 'vi' ? 'Khám phá ngay' : 'Explore Now'} <i className="fas fa-arrow-right"></i>
+                                    </button>
                                 </div>
                             ))}
                         </div>
 
                         <div className="cf-ecosystem-banner">
                             <div className="eco-content">
-                                <h4>Hệ sinh thái BookingCare</h4>
-                                <p>Kết nối hơn {numClinics} bệnh viện và {numPharmacies} đối tác trên toàn quốc.</p>
+                                <h4>{language === 'vi' ? 'Hệ sinh thái BookingCare' : 'BookingCare Ecosystem'}</h4>
+                                <p>
+                                    {language === 'vi'
+                                        ? `Kết nối hơn ${numClinics} bệnh viện và ${numPharmacies} đối tác trên toàn quốc.`
+                                        : `Connecting more than ${numClinics} hospitals and ${numPharmacies} partners nationwide.`}
+                                </p>
                             </div>
                             <div className="eco-visual">
                                 <div className="eco-node"></div>
@@ -151,4 +189,10 @@ class ClinicFlowTab extends Component {
     }
 }
 
-export default withRouter(ClinicFlowTab);
+const mapStateToProps = state => {
+    return {
+        language: state.app.language
+    };
+};
+
+export default withRouter(connect(mapStateToProps)(ClinicFlowTab));

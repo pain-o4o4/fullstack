@@ -114,53 +114,37 @@ class ExtraInforDoctor extends Component {
                             {displayClinicName}
                         </div>
                         <div className="detail-address">
-                            {displayClinicAddress}
+                            <span className="address-text">{displayClinicAddress}</span>
+                            {displayClinicAddress && (
+                                <a 
+                                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(displayClinicAddress + ' ' + displayClinicName)}`} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    className="map-directions-link"
+                                    title="Xem vị trí trên bản đồ"
+                                >
+                                    <i className="fas fa-map-marked-alt"></i> Bản đồ
+                                </a>
+                            )}
                         </div>
                     </div>
                     <div className="content-donw">
-
-                        {isShowDetailInfor === false ? <div className="short-infor">
-
-
-
-                            <span onClick={() => this.showHideDetailInfor(true)}>
-                                <FormattedMessage id="schedule-doctor.show-price" />
-                            </span>
-                        </div> :
-                            <>
-                                <div className="title-price">
-                                    {
-
-                                    }
-                                </div>
-                                <div className="detail-infor">
-                                    {displayClinicAddress}
-                                </div>
-                                <div className="price">
-                                    <span className="left">
-                                        <FormattedMessage id="schedule-doctor.price" />
-                                    </span>
-                                    <span className="right">
-                                        {listExtraInforLanguage.price}
-                                    </span>
-                                </div>
-                                <div className="note">
-                                    {
-                                        extraInfor && extraInfor.note ? extraInfor.note : ''
-                                    }
-                                </div>
-                                <div className="payment">
-                                    {listExtraInforLanguage.payment}
-                                </div>
-                                <div className="hide-price">
-                                    <span onClick={() => this.showHideDetailInfor(false)}>
-                                        <FormattedMessage id="schedule-doctor.hide-price" />
-                                    </span>
-
-                                </div>
-                            </>
-                        }
-
+                        <div className="price-detail-card">
+                            <div className="price-row">
+                                <span className="left">
+                                    <i className="fas fa-tags"></i> <FormattedMessage id="schedule-doctor.price" />
+                                </span>
+                                <span className="right">
+                                    {listExtraInforLanguage.price}
+                                </span>
+                            </div>
+                            <div className="payment-row">
+                                <span className="label">
+                                    <i className="far fa-credit-card"></i> Phương thức thanh toán:
+                                </span>
+                                <span className="value">{listExtraInforLanguage.payment}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </React.Fragment>

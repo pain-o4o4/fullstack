@@ -36,7 +36,8 @@ class BookingModal extends Component {
             provinceData: '',
             currentDoctorId: -1,
             isLoading: false,
-            progressStatus: 'idle'
+            progressStatus: 'idle',
+            errors: {}
         }
     }
 
@@ -46,6 +47,15 @@ class BookingModal extends Component {
             let id = this.props.params.id;
             this.setState({
                 currentDoctorId: id
+            });
+        }
+        let { userInfo } = this.props;
+        if (userInfo) {
+            this.setState({
+                fullName: (userInfo.firstName && userInfo.lastName) ? `${userInfo.lastName} ${userInfo.firstName}` : this.state.fullName,
+                email: userInfo.email || '',
+                phoneNumber: userInfo.phonenumber || userInfo.phoneNumber || '',
+                address: userInfo.address || ''
             });
         }
     }
@@ -165,67 +175,157 @@ class BookingModal extends Component {
         }
     }
 
+    validateField = (fieldName, value) => {
+        let { errors } = this.state;
+        let { language } = this.props;
+        const nameRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂÂÊÔƠưăâêôơ\s]+$/;
+        const xssRegex = /<[^>]*>/g;
+
+        const cleanVal = (value || '').trim();
+
+        if (fieldName === 'fullName') {
+            if (!cleanVal) {
+                errors.fullName = language === 'vi' ? 'Vui lòng nhập họ và tên!' : 'Full name is required!';
+            } else if (xssRegex.test(value)) {
+                errors.fullName = language === 'vi' ? 'Họ và tên chứa ký tự không hợp lệ!' : 'Full name contains invalid characters!';
+            } else if (!nameRegex.test(cleanVal)) {
+                errors.fullName = language === 'vi' ? 'Họ và tên chỉ được phép chứa các chữ cái!' : 'Full name can only contain alphabetic characters!';
+            } else if (cleanVal.split(/\s+/).length < 2) {
+                errors.fullName = language === 'vi' ? 'Vui lòng nhập cả Họ và Tên!' : 'Please enter both first and last name!';
+            } else {
+                delete errors.fullName;
+            }
+        }
+        if (fieldName === 'phoneNumber') {
+            let cleanPhone = (value || '').replace(/[\s\-\.]/g, '');
+            if (cleanPhone.startsWith('+84')) {
+                cleanPhone = '0' + cleanPhone.slice(3);
+            } else if (cleanPhone.startsWith('84')) {
+                cleanPhone = '0' + cleanPhone.slice(2);
+            }
+
+            if (!cleanPhone) {
+                errors.phoneNumber = language === 'vi' ? 'Vui lòng nhập số điện thoại!' : 'Phone number is required!';
+            } else if (!/^\+?\d+$/.test(cleanPhone)) {
+                errors.phoneNumber = language === 'vi' ? 'Số điện thoại chỉ được chứa các chữ số!' : 'Phone number must contain only digits!';
+            } else if (!cleanPhone.startsWith('0')) {
+                errors.phoneNumber = language === 'vi' ? 'Số điện thoại phải bắt đầu bằng số 0!' : 'Phone number must start with 0!';
+            } else if (cleanPhone.length !== 10) {
+                errors.phoneNumber = language === 'vi' ? 'Số điện thoại phải có đúng 10 chữ số!' : 'Phone number must be exactly 10 digits!';
+            } else if (!/^(03|05|07|08|09)\d{8}$/.test(cleanPhone)) {
+                errors.phoneNumber = language === 'vi' ? 'Đầu số không hợp lệ (hỗ trợ 03, 05, 07, 08, 09)!' : 'Invalid phone prefix (starts with 03, 05, 07, 08, 09)!';
+            } else {
+                delete errors.phoneNumber;
+            }
+        }
+        if (fieldName === 'address') {
+            if (!cleanVal) {
+                errors.address = language === 'vi' ? 'Vui lòng nhập địa chỉ!' : 'Address is required!';
+            } else if (xssRegex.test(value)) {
+                errors.address = language === 'vi' ? 'Địa chỉ chứa ký tự không hợp lệ!' : 'Address contains invalid characters!';
+            } else {
+                delete errors.address;
+            }
+        }
+        if (fieldName === 'reason') {
+            if (!cleanVal) {
+                errors.reason = language === 'vi' ? 'Vui lòng nhập lý do khám bệnh!' : 'Reason is required!';
+            } else if (cleanVal.length < 10) {
+                errors.reason = language === 'vi' ? 'Vui lòng mô tả lý do khám chi tiết hơn (tối thiểu 10 ký tự)!' : 'Please describe your reason in more detail (at least 10 characters)!';
+            } else {
+                delete errors.reason;
+            }
+        }
+
+        this.setState({ errors });
+    }
+
+    checkValidateInput = () => {
+        const { fullName, phoneNumber, address, reason, birthday, selectedGender, selectedPayment } = this.state;
+        let { language } = this.props;
+        let { errors } = this.state;
+
+        this.validateField('fullName', fullName);
+        this.validateField('phoneNumber', phoneNumber);
+        this.validateField('address', address);
+        this.validateField('reason', reason);
+
+        if (!birthday) {
+            errors.birthday = language === 'vi' ? 'Vui lòng chọn ngày sinh!' : 'Please select your birthday!';
+        } else {
+            delete errors.birthday;
+        }
+
+        if (!selectedGender) {
+            errors.selectedGender = language === 'vi' ? 'Vui lòng chọn giới tính!' : 'Please select your gender!';
+        } else {
+            delete errors.selectedGender;
+        }
+
+        if (!selectedPayment) {
+            errors.selectedPayment = language === 'vi' ? 'Vui lòng chọn phương thức thanh toán!' : 'Please select a payment method!';
+        } else {
+            delete errors.selectedPayment;
+        }
+
+        this.setState({ errors });
+        return Object.keys(errors).length === 0;
+    }
+
     handleOnChangeInput = (event, type) => {
         let copyState = { ...this.state }
         copyState[type] = event.target.value
         this.setState({
             ...copyState
-        })
+        }, () => {
+            this.validateField(type, event.target.value);
+        });
     }
 
     handleOnChangeDatePicker = (date) => {
         this.setState({
             birthday: date[0]
-        })
+        }, () => {
+            let { errors } = this.state;
+            if (date[0]) {
+                delete errors.birthday;
+            } else {
+                errors.birthday = this.props.language === 'vi' ? 'Vui lòng chọn ngày sinh!' : 'Please select your birthday!';
+            }
+            this.setState({ errors });
+        });
     }
 
     handleChangeSelect = (selectedOption, actionMeta) => {
         this.setState({
             [actionMeta.name]: selectedOption
+        }, () => {
+            let { errors } = this.state;
+            if (selectedOption) {
+                delete errors[actionMeta.name];
+            } else {
+                errors[actionMeta.name] = this.props.language === 'vi' ? 'Vui lòng chọn mục này!' : 'Please select this field!';
+            }
+            this.setState({ errors });
         });
     }
 
     handleConfirmBooking = async () => {
-        this.setState({ isLoading: true, progressStatus: 'encrypting' });
-        let { dataTimeModal, isLoggedIn } = this.props;
-        let {
-            selectedPayment, fullName, email, address,
-            birthday, phoneNumber, selectedGender, reason
-        } = this.state;
+        let { isLoggedIn } = this.props;
 
         if (!isLoggedIn) {
             toast.warning(this.props.language === 'vi' ? "Vui Lòng Đăng Nhập Để Thực Hiện Đặt Lịch!" : "Please Login To Book An Appointment!");
             this.props.navigate(path.LOGIN);
-            this.setState({ isLoading: false, progressStatus: 'idle' });
             return;
         }
 
-        const emailRe = /\S+@\S+\.\S+/;
-        const phoneRe = /^\d+$/;
-
-        if (!fullName || !email || !address || !phoneNumber || !selectedGender || !selectedPayment || !birthday || !reason) {
-            toast.error(this.props.language === 'vi' ? "Vui Lòng Điền Đầy Đủ Các Thông Tin Bắt Buộc!" : "Please Fill In All Required Fields!");
-            this.setState({ isLoading: false, progressStatus: 'idle' });
+        let isValid = this.checkValidateInput();
+        if (!isValid) {
+            toast.error(this.props.language === 'vi' ? "Vui Lòng Điền Đầy Đủ Và Chính Xác Các Thông Tin!" : "Please Fill In All Fields Correctly!");
             return;
         }
 
-        if (!emailRe.test(email)) {
-            toast.error(this.props.language === 'vi' ? "Định Dạng Email Không Hợp Lệ!" : "Invalid Email Format!");
-            this.setState({ isLoading: false, progressStatus: 'idle' });
-            return;
-        }
-
-        if (!phoneRe.test(phoneNumber)) {
-            toast.error(this.props.language === 'vi' ? "Số Điện Thoại Không Hợp Lệ!" : "Invalid Phone Number!");
-            this.setState({ isLoading: false, progressStatus: 'idle' });
-            return;
-        }
-
-        if (reason.length < 10) {
-            toast.error(this.props.language === 'vi' ? "Vui Lòng Mô Tả Lý Do Khám Chi Tiết Hơn!" : "Please Describe Your Reason In More Detail!");
-            this.setState({ isLoading: false, progressStatus: 'idle' });
-            return;
-        }
+        this.setState({ isLoading: true, progressStatus: 'encrypting' });
 
         setTimeout(() => {
             this.setState({ progressStatus: 'sending' });
@@ -329,70 +429,79 @@ class BookingModal extends Component {
                                 <label htmlFor="fullName"><FormattedMessage id="schedule-doctor.fullName" /></label>
                                 <input
                                     id="fullName"
-                                    className="form-control"
+                                    className={`form-control ${this.state.errors.fullName ? 'is-invalid' : ''}`}
                                     type="text"
                                     value={this.state.fullName}
                                     onChange={(event) => { this.handleOnChangeInput(event, 'fullName') }}
                                     placeholder="VD: Nguyễn Văn A"
                                     aria-required="true"
                                 />
+                                {this.state.errors.fullName && <div className="invalid-feedback">{this.state.errors.fullName}</div>}
                             </div>
                             <div className="col-md-6 form-group">
                                 <label htmlFor="phoneNumber"><FormattedMessage id="schedule-doctor.phoneNumber" /></label>
                                 <input
                                     id="phoneNumber"
-                                    className="form-control"
+                                    className={`form-control ${this.state.errors.phoneNumber ? 'is-invalid' : ''}`}
                                     type="tel"
                                     value={this.state.phoneNumber}
                                     onChange={(event) => { this.handleOnChangeInput(event, 'phoneNumber') }}
                                     placeholder="09xx xxx xxx"
                                     aria-required="true"
                                 />
+                                {this.state.errors.phoneNumber && <div className="invalid-feedback">{this.state.errors.phoneNumber}</div>}
                             </div>
                             <div className="col-md-6 form-group">
                                 <label htmlFor="email"><FormattedMessage id="schedule-doctor.email" /></label>
                                 <input
                                     id="email"
-                                    className="form-control"
+                                    className="form-control locked-input"
                                     type="email"
                                     value={this.state.email}
-                                    onChange={(event) => { this.handleOnChangeInput(event, "email") }}
+                                    readOnly
                                     placeholder="Email"
                                     aria-required="true"
                                 />
+                                <small className="form-text text-muted" style={{ color: '#86868b', fontSize: '12px', marginTop: '4px', display: 'block' }}>
+                                    <i className="fas fa-lock" style={{ marginRight: '4px' }}></i>
+                                    {language === 'vi' ? 'Email được điền tự động từ tài khoản để tránh spam.' : 'Email is auto-filled from your account to prevent spam.'}
+                                </small>
                             </div>
                             <div className="col-md-6 form-group">
                                 <label htmlFor="address"><FormattedMessage id="schedule-doctor.address" /></label>
                                 <input
                                     id="address"
-                                    className="form-control"
+                                    className={`form-control ${this.state.errors.address ? 'is-invalid' : ''}`}
                                     type="text"
                                     value={this.state.address}
                                     onChange={(event) => { this.handleOnChangeInput(event, "address") }}
                                     placeholder="Địa chỉ"
                                     aria-required="true"
                                 />
+                                {this.state.errors.address && <div className="invalid-feedback">{this.state.errors.address}</div>}
                             </div>
                             <div className="col-12 form-group">
                                 <label htmlFor="reason"><FormattedMessage id="schedule-doctor.reason" /></label>
                                 <textarea
                                     id="reason"
-                                    className="form-control"
+                                    className={`form-control ${this.state.errors.reason ? 'is-invalid' : ''}`}
                                     rows="3"
                                     value={this.state.reason}
                                     onChange={(event) => { this.handleOnChangeInput(event, "reason") }}
                                     placeholder="Mô tả triệu chứng..."
                                     aria-required="true"
                                 />
+                                {this.state.errors.reason && <div className="invalid-feedback">{this.state.errors.reason}</div>}
                             </div>
                             <div className="col-4 form-group">
                                 <label><FormattedMessage id="schedule-doctor.birthday" /></label>
                                 <DatePicker
                                     onChange={(date) => { this.handleOnChangeDatePicker(date) }}
-                                    className="form-control"
+                                    className={`form-control ${this.state.errors.birthday ? 'is-invalid' : ''}`}
                                     value={this.state.birthday}
                                     maxDate={new Date()}
                                 />
+                                {this.state.errors.birthday && <div className="invalid-feedback">{this.state.errors.birthday}</div>}
                             </div>
                             <div className="col-4 form-group">
                                 <label><FormattedMessage id="schedule-doctor.gender" /></label>
@@ -401,9 +510,10 @@ class BookingModal extends Component {
                                     onChange={this.handleChangeSelect}
                                     name='selectedGender'
                                     options={this.state.genders}
-                                    className="react-select-container"
+                                    className={`react-select-container ${this.state.errors.selectedGender ? 'is-invalid' : ''}`}
                                     classNamePrefix="react-select"
                                 />
+                                {this.state.errors.selectedGender && <div className="invalid-feedback">{this.state.errors.selectedGender}</div>}
                             </div>
                             <div className="col-4 form-group">
                                 <label><FormattedMessage id="schedule-doctor.payment" /></label>
@@ -412,9 +522,10 @@ class BookingModal extends Component {
                                     onChange={this.handleChangeSelect}
                                     name='selectedPayment'
                                     options={this.state.listPayment}
-                                    className="react-select-container"
+                                    className={`react-select-container ${this.state.errors.selectedPayment ? 'is-invalid' : ''}`}
                                     classNamePrefix="react-select"
                                 />
+                                {this.state.errors.selectedPayment && <div className="invalid-feedback">{this.state.errors.selectedPayment}</div>}
                             </div>
                         </div>
 

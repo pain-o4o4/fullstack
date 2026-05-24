@@ -73,13 +73,57 @@ class DoctorChat extends Component {
         if (isOpen && !prevProps.isOpen) {
             this.scrollToBottom();
             this.loadChatHistory();
-            if (this.state.selectedDoctor) this.loadMessages();
+
+            // Check if there is a preselected doctor ID from detailed page
+            const preselectedId = localStorage.getItem('telehealth_preselected_doctor_id');
+            if (preselectedId) {
+                localStorage.removeItem('telehealth_preselected_doctor_id');
+                const docId = +preselectedId;
+                const foundDoctor = this.state.listDoctors.find(d => d.id === docId);
+                if (foundDoctor) {
+                    const formattedDoc = {
+                        id: foundDoctor.id,
+                        name: `${foundDoctor.lastName} ${foundDoctor.firstName}`,
+                        lastName: foundDoctor.lastName,
+                        firstName: foundDoctor.firstName,
+                        image: foundDoctor.image,
+                        avatar: foundDoctor.image,
+                        online: true
+                    };
+                    this.setState({
+                        selectedDoctor: formattedDoc,
+                        filterTab: 'ALL'
+                    }, () => {
+                        this.loadMessages();
+                        this.handleMarkAsRead();
+                    });
+                } else {
+                    const formattedDoc = {
+                        id: docId,
+                        name: 'Bác sĩ',
+                        lastName: 'Bác sĩ',
+                        firstName: '',
+                        image: '',
+                        avatar: '',
+                        online: true
+                    };
+                    this.setState({
+                        selectedDoctor: formattedDoc,
+                        filterTab: 'ALL'
+                    }, () => {
+                        this.loadMessages();
+                        this.handleMarkAsRead();
+                    });
+                }
+            } else {
+                if (this.state.selectedDoctor) this.loadMessages();
+            }
 
             // Nếu mở drawer theo yêu cầu AI từ Redux
             if (this.props.doctorChatTab === 'AISUPPORT') {
                 this.setState({ filterTab: 'AISUPPORT' });
                 this.handleNewAIChat();
-            } else {
+            } else if (!preselectedId) {
                 // Mặc định về tab Tất cả nếu không có yêu cầu đặc biệt (Fix lỗi sếp lo)
                 this.setState({ filterTab: 'ALL' });
             }
@@ -110,7 +154,25 @@ class DoctorChat extends Component {
             if (doctors && doctors.length > 0) {
                 this.setState({
                     listDoctors: doctors
-                })
+                }, () => {
+                    const { selectedDoctor } = this.state;
+                    if (selectedDoctor && selectedDoctor.name === 'Bác sĩ') {
+                        const found = doctors.find(d => d.id === selectedDoctor.id);
+                        if (found) {
+                            this.setState({
+                                selectedDoctor: {
+                                    id: found.id,
+                                    name: `${found.lastName} ${found.firstName}`,
+                                    lastName: found.lastName,
+                                    firstName: found.firstName,
+                                    image: found.image,
+                                    avatar: found.image,
+                                    online: true
+                                }
+                            });
+                        }
+                    }
+                });
             }
         }
 

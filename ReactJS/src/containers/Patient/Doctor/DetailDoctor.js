@@ -82,15 +82,28 @@ class DetailDoctor extends Component {
         }
     }
 
-    handleViewDetailDoctor = (doctor) => {
-        if (this.props.navigate) {
-            this.props.navigate(`/detail-doctor/${doctor.doctorId}`);
-        }
+    handleViewDetail = (data, type) => {
+        if (type === "DOCTOR") {
+            this.props.navigate(`/detail-doctor/${data.doctorId}`);
+        } else if (type === "SPECIALTY") {
+            this.props.navigate(`/detail-specialty/${data.id}`);
+        } else if (type === "CLINIC") {
+            this.props.navigate(`/detail-clinic/${data.id}`);
+        } else return;
     }
     handleClinicSelection = (clinicData) => {
         this.setState({
             selectedClinicData: clinicData
         });
+    }
+
+    handleStartChat = () => {
+        if (this.state.currentDoctorId) {
+            localStorage.setItem('telehealth_preselected_doctor_id', this.state.currentDoctorId);
+            if (this.props.toggleChat) {
+                this.props.toggleChat();
+            }
+        }
     }
 
     render() {
@@ -99,8 +112,8 @@ class DetailDoctor extends Component {
         let nameVi = '', nameEn = '';
 
         if (detailDoctor && detailDoctor.positionData) {
-            nameVi = `${detailDoctor.positionData.valueVi} ${detailDoctor.firstName} ${detailDoctor.lastName}`;
-            nameEn = `${detailDoctor.positionData.valueEn} ${detailDoctor.lastName} ${detailDoctor.firstName}`;
+            nameVi = `${detailDoctor.positionData.valueVi} ${detailDoctor.lastName} ${detailDoctor.firstName}`;
+            nameEn = `${detailDoctor.positionData.valueEn} ${detailDoctor.firstName} ${detailDoctor.lastName}`;
         }
 
         return (
@@ -127,10 +140,50 @@ class DetailDoctor extends Component {
                                     <div className='up'>
                                         {language === LANGUAGES.VI ? nameVi : nameEn}
                                     </div>
+
+                                    {/* Clean, high-end subtitle with bullet separator (Apple specification style) */}
+                                    <div className='doctor-subtitle-meta'>
+                                        {detailDoctor?.doctorinforData?.specialtyData?.name && (
+                                            <span className='meta-item' onClick={() => this.handleViewDetail({ id: detailDoctor.doctorinforData.specialtyId || detailDoctor.doctorinforData.specialtyData.id }, 'SPECIALTY')}>
+                                                <i className='fas fa-stethoscope'></i> {detailDoctor.doctorinforData.specialtyData.name}
+                                            </span>
+                                        )}
+                                        {detailDoctor?.doctorinforData?.specialtyData?.name && detailDoctor?.doctorinforData?.clinicData?.name && (
+                                            <span className='meta-divider'>•</span>
+                                        )}
+                                        {detailDoctor?.doctorinforData?.clinicData?.name && (
+                                            <span className='meta-item' onClick={() => this.handleViewDetail({ id: detailDoctor.doctorinforData.clinicId || detailDoctor.doctorinforData.clinicData.id }, 'CLINIC')}>
+                                                <i className='fas fa-hospital'></i> {detailDoctor.doctorinforData.clinicData.name}
+                                            </span>
+                                        )}
+                                    </div>
+
                                     <div className='down'>
                                         {detailDoctor && detailDoctor.markdownData && detailDoctor.markdownData.description
                                             && <span>{detailDoctor.markdownData.description}</span>
                                         }
+                                    </div>
+
+                                    {/* Sleek, Apple-style Hero Actions Row */}
+                                    <div className='doctor-hero-actions'>
+                                        <button
+                                            onClick={this.handleStartChat}
+                                            className='btn-quick-chat'
+                                            title={language === 'vi' ? 'Trò chuyện trực tuyến ngay với bác sĩ này' : 'Chat now online with this doctor'}>
+                                            <i className="fas fa-comments"></i>
+                                            {language === 'vi' ? 'Tư vấn trực tuyến' : 'Consult Online'}
+                                        </button>
+
+                                        {detailDoctor?.phonenumber && (
+                                            <a href={`tel:${detailDoctor.phonenumber}`} className='action-secondary-link' title="Bấm để gọi ngay">
+                                                <i className='fas fa-phone-alt'></i> {language === 'vi' ? 'Gọi ngay' : 'Call'}
+                                            </a>
+                                        )}
+                                        {detailDoctor?.email && (
+                                            <a href={`mailto:${detailDoctor.email}`} className='action-secondary-link' title="Bấm để gửi email">
+                                                <i className='fas fa-envelope'></i> {language === 'vi' ? 'Gửi Email' : 'Email'}
+                                            </a>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -163,7 +216,7 @@ class DetailDoctor extends Component {
                                     </div>
                                     <div className="related-list">
                                         {this.state.listRelatedDoctors.map((item, index) => (
-                                            <div className="related-item" key={index} onClick={() => this.handleViewDetailDoctor(item)}>
+                                            <div className="related-item" key={index} onClick={() => this.handleViewDetail(item, "DOCTOR")}>
                                                 <ProfileDoctor
                                                     doctorId={item.doctorId}
                                                     isShowDescription={true}
@@ -196,8 +249,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-
-        getDetailDoctor: (id) => dispatch(action.getDetailDoctor(id))
+        getDetailDoctor: (id) => dispatch(action.getDetailDoctor(id)),
+        toggleChat: () => dispatch(action.toggleChat())
     };
 };
 

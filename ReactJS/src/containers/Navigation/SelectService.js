@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, FormattedNumber } from 'react-intl';
 import { withRouter } from '../../components/Navigator';
 import HomeHeader from '../HomePage/HomeHeader';
 import HomeFooter from '../HomePage/HomeFooter';
@@ -127,14 +127,37 @@ class SelectService extends Component {
                                 <div className="card-image" style={{ backgroundImage: `url(${item.image})` }}></div>
                                 <div className="card-info">
                                     <h3 className="card-name">{language === 'vi' ? nameVi : nameEn}</h3>
-                                    <p className="card-desc">{item.Doctor_Infor?.specialtyData?.name || 'Chuyên gia y tế'}</p>
+                                    <p className="card-desc">
+                                        <span className="specialty-text">{item.doctorinforData?.specialtyData?.name || (language === 'vi' ? 'Chuyên gia y tế' : 'Medical Specialist')}</span>
+                                        {item.doctorinforData?.clinicData?.name && (
+                                            <>
+                                                <span className="separator-dot">•</span>
+                                                <span className="clinic-text">{item.doctorinforData.clinicData.name}</span>
+                                            </>
+                                        )}
+                                    </p>
                                     <div className="card-meta">
-                                        <span><i className="fas fa-map-marker-alt"></i> Hà Nội</span>
-                                        <span><i className="fas fa-user-check"></i> Đang làm việc</span>
+                                        <span>
+                                            <i className="fas fa-map-marker-alt"></i>
+                                            {language === 'vi' ? (item.doctorinforData?.provinceTypeData?.valueVi || 'Toàn quốc') : (item.doctorinforData?.provinceTypeData?.valueEn || 'National')}
+                                        </span>
+                                        <span>
+                                            <i className="fas fa-money-bill-wave"></i>
+                                            {item.doctorinforData?.priceTypeData ? (
+                                                language === 'vi' ? (
+                                                    <FormattedNumber value={item.doctorinforData.priceTypeData.valueVi} style="currency" currency="VND" />
+                                                ) : (
+                                                    <FormattedNumber value={item.doctorinforData.priceTypeData.valueEn} style="currency" currency="USD" />
+                                                )
+                                            ) : (
+                                                language === 'vi' ? 'Liên hệ' : 'Contact'
+                                            )}
+                                        </span>
+                                        <span><i className="fas fa-user-check"></i> {language === 'vi' ? 'Đang trực tuyến' : 'Online'}</span>
                                     </div>
                                 </div>
                                 <div className="card-actions">
-                                    <button className="btn-book">Đặt lịch khám <i className="fas fa-chevron-right"></i></button>
+                                    <button className="btn-book">{language === 'vi' ? 'Đặt lịch khám' : 'Book Appointment'} <i className="fas fa-chevron-right"></i></button>
                                 </div>
                             </div>
                         );
@@ -146,7 +169,7 @@ class SelectService extends Component {
     }
 
     renderSpecialtyList = () => {
-        const { allSpecialties, navigate } = this.props;
+        const { allSpecialties, navigate, language } = this.props;
         const { currentPage, itemsPerPage } = this.state;
 
         if (!allSpecialties || allSpecialties.length === 0) return <SectionSkeleton items={4} />;
@@ -163,13 +186,21 @@ class SelectService extends Component {
                             <div className="card-image" style={{ backgroundImage: `url(${item.image})` }}></div>
                             <div className="card-info">
                                 <h3 className="card-name">{item.name}</h3>
-                                <p className="card-desc">Chuyên khoa uy tín</p>
+                                <p className="card-desc">
+                                    {item.descriptionMarkdown ? (
+                                        item.descriptionMarkdown.length > 120 
+                                            ? item.descriptionMarkdown.substring(0, 120) + '...' 
+                                            : item.descriptionMarkdown
+                                    ) : (
+                                        language === 'vi' ? 'Chuyên khoa y tế uy tín, chất lượng hàng đầu.' : 'Leading medical specialty with reputable services.'
+                                    )}
+                                </p>
                                 <div className="card-meta">
-                                    <span><i className="fas fa-check-circle"></i> Đội ngũ bác sĩ giỏi</span>
+                                    <span><i className="fas fa-user-md"></i> {language === 'vi' ? 'Đội ngũ bác sĩ chuyên môn giỏi' : 'Team of highly skilled specialists'}</span>
                                 </div>
                             </div>
                             <div className="card-actions">
-                                <button className="btn-book">Xem chi tiết <i className="fas fa-chevron-right"></i></button>
+                                <button className="btn-book">{language === 'vi' ? 'Xem chi tiết' : 'View Details'} <i className="fas fa-chevron-right"></i></button>
                             </div>
                         </div>
                     ))}
@@ -180,7 +211,7 @@ class SelectService extends Component {
     }
 
     renderClinicList = () => {
-        const { allClinics, navigate } = this.props;
+        const { allClinics, navigate, language } = this.props;
         const { currentPage, itemsPerPage } = this.state;
 
         if (!allClinics || allClinics.length === 0) return <SectionSkeleton items={4} />;
@@ -197,13 +228,22 @@ class SelectService extends Component {
                             <div className="card-image" style={{ backgroundImage: `url(${item.image})` }}></div>
                             <div className="card-info">
                                 <h3 className="card-name">{item.name}</h3>
-                                <p className="card-desc">{item.address}</p>
+                                <p className="card-desc"><i className="fas fa-map-marker-alt" style={{ marginRight: '6px', color: '#0071e3' }}></i> {item.address}</p>
                                 <div className="card-meta">
-                                    <span><i className="fas fa-hospital"></i> Cơ sở vật chất hiện đại</span>
+                                    <span>
+                                        <i className="fas fa-info-circle"></i>
+                                        {item.descriptionMarkdown ? (
+                                            item.descriptionMarkdown.length > 90 
+                                                ? item.descriptionMarkdown.substring(0, 90) + '...' 
+                                                : item.descriptionMarkdown
+                                        ) : (
+                                            language === 'vi' ? 'Cơ sở vật chất hiện đại, dịch vụ y tế chất lượng cao.' : 'Modern facilities and high-quality healthcare services.'
+                                        )}
+                                    </span>
                                 </div>
                             </div>
                             <div className="card-actions">
-                                <button className="btn-book">Xem chi tiết <i className="fas fa-chevron-right"></i></button>
+                                <button className="btn-book">{language === 'vi' ? 'Xem chi tiết' : 'View Details'} <i className="fas fa-chevron-right"></i></button>
                             </div>
                         </div>
                     ))}

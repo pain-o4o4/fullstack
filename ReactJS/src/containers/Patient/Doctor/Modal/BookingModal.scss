@@ -83,6 +83,36 @@
                     border-color: #0071e3 !important;
                     box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1) !important;
                 }
+
+                &.is-invalid {
+                    border-color: #ff3b30 !important;
+                    background-color: #fff2f2 !important;
+
+                    &:focus {
+                        box-shadow: 0 0 0 4px rgba(255, 59, 48, 0.15) !important;
+                    }
+                }
+
+                &.locked-input {
+                    background: #e8e8ed !important;
+                    color: #86868b !important;
+                    cursor: not-allowed;
+                    border-color: rgba(0, 0, 0, 0.05) !important;
+                    opacity: 0.8;
+
+                    &:focus {
+                        border-color: rgba(0, 0, 0, 0.05) !important;
+                        box-shadow: none !important;
+                    }
+                }
+            }
+
+            .invalid-feedback {
+                color: #ff3b30;
+                font-size: 13px;
+                font-weight: 500;
+                margin-top: 6px;
+                display: block;
             }
         }
 
@@ -233,5 +263,12 @@
 
     .react-select__placeholder {
         color: #515154 !important; // Pair 2 Text
+    }
+
+    &.is-invalid {
+        .react-select__control {
+            border-color: #ff3b30 !important;
+            background-color: #fff2f2 !important;
+        }
     }
 }

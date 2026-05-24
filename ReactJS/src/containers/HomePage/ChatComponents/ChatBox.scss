@@ -908,3 +908,202 @@
         }
     }
 }
+
+// Wrapper for Chat and Slide-out Patient Info Drawer
+.dcd-chat-main-wrapper {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.dcd-chat-area-hidden {
+    display: none !important;
+}
+
+.dcd-patient-drawer {
+    width: 100% !important;
+    height: 100%;
+    background: #ffffff;
+    border-left: 1px solid rgba(209, 209, 214, 0.3);
+    display: flex;
+    flex-direction: column;
+    animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.04);
+    z-index: 50;
+
+    .dcd-drawer-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid rgba(209, 209, 214, 0.3);
+
+        .header-content {
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: #1d1d1f;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #8e8e93;
+            font-size: 16px;
+            transition: color 0.2s;
+
+            &:hover {
+                color: #ff3b30;
+            }
+        }
+    }
+
+    .dcd-drawer-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 24px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        max-width: 500px;
+        width: 100%;
+        margin: 0 auto;
+
+        .patient-avatar-wrap {
+            position: relative;
+            margin-bottom: 8px;
+
+            .patient-avatar {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 3px solid #fff;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            }
+
+            .patient-avatar-placeholder {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                background: #f2f2f7;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 32px;
+                color: #8e8e93;
+                border: 3px solid #fff;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            }
+        }
+
+        .patient-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1d1d1f;
+            text-align: center;
+            margin-top: -8px;
+        }
+
+        .info-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            background: #fafafa;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.02);
+
+            .info-item {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+
+                .label {
+                    font-size: 11px;
+                    font-weight: 600;
+                    color: #8e8e93;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+
+                .value {
+                    font-size: 13px;
+                    font-weight: 500;
+                    color: #1d1d1f;
+                    word-break: break-all;
+                }
+            }
+        }
+
+        .security-badge {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(52, 199, 89, 0.06);
+            border-radius: 10px;
+            border: 1px dashed rgba(52, 199, 89, 0.3);
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            font-size: 11px;
+            line-height: 1.4;
+            color: #34c759;
+
+            i {
+                font-size: 14px;
+                margin-top: 2px;
+            }
+        }
+    }
+}
+
+.dcd-drawer-loading {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 24px;
+    gap: 16px;
+    max-width: 500px;
+    width: 100%;
+    margin: 0 auto;
+
+    .skeleton-avatar, .skeleton-name, .skeleton-info-box {
+        animation: pulseShimmer 1.5s ease-in-out infinite;
+    }
+}
+
+@keyframes pulseShimmer {
+    0% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.6;
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
