@@ -1,6 +1,6 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component, Fragment, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { IntlProvider } from 'react-intl';
 
@@ -47,7 +47,27 @@ import AISupportPage from './HomePage/AISupportPage';
 import PrivacyPolicy from './HomePage/Legal/PrivacyPolicy';
 import TermsOfUse from './HomePage/Legal/TermsOfUse';
 
+const ScrollToTop = ({ scrollbarRef }) => {
+    const { pathname } = useLocation();
+
+    useEffect(() => {
+        if (scrollbarRef && scrollbarRef.current) {
+            const rawScrollbars = scrollbarRef.current.ref?.current;
+            if (rawScrollbars && typeof rawScrollbars.scrollTop === 'function') {
+                rawScrollbars.scrollTop(0);
+            } else if (typeof scrollbarRef.current.scrollTo === 'function') {
+                scrollbarRef.current.scrollTo(0);
+            }
+        }
+        window.scrollTo(0, 0);
+    }, [pathname, scrollbarRef]);
+
+    return null;
+};
+
 class App extends Component {
+    customScrollbarsRef = React.createRef();
+
     state = {
         bootstrapped: false
     };
@@ -94,11 +114,12 @@ class App extends Component {
             <Fragment>
 
                 <BrowserRouter>
+                    <ScrollToTop scrollbarRef={this.customScrollbarsRef} />
                     <div className="main-container">
                         <ResilienceBanner />
                         <ConfirmModal />
                         <div className="content-container">
-                            <CustomScrollbars style={{ height: '100vh', width: '100%' }}>
+                            <CustomScrollbars ref={this.customScrollbarsRef} style={{ height: '100vh', width: '100%' }}>
                                 <Routes>
                                     <Route path={path.HOME} element={<Home />} />
 

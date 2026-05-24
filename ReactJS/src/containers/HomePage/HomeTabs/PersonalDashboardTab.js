@@ -113,7 +113,7 @@ class PersonalDashboardTab extends Component {
                 <div className="pdt-wrapper">
                     {/* ── Profile Card ───────────────────────────────── */}
                     <div className="pdt-profile-card">
-                        <div className="pdt-avatar-container" onClick={() => isLoggedIn && navigate('/patient/profile')}>
+                        <div className="pdt-avatar-container" onClick={() => isLoggedIn && navigate('/system/patient-profile')}>
                             {avatarSrc ? (
                                 <img src={avatarSrc} alt="avatar" className="pdt-avatar-img" />
                             ) : (
@@ -152,7 +152,7 @@ class PersonalDashboardTab extends Component {
                             <span className="pdt-card-icon"><i className="fas fa-heartbeat"></i></span>
                             <h4>Chỉ số sinh hiệu sinh học</h4>
                         </div>
-                        
+
                         <div className="pdt-vitals-grid">
                             <div className="pdt-vital-item heart-rate">
                                 <div className="vital-icon-pulse">
@@ -282,62 +282,62 @@ class PersonalDashboardTab extends Component {
                         <button className="pdt-ai-btn" onClick={(e) => { e.stopPropagation(); this.props.openChatWithTab('AISUPPORT'); }}>
                             Thử ngay <i className="fas fa-arrow-right"></i>
                         </button>
-                </div>
-
-                {/* ── Glassmorphic Modal for Vitals Update ── */}
-                {showVitalsModal && (
-                    <div className="pdt-modal-overlay" onClick={this.handleCloseVitalsModal}>
-                        <div className="pdt-modal-content" onClick={(e) => e.stopPropagation()}>
-                            <div className="pdt-modal-header">
-                                <h3><i className="fas fa-heartbeat"></i> Cập nhật chỉ số sinh hiệu</h3>
-                                <button className="pdt-modal-close" onClick={this.handleCloseVitalsModal}>&times;</button>
-                            </div>
-                            <form onSubmit={this.handleSaveVitals}>
-                                <div className="pdt-form-group">
-                                    <label>Nhịp tim (bpm):</label>
-                                    <input 
-                                        type="number" 
-                                        value={tempHeartRate} 
-                                        onChange={(e) => this.setState({ tempHeartRate: e.target.value })}
-                                        placeholder="Ví dụ: 75"
-                                        min="40"
-                                        max="200"
-                                        required
-                                    />
-                                </div>
-
-                                <div className="pdt-form-group">
-                                    <label>Huyết áp (mmHg):</label>
-                                    <input 
-                                        type="text" 
-                                        value={tempBloodPressure} 
-                                        onChange={(e) => this.setState({ tempBloodPressure: e.target.value })}
-                                        placeholder="Ví dụ: 120/80"
-                                        required
-                                    />
-                                </div>
-
-                                <div className="pdt-form-group">
-                                    <label>Nồng độ Oxy SpO2 (%):</label>
-                                    <input 
-                                        type="number" 
-                                        value={tempSpo2} 
-                                        onChange={(e) => this.setState({ tempSpo2: e.target.value })}
-                                        placeholder="Ví dụ: 98"
-                                        min="50"
-                                        max="100"
-                                        required
-                                    />
-                                </div>
-
-                                <div className="pdt-modal-actions">
-                                    <button type="button" className="pdt-btn-cancel" onClick={this.handleCloseVitalsModal}>Hủy</button>
-                                    <button type="submit" className="pdt-btn-save">Lưu lại</button>
-                                </div>
-                            </form>
-                        </div>
                     </div>
-                )}
+
+                    {/* ── Glassmorphic Modal for Vitals Update ── */}
+                    {showVitalsModal && (
+                        <div className="pdt-modal-overlay" onClick={this.handleCloseVitalsModal}>
+                            <div className="pdt-modal-content" onClick={(e) => e.stopPropagation()}>
+                                <div className="pdt-modal-header">
+                                    <h3><i className="fas fa-heartbeat"></i> Cập nhật chỉ số sinh hiệu</h3>
+                                    <button className="pdt-modal-close" onClick={this.handleCloseVitalsModal}>&times;</button>
+                                </div>
+                                <form onSubmit={this.handleSaveVitals}>
+                                    <div className="pdt-form-group">
+                                        <label>Nhịp tim (bpm):</label>
+                                        <input
+                                            type="number"
+                                            value={tempHeartRate}
+                                            onChange={(e) => this.setState({ tempHeartRate: e.target.value })}
+                                            placeholder="Ví dụ: 75"
+                                            min="40"
+                                            max="200"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="pdt-form-group">
+                                        <label>Huyết áp (mmHg):</label>
+                                        <input
+                                            type="text"
+                                            value={tempBloodPressure}
+                                            onChange={(e) => this.setState({ tempBloodPressure: e.target.value })}
+                                            placeholder="Ví dụ: 120/80"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="pdt-form-group">
+                                        <label>Nồng độ Oxy SpO2 (%):</label>
+                                        <input
+                                            type="number"
+                                            value={tempSpo2}
+                                            onChange={(e) => this.setState({ tempSpo2: e.target.value })}
+                                            placeholder="Ví dụ: 98"
+                                            min="50"
+                                            max="100"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="pdt-modal-actions">
+                                        <button type="button" className="pdt-btn-cancel" onClick={this.handleCloseVitalsModal}>Hủy</button>
+                                        <button type="submit" className="pdt-btn-save">Lưu lại</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         );
