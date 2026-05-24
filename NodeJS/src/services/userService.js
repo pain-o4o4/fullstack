@@ -524,6 +524,111 @@ let handleRefreshTokenService = (token) => {
     });
 };
 
+let handleForgotPasswordService = (email, language = 'vi') => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!email) {
+                return resolve({ errCode: 1, errMessage: language === 'vi' ? 'Vui lòng cung cấp email!' : 'Please provide an email!' });
+            }
+
+            // 1. Tìm User
+            let user = await db.User.findOne({
+                where: { email: email.trim().toLowerCase() },
+                attributes: ['id', 'email', 'password']
+            });
+
+            if (!user) {
+                return resolve({ errCode: 2, errMessage: language === 'vi' ? 'Email không tồn tại trong hệ thống!' : 'Email does not exist!' });
+            }
+
+            // 2. Tạo khóa Secret động: Secret hệ thống + password hiện tại của user
+            const secret = process.env.JWT_SECRET + user.password;
+
+            // 3. Tạo JWT Token dùng trong 15 phút
+            const token = jwt.sign(
+                { id: user.id, email: user.email }, 
+                secret, 
+                { expiresIn: '15m' }
+            );
+
+            // 4. Tạo đường link gửi về mail (lấy từ process.env.URL_REACT)
+            const reactUrl = process.env.URL_REACT || 'http://localhost:3000';
+            const resetLink = `${reactUrl}/reset-password?id=${user.id}&token=${token}`;
+
+            // 5. Gửi email thông qua emailService
+            await emailService.sendResetPasswordEmail({
+                receiverEmail: user.email,
+                resetLink: resetLink,
+                language: language
+            });
+
+            resolve({
+                errCode: 0,
+                errMessage: language === 'vi' ? 'Một liên kết khôi phục mật khẩu đã được gửi đến email của bạn!' : 'A password reset link has been sent to your email!'
+            });
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+
+let handleResetPasswordService = (userId, token, newPassword, language = 'vi') => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!userId || !token || !newPassword) {
+                return resolve({ errCode: 1, errMessage: language === 'vi' ? 'Thiếu tham số bắt buộc!' : 'Missing required parameters!' });
+            }
+
+            // 1. Tìm user theo ID và lấy trường password rõ ràng
+            let user = await db.User.findOne({
+                where: { id: userId },
+                attributes: ['id', 'email', 'password'],
+                raw: false
+            });
+
+            if (!user) {
+                return resolve({ errCode: 2, errMessage: language === 'vi' ? 'Tài khoản không tồn tại!' : 'User not found!' });
+            }
+
+            // 2. Kiểm tra mật khẩu mới có trùng mật khẩu cũ không
+            let isSamePassword = bcrypt.compareSync(newPassword, user.password);
+            if (isSamePassword) {
+                return resolve({
+                    errCode: 4,
+                    errMessage: language === 'vi' 
+                        ? 'Mật khẩu mới không được trùng mật khẩu cũ!' 
+                        : 'New password cannot be the same as the old password!'
+                });
+            }
+
+            // 3. Tạo lại chính xác chuỗi Secret động bằng password cũ trong DB
+            const secret = process.env.JWT_SECRET + user.password;
+
+            try {
+                // 4. Xác thực JWT token
+                jwt.verify(token, secret);
+
+                // 5. Token hoàn toàn hợp lệ -> Tiến hành hash mật khẩu mới và cập nhật (Cần await vì hashUserPassword là Promise)
+                user.password = await hashUserPassword(newPassword);
+                await user.save();
+
+                resolve({
+                    errCode: 0,
+                    errMessage: language === 'vi' ? 'Mật khẩu đã được khôi phục thành công! Vui lòng đăng nhập lại.' : 'Password reset successful! Please login again.'
+                });
+            } catch (jwtError) {
+                console.error(">>> JWT Verification failed in handleResetPasswordService:", jwtError);
+                return resolve({
+                    errCode: 3,
+                    errMessage: language === 'vi' ? 'Đường dẫn khôi phục không hợp lệ hoặc đã hết hạn!' : 'Reset link is invalid or expired!'
+                });
+            }
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+
 export default {
     initiateRegisterService: initiateRegisterService,
     resendRegisterVerificationCodeService: resendRegisterVerificationCodeService,
@@ -537,5 +642,7 @@ export default {
     updateUserData: updateUserData,
     getAllCodeService: getAllCodeService,
     hashUserPassword: hashUserPassword,
-    handleRefreshTokenService: handleRefreshTokenService
+    handleRefreshTokenService: handleRefreshTokenService,
+    handleForgotPasswordService: handleForgotPasswordService,
+    handleResetPasswordService: handleResetPasswordService
 };

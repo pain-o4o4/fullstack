@@ -188,6 +188,32 @@ let handleLogout = async (req, res) => {
     }
 }
 
+let handleForgotPassword = async (req, res) => {
+    try {
+        let response = await userService.handleForgotPasswordService(req.body.email, req.body.language);
+        return res.status(200).json(response);
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({
+            errCode: -1,
+            errMessage: 'Error from server...'
+        });
+    }
+}
+
+let handleResetPassword = async (req, res) => {
+    try {
+        let response = await userService.handleResetPasswordService(req.body.userId, req.body.token, req.body.newPassword, req.body.language);
+        return res.status(200).json(response);
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({
+            errCode: -1,
+            errMessage: 'Error from server...'
+        });
+    }
+}
+
 export default {
     createRegister: createRegister,
     handleLogin: handleLogin,
@@ -198,5 +224,6 @@ export default {
     getAllCode: getAllCode,
     handleRefreshToken: handleRefreshToken,
     handleLogout: handleLogout,
-
+    handleForgotPassword: handleForgotPassword,
+    handleResetPassword: handleResetPassword
 };

@@ -255,6 +255,14 @@ const deleteBookingServiceManual = (id) => {
     return axios.delete('/api/delete-booking', { data: { id } });
 }
 
+const handleForgotPasswordAPI = (email, language = 'vi') => {
+    return axios.post('/api/forgot-password', { email, language });
+}
+
+const handleResetPasswordAPI = (data) => {
+    return axios.post('/api/reset-password', data);
+}
+
 export {
     handleLoginApi,
     verifyPaymentStatus,
@@ -316,5 +324,7 @@ export {
     saveGlobalQuickReplyApi,
     getListBookingHistoryService,
     updateBookingServiceManual,
-    deleteBookingServiceManual
+    deleteBookingServiceManual,
+    handleForgotPasswordAPI,
+    handleResetPasswordAPI
 }

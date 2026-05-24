@@ -7,8 +7,9 @@ import { FormattedMessage } from 'react-intl';
 import emailIcon from '../../assets/images/email.png';
 import passwordIcon from '../../assets/images/password.png';
 
-import { handleLoginApi } from '../../services/userService';
+import { handleLoginApi, handleForgotPasswordAPI } from '../../services/userService';
 import { withRouter } from '../../components/Navigator';
+import { Eye as EyeIcon, EyeClosed as EyeClosedIcon } from '@phosphor-icons/react';
 
 class Login extends Component {
     state = {
@@ -16,7 +17,64 @@ class Login extends Component {
         password: '',
         isShowPassword: false,
         errMessage: '',
-        errors: {}
+        errors: {},
+        isShowForgotPasswordModal: false,
+        forgotEmail: '',
+        forgotErrMessage: '',
+        forgotSuccessMessage: '',
+        isForgotLoading: false
+    };
+
+    handleOpenForgotPasswordModal = () => {
+        this.setState({
+            isShowForgotPasswordModal: true,
+            forgotEmail: '',
+            forgotErrMessage: '',
+            forgotSuccessMessage: '',
+            isForgotLoading: false
+        });
+    };
+
+    handleCloseForgotPasswordModal = () => {
+        this.setState({ isShowForgotPasswordModal: false });
+    };
+
+    handleForgotEmailChange = (e) => {
+        this.setState({ forgotEmail: e.target.value, forgotErrMessage: '', forgotSuccessMessage: '' });
+    };
+
+    handleSendForgotRequest = async (e) => {
+        e.preventDefault();
+        const { forgotEmail } = this.state;
+        const { language } = this.props;
+
+        if (!forgotEmail) {
+            this.setState({
+                forgotErrMessage: language === 'vi' ? 'Vui lòng nhập Email!' : 'Email is required!'
+            });
+            return;
+        }
+
+        this.setState({ isForgotLoading: true, forgotErrMessage: '', forgotSuccessMessage: '' });
+
+        try {
+            let res = await handleForgotPasswordAPI(forgotEmail, language);
+            if (res && res.errCode === 0) {
+                this.setState({
+                    forgotSuccessMessage: res.errMessage || (language === 'vi' ? 'Đã gửi liên kết khôi phục thành công!' : 'Reset link sent successfully!')
+                });
+            } else {
+                this.setState({
+                    forgotErrMessage: res.errMessage || (language === 'vi' ? 'Gửi yêu cầu thất bại!' : 'Failed to send request!')
+                });
+            }
+        } catch (error) {
+            this.setState({
+                forgotErrMessage: language === 'vi' ? 'Lỗi kết nối máy chủ!' : 'Server connection error!'
+            });
+        } finally {
+            this.setState({ isForgotLoading: false });
+        }
     };
 
     validateField = (fieldName, value) => {
@@ -183,55 +241,132 @@ class Login extends Component {
 
                 <div className="form-right-login">
                     <div className="container">
-                        <div className="header">
-                            <div className="text"><FormattedMessage id="login.login" /></div>
-                            <div className="underline"></div>
-                        </div>
+                        {!this.state.isShowForgotPasswordModal ? (
+                            <React.Fragment>
+                                <div className="header">
+                                    <div className="text"><FormattedMessage id="login.login" /></div>
+                                    <div className="underline"></div>
+                                </div>
 
-                        <div className="inputs">
-                            <div className={`input ${errors.email ? 'has-error' : ''}`}>
-                                <img className="input-icon" src={emailIcon} alt="email" />
-                                <input
-                                    type="email"
-                                    name="email"
-                                    placeholder={language === 'vi' ? 'Email' : 'Email'}
-                                    value={this.state.email}
-                                    onChange={this.handleEmailChange}
-                                    onBlur={this.handleEmailBlur}
-                                    onKeyDown={(event) => this.handleKeyDown(event, 'email')}
-                                />
-                            </div>
-                            {errors.email && <div className="inline-error">{errors.email}</div>}
+                                <div className="inputs">
+                                    <div className={`input ${errors.email ? 'has-error' : ''}`}>
+                                        <img className="input-icon" src={emailIcon} alt="email" />
+                                        <input
+                                            type="email"
+                                            name="email"
+                                            placeholder={language === 'vi' ? 'Email' : 'Email'}
+                                            value={this.state.email}
+                                            onChange={this.handleEmailChange}
+                                            onBlur={this.handleEmailBlur}
+                                            onKeyDown={(event) => this.handleKeyDown(event, 'email')}
+                                        />
+                                    </div>
+                                    {errors.email && <div className="inline-error">{errors.email}</div>}
 
-                            <div className={`input ${errors.password ? 'has-error' : ''}`}>
-                                <img className="input-icon" src={passwordIcon} alt="password" />
-                                <input
-                                    type={this.state.isShowPassword ? "text" : "password"}
-                                    name="password"
-                                    placeholder={language === 'vi' ? 'Mật khẩu' : 'Password'}
-                                    value={this.state.password}
-                                    onChange={this.handlePasswordChange}
-                                    onKeyDown={(event) => this.handleKeyDown(event, 'password')}
-                                />
-                                <span onClick={this.toggleShowPassword} style={{ cursor: 'pointer' }}>
-                                    {this.state.isShowPassword ? '🙈' : '👁️'}
-                                </span>
-                            </div>
-                            {errors.password && <div className="inline-error">{errors.password}</div>}
+                                    <div className={`input ${errors.password ? 'has-error' : ''}`}>
+                                        <img className="input-icon" src={passwordIcon} alt="password" />
+                                        <input
+                                            type={this.state.isShowPassword ? "text" : "password"}
+                                            name="password"
+                                            placeholder={language === 'vi' ? 'Mật khẩu' : 'Password'}
+                                            value={this.state.password}
+                                            onChange={this.handlePasswordChange}
+                                            onKeyDown={(event) => this.handleKeyDown(event, 'password')}
+                                        />
+                                        <span onClick={this.toggleShowPassword} className="eye-icon-span">
+                                            {this.state.isShowPassword ? (
+                                                <EyeIcon size={28} color="#1c246d" weight="light" />
+                                            ) : (
+                                                <EyeClosedIcon size={28} color="#1c246d" weight="light" />
+                                            )}
+                                        </span>
+                                    </div>
+                                    {errors.password && <div className="inline-error">{errors.password}</div>}
 
-                            <div className="error-message">
-                                {this.state.errMessage}
-                            </div>
+                                    <div className="error-forgot-container">
+                                        <div className="error-message">
+                                            {this.state.errMessage}
+                                        </div>
+                                        <div className="forgot-password">
+                                            <span onClick={this.handleOpenForgotPasswordModal}>
+                                                {language === 'vi' ? 'Quên mật khẩu?' : 'Forgot password?'}
+                                            </span>
+                                        </div>
+                                    </div>
 
-                            <div className="submit-container">
-                                <button className="submit" onClick={this.handleLogin}>
-                                    <FormattedMessage id="login.login" />
-                                </button>
-                                <button className="submit gray" onClick={this.handleSignUp}>
-                                    <FormattedMessage id="login.signup" />
-                                </button>
-                            </div>
-                        </div>
+                                    <div className="submit-container">
+                                        <button className="submit" onClick={this.handleLogin}>
+                                            <FormattedMessage id="login.login" />
+                                        </button>
+                                        <button className="submit gray" onClick={this.handleSignUp}>
+                                            <FormattedMessage id="login.signup" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </React.Fragment>
+                        ) : (
+                            <React.Fragment>
+                                <div className="header">
+                                    <div className="text">
+                                        {language === 'vi' ? 'Khôi phục' : 'Forgot Password'}
+                                    </div>
+                                    <div className="underline"></div>
+                                </div>
+
+                                <form onSubmit={this.handleSendForgotRequest} className="forgot-password-form">
+                                    <div className="forgot-content-wrap">
+                                        <p>
+                                            {language === 'vi' 
+                                                ? 'Nhập địa chỉ email tài khoản của bạn để nhận liên kết khôi phục mật khẩu y tế.' 
+                                                : 'Enter your email address to receive a secure password reset link.'}
+                                        </p>
+                                        <div className="form-group-forgot">
+                                            <label>{language === 'vi' ? 'Địa chỉ Email' : 'Email Address'}</label>
+                                            <div className="forgot-input-wrapper">
+                                                <input 
+                                                    type="email" 
+                                                    value={this.state.forgotEmail} 
+                                                    onChange={this.handleForgotEmailChange}
+                                                    placeholder="your-email@example.com"
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {this.state.forgotErrMessage && (
+                                        <div className="status-message error">
+                                            {this.state.forgotErrMessage}
+                                        </div>
+                                    )}
+
+                                    {this.state.forgotSuccessMessage && (
+                                        <div className="status-message success">
+                                            {this.state.forgotSuccessMessage}
+                                        </div>
+                                    )}
+
+                                    <div className="submit-container">
+                                        <button 
+                                            type="submit" 
+                                            disabled={this.state.isForgotLoading}
+                                            className="submit"
+                                        >
+                                            {this.state.isForgotLoading 
+                                                ? (language === 'vi' ? 'Đang gửi...' : 'Sending...') 
+                                                : (language === 'vi' ? 'Gửi yêu cầu' : 'Send Link')}
+                                        </button>
+                                        <button 
+                                            type="button" 
+                                            className="submit gray"
+                                            onClick={this.handleCloseForgotPasswordModal}
+                                        >
+                                            {language === 'vi' ? 'Quay lại' : 'Back'}
+                                        </button>
+                                    </div>
+                                </form>
+                            </React.Fragment>
+                        )}
                     </div>
                 </div>
             </div>

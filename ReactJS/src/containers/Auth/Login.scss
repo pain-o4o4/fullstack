@@ -86,11 +86,14 @@ body {
 
     .container {
         width: 100%;
-        // 1. Tăng cái này lên cho bằng Signup (Duy có thể để 500px hoặc 550px)
         max-width: 500px;
+        min-height: 520px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
 
         background: #f7f7f7;
-        padding: 50px 40px; // Tăng padding bên trong cho form trông "béo" và sang hơn
+        padding: 50px 40px;
         border-radius: 38px;
         box-shadow: 0 15px 35px rgba(28, 36, 109, 0.08);
         transition: all 0.3s ease;
@@ -100,6 +103,7 @@ body {
             padding: 30px 20px;
             box-shadow: none;
             border-radius: 0;
+            min-height: auto;
         }
     }
 
@@ -126,8 +130,9 @@ body {
     .inputs {
         display: flex;
         flex-direction: column;
-
-        gap: 25px;
+        justify-content: space-between;
+        flex: 1;
+        gap: 20px;
 
         .input {
             display: flex;
@@ -170,6 +175,18 @@ body {
                 &::placeholder {
                     color: #adb5bd;
                     font-weight: 400;
+                }
+            }
+
+            .eye-icon-span {
+                cursor: pointer;
+                user-select: none;
+                font-size: 1.1rem;
+                opacity: 0.75;
+                transition: opacity 0.2s;
+
+                &:hover {
+                    opacity: 1;
                 }
             }
 
@@ -217,43 +234,7 @@ body {
             }
         }
 
-        .submit-container {
-            display: flex;
-            gap: 12px;
-            margin-top: 10px;
 
-            .submit {
-                flex: 1;
-                padding: 14px;
-                font-size: 1rem;
-                font-weight: 600;
-                border-radius: 16px;
-                cursor: pointer;
-                transition: all 0.3s;
-                border: none;
-
-                &:first-child {
-                    background: linear-gradient(135deg, #1c246d 0%, #2a38a3 100%);
-                    color: white;
-                    box-shadow: 0 8px 15px rgba(28, 36, 109, 0.2);
-
-                    &:hover {
-                        transform: translateY(-2px);
-                        box-shadow: 0 12px 20px rgba(28, 36, 109, 0.3);
-                    }
-                }
-
-                &.gray {
-                    background: transparent;
-                    color: #1c246d;
-                    border: 1.5px solid #1c246d;
-
-                    &:hover {
-                        background: rgba(28, 36, 109, 0.05);
-                    }
-                }
-            }
-        }
 
 
         .social-login {
@@ -280,6 +261,128 @@ body {
                     transform: scale(1.2);
                     color: #45c3d2;
                 }
+            }
+        }
+    }
+
+    .submit-container {
+        display: flex;
+        gap: 12px;
+        margin-top: 10px;
+
+        .submit {
+            flex: 1;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+
+            &:first-child {
+                background: linear-gradient(135deg, #1c246d 0%, #2a38a3 100%);
+                color: white;
+                box-shadow: 0 8px 15px rgba(28, 36, 109, 0.2);
+
+                &:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 12px 20px rgba(28, 36, 109, 0.3);
+                }
+            }
+
+            &.gray {
+                background: transparent;
+                color: #1c246d;
+                border: 1.5px solid #1c246d;
+
+                &:hover {
+                    background: rgba(28, 36, 109, 0.05);
+                }
+            }
+        }
+    }
+
+    .forgot-password-form {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        flex: 1;
+        gap: 15px;
+        animation: fadeInError 0.3s ease-out;
+
+        .forgot-content-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+
+            p {
+                color: #6b7280;
+                font-size: 0.95rem;
+                line-height: 1.6;
+                text-align: left;
+                margin: 0;
+            }
+
+            .form-group-forgot {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                text-align: left;
+
+                label {
+                    font-size: 0.9rem;
+                    font-weight: 600;
+                    color: #1c246d;
+                    padding-left: 2px;
+                }
+
+                .forgot-input-wrapper {
+                    display: flex;
+                    align-items: center;
+                    border: 1px solid rgba(28, 36, 109, 0.2);
+                    border-radius: 16px;
+                    padding: 14px 20px;
+                    background: #ffffff;
+                    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+                &:focus-within {
+                    border-color: #1c246d;
+                    background: #fdfdfd;
+                    box-shadow: 0 0 0 4px rgba(69, 195, 210, 0.1);
+                    transform: scale(1.01);
+                }
+
+                input {
+                    flex: 1;
+                    border: none;
+                    outline: none;
+                    background: transparent;
+                    font-size: 1rem;
+                    color: #1c246d;
+                    font-weight: 500;
+
+                    &::placeholder {
+                        color: #adb5bd;
+                    }
+                }
+            }
+        }
+    }
+
+        .status-message {
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-align: left;
+            padding-left: 5px;
+            animation: fadeInError 0.2s ease-out forwards;
+
+            &.error {
+                color: #ff3b30;
+            }
+
+            &.success {
+                color: #34c759;
             }
         }
     }

@@ -15,6 +15,8 @@ export const PUBLIC_PATHS = [
     '/api/register',
     '/api/refresh-token',
     '/api/logout',
+    '/api/forgot-password',
+    '/api/reset-password',
     '/api/allcode',
     '/api/search',
 

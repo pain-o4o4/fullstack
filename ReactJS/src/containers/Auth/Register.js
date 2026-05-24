@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import Select from 'react-select';
 import * as action from "../../store/actions";
 import { withRouter } from '../../components/Navigator';
+import { Eye as EyeIcon, EyeClosed as EyeClosedIcon } from '@phosphor-icons/react';
 class Register extends Component {
     constructor(props) {
         super(props);
@@ -305,8 +306,12 @@ class Register extends Component {
                                     value={this.state.password}
                                     onChange={(event) => this.handleOnChangeInput(event, 'password')}
                                     onKeyDown={(event) => this.handleKeyDown(event, 'password')} />
-                                <span onClick={this.toggleShowPassword} style={{ cursor: 'pointer', marginRight: '10px' }}>
-                                    {this.state.isShowPassword ? '🙈' : '👁️'}
+                                <span onClick={this.toggleShowPassword} className="eye-icon-span">
+                                    {this.state.isShowPassword ? (
+                                        <EyeIcon size={28} color="#1c246d" weight="light" />
+                                    ) : (
+                                        <EyeClosedIcon size={28} color="#1c246d" weight="light" />
+                                    )}
                                 </span>
                             </div>
                             {errors.password && <div className="inline-error">{errors.password}</div>}

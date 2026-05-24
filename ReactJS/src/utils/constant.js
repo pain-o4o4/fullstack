@@ -6,6 +6,7 @@ export const path = {
     LOGIN: '/login',
     REGISTER: '/register',
     REGISTER_VERIFY_OTP: '/register/verify-otp',
+    RESET_PASSWORD: '/reset-password',
     LOG_OUT: '/logout',
     SYSTEM: '/system',
     // ADMIN: '/admin',

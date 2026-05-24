@@ -7,7 +7,11 @@ import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
 import './ManageEmailTemplate.scss';
 
-const mdParser = new MarkdownIt();
+const mdParser = new MarkdownIt({
+    html: true,
+    linkify: true,
+    typographer: true
+});
 
 class ManageEmailTemplate extends Component {
     constructor(props) {
@@ -28,20 +32,46 @@ class ManageEmailTemplate extends Component {
         await this.fetchData();
     }
 
+    autoFillTemplate = (type, language, list = this.state.listTemplates) => {
+        let match = list.find(item => item.type === type && item.language === language);
+        if (match) {
+            this.setState({
+                subject: match.subject || '',
+                contentHTML: match.content || '',
+                contentMarkdown: match.contentMarkdown || match.content || '',
+                isEdit: true,
+                editId: match.id
+            });
+        } else {
+            this.setState({
+                subject: '',
+                contentHTML: '',
+                contentMarkdown: '',
+                isEdit: false,
+                editId: null
+            });
+        }
+    }
+
     fetchData = async () => {
         let res = await getAllEmailTemplatesApi();
         if (res && res.errCode === 0) {
             this.setState({
                 listTemplates: res.data
+            }, () => {
+                this.autoFillTemplate(this.state.type, this.state.language);
             });
         }
     }
 
     handleOnChangeInput = (event, id) => {
-        let copyState = { ...this.state };
-        copyState[id] = event.target.value;
+        let value = event.target.value;
         this.setState({
-            ...copyState
+            [id]: value
+        }, () => {
+            if (id === 'type' || id === 'language') {
+                this.autoFillTemplate(this.state.type, this.state.language);
+            }
         });
     }
 
@@ -63,13 +93,6 @@ class ManageEmailTemplate extends Component {
 
         if (res && res.errCode === 0) {
             toast.success(isEdit ? 'Cập nhật mẫu thành công!' : 'Thêm mới mẫu thành công!');
-            this.setState({
-                subject: '',
-                contentHTML: '',
-                contentMarkdown: '',
-                isEdit: false,
-                editId: null
-            });
             await this.fetchData();
         } else {
             toast.error('Có lỗi xảy ra!');
@@ -81,7 +104,7 @@ class ManageEmailTemplate extends Component {
             type: item.type,
             subject: item.subject,
             contentHTML: item.content || '',
-            contentMarkdown: item.contentMarkdown || '',
+            contentMarkdown: item.contentMarkdown || item.content || '',
             language: item.language,
             isEdit: true,
             editId: item.id
@@ -97,7 +120,7 @@ class ManageEmailTemplate extends Component {
 
 
     render() {
-        let { listTemplates, type, subject, content, language, isEdit } = this.state;
+        let { listTemplates, type, subject, language, isEdit } = this.state;
         return (
             <div className="manage-email-template-container">
                 <div className="title">QUẢN LÝ MẪU EMAIL TỰ ĐỘNG</div>
@@ -108,7 +131,8 @@ class ManageEmailTemplate extends Component {
                             <label className="form-label"><b>Chỉnh sửa / Thêm mới mẫu Email</b></label>
                             <div className="alert alert-warning">
                                 <b>Biến hỗ trợ chung:</b> <code>{'{{patientName}}'}</code>, <code>{'{{doctorName}}'}</code>, <code>{'{{time}}'}</code>, <code>{'{{clinicName}}'}</code>, <code>{'{{addressClinic}}'}</code><br/>
-                                <b>Biến cho Mã xác thực:</b> <code>{'{{code}}'}</code> (Mã OTP), <code>{'{{expireMinutes}}'}</code> (Thời gian hết hạn)
+                                <b>Biến cho Mã xác thực:</b> <code>{'{{code}}'}</code> (Mã OTP), <code>{'{{expireMinutes}}'}</code> (Thời gian hết hạn)<br/>
+                                <b>Biến cho Đổi mật khẩu:</b> <code>{'{{resetLink}}'}</code> (Link đổi mật khẩu)
                             </div>
                         </div>
                         <div className="col-3 mb-3">
@@ -118,6 +142,7 @@ class ManageEmailTemplate extends Component {
                                 <option value="REMEDY">Kết quả khám bệnh</option>
                                 <option value="MISSED">Thông báo lỡ hẹn</option>
                                 <option value="VERIFICATION">Mã xác thực đăng ký</option>
+                                <option value="RESET_PASSWORD">Khôi phục mật khẩu</option>
                             </select>
                         </div>
                         <div className="col-2 mb-3">
