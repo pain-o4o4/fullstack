@@ -44,7 +44,7 @@ class DoctorChat extends Component {
             replyingTo: null, // Lưu tin nhắn đang được trả lời
         };
         this.messagesEndRef = React.createRef();
-        this.socketRegistered = false;
+        this.socketRegisteredSocket = null;
     }
 
     componentDidMount() {
@@ -129,7 +129,7 @@ class DoctorChat extends Component {
             }
         }
 
-        if (socket && !this.socketRegistered && userInfo?.id) {
+        if (socket && this.socketRegisteredSocket !== socket && userInfo?.id) {
             this.setupSocket(socket);
         }
 
@@ -360,7 +360,7 @@ class DoctorChat extends Component {
             }
         });
 
-        this.socketRegistered = true;
+        this.socketRegisteredSocket = socket;
     }
 
     loadChatHistory = async () => {
@@ -572,9 +572,23 @@ class DoctorChat extends Component {
         });
 
         if (res && res.success) {
-            // Không gọi loadMessages() nữa để tránh lag và tốn băng thông
-            // Chỉ cập nhật Sidebar (vì tin nhắn mới làm thay đổi thứ tự hàng chờ)
-            this.loadChatHistory();
+            const realMsg = res.data;
+            this.setState(prevState => ({
+                messages: prevState.messages.map(m => {
+                    if (String(m.id) === String(tempId) || String(m.idempotencyKey) === String(tempId)) {
+                        return {
+                            ...realMsg,
+                            isPending: false,
+                            type: 'patient',
+                            time: new Date(realMsg.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+                        };
+                    }
+                    return m;
+                })
+            }), () => {
+                this.loadChatHistory();
+                this.scrollToBottom();
+            });
 
             // Fallback: Nếu socket đang rớt, vẫn phải load lại để chắc chắn
             if (!this.props.socket || !this.props.socket.connected) {
