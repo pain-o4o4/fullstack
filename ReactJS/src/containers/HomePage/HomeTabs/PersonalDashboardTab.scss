@@ -213,52 +213,238 @@ $ease    : cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 }
 
-// ── Biometric Card ────────────────────────────────────────────
-.pdt-biometric-visual {
+// ── Vitals Grid & Pulse Animations ──
+.pdt-vitals-grid {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 14px;
+    gap: 12px;
+    margin-bottom: 18px;
+}
 
-    .faceid-icon {
-        width: 62px;
-        height: 62px;
-        background: $bg;
-        border-radius: 12px;
+.pdt-vital-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px;
+    background: $bg;
+    border-radius: 14px;
+    transition: all 0.25s $ease;
+
+    &:hover {
+        background: rgba($blue, 0.04);
+        transform: translateX(2px);
+    }
+
+    .vital-icon-pulse {
+        width: 38px;
+        height: 38px;
+        background: rgba($green, 0.1);
+        color: $green;
+        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: $t3;
-        transition: all 0.35s $ease;
+        font-size: 16px;
+        position: relative;
 
-        .pdt-faceid-icon {
-            font-size: 32px;
+        &::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 2px dashed rgba($green, 0.4);
+            animation: pdtPulse 2.5s infinite linear;
         }
 
-        &.scanning {
+        &.bp {
+            background: rgba($blue, 0.1);
             color: $blue;
-            background: rgba($blue, 0.08);
-            animation: pdtScan 0.9s ease-in-out infinite alternate;
+            &::after { border-color: rgba($blue, 0.4); animation-delay: 0.8s; }
         }
 
-        &.success {
-            background: rgba($green, 0.12);
-            color: $green;
+        &.oxygen {
+            background: rgba(#af52de, 0.1);
+            color: #af52de;
+            &::after { border-color: rgba(#af52de, 0.4); animation-delay: 1.6s; }
         }
     }
 
-    p {
-        font-size: 12px;
-        color: $t2;
-        margin: 0;
-        font-weight: 500;
+    .vital-info {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+
+        .vital-label {
+            font-size: 11px;
+            color: $t2;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .vital-value {
+            font-size: 15px;
+            font-weight: 700;
+            color: $t1;
+
+            .vital-unit {
+                font-size: 12px;
+                color: $t2;
+                font-weight: 500;
+            }
+        }
     }
+}
+
+@keyframes pdtPulse {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.3); opacity: 0; }
+}
+
+// ── Vitals Modal Styles (Premium Glassmorphism) ──
+.pdt-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.25s $ease;
+}
+
+.pdt-modal-content {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 24px;
+    width: 90%;
+    max-width: 420px;
+    padding: 24px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    animation: scaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    .pdt-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+
+        h3 {
+            font-size: 18px;
+            font-weight: 800;
+            color: $t1;
+            margin: 0;
+            letter-spacing: -0.4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            i {
+                color: #ff3b30;
+                animation: heartBeat 1.2s infinite;
+            }
+        }
+
+        .pdt-modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: $t2;
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+            transition: color 0.2s;
+
+            &:hover { color: $t1; }
+        }
+    }
+
+    .pdt-form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 16px;
+
+        label {
+            font-size: 13px;
+            font-weight: 700;
+            color: $t1;
+        }
+
+        input {
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            font-weight: 600;
+            color: $t1;
+            transition: all 0.2s;
+
+            &:focus {
+                outline: none;
+                border-color: $blue;
+                background: #fff;
+                box-shadow: 0 0 0 4px rgba($blue, 0.12);
+            }
+        }
+    }
+
+    .pdt-modal-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s $ease;
+        }
+
+        .pdt-btn-cancel {
+            background: rgba(0, 0, 0, 0.05);
+            color: $t1;
+            &:hover { background: rgba(0, 0, 0, 0.08); }
+        }
+
+        .pdt-btn-save {
+            background: $blue;
+            color: #fff;
+            &:hover { background: color.adjust($blue, $lightness: -6%); transform: translateY(-1px); }
+        }
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes heartBeat {
+    0% { transform: scale(1); }
+    14% { transform: scale(1.12); }
+    28% { transform: scale(1); }
+    42% { transform: scale(1.12); }
+    70% { transform: scale(1); }
 }
 
 .pdt-scan-btn {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     background: $t1;
     color: #fff;
     border: none;
@@ -267,17 +453,14 @@ $ease    : cubic-bezier(0.25, 0.46, 0.45, 0.94);
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s $ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 
     &:hover { background: #000; transform: translateY(-1px); }
     &:active { transform: scale(0.97); }
     &:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
-
-    &--success {
-        background: rgba($green, 0.1);
-        color: color.adjust($green, $lightness: -5%);
-
-        &:hover { background: rgba($green, 0.18); transform: translateY(-1px); }
-    }
 }
 
 // ── Appointment Card ──────────────────────────────────────────

@@ -55,7 +55,48 @@
                 padding: 24px; flex: 1; display: flex; flex-direction: column;
                 .name { font-size: 20px; font-weight: 700; color: $apple-black; margin-bottom: 8px; text-align: center; }
                 .specialty { font-size: 14px; color: $apple-blue; font-weight: 600; margin-bottom: 20px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px; }
-                .doctor-meta { display: flex; justify-content: center; gap: 15px; margin-bottom: 24px; font-size: 13px; color: $text-secondary; span { display: flex; align-items: center; gap: 5px; i { font-size: 12px; } } }
+                .doctor-meta {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                    margin-bottom: 24px;
+                    font-size: 13.5px;
+                    color: $text-secondary;
+                    border-top: 1px dashed rgba(0,0,0,0.06);
+                    border-bottom: 1px dashed rgba(0,0,0,0.06);
+                    padding: 12px 0;
+
+                    span {
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        line-height: 1.4;
+
+                        i {
+                            width: 16px;
+                            font-size: 13px;
+                            color: $apple-blue;
+                        }
+
+                        &.clinic-name {
+                            font-weight: 500;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
+                            max-width: 100%;
+                        }
+
+                        &.location {
+                            color: $text-secondary;
+                        }
+
+                        &.price-tag {
+                            color: #ff9500;
+                            font-weight: 700;
+                            font-size: 14px;
+                        }
+                    }
+                }
                 .btn-detail-apple {
                     margin-top: auto; background: #f5f5f7; color: $apple-black; border: none; padding: 12px;
                     border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer;

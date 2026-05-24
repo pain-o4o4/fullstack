@@ -11,8 +11,13 @@ class PersonalDashboardTab extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isScanning: false,
-            scanSuccess: false,
+            heartRate: 72,
+            bloodPressure: '120/80',
+            spo2: 98,
+            showVitalsModal: false,
+            tempHeartRate: '',
+            tempBloodPressure: '',
+            tempSpo2: '',
             nextAppointment: null,
             isLoadingAppointment: true,
         };
@@ -49,12 +54,37 @@ class PersonalDashboardTab extends Component {
         return (l + f) || '?';
     };
 
-    handleFaceIDScan = () => {
-        this.setState({ isScanning: true });
-        setTimeout(() => {
-            this.setState({ isScanning: false, scanSuccess: true });
-            console.log('Xác thực sinh trắc học thành công!');
-        }, 2000);
+    handleOpenVitalsModal = () => {
+        this.setState({
+            showVitalsModal: true,
+            tempHeartRate: String(this.state.heartRate),
+            tempBloodPressure: this.state.bloodPressure,
+            tempSpo2: String(this.state.spo2)
+        });
+    }
+
+    handleCloseVitalsModal = () => {
+        this.setState({ showVitalsModal: false });
+    }
+
+    handleSaveVitals = (e) => {
+        e.preventDefault();
+        const { tempHeartRate, tempBloodPressure, tempSpo2 } = this.state;
+        const hr = tempHeartRate ? parseInt(tempHeartRate) : 72;
+        const bp = tempBloodPressure || '120/80';
+        const sp = tempSpo2 ? parseInt(tempSpo2) : 98;
+
+        this.setState({
+            heartRate: hr,
+            bloodPressure: bp,
+            spo2: sp,
+            showVitalsModal: false
+        }, () => {
+            toast.success("Cập nhật chỉ số sinh hiệu thành công!", {
+                position: "top-right",
+                autoClose: 2000
+            });
+        });
     }
 
     handleComingSoon = (feature) => {
@@ -65,7 +95,7 @@ class PersonalDashboardTab extends Component {
 
     render() {
         const { isLoggedIn, userInfo, navigate } = this.props;
-        const { isScanning, scanSuccess, nextAppointment, isLoadingAppointment } = this.state;
+        const { heartRate, bloodPressure, spo2, showVitalsModal, tempHeartRate, tempBloodPressure, tempSpo2, nextAppointment, isLoadingAppointment } = this.state;
 
         // Decode avatar
         let avatarSrc = '';
@@ -116,35 +146,48 @@ class PersonalDashboardTab extends Component {
                         )}
                     </div>
 
-                    {/* ── All Cards (Bento Grid layout) ── */}
-                    {/* Card 1: Biometric Auth */}
+                    {/* Card 1: Vitals Tracker */}
                     <div className="pdt-health-card pdt-biometric">
                         <div className="pdt-card-header">
-                            <span className="pdt-card-icon"><i className="fas fa-lock"></i></span>
-                            <h4>Bảo mật sinh trắc học</h4>
+                            <span className="pdt-card-icon"><i className="fas fa-heartbeat"></i></span>
+                            <h4>Chỉ số sinh hiệu sinh học</h4>
                         </div>
-                        <div className="pdt-biometric-visual">
-                            <div className={`faceid-icon ${isScanning ? 'scanning' : ''} ${scanSuccess ? 'success' : ''}`}>
-                                <i className="fas fa-user-shield pdt-faceid-icon"></i>
+                        
+                        <div className="pdt-vitals-grid">
+                            <div className="pdt-vital-item heart-rate">
+                                <div className="vital-icon-pulse">
+                                    <i className="fas fa-heart"></i>
+                                </div>
+                                <div className="vital-info">
+                                    <span className="vital-label">Nhịp tim</span>
+                                    <span className="vital-value">{heartRate} <span className="vital-unit">bpm</span></span>
+                                </div>
                             </div>
-                            <p>{isScanning ? 'Đang nhận diện...' : scanSuccess ? <span><i className="fas fa-check"></i> Xác thực thành công</span> : 'Chưa kích hoạt FaceID'}</p>
+
+                            <div className="pdt-vital-item blood-pressure">
+                                <div className="vital-icon-pulse bp">
+                                    <i className="fas fa-tint"></i>
+                                </div>
+                                <div className="vital-info">
+                                    <span className="vital-label">Huyết áp</span>
+                                    <span className="vital-value">{bloodPressure} <span className="vital-unit">mmHg</span></span>
+                                </div>
+                            </div>
+
+                            <div className="pdt-vital-item spo2">
+                                <div className="vital-icon-pulse oxygen">
+                                    <i className="fas fa-wind"></i>
+                                </div>
+                                <div className="vital-info">
+                                    <span className="vital-label">Nồng độ SpO2</span>
+                                    <span className="vital-value">{spo2}%</span>
+                                </div>
+                            </div>
                         </div>
-                        {!scanSuccess ? (
-                            <button
-                                className="pdt-scan-btn"
-                                onClick={this.handleFaceIDScan}
-                                disabled={isScanning}
-                            >
-                                {isScanning ? 'Đang quét...' : 'Thử quét FaceID'}
-                            </button>
-                        ) : (
-                            <button
-                                className="pdt-scan-btn pdt-scan-btn--success"
-                                onClick={() => navigate('/patient/profile')}
-                            >
-                                Xem hồ sơ của tôi <i className="fas fa-arrow-right"></i>
-                            </button>
-                        )}
+
+                        <button className="pdt-scan-btn" onClick={this.handleOpenVitalsModal}>
+                            <i className="fas fa-plus"></i> Cập nhật chỉ số
+                        </button>
                     </div>
 
                     {/* Card 2: Next Appointment (dynamic) */}
@@ -239,7 +282,62 @@ class PersonalDashboardTab extends Component {
                         <button className="pdt-ai-btn" onClick={(e) => { e.stopPropagation(); this.props.openChatWithTab('AISUPPORT'); }}>
                             Thử ngay <i className="fas fa-arrow-right"></i>
                         </button>
+                </div>
+
+                {/* ── Glassmorphic Modal for Vitals Update ── */}
+                {showVitalsModal && (
+                    <div className="pdt-modal-overlay" onClick={this.handleCloseVitalsModal}>
+                        <div className="pdt-modal-content" onClick={(e) => e.stopPropagation()}>
+                            <div className="pdt-modal-header">
+                                <h3><i className="fas fa-heartbeat"></i> Cập nhật chỉ số sinh hiệu</h3>
+                                <button className="pdt-modal-close" onClick={this.handleCloseVitalsModal}>&times;</button>
+                            </div>
+                            <form onSubmit={this.handleSaveVitals}>
+                                <div className="pdt-form-group">
+                                    <label>Nhịp tim (bpm):</label>
+                                    <input 
+                                        type="number" 
+                                        value={tempHeartRate} 
+                                        onChange={(e) => this.setState({ tempHeartRate: e.target.value })}
+                                        placeholder="Ví dụ: 75"
+                                        min="40"
+                                        max="200"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="pdt-form-group">
+                                    <label>Huyết áp (mmHg):</label>
+                                    <input 
+                                        type="text" 
+                                        value={tempBloodPressure} 
+                                        onChange={(e) => this.setState({ tempBloodPressure: e.target.value })}
+                                        placeholder="Ví dụ: 120/80"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="pdt-form-group">
+                                    <label>Nồng độ Oxy SpO2 (%):</label>
+                                    <input 
+                                        type="number" 
+                                        value={tempSpo2} 
+                                        onChange={(e) => this.setState({ tempSpo2: e.target.value })}
+                                        placeholder="Ví dụ: 98"
+                                        min="50"
+                                        max="100"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="pdt-modal-actions">
+                                    <button type="button" className="pdt-btn-cancel" onClick={this.handleCloseVitalsModal}>Hủy</button>
+                                    <button type="submit" className="pdt-btn-save">Lưu lại</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
+                )}
                 </div>
             </div>
         );

@@ -38,8 +38,23 @@ class AllDoctor extends Component {
                     <div className="doctors-grid">
                         {allDoctors && allDoctors.length > 0 &&
                             allDoctors.map((item, index) => {
-                                let nameVi = `${item.positionData.valueVi}, ${item.lastName} ${item.firstName}`;
-                                let nameEn = `${item.positionData.valueEn}, ${item.firstName} ${item.lastName}`;
+                                let nameVi = `${item.positionData?.valueVi || ''}, ${item.lastName || ''} ${item.firstName || ''}`;
+                                let nameEn = `${item.positionData?.valueEn || ''}, ${item.firstName || ''} ${item.lastName || ''}`;
+                                
+                                let specialtyName = item.doctorinforData?.specialtyData?.name 
+                                    || (language === 'vi' ? 'Chuyên khoa Y tế' : 'Medical Specialist');
+                                
+                                let provinceName = item.doctorinforData?.provinceTypeData
+                                    ? (language === 'vi' ? item.doctorinforData.provinceTypeData.valueVi : item.doctorinforData.provinceTypeData.valueEn)
+                                    : (language === 'vi' ? 'Toàn quốc' : 'National');
+
+                                let clinicName = item.doctorinforData?.clinicData?.name
+                                    || (language === 'vi' ? 'Phòng khám đa khoa' : 'General Clinic');
+
+                                let priceValue = item.doctorinforData?.priceTypeData
+                                    ? (language === 'vi' ? `${item.doctorinforData.priceTypeData.valueVi}đ` : `${item.doctorinforData.priceTypeData.valueEn}$`)
+                                    : '';
+
                                 return (
                                     <div key={index} className="doctor-card" onClick={() => this.handleViewDetailDoctor(item)}>
                                         <div className="card-top">
@@ -52,13 +67,24 @@ class AllDoctor extends Component {
                                                 {language === 'vi' ? nameVi : nameEn}
                                             </div>
                                             <div className="specialty">
-                                                {item.Doctor_Infor && item.Doctor_Infor.specialtyData ? item.Doctor_Infor.specialtyData.name : 'Chuyên gia y tế'}
+                                                {specialtyName}
                                             </div>
                                             <div className="doctor-meta">
-                                                <span className="experience"><i className="fas fa-stethoscope"></i> Tận tâm</span>
-                                                <span className="location"><i className="fas fa-map-marker-alt"></i> Hà Nội</span>
+                                                <span className="clinic-name" title={clinicName}>
+                                                    <i className="fas fa-hospital"></i> {clinicName}
+                                                </span>
+                                                <span className="location">
+                                                    <i className="fas fa-map-marker-alt"></i> {provinceName}
+                                                </span>
+                                                {priceValue && (
+                                                    <span className="price-tag">
+                                                        <i className="fas fa-hand-holding-usd"></i> {priceValue}
+                                                    </span>
+                                                )}
                                             </div>
-                                            <button className="btn-detail-apple">Xem hồ sơ <i className="fas fa-arrow-right"></i></button>
+                                            <button className="btn-detail-apple">
+                                                {language === 'vi' ? 'Xem chi tiết' : 'View Profile'} <i className="fas fa-arrow-right"></i>
+                                            </button>
                                         </div>
                                     </div>
                                 )

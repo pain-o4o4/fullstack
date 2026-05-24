@@ -83,6 +83,7 @@ class ClinicFlowTab extends Component {
     }
 
     handleCardClick = (action) => {
+        const { language } = this.props;
         switch (action) {
             case 'DOCTOR_CHAT':
                 this.setState({ activeView: 'DOCTOR_CHAT' });
@@ -94,7 +95,8 @@ class ClinicFlowTab extends Component {
                 this.setState({ activeView: 'AI_CHAT' });
                 break;
             case 'PHARMACY':
-                this.props.navigate('/pharmacy');
+                // this.props.navigate('/pharmacy');
+                alert(language === 'vi' ? 'Nhà thuốc số chưa được triển khai' : 'Digital Pharmacy is not implemented yet');
                 break;
             default:
                 break;

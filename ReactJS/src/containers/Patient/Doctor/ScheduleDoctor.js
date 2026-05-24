@@ -203,11 +203,11 @@ class ScheduleDoctor extends Component {
                                 let clinicData = groupedTime[clinicId][0].clinicData;
                                 return (
                                     <div key={clinicId} className="clinic-group">
-                                        {clinicData && (
+                                        {/* {clinicData && (
                                             <div className="clinic-name-header">
                                                 <i className="fas fa-hospital"></i> {clinicData.name}
                                             </div>
-                                        )}
+                                        )} */}
                                         <div className="time-grid">
                                             {groupedTime[clinicId]
                                                 .filter(item => item.isFull !== true) // CHỈ HIỆN NHỮNG SLOT CHƯA ĐẦY
