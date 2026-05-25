@@ -5,6 +5,7 @@
     overflow: hidden;
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
     height: 100vh;
+    height: 100dvh;
 
     .sub-header {
         position: sticky;
@@ -21,6 +22,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            width: 100%;
 
             .left-controls {
                 margin-left: 10px;
@@ -417,19 +419,31 @@
 
 @media (max-width: 1024px) {
     .account-page {
-        .sub-header .sub-header-content {
-            .right-controls .sidebar-toggle {
-                display: flex;
-            }
+        .sub-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 56px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
 
-            .right-controls .btn-signout,
-            .right-controls .translate-wrapper {
-                display: none !important;
+            .sub-header-content {
+                .right-controls .sidebar-toggle {
+                    display: flex;
+                }
+
+                .right-controls .btn-signout,
+                .right-controls .translate-wrapper {
+                    display: none !important;
+                }
             }
         }
 
         .settings-container {
-            padding: 0;
+            padding: 56px 0 0 0;
 
             .container-flex {
                 gap: 0;
@@ -468,23 +482,35 @@
 
 @media (max-width: 768px) {
     .account-page {
-        .sub-header .sub-header-content {
-            .left-controls .sidebar-toggle {
-                display: none;
-            }
+        .sub-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 56px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
 
-            .right-controls .sidebar-toggle {
-                display: flex;
-            }
+            .sub-header-content {
+                .left-controls .sidebar-toggle {
+                    display: none;
+                }
 
-            .right-controls .btn-signout,
-            .right-controls .translate-wrapper {
-                display: none !important;
+                .right-controls .sidebar-toggle {
+                    display: flex;
+                }
+
+                .right-controls .btn-signout,
+                .right-controls .translate-wrapper {
+                    display: none !important;
+                }
             }
         }
 
         .settings-container {
-            padding: 0;
+            padding: 56px 0 0 0;
 
             .container-flex {
                 gap: 0;

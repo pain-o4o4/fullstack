@@ -745,6 +745,12 @@
         flex: 1;
         overflow-y: auto;
         padding-bottom: 100px;
+        
+        &::-webkit-scrollbar {
+            display: none !important;
+        }
+        -ms-overflow-style: none !important;
+        scrollbar-width: none !important;
     }
 
     .sidebar-profile-section {
@@ -800,6 +806,12 @@
         list-style: none;
         padding: 0 24px;
         margin: 0;
+        
+        &::-webkit-scrollbar {
+            display: none !important;
+        }
+        -ms-overflow-style: none !important;
+        scrollbar-width: none !important;
 
         .menu-group-label {
             font-size: 12px;
