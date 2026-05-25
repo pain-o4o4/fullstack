@@ -154,13 +154,13 @@ class MobileSidebarInternal extends Component {
                         </ul>
                     </div>
 
-                    <div className="sidebar-footer">
+                    {/* <div className="sidebar-footer">
                         <div className="lang-switch">
                             <span className={language === LANGUAGES.VI ? 'active' : ''} onClick={() => this.props.changeLanguage(LANGUAGES.VI)}>VN</span>
                             <span className="divider">|</span>
                             <span className={language === LANGUAGES.EN ? 'active' : ''} onClick={() => this.props.changeLanguage(LANGUAGES.EN)}>EN</span>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </React.Fragment>
         );
