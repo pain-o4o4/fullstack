@@ -202,10 +202,20 @@ class HomeHeader extends Component {
         document.addEventListener('keydown', this.handleGlobalKeyDown);
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        const isOverlayOpen = this.state.isOpenSidebar || this.state.isOpenSearch || this.props.isOpenDoctorChat;
+        if (isOverlayOpen) {
+            document.body.classList.add('overlay-open');
+        } else {
+            document.body.classList.remove('overlay-open');
+        }
+    }
+
     componentWillUnmount() {
         document.removeEventListener('mousedown', this.handleClickOutside);
         document.removeEventListener('keydown', this.handleGlobalKeyDown);
-        document.body.style.overflow = 'unset'; // Trả lại scroll khi unmount
+        document.body.style.overflow = 'unset';
+        document.body.classList.remove('overlay-open');
     }
 
     handleGlobalKeyDown = (event) => {

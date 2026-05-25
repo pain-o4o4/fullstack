@@ -1,5 +1,15 @@
 @use "../styles/common" as *;
 
+body.overlay-open,
+body.modal-open {
+  .custom-scrollbar {
+    > div {
+      overflow-y: hidden !important;
+      touch-action: none !important;
+    }
+  }
+}
+
 .custom-scrollbar {
   > div {
     overflow-x: hidden !important;
