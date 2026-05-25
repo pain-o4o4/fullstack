@@ -24,8 +24,8 @@
     position: fixed;
     top: 0;
     right: 0;
+    bottom: 0;
     width: 950px;
-    height: 100vh;
     z-index: 1999;
     display: flex;
     flex-direction: column;
@@ -597,7 +597,10 @@
 
 @media (max-width: 1024px) {
     .dcd-drawer {
-        width: 90vw !important;
+        width: 100vw !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        height: auto !important;
     }
 }
 
@@ -607,7 +610,9 @@
 @media (max-width: 768px) {
     .dcd-drawer {
         width: 100vw !important;
-        height: 100% !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        height: auto !important;
         border-radius: 0 !important;
         background: #ffffff !important;
         right: 0 !important;
@@ -622,7 +627,7 @@
         .close-drawer-mobile {
             display: flex;
             position: absolute;
-            top: 15px;
+            top: calc(15px + env(safe-area-inset-top, 0px));
             right: 15px;
             width: 36px;
             height: 36px;
@@ -649,6 +654,11 @@
                     min-width: 100% !important;
                     height: 100% !important;
                     border-right: none !important;
+                    padding-top: calc(20px + env(safe-area-inset-top, 0px)) !important;
+
+                    .dcd-sidebar-list {
+                        padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)) !important;
+                    }
                 }
 
                 .dcd-chat-area {
@@ -666,6 +676,11 @@
                     width: 100% !important;
                     height: 100% !important;
                     flex: 1;
+
+                    .dcd-chat-header {
+                        height: calc(75px + env(safe-area-inset-top, 0px)) !important;
+                        padding-top: calc(16px + env(safe-area-inset-top, 0px)) !important;
+                    }
                 }
             }
 

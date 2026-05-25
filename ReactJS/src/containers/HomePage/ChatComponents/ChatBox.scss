@@ -1074,6 +1074,7 @@
 
     .dcd-input-bar {
         padding: 12px 18px;
+        padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 12px) !important;
 
         .dcd-input-container .dcd-input {
             font-size: 15px;
@@ -1195,6 +1196,7 @@
 
     .dcd-input-bar {
         padding: 8px 10px;
+        padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 10px) !important;
 
         .dcd-send-btn {
             width: 36px;
@@ -1219,7 +1221,8 @@
 
         .dcd-drawer-header {
             padding: 12px 16px;
-            height: 70px;
+            padding-top: calc(12px + env(safe-area-inset-top, 0px)) !important;
+            height: calc(70px + env(safe-area-inset-top, 0px)) !important;
 
             h3 {
                 font-size: 15px;
