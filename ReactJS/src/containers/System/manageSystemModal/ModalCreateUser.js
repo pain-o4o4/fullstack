@@ -88,7 +88,7 @@ class ModalCreateUser extends Component {
 
                 <ModalBody>
                     <div className="modal-user-body">
-                        {/* Avatar Upload */}
+                        
                         <div className="input-container max-width-input">
                             <label><FormattedMessage id="manage-user.image" defaultMessage="Ảnh đại diện (Avatar)" /></label>
                             <div className="avatar-upload-area" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
@@ -163,7 +163,7 @@ class ModalCreateUser extends Component {
                             />
                         </div>
 
-                        {/* Selects */}
+                        
                         <div className="input-container" style={{ width: '33.33%' }}>
                             <label><FormattedMessage id="manage-user.gender" defaultMessage="Giới tính" /></label>
                             <select 

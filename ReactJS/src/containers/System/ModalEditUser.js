@@ -122,14 +122,7 @@ class ModalEditUser extends Component {
                             />
                         </div>
 
-                        {/*<div className="input-container">
-                            <label>Gender</label>
-                            <input
-                                type="tel"    // 
-                                onChange={(e) => this.handleOnChangeInput(e, "gender")}
-                                value={this.state.gender}
-                            />
-                        </div> */}
+                        
                         <div className="input-container">
                             <label><FormattedMessage id="manage-user.first-name" /></label>
                             <input

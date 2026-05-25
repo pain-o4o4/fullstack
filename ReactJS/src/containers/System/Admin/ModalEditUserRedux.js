@@ -50,7 +50,7 @@ class ModalEditUser extends Component {
                                 <input className="form-control" value={this.state.firstName}
                                     onChange={(e) => this.setState({ firstName: e.target.value })} />
                             </div>
-                            {/* Thêm các trường khác tương tự... */}
+                            
                         </div>
                     </div>
                 </ModalBody>

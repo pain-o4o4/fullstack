@@ -14,7 +14,7 @@
     z-index: 1000;
     background: transparent;
     pointer-events: none;
-    padding-top: env(safe-area-inset-top, 0px); // Handle notch/status bar
+    padding-top: env(safe-area-inset-top, 0px);
 
     .hm-header-pill {
         pointer-events: all;
@@ -40,7 +40,7 @@
     }
 
     .hm-header-logo {
-        flex: 1 1 0; // Force equal width with actions
+        flex: 1 1 0;
         min-width: 0;
         display: flex;
         align-items: center;
@@ -100,7 +100,7 @@
                 font-size: 21px;
                 font-weight: 800;
                 letter-spacing: -0.2px;
-                text-transform: none; // Improving reading speed for elderly
+                text-transform: none;
                 background: linear-gradient(135deg, #0071e3 0%, #05c1ff 100%);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
@@ -118,11 +118,11 @@
             }
 
             .brand-sub {
-                font-size: 12px; // WCAG compliant (min 12px)
+                font-size: 12px;
                 font-weight: 700;
                 color: #515154;
                 text-transform: none;
-                letter-spacing: 0.5px; // Reduced for larger font
+                letter-spacing: 0.5px;
                 margin-top: 2px;
                 opacity: 0.85;
             }
@@ -130,14 +130,14 @@
     }
 
     .hm-header-nav {
-        flex: 0 0 auto; // Stay in the absolute center
+        flex: 0 0 auto;
         display: flex;
         justify-content: center;
 
         .hm-nav-list {
             display: flex;
             align-items: center;
-            gap: 8px; // Increased gap for better negative space
+            gap: 8px;
             margin: 0;
             padding: 0;
         }
@@ -173,7 +173,7 @@
     }
 
     .hm-header-actions {
-        flex: 1 1 0; // Force equal width with logo
+        flex: 1 1 0;
         min-width: 0;
         display: flex;
         align-items: center;
@@ -184,12 +184,12 @@
             position: relative;
 
             .mobile-sidebar-trigger {
-                display: none; // Hidden on desktop
+                display: none;
             }
         }
 
         .search-trigger {
-            display: none !important; // Hidden on desktop
+            display: none !important;
 
             .search-icon {
                 font-size: 20px;
@@ -295,10 +295,10 @@
     min-height: 650px;
     height: auto;
     display: flex;
-    align-items: flex-start; // Align to top to give more space for dropdown
+    align-items: flex-start;
     justify-content: center;
     position: relative;
-    overflow: visible; // Allow dropdown to overflow if needed
+    overflow: visible;
     padding: 140px 0 100px;
 
     .hm-hero-bg {
@@ -372,7 +372,7 @@
         letter-spacing: -2px;
         color: #ffffff;
         margin: 0 0 32px;
-        text-transform: none; // Title Case for premium feel
+        text-transform: none;
         white-space: nowrap;
 
 
@@ -389,7 +389,7 @@
         max-width: 700px;
         margin: 20px auto 32px;
         position: relative;
-        z-index: 100; // Ensure it's above everything
+        z-index: 100;
         animation: heroSearchIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
     }
 
@@ -526,7 +526,7 @@
         .hm-header-actions {
             gap: 8px;
 
-            // ── Icon button base (shared by all 3 actions) ─────────────────────
+
             .nav-sign-in,
             .hm-chat-doctor-btn,
             .user-menu-wrapper .mobile-sidebar-trigger {
@@ -569,12 +569,12 @@
                 }
             }
 
-            // ── 1. Search ──────────────────────────────────────────────────────
+
             .nav-sign-in {
                 order: 1;
             }
 
-            // ── 2. Chat doctor ────────────────────────────────────────────────
+
             .hm-chat-doctor-btn {
                 order: 2;
                 background: transparent !important;
@@ -602,7 +602,7 @@
                 }
             }
 
-            // ── 3. Hamburger (inside user-menu-wrapper) ───────────────────────
+
             .user-menu-wrapper {
                 order: 3;
                 position: relative;
@@ -688,7 +688,7 @@
     transform: translateX(100%);
     opacity: 0;
     transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    // padding-top: env(safe-area-inset-top);
+
     padding: calc(20px + env(safe-area-inset-top)) 24px 24px 24px;
 
     &.open {
@@ -929,12 +929,14 @@
             margin-right: auto;
 
             .logo-icon {
-                transform: scale(0.9);
+
+                display: none;
             }
 
             .brand-wrapper {
                 display: flex;
                 flex-direction: column;
+                border-left: none !important;
 
                 .brand-name {
                     font-size: 19px;
@@ -968,9 +970,9 @@
             order: 3;
             display: flex;
             align-items: center;
-            gap: 4px; // Tighter on 375px screens
+            gap: 4px;
 
-            // ── Icon button base (same system as 1024px, 40×40 touch target) ──
+
             .nav-sign-in,
             .hm-chat-doctor-btn,
             .user-menu-wrapper .mobile-sidebar-trigger {
@@ -1012,12 +1014,12 @@
                 }
             }
 
-            // ── 1. Search ──────────────────────────────────────────────────────
+
             .nav-sign-in {
                 order: 1;
             }
 
-            // ── 2. Chat doctor ────────────────────────────────────────────────
+
             .hm-chat-doctor-btn {
                 order: 2;
                 background: transparent !important;
@@ -1045,7 +1047,7 @@
                 }
             }
 
-            // ── 3. Hamburger (inside user-menu-wrapper) ───────────────────────
+
             .user-menu-wrapper {
                 order: 3;
                 position: relative;
@@ -1080,10 +1082,10 @@
         display: flex;
         position: fixed;
         bottom: 20px;
-        left: 50%; // Center for iPad/Tablet
+        left: 50%;
         transform: translateX(-50%);
         width: calc(100% - 40px);
-        max-width: 480px; // Constraint for iPad
+        max-width: 480px;
         height: 64px;
         background: rgba(255, 255, 255, 0.88);
         backdrop-filter: blur(25px) saturate(180%);
@@ -1108,7 +1110,7 @@
             gap: 4px;
             transition: all 0.2s ease;
             cursor: pointer;
-            border-radius: 12px; // Design System standard
+            border-radius: 12px;
             padding: 4px 0;
 
             i {
@@ -1132,7 +1134,7 @@
 
             &.active {
                 color: #0071e3;
-                background: transparent; // Cleaner active state
+                background: transparent;
 
                 i {
                     transform: scale(1.1);

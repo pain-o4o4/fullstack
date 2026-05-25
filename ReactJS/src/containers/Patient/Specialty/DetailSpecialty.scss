@@ -8,7 +8,7 @@
     .detail-specialty-body {
         max-width: 1200px;
         margin: 0 auto;
-        padding: 0 20px 80px; // Standardized padding for desktop, overriden for mobile below
+        padding: 0 20px 80px;
 
         .specialty-banner {
             width: 100%;
@@ -369,9 +369,9 @@
     }
 }
 
-// ============================================================
-// OTHER SPECIALTIES SECTION STYLES (Apple Inspired)
-// ============================================================
+
+
+
 .other-specialties-section {
     padding: 60px 0;
     border-top: 1px solid #f2f2f7;
@@ -408,7 +408,7 @@
                 transform: translateY(-8px);
                 box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
                 border-color: rgba(0, 113, 227, 0.2);
-                
+
                 .specialty-name {
                     color: #0071e3;
                 }
@@ -457,7 +457,7 @@
         }
     }
 
-    // Shared pagination styles
+
     .pagination-container {
         display: flex;
         justify-content: center;

@@ -1,8 +1,8 @@
-// DoctorChat.scss — Glassmorphism Slide-over Panel (Apple Style)
 
-// ============================================================
-// BASE STYLES (LAPTOP/DESKTOP)
-// ============================================================
+
+
+
+
 
 .dcd-overlay {
     position: fixed;
@@ -230,7 +230,7 @@
             transition: all 0.2s;
             cursor: pointer;
 
-            // &:hover { background: rgba(0, 113, 227, 0.1); transform: scale(1.05); }
+
             &:active {
                 transform: scale(0.95);
             }
@@ -592,18 +592,18 @@
 
 
 
-// ============================================================
-// RESPONSIVE OVERRIDES (TABLET - MAX 1024PX)
-// ============================================================
+
+
+
 @media (max-width: 1024px) {
     .dcd-drawer {
         width: 90vw !important;
     }
 }
 
-// ============================================================
-// RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
-// ============================================================
+
+
+
 @media (max-width: 768px) {
     .dcd-drawer {
         width: 100vw !important;

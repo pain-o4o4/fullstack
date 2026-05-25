@@ -1,60 +1,132 @@
-.infor-doctor {
-    display: flex;
-    align-items: flex-start; // Căn đỉnh để text dài không bị đẩy ảnh xuống giữa
-    gap: 20px;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.5); // Nền nhẹ trong Modal
-    border-radius: 16px;
-    margin-bottom: 25px;
 
-    .content-left {
-        // Thu nhỏ ảnh lại theo đúng chuẩn Apple Profile
-        width: 70px !important;
-        height: 70px !important;
-        min-width: 70px; // Đảm bảo không bị co lại khi text bên phải quá dài
-        
-        border-radius: 50%; // Hình tròn mềm mại
-        background-position: center;
-        background-size: cover;
-        background-repeat: no-repeat;
-        
-        border: 2px solid #ffffff;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); // Đổ bóng nhẹ cho ảnh nổi lên
+.profile-doctor-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    .intro-doctor {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 16px !important;
+        margin-bottom: 16px !important;
+        border-bottom: none !important;
+        padding: 0 !important;
+
+        .content-left {
+            width: 72px !important;
+            height: 72px !important;
+            min-width: 72px !important;
+            border-radius: 50% !important;
+            overflow: hidden !important;
+            border: 2px solid #ffffff !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+            aspect-ratio: 1 / 1 !important;
+            flex-shrink: 0 !important;
+
+            .doctor-avatar {
+                width: 100% !important;
+                height: 100% !important;
+                object-fit: cover !important;
+                display: block !important;
+            }
+        }
+
+        .content-right {
+            flex: 1 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 4px !important;
+            justify-content: center !important;
+
+            &::before {
+                content: "BÁC SĨ ĐIỀU TRỊ" !important;
+                font-size: 10px !important;
+                font-weight: 700 !important;
+                color: #0071e3 !important;
+                letter-spacing: 0.8px !important;
+                margin-bottom: 1px !important;
+            }
+
+            .up {
+                font-size: 18px !important;
+                font-weight: 700 !important;
+                color: #1d1d1f !important;
+                letter-spacing: -0.4px !important;
+                line-height: 1.2 !important;
+                margin-bottom: 0 !important;
+            }
+
+            .down {
+                font-size: 13px !important;
+                color: #86868b !important;
+                line-height: 1.4 !important;
+                margin-top: 2px !important;
+
+                .doctor-booking-meta {
+                    display: flex !important;
+                    flex-direction: column !important;
+                    gap: 6px !important;
+                    margin-top: 4px !important;
+
+                    .meta-pill {
+                        display: inline-flex !important;
+                        align-items: center !important;
+                        gap: 8px !important;
+                        padding: 4px 10px !important;
+                        border-radius: 8px !important;
+                        font-size: 12px !important;
+                        font-weight: 600 !important;
+                        width: fit-content !important;
+
+                        i {
+                            font-size: 12px !important;
+                        }
+
+                        &.time-pill {
+                            background: rgba(0, 113, 227, 0.08) !important;
+                            color: #0071e3 !important;
+                        }
+
+                        &.clinic-pill {
+                            background: #f5f5f7 !important;
+                            color: #515154 !important;
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    .content-right {
-        flex: 1; // Chiếm toàn bộ không gian còn lại
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
+    .price-info-bar {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        background: #f5f5f7 !important;
+        border: 1px solid rgba(0, 0, 0, 0.03) !important;
+        padding: 10px 14px !important;
+        border-radius: 10px !important;
+        margin-top: 8px !important;
+        margin-bottom: 8px !important;
 
-        .doctor-name {
-            font-size: 20px;
-            font-weight: 700;
-            color: #1d1d1f; // Jet Black
-            letter-spacing: -0.5px;
+        .price-label {
+            font-size: 13px !important;
+            font-weight: 600 !important;
+            color: #515154 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+
+            i {
+                color: #ff9500 !important;
+                font-size: 12px !important;
+            }
         }
 
-        .doctor-description {
-            font-size: 15px;
-            color: #86868b; // Màu xám phụ của Apple
-            line-height: 1.5;
-            
-            // Nếu bạn muốn hiển thị nhiều thông tin hơn (giới hạn 3 dòng chẳng hạn)
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        /* Thêm một dòng "Label" nhỏ phía trên tên nếu cần (VD: BÁC SĨ CHUYÊN KHOA) */
-        &::before {
-            content: "MEDICAL PROFILE";
-            font-size: 11px;
-            font-weight: 600;
-            color: #0071e3;
-            letter-spacing: 1px;
-            margin-bottom: 2px;
+        .price-value {
+            font-size: 14px !important;
+            font-weight: 700 !important;
+            color: #1d1d1f !important;
         }
     }
 }

@@ -315,7 +315,7 @@ class ManagePatient extends Component {
                     </div>
                 </div>
 
-                {/* APPLE STYLE CONFIRM POPUP */}
+                
                 {showConfirm && (
                     <div className="apple-confirm-overlay">
                         <div className="apple-confirm-popup">

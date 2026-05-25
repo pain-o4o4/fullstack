@@ -1,11 +1,11 @@
-// CustomBreadcrumb.scss — Minimalist Apple Style
 
-// ============================================================
-// BASE STYLES (LAPTOP/DESKTOP)
-// ============================================================
+
+
+
+
 .breadcrumb-container {
     position: fixed;
-    // top: 40px;
+
     left: 0;
     right: 0;
     max-width: 1240px;
@@ -86,25 +86,25 @@
     }
 }
 
-// ============================================================
-// RESPONSIVE OVERRIDES (TABLET/MOBILE)
-// ============================================================
+
+
+
 @media (max-width: 1024px) {
     .breadcrumb-container {
         position: relative;
-        background: #ffffff !important; // Force white background
+        background: #ffffff !important;
         backdrop-filter: none !important;
         -webkit-backdrop-filter: none !important;
-        box-shadow: none !important; // Kill shadow
-        border: none !important; // Kill border
-        border-radius: 0 !important; // Kill rounded corners
-        padding: 8px 16px !important; // Very tight padding
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 8px 16px !important;
         animation: none !important;
         max-width: 100% !important;
-        margin: 15px 0 0 0 !important; // Start exactly after header
+        margin: 15px 0 0 0 !important;
         width: 100%;
         box-sizing: border-box;
-        z-index: 900; // Below header
+        z-index: 900;
 
         .breadcrumb {
             margin: 0 !important;
@@ -116,7 +116,7 @@
             align-items: center;
             width: 100%;
             overflow: hidden;
-            line-height: 1; // Tight line height
+            line-height: 1;
 
             .home-link {
                 color: #0071e3 !important;

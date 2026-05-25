@@ -1,5 +1,5 @@
 .my-booking-container {
-    background-color: #f9fafb; // Sleek modern neutral background
+    background-color: #f9fafb;
     min-height: 100vh;
     padding-top: 120px;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -7,7 +7,7 @@
     .my-booking-body {
         max-width: 1240px;
         margin: 0 auto 80px;
-        // padding: 0 24px;
+
 
         .title-booking {
             text-align: left;
@@ -41,7 +41,7 @@
 
             .booking-table {
                 width: 100%;
-                min-width: 1100px; // Tăng thêm độ rộng tối thiểu để các cột thoải mái co giãn
+                min-width: 1100px;
                 border-collapse: collapse;
                 text-align: left;
 
@@ -58,7 +58,7 @@
                             text-transform: uppercase;
                             letter-spacing: 0.05em;
                             border: none !important;
-                            white-space: nowrap; // Ngăn chặn tuyệt đối tiêu đề cột bị xuống dòng làm vỡ layout
+                            white-space: nowrap;
 
                             i {
                                 margin-right: 6px;
@@ -107,7 +107,7 @@
                                 color: #9ca3af;
                             }
 
-                            // Dynamic elements inside cells
+
                             .cell-time {
                                 display: flex;
                                 align-items: center;
@@ -237,7 +237,7 @@
                                     border-radius: 50%;
                                 }
 
-                                // Pending payment / Lịch hẹn mới
+
                                 &.S1 {
                                     background: #fef3c7 !important;
                                     color: #d97706 !important;
@@ -247,7 +247,7 @@
                                     }
                                 }
 
-                                // Confirmed / Đã xác nhận / Đã thanh toán
+
                                 &.S2 {
                                     background: #d1fae5 !important;
                                     color: #059669 !important;
@@ -257,7 +257,7 @@
                                     }
                                 }
 
-                                // Done / Đã khám xong
+
                                 &.S3 {
                                     background: #dbeafe !important;
                                     color: #2563eb !important;
@@ -267,7 +267,7 @@
                                     }
                                 }
 
-                                // Cancelled / Đã hủy
+
                                 &.S4 {
                                     background: #fee2e2 !important;
                                     color: #dc2626 !important;
@@ -277,7 +277,7 @@
                                     }
                                 }
 
-                                // Missed / Lỡ hẹn
+
                                 &.S5 {
                                     background: #f3f4f6 !important;
                                     color: #4b5563 !important;
@@ -288,7 +288,7 @@
                                 }
                             }
 
-                            // Actions styling
+
                             .action-btn {
                                 display: inline-flex;
                                 align-items: center;
@@ -398,7 +398,7 @@
     }
 }
 
-// Responsive Tablet & Mobile overrides
+
 @media (max-width: 1024px) {
     .my-booking-container {
         .my-booking-body {

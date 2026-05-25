@@ -7,7 +7,7 @@
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
     color: #1d1d1f;
 
-    // Header
+
     .manage-header {
         display: flex;
         justify-content: space-between;
@@ -60,7 +60,7 @@
         }
     }
 
-    // Toolbar
+
     .manage-toolbar {
         display: flex;
         justify-content: space-between;
@@ -102,7 +102,7 @@
         }
     }
 
-    // Table Container
+
     .table-wrapper {
         background: #fff;
         border-radius: 16px;
@@ -265,7 +265,7 @@
     }
 }
 
-// Clinic Cell Styling
+
 .clinic-cell {
     display: flex;
     align-items: center;
@@ -323,7 +323,7 @@
     }
 }
 
-// Reuse Glassmorphic Overlay/Popup from UserManage.scss
+
 .apple-confirm-overlay {
     position: fixed;
     inset: 0;
@@ -645,7 +645,7 @@
                             }
                         }
 
-                        // Clinic info cell
+
                         td:nth-child(3) {
                             display: block !important;
                             padding: 16px 0 !important;
@@ -692,7 +692,7 @@
                             }
                         }
 
-                        // Address cell
+
                         td:nth-child(4) {
                             display: flex !important;
                             align-items: flex-start !important;
@@ -720,7 +720,7 @@
                             }
                         }
 
-                        // Actions cell
+
                         td:nth-child(5) {
                             display: flex !important;
                             justify-content: flex-end !important;

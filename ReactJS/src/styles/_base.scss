@@ -1,6 +1,4 @@
-/*
- * General styles
- */
+
 body,
 html {
   background-image: "#fff";
@@ -17,7 +15,7 @@ html {
   border: none;
   cursor: pointer;
   font-weight: 700;
-  height: 44px; // WCAG Touch Target standard
+  height: 44px;
   min-width: 44px;
   line-height: 44px;
   border-radius: 12px;
@@ -46,31 +44,31 @@ html {
 }
 
 #password:invalid {
-  font-family: $fontmain; // Fixed TH hien thi placeholder cho EDGE
+  font-family: $fontmain;
 }
 
 #password:-webkit-input-placeholder {
-  font-family: $fontmain; // CHROME 1
+  font-family: $fontmain;
 }
 
 #password::-webkit-input-placeholder {
-  font-family: $fontmain; //CHROME 2   EDGE 1
+  font-family: $fontmain;
 }
 
 #password:-moz-placeholder {
-  font-family: $fontmain; // Firefox 4-18
+  font-family: $fontmain;
 }
 
 #password::-moz-placeholder {
-  font-family: $fontmain; // Firefox 19+
+  font-family: $fontmain;
 }
 
 #password:-ms-input-placeholder {
-  font-family: $fontmain; // IE 10-11
+  font-family: $fontmain;
 }
 
 #password::-ms-input-placeholder {
-  font-family: $fontmain; // EDGE 2
+  font-family: $fontmain;
 }
 
 #password::placeholder {
@@ -122,7 +120,7 @@ html {
     }
   }
 }
-// Anxiety-Reducing Utilities
+
 .shadow-soft {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04) !important;
 }
@@ -137,8 +135,8 @@ html {
 }
 
 .pill-suggestion {
-  background: #e6f6f4; // Soft Mint/Teal
-  color: #0d9488; // Darker Teal
+  background: #e6f6f4;
+  color: #0d9488;
   padding: 6px 16px;
   border-radius: 999px;
   font-size: 13px;

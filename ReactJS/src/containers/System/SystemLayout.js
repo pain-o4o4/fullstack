@@ -107,7 +107,7 @@ class SystemLayout extends Component {
 
         return (
             <div className="account-page">
-                {/* Top Header */}
+                
                 <div className="sub-header">
                     <div className="sub-header-content">
                         <div className="left-controls" onClick={() => window.location.href = '/home'} style={{ cursor: 'pointer' }}>
@@ -137,14 +137,14 @@ class SystemLayout extends Component {
 
 
                 <div className="settings-container">
-                    {/* Overlay for mobile sidebar */}
+                    
                     {this.state.isOpenSidebar && (
                         <div className="sidebar-overlay" onClick={this.closeSidebar}></div>
                     )}
 
                     <div className="container-flex">
 
-                        {/* Sidebar */}
+                        
                         <aside className={`sidebar ${this.state.isOpenSidebar ? 'open' : ''}`}>
                             <div className="user-profile-summary">
                                 <label htmlFor="upload-sys-avatar" className="avatar-circle" style={{ cursor: 'pointer', position: 'relative' }}>
@@ -166,7 +166,7 @@ class SystemLayout extends Component {
                                         <div className="group-name">
                                             <FormattedMessage id={group.name} />
                                         </div>
-                                        {/* Some menus array inside the group */}
+                                        
                                         {group.menus && group.menus.length > 0 ? (
                                             group.menus.map((item, itemIndex) => (
                                                 <NavLink
@@ -192,7 +192,7 @@ class SystemLayout extends Component {
                                     </div>
                                 ))}
                                 
-                                {/* Mobile-only System Actions (Logout/Translate) */}
+                                
                                 <div className="menu-group mobile-system-actions">
                                     <div className="group-name">
                                         <FormattedMessage id="system-layout.system" defaultMessage="SYSTEM" />
@@ -209,7 +209,7 @@ class SystemLayout extends Component {
                             </nav>
                         </aside>
 
-                        {/* Content Area */}
+                        
                         <main className="main-content">
                             {children}
                         </main>

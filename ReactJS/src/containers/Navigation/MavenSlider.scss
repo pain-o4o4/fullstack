@@ -215,9 +215,9 @@
     }
 }
 
-// ============================================================
-// RESPONSIVE OVERRIDES (TABLET - MAX 1024PX)
-// ============================================================
+
+
+
 @media (max-width: 1024px) {
     .section-maven {
         max-width: 970px;
@@ -307,7 +307,7 @@
     }
 }
 
-// Symptom Categories Overrides
+
 .symptom-categories {
     .symptom-grid {
         padding-bottom: 32px;
@@ -316,8 +316,8 @@
     .symptom-card {
         flex: 0 0 160px;
         height: 180px;
-        background: #f8fafc; // bg-slate-50
-        border-radius: 20px; // rounded-2xl
+        background: #f8fafc;
+        border-radius: 20px;
         padding: 24px 16px;
         display: flex;
         flex-direction: column;
@@ -378,7 +378,7 @@
     }
 }
 
-// Social Proof Badge Styles
+
 .maven-social-proof {
     display: flex;
     align-items: center;

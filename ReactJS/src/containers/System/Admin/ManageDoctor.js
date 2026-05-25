@@ -321,7 +321,7 @@ class ManageDoctor extends Component {
 
                 <div className="doctor-main-layout">
                     <div className="settings-grid">
-                        {/* CARD 1: SELECTION & PROFESSIONAL - Hidden for Doctors */}
+                        
                         {this.props.userInfo && this.props.userInfo.roleId !== USER_ROLE.DOCTOR && (
                             <div className="info-card">
                                 <div className="card-header">
@@ -368,7 +368,7 @@ class ManageDoctor extends Component {
                             </div>
                         )}
 
-                        {/* CARD 2: FINANCIALS & SUMMARY */}
+                        
                         <div className="info-card">
                             <div className="card-header">
                                 <span className="card-title">Giá khám & Thanh toán</span>
@@ -437,7 +437,7 @@ class ManageDoctor extends Component {
                             </div>
                         </div>
 
-                        {/* CARD 3: INTRODUCTION (FULL WIDTH) */}
+                        
                         <div className="info-card full-width">
                             <div className="card-header">
                                 <span className="card-title">Thông tin giới thiệu & Ghi chú</span>
@@ -479,7 +479,7 @@ class ManageDoctor extends Component {
                         </div>
                     </div>
 
-                    {/* Section 2: Detailed Content (Markdown) */}
+                    
                     <div className="editor-section">
                         <div className="section-header">
                             <h2>Nội dung chi tiết</h2>
@@ -506,7 +506,7 @@ class ManageDoctor extends Component {
                     </button>
                 </div>
 
-                {/* CONFIRMATION POPUP */}
+                
                 {this.state.showConfirm && (
                     <div className="apple-confirm-overlay">
                         <div className="apple-confirm-popup">

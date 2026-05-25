@@ -111,7 +111,7 @@ class PersonalDashboardTab extends Component {
         return (
             <div className="personal-dashboard-tab">
                 <div className="pdt-wrapper">
-                    {/* ── Profile Card ───────────────────────────────── */}
+                    
                     <div className="pdt-profile-card">
                         <div className="pdt-avatar-container" onClick={() => isLoggedIn && navigate('/system/patient-profile')}>
                             {avatarSrc ? (
@@ -146,7 +146,7 @@ class PersonalDashboardTab extends Component {
                         )}
                     </div>
 
-                    {/* Card 1: Vitals Tracker */}
+                    
                     <div className="pdt-health-card pdt-biometric">
                         <div className="pdt-card-header">
                             <span className="pdt-card-icon"><i className="fas fa-heartbeat"></i></span>
@@ -190,7 +190,7 @@ class PersonalDashboardTab extends Component {
                         </button>
                     </div>
 
-                    {/* Card 2: Next Appointment (dynamic) */}
+                    
                     <div className="pdt-health-card pdt-appointment">
                         <div className="pdt-card-header">
                             <span className="pdt-card-icon"><i className="fas fa-calendar-alt"></i></span>
@@ -240,7 +240,7 @@ class PersonalDashboardTab extends Component {
                         )}
                     </div>
 
-                    {/* Card 3: Quick Actions */}
+                    
                     <div className="pdt-health-card pdt-actions">
                         <div className="pdt-card-header">
                             <span className="pdt-card-icon"><i className="fas fa-bolt"></i></span>
@@ -274,7 +274,7 @@ class PersonalDashboardTab extends Component {
                         </div>
                     </div>
 
-                    {/* Card 4: AI Promo */}
+                    
                     <div className="pdt-health-card pdt-ai-promo" onClick={() => this.props.openChatWithTab('AISUPPORT')}>
                         <div className="pdt-ai-badge">Gemini AI Premium</div>
                         <h3>Phân tích dữ liệu y tế thông minh</h3>
@@ -284,7 +284,7 @@ class PersonalDashboardTab extends Component {
                         </button>
                     </div>
 
-                    {/* ── Glassmorphic Modal for Vitals Update ── */}
+                    
                     {showVitalsModal && (
                         <div className="pdt-modal-overlay" onClick={this.handleCloseVitalsModal}>
                             <div className="pdt-modal-content" onClick={(e) => e.stopPropagation()}>

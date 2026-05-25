@@ -23,7 +23,7 @@
         }
     }
 
-    // High-Fidelity Glassmorphic Filters
+
     .filters-card {
         background: rgba(255, 255, 255, 0.6);
         backdrop-filter: blur(25px) saturate(180%);
@@ -78,7 +78,7 @@
                     }
                 }
 
-                // Search specific
+
                 i.fa-search {
                     position: absolute;
                     left: 16px;
@@ -95,7 +95,7 @@
         }
     }
 
-    // Premium Table Wrapper
+
     .table-wrapper {
         background: rgba(255, 255, 255, 0.7);
         backdrop-filter: blur(30px) saturate(190%);
@@ -173,7 +173,7 @@
         }
     }
 
-    // Role/Time Badges
+
     .role-badge {
         display: inline-flex;
         align-items: center;
@@ -192,7 +192,7 @@
         &.gray { background: #f2f2f7; color: #8e8e93; }
     }
 
-    // User Info Cell
+
     .user-info-cell {
         display: flex;
         align-items: center;
@@ -218,7 +218,7 @@
         }
     }
 
-    // Status Selection Styling
+
     .status-select {
         border: 1px solid rgba(0, 0, 0, 0.1);
         background: #ffffff;
@@ -249,15 +249,15 @@
     }
 }
 
-// Animations
+
 @keyframes slideUpFade {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-// ============================================================
-// RESPONSIVE OVERRIDES (TABLET - MAX 1024PX)
-// ============================================================
+
+
+
 @media (max-width: 1024px) {
     .manage-patient-container {
         padding: 24px;
@@ -277,9 +277,9 @@
     }
 }
 
-// ============================================================
-// RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
-// ============================================================
+
+
+
 @media (max-width: 768px) {
     .manage-patient-container {
         padding: 16px;

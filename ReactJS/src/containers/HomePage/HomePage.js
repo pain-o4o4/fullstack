@@ -58,7 +58,7 @@ class HomePage extends Component {
             <div className="hm-page-container">
                 <HomeHeader isShowBanner={true} />
 
-                {/* ============ SEGMENTED CONTROL BAR + TABS ============ */}
+                
                 <div className="hm-tabs-section" ref={this.tabsSectionRef}>
                     <div className="hm-tabs-container">
                         <div className="hm-segmented-bar">
@@ -83,14 +83,14 @@ class HomePage extends Component {
                     </div>
                 </div>
 
-                {/* 1. Medicine Banner */}
+                
                 <div className="hm-medicine-banner">
                     <div className="hm-medicine-text" data-sal="slide-up">
                         <FormattedMessage id="homepage.medicine-text" />
                     </div>
                 </div>
 
-                {/* 2. Offer Section */}
+                
                 <div className="hm-offer-section" id="oferta">
                     <div className="hm-section-header">
                         <div className="hm-section-title">
@@ -143,7 +143,7 @@ class HomePage extends Component {
                     </ul>
                 </div>
 
-                {/* --- NEW Gallery Section --- */}
+                
                 <div className="hm-gallery-section">
                     <div className="hm-gallery-container">
                         <div className="gallery-grid">
@@ -166,7 +166,7 @@ class HomePage extends Component {
                     </div>
                 </div>
 
-                {/* 3. Reach Section */}
+                
                 <div className="hm-reach-section">
                     <div className="hm-reach-wrapper">
                         <div className="hm-reach-top">
@@ -197,7 +197,7 @@ class HomePage extends Component {
                     </div>
                 </div>
 
-                {/* 4. About Us Section */}
+                
                 <div className="hm-about-section" id="o-nas">
                     <div className="hm-section-header">
                         <div className="hm-section-title">
@@ -220,7 +220,7 @@ class HomePage extends Component {
                     </div>
                 </div>
 
-                {/* 5. Successes Section */}
+                
                 <div className="hm-successes-section">
                     <div className="hm-successes-wrapper">
                         <div className="hm-successes-title">
@@ -239,7 +239,7 @@ class HomePage extends Component {
                     </div>
                 </div>
 
-                {/* 6. Merits Section */}
+                
                 <div className="hm-merits-section" id="co-nas-wyroznia">
                     <div className="hm-section-header center">
                         <div className="hm-section-title">
@@ -277,7 +277,7 @@ class HomePage extends Component {
                     </ul>
                 </div>
 
-                {/* 7. Contact Banner */}
+                
                 <div className="hm-contact-banner">
                     <div className="hm-banner-wrapper">
                         <div className="hm-banner-col">

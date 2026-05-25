@@ -1,12 +1,12 @@
 @use "sass:color";
 
-// ============================================================
-// BASE STYLES (LAPTOP/DESKTOP)
-// ============================================================
+
+
+
 .chatbot-integrated {
     animation: fadeIn 0.5s ease;
     height: 100%;
-    min-height: 600px; // Prevent layout collapse when switching views
+    min-height: 600px;
 
     .cb-header {
         display: flex;
@@ -97,10 +97,10 @@
                 border-radius: 12px;
                 cursor: pointer;
                 transition: all 0.2s ease;
-                
+
                 &:hover { background: #f5f5f7; }
-                &.active { 
-                    background: #fdf5ff; 
+                &.active {
+                    background: #fdf5ff;
                     border: 1px solid rgba(175, 82, 222, 0.2);
                     i { color: #af52de; }
                 }
@@ -222,12 +222,12 @@
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-// ============================================================
-// RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
-// ============================================================
-// ============================================================
-// RESPONSIVE OVERRIDES (TABLET - MAX 1024PX)
-// ============================================================
+
+
+
+
+
+
 @media (max-width: 1024px) {
     .chatbot-integrated {
         .cb-header h2 { font-size: 28px; }
@@ -241,7 +241,7 @@
 @media (max-width: 768px) {
     .chatbot-integrated {
         min-height: 500px;
-        
+
         .cb-header {
             gap: 12px;
             margin-bottom: 16px;
@@ -260,7 +260,7 @@
         .cb-sidebar {
             width: 100%;
             height: auto;
-            max-height: 180px; // Smaller sidebar on mobile
+            max-height: 180px;
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             padding-bottom: 12px;
 
@@ -271,7 +271,7 @@
         }
 
         .cb-window {
-            height: 400px; // Fixed height for chat window on mobile to prevent outer scroll
+            height: 400px;
         }
 
         .cb-messages {

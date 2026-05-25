@@ -91,7 +91,7 @@ class IntroTab extends Component {
 
         return (
             <div className="intro-tab">
-                {/* Stats Row */}
+                
                 <div className="intro-stats-row">
                     <div className="intro-stat-item">
                         <div className="stat-number">{this.formatNumber(numDoctors)}</div>
@@ -111,12 +111,12 @@ class IntroTab extends Component {
                     </div>
                 </div>
 
-                {/* Bento Grid */}
+                
                 <div className="intro-bento-grid">
-                    {/* Hero card */}
+                    
                     <div className="bento-card bento-hero">
                         <div className="bento-hero-text">
-                            {/* <div className="bento-hero-eyebrow">Nền tảng y tế số</div> */}
+                            
                             <h2>Chăm sóc sức khỏe<br />theo cách của bạn.</h2>
                             <p>Mạng lưới {numClinics} bệnh viện uy tín. Đặt lịch, tư vấn, theo dõi — tất cả trong một nơi.</p>
                             <button
@@ -136,7 +136,7 @@ class IntroTab extends Component {
                         </div>
                     </div>
 
-                    {/* Feature Cards */}
+                    
                     {dynamicFeatures.map((feat, i) => (
                         <div
                             key={i}
@@ -159,7 +159,7 @@ class IntroTab extends Component {
                         </div>
                     ))}
 
-                    {/* Network Map card */}
+                    
                     <div className="bento-card bento-network">
                         <div className="bento-network-label">Mạng lưới</div>
                         <div className="bento-network-title">Toàn quốc</div>

@@ -1,4 +1,4 @@
-// --- HEALTHYMATCH CLONE & APPLE DESIGN TOKENS ---
+
 $apple-blue: #0071e3;
 $apple-blue-hover: #005bb5;
 $apple-black: #1d1d1f;
@@ -7,14 +7,14 @@ $text-secondary: #86868b;
 $light-bg: #fffdf9;
 $border-color: rgba(0, 0, 0, 0.05);
 
-// ============================================================
-// BASE STYLES (LAPTOP/DESKTOP)
-// ============================================================
+
+
+
 
 .hm-tabs-section {
     background: #f5f5f7;
     padding: 20px 32px 40px;
-    scroll-margin-top: 100px; // Ensure space for fixed header when scrolling into view
+    scroll-margin-top: 100px;
 }
 
 .hm-tabs-container {
@@ -162,7 +162,7 @@ ul {
         font-size: 48px;
         font-weight: 700;
         margin: 0;
-        text-transform: none; // Better reading speed for elderly
+        text-transform: none;
         color: $apple-blue;
         letter-spacing: -1.2px;
         white-space: nowrap;
@@ -549,9 +549,9 @@ ul {
     }
 }
 
-// ============================================================
-// RESPONSIVE OVERRIDES (TABLET/LAPTOP - MAX 1024PX)
-// ============================================================
+
+
+
 @media (max-width: 1024px) {
     .hm-tabs-section {
         padding: 40px 24px;
@@ -626,9 +626,9 @@ ul {
     }
 }
 
-// ============================================================
-// RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
-// ============================================================
+
+
+
 @media (max-width: 768px) {
     .hm-tabs-section {
         padding: 40px 16px 48px;

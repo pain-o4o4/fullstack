@@ -141,7 +141,7 @@ class DetailDoctor extends Component {
                                         {language === LANGUAGES.VI ? nameVi : nameEn}
                                     </div>
 
-                                    {/* Clean, high-end subtitle with bullet separator (Apple specification style) */}
+                                    
                                     <div className='doctor-subtitle-meta'>
                                         {detailDoctor?.doctorinforData?.specialtyData?.name && (
                                             <span className='meta-item' onClick={() => this.handleViewDetail({ id: detailDoctor.doctorinforData.specialtyId || detailDoctor.doctorinforData.specialtyData.id }, 'SPECIALTY')}>
@@ -164,7 +164,7 @@ class DetailDoctor extends Component {
                                         }
                                     </div>
 
-                                    {/* Sleek, Apple-style Hero Actions Row */}
+                                    
                                     <div className='doctor-hero-actions'>
                                         <button
                                             onClick={this.handleStartChat}
@@ -201,14 +201,14 @@ class DetailDoctor extends Component {
                                     />
                                 </div>
                             </div>
-                            {/* Hiển thị nội dung Markdown bằng dangerouslySetInnerHTML */}
+                            
                             <div className='detail-info-doctor'>
                                 {detailDoctor && detailDoctor.markdownData && detailDoctor.markdownData.contentHTML
                                     && <div dangerouslySetInnerHTML={{ __html: detailDoctor.markdownData.contentHTML }}></div>
                                 }
                             </div>
 
-                            {/* Related Doctors Section */}
+                            
                             {this.state.listRelatedDoctors && this.state.listRelatedDoctors.length > 0 && (
                                 <div className="related-doctors-section">
                                     <div className="related-title">

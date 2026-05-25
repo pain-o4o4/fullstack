@@ -1,6 +1,6 @@
-// IntroTab.scss — Apple Minimalist · Refined Layout
 
-// ── Stats Row ──────────────────────────────────────────────
+
+
 .intro-tab {
     padding: 5px 0 24px;
 }
@@ -47,7 +47,7 @@
     }
 }
 
-// ── Bento Grid ─────────────────────────────────────────────
+
 .intro-bento-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -61,7 +61,7 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-// ── Hero Card ───────────────────────────────────────────────
+
 .bento-hero {
     grid-column: span 2;
     grid-row: span 1;
@@ -209,7 +209,7 @@
     }
 }
 
-// ── Feature Cards ───────────────────────────────────────────
+
 .bento-feature {
     background: #ffffff;
     border: 1px solid rgba(0, 0, 0, 0.06);
@@ -292,7 +292,7 @@
     }
 }
 
-// ── Network Card ────────────────────────────────────────────
+
 .bento-network {
     grid-column: span 2;
     background: #1d1d1f;
@@ -391,9 +391,9 @@
     }
 }
 
-// ============================================================
-// RESPONSIVE OVERRIDES (TABLET - MAX 1024PX)
-// ============================================================
+
+
+
 @media (max-width: 1024px) {
     .intro-stats-row {
         margin-bottom: 36px;
@@ -414,9 +414,9 @@
     }
 }
 
-// ============================================================
-// RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
-// ============================================================
+
+
+
 @media (max-width: 768px) {
     .intro-stats-row {
         display: grid;

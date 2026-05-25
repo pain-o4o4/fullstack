@@ -292,7 +292,7 @@ class ChatSidebar extends Component {
                     )}
                 </div>
 
-                {/* Đã chuyển sang Popup trung tâm ở DoctorChat */}
+                
             </div>
         );
     }

@@ -196,14 +196,14 @@ class AISupportPage extends Component {
         return (
             <div className="ai-support-container">
                 <div className="ai-support-content">
-                    {/* Mobile Sidebar Backdrop */}
+                    
                     {isSidebarOpen && window.innerWidth <= 768 && (
                         <div className="sidebar-backdrop" onClick={this.toggleSidebar}></div>
                     )}
 
-                    {/* ── Sidebar ── */}
+                    
                     <div className={`ai-sidebar ${isSidebarOpen ? 'open' : 'collapsed'}`}>
-                        {/* Sidebar header: logo + toggle */}
+                        
                         <div className="sidebar-header">
                             <div className="sidebar-logo" onClick={this.handleHomePage}>
                                 <i className="fas fa-stethoscope sidebar-logo-icon"></i>
@@ -214,7 +214,7 @@ class AISupportPage extends Component {
                             </button>
                         </div>
 
-                        {/* New Chat */}
+                        
                         <button className="new-chat-btn" onClick={this.handleNewChat}>
                             <i className="fas fa-edit"></i>
                             <span className="new-chat-text">
@@ -222,7 +222,7 @@ class AISupportPage extends Component {
                             </span>
                         </button>
 
-                        {/* Nav items */}
+                        
                         <div className="sidebar-nav">
                             <div className="sidebar-nav-item" onClick={this.handleHomePage}>
                                 <i className="fas fa-home"></i>
@@ -232,7 +232,7 @@ class AISupportPage extends Component {
 
                         <div className="sidebar-divider"></div>
 
-                        {/* Sessions */}
+                        
                         <div className="sessions-list">
                             <div className="session-group-title">
                                 <span className="sidebar-label">
@@ -263,9 +263,9 @@ class AISupportPage extends Component {
                         </div>
                     </div>
 
-                    {/* ── Chat Main ── */}
+                    
                     <div className="ai-chat-main">
-                        {/* Top bar (only visible when sidebar is closed on desktop) */}
+                        
                         <div className="chat-topbar">
                             <button className="sidebar-toggle-btn topbar-toggle" onClick={this.toggleSidebar} title="Toggle sidebar">
                                 <i className="fas fa-bars"></i>
@@ -276,7 +276,7 @@ class AISupportPage extends Component {
                             </div>
                         </div>
 
-                        {/* ── Welcome state: input centered ── */}
+                        
                         {!hasMessages ? (
                             <div className="chat-welcome-screen">
                                 <div className="welcome-glow"></div>
@@ -289,7 +289,7 @@ class AISupportPage extends Component {
                                     <p className="welcome-sub">
                                         Hãy đặt câu hỏi về triệu chứng, bác sĩ hoặc cách sử dụng hệ thống BookingCare.
                                     </p>
-                                    {/* Input centered on welcome screen */}
+                                    
                                     <div className="welcome-input-area">
                                         <div className="input-wrapper">
                                             <textarea

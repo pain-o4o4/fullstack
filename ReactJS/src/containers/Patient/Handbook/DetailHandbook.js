@@ -146,7 +146,7 @@ class DetailHandbook extends Component {
                         </aside>
                     </div>
 
-                    {/* SUGGESTED SECTION AT BOTTOM */}
+                    
                     <div className="suggested-handbooks">
                         <div className="suggested-header">
                             <h2>{language === 'vi' ? 'Có thể bạn quan tâm' : 'You might also like'}</h2>

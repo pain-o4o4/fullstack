@@ -144,7 +144,7 @@ class DoctorConsultationTab extends Component {
                 </div>
 
                 <div className="dct-layout">
-                    {/* Left Sidebar — Doctor Directory */}
+                    
                     <div className="dct-sidebar">
                         <div className="sidebar-title">
                             {language === 'vi' ? 'Bác sĩ trực tuyến' : 'Online Doctors'}
@@ -177,13 +177,13 @@ class DoctorConsultationTab extends Component {
                         </div>
                     </div>
 
-                    {/* Right Panel — Premium Telehealth Profile Overview */}
+                    
                     <div className="dct-profile-panel">
                         {isLoadingProfile ? (
                             this.renderSkeleton()
                         ) : selectedDoctor ? (
                             <div className="profile-wrapper">
-                                {/* Dynamic Expertise Description Card */}
+                                
                                 {markdownData?.description && (
                                     <div className="description-card">
                                         <div className="quote-decorator">“</div>
@@ -191,7 +191,7 @@ class DoctorConsultationTab extends Component {
                                     </div>
                                 )}
 
-                                {/* Services Details Card */}
+                                
                                 <div className="services-card">
                                     <h4 className="card-title">
                                         <i className="fas fa-file-medical-alt"></i>
@@ -234,7 +234,7 @@ class DoctorConsultationTab extends Component {
                                     </div>
                                 </div>
 
-                                {/* Flow Card */}
+                                
                                 <div className="flow-card">
                                     <h4 className="card-title">
                                         <i className="fas fa-clipboard-list"></i>
@@ -268,7 +268,7 @@ class DoctorConsultationTab extends Component {
                                     </div>
                                 </div>
 
-                                {/* Booking CTA Footer */}
+                                
                                 <div className="profile-action-footer">
                                     <button
                                         className="btn-book-telehealth"

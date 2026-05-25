@@ -1,9 +1,9 @@
 @use "sass:math";
 @use "../../styles/common" as *;
 
-// ==========================================
-// CẤU TRÚC XƯƠNG SỐNG (BỀN VỮNG)
-// ==========================================
+
+
+
 .flatpickr-calendar {
     position: absolute;
     display: none;
@@ -79,20 +79,20 @@
         border: 1px solid transparent;
         box-sizing: border-box;
         cursor: pointer;
-        width: 14.2857143%; // Bắt buộc là 1/7 để luôn có 7 cột
+        width: 14.2857143%;
         height: 40px;
         line-height: 40px;
-        margin: 4px 0; // Khoảng cách dọc
+        margin: 4px 0;
         display: inline-block;
         position: relative;
         text-align: center;
-        flex: none !important; // Không cho phép co giãn linh hoạt gây lệch
+        flex: none !important;
     }
 }
 
-// ==========================================
-// HIGH-END PREMIUM REDESIGN (ULTRACLEAN)
-// ==========================================
+
+
+
 .flatpickr-calendar {
     background: #ffffff !important;
     border-radius: 16px !important;
@@ -108,13 +108,13 @@
 
     .flatpickr-current-month {
         font-size: 16px !important;
-        font-weight: 700; // Đậm hơn cho sang
+        font-weight: 700;
         margin-top: 3px;
         color: #000;
         display: flex !important;
         align-items: center;
         justify-content: center;
-        gap: 10px; // Căn chỉnh lại khoảng cách hợp lý
+        gap: 10px;
         width: 100% !important;
         left: 0 !important;
         position: relative !important;
@@ -141,7 +141,7 @@
         }
     }
 
-    // Nút mũi tên tối giản cực đẹp
+
     .flatpickr-prev-month,
     .flatpickr-next-month {
         height: 32px !important;
@@ -156,7 +156,7 @@
         z-index: 10;
 
         svg {
-            fill: #000; // Đen tuyền cho icon
+            fill: #000;
             width: 8px;
             height: 8px;
         }
@@ -174,7 +174,7 @@
         }
     }
 
-    // Thứ cực nhẹ nhàng
+
     span.flatpickr-weekday {
         color: #999 !important;
         font-weight: 500 !important;
@@ -182,7 +182,7 @@
         text-transform: uppercase;
     }
 
-    // Các ngày tối giản
+
     .flatpickr-day {
         border-radius: 50% !important;
         font-size: 14px;
@@ -218,17 +218,17 @@
             font-weight: 600;
             box-shadow: none !important;
             border-radius: 50% !important;
-            // Không thay đổi width/height ở đây để tránh vỡ hàng
+
         }
 
         &.prevMonthDay,
         &.nextMonthDay {
-            color: #eee !important; // Mờ hẳn đi cho thanh thoát
+            color: #eee !important;
             font-weight: 400;
         }
     }
 
-    // Đường kẻ cực mảnh
+
     .flatpickr-days:after {
         content: '';
         display: block;
@@ -239,7 +239,7 @@
     }
 }
 
-// Animation
+
 .animate.open {
     animation: apple-pop 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
 }

@@ -72,7 +72,7 @@
     }
 }
 
-// Responsive
+
 @media (max-width: 1024px) {
     .manage-quick-reply-container {
         padding: 16px;
@@ -80,7 +80,7 @@
         .manage-quick-reply-body {
             padding: 16px;
 
-            // Bootstrap col-3/4/5 → auto-fit on tablet
+
             .section-add-new {
                 .row > [class*="col-3"],
                 .row > [class*="col-4"],
@@ -118,7 +118,7 @@
             .section-add-new {
                 padding: 14px;
 
-                // Force all Bootstrap columns to full width on mobile
+
                 .row > [class*="col-"] {
                     flex: 0 0 100% !important;
                     max-width: 100% !important;
@@ -148,14 +148,14 @@
                     resize: vertical;
                 }
 
-                // Info alert box
+
                 .alert {
                     font-size: 13px;
                     padding: 10px 12px;
                     border-radius: 10px;
                 }
 
-                // Action buttons
+
                 .text-end {
                     text-align: center !important;
                     display: flex !important;
@@ -186,7 +186,7 @@
                         white-space: nowrap;
                     }
 
-                    // Content column wraps on mobile
+
                     td:nth-child(3) {
                         white-space: normal;
                         min-width: 180px;

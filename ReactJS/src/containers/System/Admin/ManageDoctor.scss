@@ -37,7 +37,7 @@
         gap: 30px;
         flex: 1;
 
-        // Top Section: Info Cards Grid
+
         .settings-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
@@ -111,7 +111,7 @@
             }
         }
 
-        // Bottom Section: Markdown Editor
+
         .editor-section {
             background: #ffffff;
             border-radius: 24px;
@@ -171,14 +171,14 @@
     }
 }
 
-// Reuse global react-select-menu fix
+
 .react-select__menu {
     z-index: 9999 !important;
 }
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-// Premium Responsive Design System
+
 @media (max-width: 1024px) {
     .manage-doctor-container {
         padding: 24px;
@@ -187,12 +187,12 @@
             gap: 24px;
 
             .settings-grid {
-                grid-template-columns: 1fr; // Stack cards vertically to prevent cracking
+                grid-template-columns: 1fr;
                 gap: 24px;
 
                 .info-card {
                     .card-body {
-                        // Override inline styles of Grid components
+
                         grid-template-columns: 1fr !important;
                         gap: 16px !important;
                     }
@@ -243,7 +243,7 @@
                     }
 
                     .card-body {
-                        grid-template-columns: 1fr !important; // Force stack columns
+                        grid-template-columns: 1fr !important;
                         gap: 16px !important;
 
                         .input-group-apple {
@@ -255,7 +255,7 @@
                             }
                         }
 
-                        // Override react-select container sizing on mobile
+
                         .react-select-container {
                             width: 100% !important;
                         }
@@ -274,7 +274,7 @@
                 }
 
                 .custom-md-editor {
-                    height: 380px !important; // Compact height on mobile viewport
+                    height: 380px !important;
                 }
             }
         }
@@ -284,7 +284,7 @@
             padding-top: 16px;
 
             .btn-save-doctor {
-                width: 100%; // Full width button for easy tap target
+                width: 100%;
                 padding: 12px;
                 justify-content: center;
                 display: flex;

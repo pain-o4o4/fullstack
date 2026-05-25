@@ -97,15 +97,10 @@ class AllHandbook extends Component {
         return (
             <div className="handbook-page-wrapper">
                 <HomeHeader isShowBanner={false} />
-                {/* <CustomBreadcrumb
-                    items={[
-                        { label: <FormattedMessage id="homepage.home" />, link: '/home' },
-                        { label: <FormattedMessage id="homeheader.Handbook" /> }
-                    ]}
-                /> */}
+                
 
                 <div className="hb-main-content">
-                    {/* Hero Section: 1 featured left + 3 side right */}
+                    
                     {hasEnoughDataForHero && (
                         <div className="hb-hero-section">
                             <div className="hb-featured-article" onClick={() => this.handleViewDetail(featuredArticle.id)}>
@@ -138,7 +133,7 @@ class AllHandbook extends Component {
 
 
 
-                    {/* Grid Articles */}
+                    
                     <div className="hb-grid-section">
                         <div className="hb-section-title">Bài viết mới nhất</div>
                         <div className="hb-articles-grid">

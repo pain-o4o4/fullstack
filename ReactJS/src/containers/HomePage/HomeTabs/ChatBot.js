@@ -212,7 +212,7 @@ class ChatBot extends Component {
                 </div>
 
                 <div className="cb-layout">
-                    {/* Sidebar Sessions List — Left */}
+                    
                     <div className="cb-sidebar">
                         <button className="new-chat-btn" onClick={this.handleNewChat}>
                             <i className="fas fa-plus"></i>
@@ -243,7 +243,7 @@ class ChatBot extends Component {
                         </div>
                     </div>
 
-                    {/* Main Chat Box — Right */}
+                    
                     <div className="cb-window">
                         <div className="cb-messages" ref={this.messagesContainerRef}>
                             {displayMessages.map((msg, index) => (

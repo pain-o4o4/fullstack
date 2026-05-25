@@ -1,4 +1,4 @@
-// DoctorConsultationTab.scss
+
 @use "sass:color";
 
 .doctor-consultation-container {
@@ -56,9 +56,7 @@
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
     }
 
-    /* ==========================================
-       LEFT SIDEBAR — DOCTOR DIRECTORY
-       ========================================== */
+
     .dct-sidebar {
         width: 320px;
         display: flex;
@@ -166,9 +164,7 @@
         }
     }
 
-    /* ==========================================
-       RIGHT PANEL — PREMIUM TELEHEALTH DETAILS
-       ========================================== */
+
     .dct-profile-panel {
         flex: 1;
         display: flex;
@@ -193,7 +189,7 @@
             }
         }
 
-        /* Profile Card Header — Redesigned (Avatar removed) */
+
         .profile-card-header {
             background: linear-gradient(135deg, #f5f5f7 0%, #eef0f3 100%);
             border-radius: 20px;
@@ -270,7 +266,7 @@
             }
         }
 
-        /* Dynamic Description Card */
+
         .description-card {
             background: #fdfdfd;
             border-left: 4px solid #0071e3;
@@ -302,7 +298,7 @@
             }
         }
 
-        /* Services Grid Card */
+
         .services-card {
             background: #ffffff;
             border: 1px solid rgba(0, 0, 0, 0.05);
@@ -412,7 +408,7 @@
             }
         }
 
-        /* Triage Flow Card */
+
         .flow-card {
             background: #ffffff;
             border: 1px solid rgba(0, 0, 0, 0.05);
@@ -470,7 +466,7 @@
             }
         }
 
-        /* CTA Footer */
+
         .profile-action-footer {
             margin-top: auto;
             padding-top: 10px;
@@ -526,9 +522,7 @@
         }
     }
 
-    /* ==========================================
-       SHIMMER SKELETON LOADING STATES
-       ========================================== */
+
     .dct-skeleton-wrapper {
         display: flex;
         flex-direction: column;
@@ -585,9 +579,7 @@
     }
 }
 
-/* ==========================================
-   ANIMATIONS & KEYFRAMES
-   ========================================== */
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -623,9 +615,7 @@
     }
 }
 
-/* ==========================================
-   RESPONSIVE DESIGN (TABLET & MOBILE)
-   ========================================== */
+
 @media (max-width: 1024px) {
     .doctor-consultation-container {
         .dct-header h2 {

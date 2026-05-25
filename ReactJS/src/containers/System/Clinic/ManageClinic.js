@@ -313,7 +313,7 @@ class ManageClinic extends Component {
                     }}
                 </div>
 
-                {/* CONFIRM DELETE POPUP */}
+                
                 {this.state.showBulkDeleteConfirm && (
                     <div className="apple-confirm-overlay">
                         <div className="apple-confirm-popup">

@@ -509,7 +509,7 @@ class UserManage extends Component {
 
                 <input type="file" hidden ref={this.fileInputRef} onChange={this.handleQuickUploadImage} accept="image/*" />
 
-                {/* CUSTOM POPUP COMPONENT */}
+                
                 {isPopupOpen && (
                     <div className="apple-popup-overlay" onClick={this.closePopup}>
                         <div className="apple-popup-content" onClick={(e) => e.stopPropagation()}>
@@ -579,7 +579,7 @@ class UserManage extends Component {
                     </div>
                 )}
 
-                {/* BULK DELETE CONFIRM POPUP */}
+                
                 {this.state.showBulkDeleteConfirm && (
                     <div className="apple-confirm-overlay">
                         <div className="apple-confirm-popup">

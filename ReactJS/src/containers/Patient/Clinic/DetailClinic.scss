@@ -130,7 +130,7 @@
                             .short-infor span { color: #0071e3; cursor: pointer; font-weight: 600; font-size: 14px; }
                             .title-price { font-weight: 700; margin-bottom: 12px; font-size: 15px; }
                             .detail-infor { font-size: 14px; color: #48484a; margin-bottom: 12px; }
-                            
+
                             .price {
                                 display: flex; justify-content: space-between; padding: 12px 16px;
                                 background: #f5f5f7; border-radius: 12px; margin-bottom: 12px;
@@ -149,9 +149,9 @@
     }
 }
 
-// ============================================================
-// RESPONSIVE OVERRIDES (MOBILE)
-// ============================================================
+
+
+
 @media (max-width: 1024px) {
     .detail-clinic-container .detail-clinic-body {
         padding: 0 40px 80px;
@@ -228,9 +228,9 @@
         }
     }
 }
-// ============================================================
-// OTHER CLINICS SECTION STYLES (Apple Inspired)
-// ============================================================
+
+
+
 .other-clinics-section {
     padding: 60px 0;
     border-top: 1px solid #f2f2f7;
@@ -267,7 +267,7 @@
                 transform: translateY(-8px);
                 box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
                 border-color: rgba(0, 113, 227, 0.2);
-                
+
                 .clinic-name {
                     color: #0071e3;
                 }
@@ -320,7 +320,7 @@
         }
     }
 
-    // Reuse shared pagination styles
+
     .pagination-container {
         display: flex;
         justify-content: center;

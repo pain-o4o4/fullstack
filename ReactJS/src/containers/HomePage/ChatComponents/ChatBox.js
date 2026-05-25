@@ -658,18 +658,9 @@ class ChatBox extends Component {
                                                     this.props.navigate(`/detail-doctor/${selectedDoctor.id}`);
                                                 }}
                                             >
-                                                Đặt lịch khám bệnh{/* Xem trang cá nhân đầy đủ */}
-                                            </button>
-                                            {/* <button
-                                                className="submit gray"
-                                                style={{ width: '100%', height: '40px', background: '#f2f2f7', color: '#1d1d1f', border: 'none', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}
-                                                onClick={() => {
-                                                    this.props.onClose();
-                                                    this.props.navigate(`/detail-doctor/${selectedDoctor.id}`);
-                                                }}
-                                            >
                                                 Đặt lịch khám bệnh
-                                            </button> */}
+                                            </button>
+                                            
                                         </div>
                                     </div>
                                 </>

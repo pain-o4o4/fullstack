@@ -179,7 +179,7 @@ class DetailClinic extends Component {
                         <ClinicDetailSkeleton />
                     ) : (
                         <>
-                            {/* THÊM KHỐI BANNER NÀY VÀO */}
+                            
                             {dataDetailClinic && dataDetailClinic.image && (
                                 <div
                                     className="clinic-banner"
@@ -193,7 +193,7 @@ class DetailClinic extends Component {
                             <div className="clinic-description">
                                 {dataDetailClinic && !_.isEmpty(dataDetailClinic) && (
                                     <>
-                                        {/* Tớ bỏ tên ở đây vì đã đưa lên banner cho sang rồi Duy nhé */}
+                                        
                                         <div className="clinic-address">{dataDetailClinic.address}</div>
                                         <div dangerouslySetInnerHTML={{ __html: dataDetailClinic.descriptionHTML }}></div>
                                     </>
@@ -222,7 +222,7 @@ class DetailClinic extends Component {
 
                                                 </div>
                                                 <div className="dt-content-right">
-                                                    {/* <ScheduleDoctor doctorIdFromParent={item.doctorId} /> */}
+                                                    
                                                     <ExtraInforDoctor doctorIdFromParent={item.doctorId} />
                                                 </div>
                                             </div>
@@ -231,7 +231,7 @@ class DetailClinic extends Component {
                                 }
                             </div>
 
-                            {/* Other Clinics Section */}
+                            
                             {filteredClinics && filteredClinics.length > 0 && (
                                 <div className="other-clinics-section">
                                     <div className="other-title">

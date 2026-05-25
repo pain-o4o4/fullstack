@@ -58,7 +58,7 @@ class VerifyEmail extends Component {
                 <HomeHeader />
                 <div className="verify-container">
                     <div className="glass-card">
-                        {/* KHỐI 1: LOADING (Đang xử lý) */}
+                        
                         {!isVerifyCompleted && (
                             <div className="loader-wrapper fade-in">
                                 <div className="spinner"></div>
@@ -68,7 +68,7 @@ class VerifyEmail extends Component {
                             </div>
                         )}
 
-                        {/* KHỐI 2: KẾT QUẢ (Sau khi gọi API xong) */}
+                        
                         {isVerifyCompleted && (
                             <div className="result-wrapper fade-in-up">
                                 {isCancelled ? (

@@ -420,7 +420,8 @@ class BookingModal extends Component {
                                 doctorId={doctorId}
                                 isShowDescription={false}
                                 isShowLinkDetail={false}
-                                isShowPrice={false}
+                                isShowPrice={true}
+                                dataTimeModal={dataTimeModal}
                                 doctorNameFromParent={this.doctorNameFromChild}
                             />
                         </div>

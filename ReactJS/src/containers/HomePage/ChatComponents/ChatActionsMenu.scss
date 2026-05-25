@@ -1,4 +1,4 @@
-// ChatActionsMenu.scss — Messenger Style
+
 .dcd-action-hub {
     position: relative;
     display: flex;
@@ -34,7 +34,7 @@
         bottom: 50px;
         left: 0;
         width: 280px;
-        background: #ffffff; // FULLY OPAQUE
+        background: #ffffff;
         border-radius: 16px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
         border: 1px solid rgba(0, 0, 0, 0.1);
@@ -50,11 +50,11 @@
         .menu-item {
             display: flex;
             align-items: center;
-            justify-content: space-between; // LABEL LEFT, ICON RIGHT
+            justify-content: space-between;
             padding: 14px 16px;
             cursor: pointer;
             transition: background 0.1s;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05); // DIVIDERS
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 
             &:last-child {
                 border-bottom: none;
@@ -77,7 +77,7 @@
             }
 
             .item-icon-wrap {
-                color: #0084ff; // Messenger Blue
+                color: #0084ff;
                 font-size: 18px;
                 display: flex;
                 align-items: center;
@@ -85,7 +85,7 @@
                 margin-left: 12px;
             }
 
-            // Apple Switch inside Messenger style menu
+
             .apple-switch {
                 width: 40px;
                 height: 22px;
@@ -115,7 +115,7 @@
             }
         }
 
-        // Quick Replies
+
         .menu-quick-replies {
             .quick-header {
                 display: flex;

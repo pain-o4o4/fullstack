@@ -7,7 +7,7 @@
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
     color: #1d1d1f;
 
-    // Header
+
     .manage-header {
         display: flex;
         justify-content: space-between;
@@ -60,7 +60,7 @@
         }
     }
 
-    // Toolbar
+
     .manage-toolbar {
         display: flex;
         justify-content: space-between;
@@ -102,7 +102,7 @@
         }
     }
 
-    // Table Container
+
     .table-wrapper {
         background: #fff;
         border-radius: 16px;
@@ -265,7 +265,7 @@
     }
 }
 
-// Handbook Cell Styling
+
 .handbook-cell {
     display: flex;
     align-items: center;
@@ -315,7 +315,7 @@
     }
 }
 
-// Reusing Confirmation styles from common system styles or duplicate for simplicity
+
 .apple-confirm-overlay {
     position: fixed;
     inset: 0;
@@ -623,7 +623,7 @@
                             }
                         }
 
-                        // Handbook info cell
+
                         td:nth-child(3) {
                             display: block !important;
                             padding: 16px 0 !important;
@@ -660,7 +660,7 @@
                             }
                         }
 
-                        // Date cell
+
                         td:nth-child(4) {
                             display: flex !important;
                             align-items: center !important;
@@ -686,7 +686,7 @@
                             }
                         }
 
-                        // Actions cell
+
                         td:nth-child(5) {
                             display: flex !important;
                             justify-content: flex-end !important;

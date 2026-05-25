@@ -70,7 +70,7 @@ class ExaminationPackages extends Component {
                                     </div>
                                     <div className="ep-info">
                                         <h3 className="ep-name">{item.name}</h3>
-                                        {/* <p className="ep-desc">Dịch vụ khám và tư vấn chuyên sâu tại các cơ sở y tế hàng đầu.</p> */}
+                                        
                                         <div className="ep-price">
                                             <span className="price-label">Giá khám:</span>
                                             <span className="price-value">{price} VNĐ</span>

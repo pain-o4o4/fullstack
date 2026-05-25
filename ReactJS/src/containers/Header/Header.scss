@@ -1,11 +1,11 @@
 .header-container {
-    height: 50px; // Chiều cao chuẩn cho admin header
+    height: 50px;
     width: 100%;
-    // background-color: #ffffff;
+
     background: linear-gradient(70px, #8e98d3, #2785c3);
-    // backdrop-filter: blur(24px) saturate(140%); // Mờ + tăng độ đậm màu
+
     display: flex;
-    justify-content: space-between; // Đẩy 2 khối ra 2 đầu
+    justify-content: space-between;
     align-items: center;
     padding: 0 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -13,7 +13,7 @@
     z-index: 100;
 
     .header-tabs-container {
-        flex: 1; // Chiếm hết phần còn lại ở giữa/trái
+        flex: 1;
         display: flex;
         align-items: center;
     }
@@ -21,7 +21,7 @@
     .header-right-content {
         display: flex;
         align-items: center;
-        gap: 20px; // Khoảng cách giữa ngôn ngữ và logout
+        gap: 20px;
     }
 
     .Languages {
@@ -68,12 +68,12 @@
         transition: all 0.3s;
 
         &:hover {
-            color: #f56c6c; // Đổi sang màu đỏ khi hover logout
+            color: #f56c6c;
             background-color: #fef0f0;
         }
 
         i {
-            // Font Awesome icon
+
         }
     }
 }

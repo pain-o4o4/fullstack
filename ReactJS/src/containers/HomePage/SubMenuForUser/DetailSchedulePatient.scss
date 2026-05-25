@@ -1,7 +1,7 @@
 .detail-schedule-container {
-    background-color: #f9fafb; // Matching sleek modern neutral background
+    background-color: #f9fafb;
     min-height: 100vh;
-    padding-top: 120px; // Clearance for HomeHeader
+    padding-top: 120px;
     padding-bottom: 80px;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
@@ -26,7 +26,7 @@
     }
 
     .detail-schedule-body {
-        max-width: 1240px; // Perfect alignment with HomeHeader
+        max-width: 1240px;
         margin: 0 auto;
         padding: 0 24px;
 
@@ -64,7 +64,7 @@
 
         .detail-card {
             background: #ffffff;
-            border-radius: 16px; // Unified bo-góc matching table card
+            border-radius: 16px;
             padding: 40px;
             border: 1px solid #e5e7eb;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
@@ -78,7 +78,7 @@
                 border-bottom: 1px solid #f3f4f6;
 
                 .title {
-                    font-size: 24px; // Streamlined header typography
+                    font-size: 24px;
                     font-weight: 700;
                     color: #111827;
                     letter-spacing: -0.5px;
@@ -103,35 +103,35 @@
                         border-radius: 50%;
                     }
 
-                    // Pending / Lịch hẹn mới / Chờ thanh toán (Tông màu sâu đạt chuẩn WCAG AA tương phản > 5.5:1)
+
                     &.S1 {
                         background: #fef3c7 !important;
                         color: #78350f !important;
                         &::before { background: #d97706; }
                     }
 
-                    // Confirmed / Đã xác nhận / Đã thanh toán (Tông màu tương phản cao)
+
                     &.S2 {
                         background: #d1fae5 !important;
                         color: #065f46 !important;
                         &::before { background: #059669; }
                     }
 
-                    // Done / Đã khám xong (Tông màu tương phản cao)
+
                     &.S3 {
                         background: #dbeafe !important;
                         color: #1e40af !important;
                         &::before { background: #2563eb; }
                     }
 
-                    // Cancelled / Đã hủy (Tông màu sẫm cực kỳ rõ ràng)
+
                     &.S4 {
                         background: #fee2e2 !important;
                         color: #991b1b !important;
                         &::before { background: #dc2626; }
                     }
 
-                    // Missed / Lỡ hẹn (Tông xám đậm chuẩn)
+
                     &.S5 {
                         background: #f3f4f6 !important;
                         color: #374151 !important;
@@ -142,14 +142,14 @@
 
             .info-grid {
                 display: grid;
-                grid-template-columns: 1.2fr 1fr; // Phân bổ tỷ lệ cân đối theo luồng thị giác của Apple
+                grid-template-columns: 1.2fr 1fr;
                 gap: 24px;
 
                 .info-column {
                     display: flex;
                     flex-direction: column;
                     gap: 24px;
-                    height: 100%; // Đảm bảo cột kéo dài hết chiều cao hàng của Grid
+                    height: 100%;
                 }
 
                 .info-section {
@@ -157,9 +157,9 @@
                     flex-direction: column;
 
                     &.master-card {
-                        background: #f9fafb; // Nền phụ dịu nhẹ tạo chiều sâu phân tầng
+                        background: #f9fafb;
                         border: 1px solid #e5e7eb;
-                        border-radius: 16px; // Bo góc mềm mại kiểu Apple hiện đại
+                        border-radius: 16px;
                         padding: 24px;
                         transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -167,11 +167,11 @@
                             transform: translateY(-2px);
                             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
                             border-color: #d1d5db;
-                            background: #ffffff; // Chuyển màu nền sang trắng tinh khôi cực kỳ sống động
+                            background: #ffffff;
                         }
                     }
 
-                    // Styles cho Avatar Header Row (Doctor & Patient)
+
                     .provider-header-row, .patient-header-row {
                         display: flex;
                         align-items: center;
@@ -200,11 +200,11 @@
                         }
 
                         .provider-avatar.monogram {
-                            background: linear-gradient(135deg, #60a5fa, #2563eb); // Xanh dương biểu trưng cho Y tế & Bác sĩ
+                            background: linear-gradient(135deg, #60a5fa, #2563eb);
                         }
 
                         .patient-avatar.monogram {
-                            background: linear-gradient(135deg, #34d399, #059669); // Xanh ngọc biểu trưng cho Bệnh nhân & Hồ sơ
+                            background: linear-gradient(135deg, #34d399, #059669);
                         }
 
                         .provider-name-group, .patient-name-group {
@@ -221,7 +221,7 @@
                     .section-title {
                         font-size: 11px;
                         font-weight: 700;
-                        color: #6b7280; // Nhãn xám tương phản tốt
+                        color: #6b7280;
                         margin-bottom: 20px;
                         text-transform: uppercase;
                         letter-spacing: 0.08em;
@@ -246,7 +246,7 @@
                         font-size: 15px;
 
                         &.price-divider {
-                            border-top: 1px dashed #e5e7eb; // Đường cắt chỉ mảnh tinh tế thay vì viền cứng
+                            border-top: 1px dashed #e5e7eb;
                             padding-top: 16px;
                             margin-top: 12px;
                         }
@@ -323,7 +323,7 @@
                         }
                     }
 
-                    // CSS cho phần nút hành động trực tiếp trên Card
+
                     .card-action-container {
                         margin-top: 20px;
                         width: 100%;
@@ -353,7 +353,7 @@
                         }
                     }
 
-                    // CSS riêng cho phần Lý do khám dạng Aesthetic Callout lồng trong Patient Card
+
                     .reason-callout-container {
                         border-top: 1px dashed #e5e7eb;
                         margin-top: 20px;
@@ -371,7 +371,7 @@
                         }
 
                         .reason-content-box {
-                            background: #ffffff; // Nền hộp trắng nổi bật trên nền xám
+                            background: #ffffff;
                             border-radius: 8px;
                             padding: 14px 18px;
                             border: 1px solid #e5e7eb;
@@ -383,22 +383,22 @@
                         }
                     }
 
-                    // Tự động giãn chiều cao bằng tổng cột trái & dồn Lý do khám xuống đáy
+
                     &.patient-card {
                         flex: 1;
                         display: flex;
                         flex-direction: column;
 
                         .reason-callout-container {
-                            margin-top: auto !important; // Pushes symptoms callout to the absolute bottom!
+                            margin-top: auto !important;
                             padding-top: 20px;
                         }
                     }
 
-                    // Tương tác đảo chiều màu sắc lý do khi hover thẻ bệnh nhân
+
                     &.patient-card:hover {
                         .reason-content-box {
-                            background: #f9fafb; // Đảo chiều màu sắc lý do khám cực kỳ tinh tế
+                            background: #f9fafb;
                             border-color: #d1d5db;
                         }
                     }
@@ -430,9 +430,9 @@
     }
 }
 
-// ============================================================
-// RESPONSIVE OVERRIDES (TABLET - MAX 1024PX)
-// ============================================================
+
+
+
 @media (max-width: 1024px) {
     .detail-schedule-container {
         padding-top: 100px;
@@ -451,9 +451,9 @@
     }
 }
 
-// ============================================================
-// RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
-// ============================================================
+
+
+
 @media (max-width: 768px) {
     .detail-schedule-container {
         padding-top: 80px;

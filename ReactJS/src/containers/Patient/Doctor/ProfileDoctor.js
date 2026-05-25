@@ -48,31 +48,30 @@ class ProfileDoctor extends Component {
     }
     async componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props.doctorId !== prevProps.doctorId) {
-
             let data = await this.getProfileDoctor(this.props.doctorId)
-
             this.setState({
                 dataProfile: data
             })
         }
     }
 
-
     render() {
         let { dataProfile } = this.state
         let { language, isShowDescription, dataTimeModal, isShowPrice } = this.props
         let nameVi = '', nameEn = ''
-        console.log('dataProfile', dataProfile)
         if (dataProfile && dataProfile.positionData) {
-            nameVi = `${dataProfile.positionData.valueVi}, ${dataProfile.lastName} ${dataProfile.firstName}`;
-            nameEn = `${dataProfile.positionData.valueEn}, ${dataProfile.firstName} ${dataProfile.lastName}`;
+            nameVi = `${dataProfile.positionData.valueVi} ${dataProfile.lastName} ${dataProfile.firstName}`;
+            nameEn = `${dataProfile.positionData.valueEn} ${dataProfile.firstName} ${dataProfile.lastName}`;
         }
-        console.log('dataProfile', dataProfile)
         return (
             <div className="profile-doctor-container">
                 <div className='intro-doctor'>
-                    <div className='content-left'
-                        style={{ backgroundImage: `url(${dataProfile && dataProfile.image ? dataProfile.image : ''})` }}>
+                    <div className='content-left'>
+                        <img
+                            src={dataProfile && dataProfile.image ? dataProfile.image : ''}
+                            alt={language === LANGUAGES.VI ? nameVi : nameEn}
+                            className="doctor-avatar"
+                        />
                     </div>
                     <div className='content-right'>
                         <div className='up'>
@@ -80,6 +79,24 @@ class ProfileDoctor extends Component {
                         </div>
                         <div className='down'>
                             {isShowDescription === false ?
+                                <div className="doctor-booking-meta">
+                                    {dataTimeModal && (
+                                        <div className="meta-pill time-pill">
+                                            <i className="far fa-clock"></i>
+                                            <span>
+                                                {dataTimeModal.timeTypeData && (language === LANGUAGES.VI ? dataTimeModal.timeTypeData.valueVi : dataTimeModal.timeTypeData.valueEn)}
+                                                {dataTimeModal.date ? ` - ${dataTimeModal.date}` : ''}
+                                            </span>
+                                        </div>
+                                    )}
+                                    {dataProfile && dataProfile.doctorinforData && dataProfile.doctorinforData.clinicData && (
+                                        <div className="meta-pill clinic-pill">
+                                            <i className="fas fa-hospital-alt"></i>
+                                            <span>{dataProfile.doctorinforData.clinicData.name}</span>
+                                        </div>
+                                    )}
+                                </div>
+                                :
                                 <>
                                     {dataProfile && dataProfile.markdownData
                                         && dataProfile.markdownData
@@ -87,52 +104,34 @@ class ProfileDoctor extends Component {
                                             <span>{dataProfile.markdownData
                                                 .description}</span>
                                         )}
-
-                                    {/* Single Clinic Display */}
-                                    <div className="multi-infor">
-                                        {dataProfile && dataProfile.doctorinforData && dataProfile.doctorinforData.clinicData && (
-                                            <div className="clinics">
-                                                {/* <i className="fas fa-hospital-alt"></i> */}
-                                                <span className="clinic-tag">{dataProfile.doctorinforData.clinicData.name}</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                </>
-                                :
-                                <>
-                                    {dataTimeModal && dataTimeModal.timeTypeData && (
-                                        <span>{language === LANGUAGES.VI ? dataTimeModal.
-                                            timeTypeData.valueVi : dataTimeModal.timeTypeData.
-                                            valueEn}
-                                        </span>
-
-                                    )}
-                                    {dataTimeModal && dataTimeModal.date && (
-                                        <span> - {dataTimeModal.date}</span>
-                                    )}
                                 </>
                             }
                         </div>
                     </div>
                 </div>
                 {isShowPrice === true &&
-                    <div className="price">
-                        <FormattedMessage id="patient.booking-modal.price" />
-                        {dataProfile && dataProfile.doctorinforData && dataProfile.doctorinforData.priceTypeData && (
-                            language === LANGUAGES.VI ? (
-                                <FormattedNumber
-                                    value={dataProfile.doctorinforData.priceTypeData.valueVi}
-                                    style="currency"
-                                    currency="VND"
-                                />
-                            ) : (
-                                <FormattedNumber
-                                    value={dataProfile.doctorinforData.priceTypeData.valueEn}
-                                    style="currency"
-                                    currency="USD"
-                                />
-                            )
-                        )}
+                    <div className="price-info-bar">
+                        <span className="price-label">
+                            <i className="fas fa-tags"></i>
+                            <FormattedMessage id="admin.manage-doctor.price" />:
+                        </span>
+                        <span className="price-value">
+                            {dataProfile && dataProfile.doctorinforData && dataProfile.doctorinforData.priceTypeData && (
+                                language === LANGUAGES.VI ? (
+                                    <FormattedNumber
+                                        value={dataProfile.doctorinforData.priceTypeData.valueVi}
+                                        style="currency"
+                                        currency="VND"
+                                    />
+                                ) : (
+                                    <FormattedNumber
+                                        value={dataProfile.doctorinforData.priceTypeData.valueEn}
+                                        style="currency"
+                                        currency="USD"
+                                    />
+                                )
+                            )}
+                        </span>
                     </div>}
             </div>
         )

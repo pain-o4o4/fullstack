@@ -1,8 +1,8 @@
 @use './HomePage.scss' as *;
 
-// ============================================================
-// BASE STYLES (LAPTOP/DESKTOP)
-// ============================================================
+
+
+
 
 .hm-footer {
     background-color: #000000;
@@ -67,7 +67,7 @@
 
         .footer-title {
             font-size: 15px;
-            text-transform: none; // Better reading speed
+            text-transform: none;
             font-weight: 700;
             margin-bottom: 24px;
             letter-spacing: 0.2px;
@@ -117,9 +117,9 @@
     }
 }
 
-// ============================================================
-// RESPONSIVE OVERRIDES (TABLET - MAX 1024PX)
-// ============================================================
+
+
+
 @media (max-width: 1024px) {
     .hm-footer {
         padding: 50px 24px 30px;
@@ -164,9 +164,9 @@
     }
 }
 
-// ============================================================
-// RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
-// ============================================================
+
+
+
 @media (max-width: 768px) {
     .hm-footer {
         padding: 40px 20px 24px;

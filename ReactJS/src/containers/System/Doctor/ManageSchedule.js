@@ -236,7 +236,7 @@ class ManageSchedule extends Component {
                 </div>
 
                 <div className="schedule-main-layout">
-                    {/* Sidebar: Configuration */}
+                    
                     <div className="config-sidebar">
                         <div className="sidebar-card">
                             <span className="card-label">Bác sĩ phụ trách</span>
@@ -299,7 +299,7 @@ class ManageSchedule extends Component {
                         </div>
                     </div>
 
-                    {/* Main Content: Time Picker */}
+                    
                     <div className="time-picker-area">
                         <div className="area-header">
                             <div className="title-wrap">
@@ -348,7 +348,7 @@ class ManageSchedule extends Component {
                     </div>
                 </div>
 
-                {/* CONFIRMATION POPUP */}
+                
                 {showConfirm && (
                     <div className="apple-confirm-overlay">
                         <div className="apple-confirm-popup">

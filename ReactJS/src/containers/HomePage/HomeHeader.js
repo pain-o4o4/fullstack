@@ -292,7 +292,7 @@ class HomeHeader extends Component {
                         )}
 
                         <div className="hm-header-actions">
-                            {/* Search trigger removed from desktop header, will be visible on mobile via SCSS */}
+                            
                             {!isOpenSearch && (
                                 <div className="nav-sign-in search-trigger" onClick={() => this.toggleSearch(true)}>
                                     <i className="fas fa-search search-icon"></i>
@@ -360,7 +360,7 @@ class HomeHeader extends Component {
                     handleViewList={this.handleViewList}
                 />
 
-                {/* BOTTOM NAVIGATION BAR (Mobile Only) */}
+                
                 {(!isOpenSearch && !this.state.isOpenSidebar && !this.props.isOpenDoctorChat) && (
                     <div className="hm-bottom-nav">
                         <div className={`nav-item ${!isOpenSearch ? 'active' : ''}`} onClick={() => { this.handleViewList('HOME'); this.toggleSearch(false); }}>

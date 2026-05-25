@@ -20,7 +20,7 @@ class ModalSearchHeader extends Component {
         return (
             <div className="modal-search-wrapper">
                 <div className="search-input-container">
-                    {/* Icon kính lúp nằm cố định trong thanh search */}
+                    
                     <img src={search} className="icon-search" alt="icon-search" />
 
                     <input
@@ -29,7 +29,7 @@ class ModalSearchHeader extends Component {
                         autoFocus
                     />
                 </div>
-                {/* Nút X này gọi hàm toggleSearch từ cha truyền xuống để ĐÓNG search */}
+                
                 <img
                     src={close_icon} // Dùng biến closeIcon đã import ở trên
                     className="icon-close-custom" // Đặt className mới để dễ viết CSS

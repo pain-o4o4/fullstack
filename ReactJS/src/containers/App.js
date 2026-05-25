@@ -124,7 +124,7 @@ class App extends Component {
                                 <Routes>
                                     <Route path={path.HOME} element={<Home />} />
 
-                                    {/* //check roleId */}
+                                    
                                     <Route path={path.LOGIN} element={<UserIsNotAuthenticated><Login /></UserIsNotAuthenticated>} />
                                     <Route path={path.REGISTER} element={<UserIsNotAuthenticated><Register /></UserIsNotAuthenticated>} />
                                     <Route path={path.REGISTER_VERIFY_OTP} element={<UserIsNotAuthenticated><RegisterVerify /></UserIsNotAuthenticated>} />
@@ -132,17 +132,17 @@ class App extends Component {
                                     <Route path={path.SYSTEM + '/*'} element={<UserIsAuthenticated><System /></UserIsAuthenticated>} />
                                     <Route path={path.DOCTOR + '/*'} element={<UserIsDoctor><Doctor /></UserIsDoctor>} />
 
-                                    {/* submenuforuser */}
-                                    {/* <Route path={path.SETTINGS} element={<UserIsAuthenticated><PatientSettings /></UserIsAuthenticated>} /> */}
+                                    
+                                    
                                     <Route path={path.MY_BOOKING} element={<UserIsPatientOrAdmin><MyBooking /></UserIsPatientOrAdmin>} />
                                     <Route path={path.DETAIL_SCHEDULE_PATIENT} element={<UserIsPatientOrAdmin><DetailSchedulePatient /></UserIsPatientOrAdmin>} />
                                     <Route path={path.BOOKING_HISTORY} element={<UserIsPatientOrAdmin><BookingHistory /></UserIsPatientOrAdmin>} />
 
-                                    {/* checkmail */}
+                                    
                                     <Route path={path.VERIFY_EMAIL_BOOKING} element={<VerifyEmail />} />
                                     <Route path={path.PAYMENT} element={<UserIsPatientOrAdmin><Payment /></UserIsPatientOrAdmin>} />
 
-                                    {/* user */}
+                                    
                                     <Route path={path.HOMEPAGE} element={<HomePage />} />
                                     <Route path={path.DETAIL_DOCTOR} element={<DetailDoctor />} />
                                     <Route path={path.DETAIL_SPECIALTY} element={<DetailSpecialty />} />
@@ -175,7 +175,7 @@ class App extends Component {
                             draggable
                             pauseOnHover
                         />
-                        {/* {isLoggedIn && <ChatBot />} */}
+                        
                     </div>
                 </BrowserRouter>
             </Fragment>

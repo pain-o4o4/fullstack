@@ -296,7 +296,7 @@ class ManageHandbook extends Component {
                     saveHandbook={this.handleSaveHandbook}
                 />
 
-                {/* CONFIRM DELETE POPUP */}
+                
                 {this.state.showBulkDeleteConfirm && (
                     <div className="apple-confirm-overlay">
                         <div className="apple-confirm-popup">

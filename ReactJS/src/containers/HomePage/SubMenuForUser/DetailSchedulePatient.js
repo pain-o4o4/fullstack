@@ -136,9 +136,9 @@ class DetailSchedulePatient extends Component {
                         </div>
 
                         <div className="info-grid">
-                            {/* Cột trái: Bác sĩ & Lịch khám */}
+                            
                             <div className="info-column">
-                                {/* Card 1: Bác sĩ & Địa điểm (Who & Where - Đặt lên đầu để tạo điểm neo nhận thức) */}
+                                
                                 <div className="info-section master-card provider-card">
                                     <h3 className="section-title"><FormattedMessage id="patient-detail.doctor-info" /></h3>
                                     
@@ -170,7 +170,7 @@ class DetailSchedulePatient extends Component {
                                     </div>
                                 </div>
 
-                                {/* Card 2: Lịch khám & Thanh toán (When & How much - Đặt bên dưới để kết thúc bằng Nút hành động thanh toán) */}
+                                
                                 <div className="info-section master-card appointment-card">
                                     <h3 className="section-title"><FormattedMessage id="patient-detail.appointment-info" /></h3>
                                     <div className="info-item">
@@ -218,7 +218,7 @@ class DetailSchedulePatient extends Component {
                                 </div>
                             </div>
 
-                            {/* Cột phải: Hồ sơ người bệnh & Triệu chứng */}
+                            
                             <div className="info-column">
                                 <div className="info-section master-card patient-card">
                                     <h3 className="section-title"><FormattedMessage id="patient-profile.name-label" /></h3>
@@ -256,7 +256,7 @@ class DetailSchedulePatient extends Component {
                                         <span className="value address-text">{formatTitleCase(detailBooking.patientBookingData?.address)}</span>
                                     </div>
 
-                                    {/* Lý do khám lồng hợp nhất bên trong Patient Card dưới dạng Aesthetic Callout (Tránh trùng viền kép) */}
+                                    
                                     <div className="reason-callout-container">
                                         <span className="reason-label"><FormattedMessage id="schedule-doctor.reason" /></span>
                                         <div className="reason-content-box">

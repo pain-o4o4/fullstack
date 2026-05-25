@@ -1,8 +1,8 @@
 @import '../HomePage/HomePage.scss';
 
-// ============================================================
-// BASE STYLES (LAPTOP/DESKTOP)
-// ============================================================
+
+
+
 .all-doctors-container {
     background: #ffffff;
     min-height: 100vh;
@@ -108,9 +108,9 @@
     }
 }
 
-// ============================================================
-// RESPONSIVE OVERRIDES (TABLET - MAX 1024PX)
-// ============================================================
+
+
+
 @media (max-width: 1024px) {
     .all-doctors-container {
         .all-doctors-body {
@@ -127,22 +127,22 @@
     }
 }
 
-// ============================================================
-// RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
-// ============================================================
+
+
+
 @media (max-width: 768px) {
     .all-doctors-container {
         .all-doctors-body {
             padding: 40px 16px 80px;
             margin-top: 10px !important ;
             .doctors-grid {
-                grid-template-columns: repeat(2, 1fr); // Force 2 columns
+                grid-template-columns: repeat(2, 1fr);
                 gap: 12px;
             }
 
             .doctor-card {
                 border-radius: 16px;
-                
+
                 .card-top {
                     padding: 20px 0;
                     .avatar {
@@ -169,7 +169,7 @@
                         letter-spacing: 0;
                     }
                     .doctor-meta {
-                        display: none; // Hide meta info on 2-column mobile grid to save space
+                        display: none;
                     }
                     .btn-detail-apple {
                         padding: 8px;

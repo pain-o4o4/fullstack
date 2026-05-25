@@ -74,7 +74,7 @@
                         font-size: 19px;
                         font-weight: 800;
                         letter-spacing: -0.2px;
-                        text-transform: none; // Consistent accessibility
+                        text-transform: none;
                         background: linear-gradient(135deg, #0071e3 0%, #05c1ff 100%);
                         -webkit-background-clip: text;
                         -webkit-text-fill-color: transparent;
@@ -83,7 +83,7 @@
                     }
 
                     .brand-sub {
-                        font-size: 12px; // Synchronized accessibility (min 12px)
+                        font-size: 12px;
                         font-weight: 700;
                         color: #515154;
                         text-transform: none;
@@ -129,7 +129,7 @@
                 }
 
                 .sidebar-toggle {
-                    display: none; // Hidden by default on desktop
+                    display: none;
                     cursor: pointer;
                     width: 35px;
                     height: 35px;
@@ -202,15 +202,15 @@
             overflow-y: auto;
             padding-bottom: 40px;
 
-            // Hide scrollbar for a cleaner Apple look
+
             &::-webkit-scrollbar {
                 display: none;
             }
 
             -ms-overflow-style: none;
-            /* IE and Edge */
+
             scrollbar-width: none;
-            /* Firefox */
+
 
             .user-profile-summary {
                 text-align: left;
@@ -220,7 +220,7 @@
 
                 .avatar-wrapper {
                     position: relative;
-                    display: inline-block; // Giữ đúng layout cũ của bạn
+                    display: inline-block;
                 }
 
                 .avatar-circle {
@@ -346,7 +346,7 @@
                     }
 
                     &.mobile-system-actions {
-                        display: none; // Hidden by default on desktop
+                        display: none;
                         margin-top: 40px;
                         border-top: 1px solid #f2f2f7;
                         padding-top: 25px;
@@ -359,7 +359,7 @@
                         }
 
                         .logout-item {
-                            color: #ff3b30; // Apple Red for logout
+                            color: #ff3b30;
 
                             i {
                                 margin-right: 12px;
@@ -412,9 +412,9 @@
     }
 }
 
-// ============================================================
-// RESPONSIVE OVERRIDES (MOBILE)
-// ============================================================
+
+
+
 @media (max-width: 1024px) {
     .account-page {
         .sub-header .sub-header-content {
@@ -444,14 +444,14 @@
                 background: white;
                 margin-top: 0 !important;
                 padding: 80px 30px 40px;
-                box-shadow: none; // No shadow when closed to prevent bleeding
+                box-shadow: none;
                 width: 320px;
                 transform: translateX(100%);
                 transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
                 &.open {
                     transform: translateX(0);
-                    box-shadow: -15px 0 45px rgba(0, 0, 0, 0.08); // Apply shadow only when open
+                    box-shadow: -15px 0 45px rgba(0, 0, 0, 0.08);
                 }
 
                 .sidebar-nav .mobile-system-actions {
@@ -474,12 +474,12 @@
             }
 
             .right-controls .sidebar-toggle {
-                display: flex; // Show hamburger on mobile
+                display: flex;
             }
 
             .right-controls .btn-signout,
             .right-controls .translate-wrapper {
-                display: none !important; // Hide Sign Out and Translate from header on mobile
+                display: none !important;
             }
         }
 
@@ -500,14 +500,14 @@
                 background: white;
                 margin-top: 0 !important;
                 padding: 80px 20px 40px;
-                box-shadow: none; // No shadow when closed to prevent bleeding
+                box-shadow: none;
                 transform: translateX(100%);
                 transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                 width: 280px;
 
                 &.open {
                     transform: translateX(0);
-                    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.06); // Apply shadow only when open
+                    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.06);
                 }
 
                 .user-profile-summary {
@@ -516,7 +516,7 @@
 
                 .sidebar-nav {
                     .mobile-system-actions {
-                        display: block !important; // Show logout/translate in sidebar on mobile
+                        display: block !important;
                     }
                 }
             }

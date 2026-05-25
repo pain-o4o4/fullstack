@@ -7,7 +7,7 @@
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
     color: #1d1d1f;
 
-    // Header
+
     .manage-header {
         display: flex;
         justify-content: space-between;
@@ -62,7 +62,7 @@
         }
     }
 
-    // Toolbar
+
     .manage-toolbar {
         display: flex;
         justify-content: space-between;
@@ -126,29 +126,29 @@
         }
     }
 
-    // Table Container with Fixed Height
+
     .table-wrapper {
         background: #fff;
         border-radius: 20px;
         border: 1px solid #d2d2d7;
         overflow-x: auto;
-        overflow-y: auto; // Added scrollbar to prevent cracking
+        overflow-y: auto;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        height: 610px; // Increased slightly to fit 8 rows perfectly
+        height: 610px;
         display: flex;
         flex-direction: column;
 
         &::-webkit-scrollbar {
-            display: none; // Hide scrollbar for Chrome, Safari and Opera
+            display: none;
         }
 
-        -ms-overflow-style: none; // IE and Edge
-        scrollbar-width: none; // Firefox
+        -ms-overflow-style: none;
+        scrollbar-width: none;
 
         .clean-table {
             width: 100%;
-            min-width: 900px; // Increased slightly for checkbox
-            border-collapse: separate; // Needed for sticky header with borders
+            min-width: 900px;
+            border-collapse: separate;
             border-spacing: 0;
             table-layout: fixed;
 
@@ -179,27 +179,27 @@
                         width: 80px;
                     }
 
-                    // ID
+
                     &:nth-child(3) {
                         width: 30%;
                     }
 
-                    // Info
+
                     &:nth-child(4) {
                         width: 120px;
                     }
 
-                    // Role
+
                     &:nth-child(5) {
                         width: auto;
                     }
 
-                    // Address
+
                     &:nth-child(6) {
-                        width: 120px; // For Actions/Bulk Actions
+                        width: 120px;
                     }
 
-                    // Actions
+
                     .header-bulk-actions {
                         display: flex;
                         justify-content: flex-end;
@@ -270,7 +270,7 @@
                 tr {
                     border-bottom: 1px solid #f5f5f7;
                     transition: all 0.2s;
-                    height: 68px; // Fixed row height
+                    height: 68px;
 
                     &.selected-row {
                         background: #f0f7ff !important;
@@ -324,7 +324,7 @@
         }
     }
 
-    // Pagination Bar Fixed at Bottom
+
     .pagination-bar {
         display: flex;
         justify-content: center;
@@ -376,7 +376,7 @@
     }
 }
 
-// User Cell Styling
+
 .user-cell {
     display: flex;
     align-items: center;
@@ -488,7 +488,7 @@
     }
 }
 
-// Popup Overlay (Glassmorphism)
+
 .apple-popup-overlay {
     position: fixed;
     top: 0;
@@ -505,9 +505,9 @@
     animation: fadeIn 0.3s ease;
 
     .apple-popup-content {
-        background: #ffffff; // Clean solid white card
+        background: #ffffff;
         width: 90%;
-        max-width: 440px; // Compact and sleek like mockup
+        max-width: 440px;
         border-radius: 28px;
         box-shadow: 0 30px 80px rgba(0, 0, 0, 0.12);
         overflow: hidden;
@@ -518,10 +518,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: none !important; // Completely borderless
+            border-bottom: none !important;
 
             .title {
-                font-size: 26px; // Large bold title exactly like mockup
+                font-size: 26px;
                 font-weight: 700;
                 color: #1d1d1f;
                 letter-spacing: -0.5px;
@@ -553,7 +553,7 @@
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
 
-            // Circular avatar with Edit link underneath like mockup
+
             .avatar-picker {
                 display: flex;
                 justify-content: center;
@@ -593,7 +593,7 @@
                         white-space: nowrap;
 
                         i {
-                            display: none !important; // Hide camera icon
+                            display: none !important;
                         }
 
                         &::after {
@@ -609,7 +609,7 @@
 
             .form-grid {
                 display: grid;
-                grid-template-columns: 1fr; // Single column stack matching mockup
+                grid-template-columns: 1fr;
                 gap: 20px;
 
                 .input-field {
@@ -629,8 +629,8 @@
                         height: 46px;
                         padding: 0 16px;
                         border-radius: 12px;
-                        border: 1px solid #d2d2d7; // Clean gray outline
-                        background: #ffffff; // Pure white background
+                        border: 1px solid #d2d2d7;
+                        background: #ffffff;
                         font-size: 16px;
                         color: #1d1d1f;
                         outline: none;
@@ -647,7 +647,7 @@
                         }
                     }
 
-                    // Style selects with a custom chevron dropdown arrow for Apple feeling
+
                     select {
                         appearance: none;
                         -webkit-appearance: none;
@@ -669,9 +669,9 @@
         .popup-footer {
             padding: 24px 32px 32px;
             background: #ffffff;
-            border-top: 1px solid rgba(0, 0, 0, 0.05); // Clean divider line
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
             display: flex;
-            justify-content: flex-end; // Right aligned
+            justify-content: flex-end;
             align-items: center;
             gap: 24px;
 
@@ -698,7 +698,7 @@
                 &.btn-primary {
                     background: #0071e3 !important;
                     color: #fff !important;
-                    border-radius: 20px !important; // Pill shape
+                    border-radius: 20px !important;
                     padding: 0 24px !important;
                     display: flex;
                     align-items: center;
@@ -719,7 +719,7 @@
     }
 }
 
-// Confirmation Overlay
+
 .apple-confirm-overlay {
     position: fixed;
     inset: 0;
@@ -925,9 +925,9 @@
                 min-width: 100% !important;
 
                 thead {
-                    display: none !important; // Hide standard header on mobile
+                    display: none !important;
 
-                    // iOS Floating Premium Dock for Bulk Actions
+
                     &:has(.header-bulk-actions) {
                         display: block !important;
                         position: fixed !important;
@@ -936,12 +936,12 @@
                         transform: translateX(-50%) !important;
                         width: 90% !important;
                         max-width: 440px !important;
-                        background: rgba(255, 255, 255, 0.94) !important; // Beautiful pure light glassmorphism
+                        background: rgba(255, 255, 255, 0.94) !important;
                         backdrop-filter: blur(25px) saturate(190%) !important;
                         -webkit-backdrop-filter: blur(25px) saturate(190%) !important;
                         border-radius: 24px !important;
-                        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08) !important; // Soft light shadow
-                        border: 1px solid rgba(0, 0, 0, 0.06) !important; // Super thin elegant border
+                        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08) !important;
+                        border: 1px solid rgba(0, 0, 0, 0.06) !important;
                         z-index: 1000 !important;
                         padding: 12px 20px !important;
                         animation: dockSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
@@ -958,12 +958,12 @@
                             box-shadow: none !important;
                             gap: 16px !important;
 
-                            // Keep only Checkbox (Select all) and Action Buttons visible
+
                             th:not(.text-right):not(.check-col) {
                                 display: none !important;
                             }
 
-                            // Style "Select all" column beautifully on mobile dock
+
                             th.check-col {
                                 display: flex !important;
                                 align-items: center !important;
@@ -976,7 +976,7 @@
 
                                 &::after {
                                     content: "Chọn tất cả" !important;
-                                    color: #1d1d1f !important; // Apple Charcoal text
+                                    color: #1d1d1f !important;
                                     font-size: 14px !important;
                                     font-weight: 600 !important;
                                     text-transform: none !important;
@@ -988,7 +988,7 @@
                                     height: 18px !important;
                                     margin: 0 !important;
                                     cursor: pointer !important;
-                                    accent-color: #0071e3 !important; // Apple Blue Checkbox
+                                    accent-color: #0071e3 !important;
                                     border-radius: 6px !important;
                                 }
                             }
@@ -1002,14 +1002,14 @@
 
                                 .header-bulk-actions {
                                     display: flex !important;
-                                    justify-content: flex-end !important; // Align actions neatly to the right
+                                    justify-content: flex-end !important;
                                     align-items: center !important;
                                     width: 100% !important;
                                     gap: 14px !important;
 
                                     &::before {
-                                        // content: "Đã chọn:" !important;
-                                        color: #86868b !important; // Light gray indicator text
+
+                                        color: #86868b !important;
                                         font-size: 14px !important;
                                         font-weight: 500 !important;
                                         text-transform: none !important;
@@ -1038,7 +1038,7 @@
 
                                     .btn-bulk-delete {
                                         order: 2 !important;
-                                        background: #ff3b30 !important; // Apple Red
+                                        background: #ff3b30 !important;
                                         color: #ffffff !important;
                                         padding: 8px 14px !important;
                                         border-radius: 12px !important;
@@ -1134,7 +1134,7 @@
                             overflow: visible !important;
                             text-overflow: clip !important;
 
-                            // ID row styled elegantly
+
                             &.id-col {
                                 font-size: 12px;
                                 color: #86868b;
@@ -1150,7 +1150,7 @@
                                 }
                             }
 
-                            // Info cell containing user avatar and name/email
+
                             &:nth-child(3) {
                                 padding: 4px 0 12px !important;
                                 border-bottom: 1px solid #f2f2f7 !important;
@@ -1187,7 +1187,7 @@
                                 }
                             }
 
-                            // Role Badge row
+
                             &:nth-child(4) {
                                 &::before {
                                     content: "Vai trò";
@@ -1204,7 +1204,7 @@
                                 }
                             }
 
-                            // Address row
+
                             &.address-col {
                                 color: #1d1d1f;
                                 font-weight: 500;
@@ -1218,7 +1218,7 @@
                                 }
                             }
 
-                            // Action buttons row
+
                             &:nth-child(6) {
                                 margin-top: 8px;
                                 padding-top: 12px !important;
@@ -1237,7 +1237,7 @@
                                 }
                             }
 
-                            // Checkbox styled nicely
+
                             &.check-col {
                                 position: absolute;
                                 top: 16px;
@@ -1268,23 +1268,23 @@
 
     .apple-popup-overlay {
         padding: 16px;
-        align-items: center; // Perfectly center modal on mobile screen
+        align-items: center;
         justify-content: center;
 
         .apple-popup-content {
             width: 100%;
             max-width: 380px;
-            border-radius: 28px; // 100% matched card rounding
+            border-radius: 28px;
             max-height: 80vh;
             display: flex;
             flex-direction: column;
-            background: #ffffff; // Solid white card
+            background: #ffffff;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
             animation: popupSpring 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
             .popup-header {
                 padding: 28px 24px 8px;
-                border-bottom: none !important; // Completely borderless
+                border-bottom: none !important;
 
                 .title {
                     font-size: 24px;
@@ -1343,7 +1343,7 @@
                             white-space: nowrap;
 
                             i {
-                                display: none !important; // Hide camera icon
+                                display: none !important;
                             }
 
                             &::after {
@@ -1383,7 +1383,7 @@
                             outline: none;
                         }
 
-                        // Gender & Role Selects customized options dropdown chevron arrow
+
                         select {
                             appearance: none;
                             -webkit-appearance: none;
@@ -1410,7 +1410,7 @@
                 gap: 20px;
                 border-top: 1px solid rgba(0, 0, 0, 0.05);
                 display: flex;
-                justify-content: flex-end; // Right aligned
+                justify-content: flex-end;
                 align-items: center;
 
                 button {

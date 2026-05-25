@@ -54,6 +54,10 @@ class Payment extends Component {
         }
     }
 
+    componentWillUnmount() {
+        if (this.timer) clearInterval(this.timer);
+    }
+
     saveInitialBooking = async (bookingData) => {
         try {
             // This backend call creates S1 AND PayOS link
@@ -64,6 +68,10 @@ class Payment extends Component {
                     bookingData: { ...bookingData, bookingId },
                     checkoutUrl: checkoutUrl // Store for later
                 });
+                
+                // Update browser URL query params so reloading doesn't lose state/bookingId
+                this.props.navigate(`/patient/payment?bookingId=${bookingId}`, { replace: true });
+                
                 this.handleTimerPersistence(bookingId);
             } else {
                 // If backend fails (e.g. PayOS error), the record might or might not be saved 
@@ -85,10 +93,19 @@ class Payment extends Component {
                 let data = res.data;
                 const { language } = this.props;
 
-                const createdAt = data.createdAt ? new Date(data.createdAt).getTime() : Date.now();
-                const now = Date.now();
-                const diff = now - createdAt;
-                const fifteenMins = 15 * 60 * 1000;
+                // Absolute Expiry Persistence in LocalStorage (prevents timezone/clock drift reset bugs)
+                const storageKey = `payment_expiry_${data.id}`;
+                let expiry = localStorage.getItem(storageKey);
+
+                if (!expiry) {
+                    const createdAt = data.createdAt ? new Date(data.createdAt).getTime() : Date.now();
+                    expiry = createdAt + 15 * 60 * 1000;
+                    localStorage.setItem(storageKey, expiry);
+                } else {
+                    expiry = parseInt(expiry, 10);
+                }
+
+                const timeLeft = Math.max(0, Math.floor((expiry - Date.now()) / 1000));
 
                 let reconstructed = {
                     bookingId: data.id,
@@ -116,7 +133,7 @@ class Payment extends Component {
                     reason: data.patientBookingData?.reason,
                 };
 
-                if (diff > fifteenMins) {
+                if (timeLeft <= 0) {
                     toast.warn(language === LANGUAGES.VI ? "Hết hạn! Đang tạo phiên mới..." : "Expired! Creating new session...");
                     await this.createNewBookingSession(reconstructed);
                     return;
@@ -125,7 +142,7 @@ class Payment extends Component {
                 this.setState({
                     bookingData: reconstructed,
                     isLoading: false,
-                    timeLeft: Math.max(0, Math.floor((fifteenMins - diff) / 1000))
+                    timeLeft: timeLeft
                 }, () => {
                     this.startTimer(data.id);
                 });
@@ -142,13 +159,25 @@ class Payment extends Component {
     }
 
     handleTimerPersistence = (bookingId) => {
-        // This is now redundant since we use fetchBookingDetails logic, but let's keep it simple
-        // If we have an ID but no fetch (newly created), we start 15 min timer
-        this.setState({ timeLeft: 900 }, () => this.startTimer(bookingId));
+        const storageKey = `payment_expiry_${bookingId}`;
+        let expiry = localStorage.getItem(storageKey);
+
+        if (!expiry) {
+            expiry = Date.now() + 15 * 60 * 1000;
+            localStorage.setItem(storageKey, expiry);
+        } else {
+            expiry = parseInt(expiry, 10);
+        }
+
+        const timeLeft = Math.max(0, Math.floor((expiry - Date.now()) / 1000));
+        this.setState({ timeLeft }, () => this.startTimer(bookingId));
     }
 
     createNewBookingSession = async (oldData) => {
         try {
+            if (oldData && oldData.bookingId) {
+                localStorage.removeItem(`payment_expiry_${oldData.bookingId}`);
+            }
             // Re-call the booking API with old data to get a fresh ID
             let res = await postBookAppointment(oldData);
             if (res && res.errCode === 0 && res.data) {
@@ -245,7 +274,7 @@ class Payment extends Component {
 
                     <div className="payment-main">
                         <div className="payment-content-layout">
-                            {/* Left Column - Sticky via CSS */}
+                            
                             <div className="content-left">
                                 <div className="product-visual">
                                     <div className="doctor-card">
@@ -278,7 +307,7 @@ class Payment extends Component {
                                 </div>
                             </div>
 
-                            {/* Right Column */}
+                            
                             <div className="content-right">
                                 <h1 className="main-title">
                                     {language === LANGUAGES.VI ? 'Kiểm tra thông tin lịch hẹn' : 'Review your appointment'}

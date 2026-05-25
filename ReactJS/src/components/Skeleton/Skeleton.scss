@@ -1,4 +1,4 @@
-// Base Skeleton Shimmer
+
 .skeleton {
     background: #f0f2f5;
     background: linear-gradient(
@@ -21,7 +21,7 @@
     }
 }
 
-// Utility Classes
+
 .skeleton-avatar {
     width: 120px;
     height: 120px;
@@ -47,7 +47,7 @@
     border-radius: 18px;
 }
 
-// Doctor Detail Skeleton Specifics
+
 .doctor-detail-skeleton-container {
     max-width: 1100px;
     margin: 0 auto;
@@ -57,7 +57,7 @@
         display: flex;
         gap: 20px;
         padding: 20px 0;
-        
+
         .content-right {
             flex: 1;
         }
@@ -83,7 +83,7 @@
     }
 }
 
-// Specialty & Clinic Detail Skeleton Specifics
+
 .specialty-detail-skeleton-container,
 .clinic-detail-skeleton-container {
     .banner-skeleton {

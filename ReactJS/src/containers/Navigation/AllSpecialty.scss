@@ -1,8 +1,8 @@
 @import '../HomePage/HomePage.scss';
 
-// ============================================================
-// BASE STYLES (LAPTOP/DESKTOP)
-// ============================================================
+
+
+
 .all-specialty-container {
     background: #ffffff;
     min-height: 100vh;
@@ -64,9 +64,9 @@
     }
 }
 
-// ============================================================
-// RESPONSIVE OVERRIDES (TABLET - MAX 1024PX)
-// ============================================================
+
+
+
 @media (max-width: 1024px) {
     .all-specialty-container {
         .all-specialty-body {
@@ -83,30 +83,30 @@
     }
 }
 
-// ============================================================
-// RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
-// ============================================================
+
+
+
 @media (max-width: 768px) {
     .all-specialty-container {
         .all-specialty-body {
             padding: 40px 16px 80px;
             margin-top: 10px !important;
             .specialty-grid {
-                grid-template-columns: repeat(2, 1fr); // Force 2 columns
-                gap: 16px; // Tighter gap for small screens
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
             }
 
             .specialty-card {
-                border-radius: 16px; // Slightly smaller radius
-                
+                border-radius: 16px;
+
                 .card-image-wrapper {
-                    height: 140px; // Shorter images
+                    height: 140px;
                 }
 
                 .card-info {
                     padding: 12px;
                     .name {
-                        font-size: 15px; // Smaller text
+                        font-size: 15px;
                         margin-bottom: 8px;
                         display: -webkit-box;
                         -webkit-line-clamp: 2;

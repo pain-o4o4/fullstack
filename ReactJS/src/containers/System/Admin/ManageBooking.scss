@@ -129,7 +129,7 @@
             overflow-y: auto;
             position: relative;
 
-            /* Hide scrollbar for Webkit, Firefox, and Edge */
+
             scrollbar-width: none;
             -ms-overflow-style: none;
 
@@ -228,7 +228,7 @@
                         }
 
                         &.selected-row {
-                            background: #f0f8ff; // light blue for selected
+                            background: #f0f8ff;
                         }
 
                         td {
@@ -309,7 +309,7 @@
                                     color: #34c759;
                                 }
 
-                                // Green badge for Paid/R2 style
+
                                 &.S3 {
                                     background: #e5f1ff;
                                     color: #0071e3;
@@ -407,7 +407,7 @@
     }
 }
 
-// Modals
+
 .apple-modal-overlay,
 .apple-confirm-overlay {
     position: fixed;
@@ -584,9 +584,9 @@
     }
 }
 
-// ============================================================
-// RESPONSIVE OVERRIDES (TABLET - MAX 1024PX)
-// ============================================================
+
+
+
 @media (max-width: 1024px) {
     .manage-booking-history-container {
         padding: 24px;
@@ -606,9 +606,9 @@
     }
 }
 
-// ============================================================
-// RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
-// ============================================================
+
+
+
 @media (max-width: 768px) {
     .manage-booking-history-container {
         padding: 16px;

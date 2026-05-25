@@ -463,7 +463,7 @@ class ManageBooking extends Component {
                     </div>
                 </div>
 
-                {/* EDIT MODAL */}
+                
                 {showEditModal && editData && (
                     <div className="apple-modal-overlay">
                         <div className="apple-modal-content">

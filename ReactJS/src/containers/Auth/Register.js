@@ -266,7 +266,7 @@ class Register extends Component {
                             <div className="underline"></div>
                         </div>
                         <div className="inputs">
-                            {/* First Name - Last Name */}
+                            
                             <div className="input-group-row">
                                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                                     <div className={`input ${errors.firstName ? 'has-error' : ''}`}>
@@ -290,7 +290,7 @@ class Register extends Component {
                                 </div>
                             </div>
 
-                            {/* Email */}
+                            
                             <div className={`input ${errors.email ? 'has-error' : ''}`}>
                                 <input name="email" type="email" placeholder={language === 'vi' ? 'Email' : 'Email'}
                                     value={this.state.email}
@@ -300,7 +300,7 @@ class Register extends Component {
                             </div>
                             {errors.email && <div className="inline-error">{errors.email}</div>}
 
-                            {/* Password */}
+                            
                             <div className={`input ${errors.password ? 'has-error' : ''}`}>
                                 <input name="password" type={this.state.isShowPassword ? "text" : "password"} placeholder={language === 'vi' ? 'Mật khẩu' : 'Password'}
                                     value={this.state.password}
@@ -316,7 +316,7 @@ class Register extends Component {
                             </div>
                             {errors.password && <div className="inline-error">{errors.password}</div>}
 
-                            {/* Real-time Password Strength checklist */}
+                            
                             {this.state.password && (
                                 <div className="password-requirements">
                                     <div className={`requirement ${this.getPasswordStrength(this.state.password).length ? 'valid' : 'invalid'}`}>
@@ -335,7 +335,7 @@ class Register extends Component {
                             )}
 
                             <div className="input-group-row">
-                                {/* Phone Number */}
+                                
                                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                                     <div className={`input ${errors.phonenumber ? 'has-error' : ''}`}>
                                         <input name="phonenumber" placeholder={language === 'vi' ? 'Số điện thoại' : 'Phone Number'}
@@ -345,7 +345,7 @@ class Register extends Component {
                                     </div>
                                     {errors.phonenumber && <div className="inline-error">{errors.phonenumber}</div>}
                                 </div>
-                                {/* Gender */}
+                                
                                 <div className="input-gender">
                                     <Select
                                         className="react-select-container"
@@ -357,7 +357,7 @@ class Register extends Component {
                                 </div>
                             </div>
 
-                            {/* Address */}
+                            
                             <div className={`input ${errors.address ? 'has-error' : ''}`}>
                                 <input name="address" placeholder={language === 'vi' ? 'Địa chỉ' : 'Address'}
                                     value={this.state.address}

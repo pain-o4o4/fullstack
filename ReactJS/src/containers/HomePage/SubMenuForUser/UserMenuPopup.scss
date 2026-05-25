@@ -4,7 +4,7 @@
     right: 0;
     margin-top: 30px;
     width: 280px;
-    background: #ffffff; // Solid white background
+    background: #ffffff;
     border-radius: 12px;
     border: 1px solid rgba(118, 118, 128, 0.12);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -12,7 +12,7 @@
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
 
     .menu-header {
-        // padding: px;
+
         padding: 15px 25px;
         background-color: rgba(118, 118, 128, 0.12);
         border-radius: 12px 12px 0 0;
@@ -58,7 +58,7 @@
                 font-weight: 400;
             }
 
-            // HIỆU ỨNG HOVER
+
             &:hover {
                 background: rgba(0, 0, 0, 0.05);
             }

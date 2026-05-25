@@ -22,6 +22,7 @@
         }
 
         .banner-content {
+            top: 5%;
             position: relative;
             z-index: 10;
             text-align: center;
@@ -213,7 +214,7 @@
             align-items: center;
             gap: 0;
             padding: 60px 0;
-            background: rgba(245, 245, 247, 0.5); // Apple background
+            background: rgba(245, 245, 247, 0.5);
             backdrop-filter: blur(20px);
             border-radius: 48px;
             margin-bottom: 80px;
@@ -240,7 +241,7 @@
 
                     .hub-desc {
                         margin: 0;
-                        font-size: 18px; // Accessible font size
+                        font-size: 18px;
                         color: #1d1d1f;
                         line-height: 1.6;
                         font-weight: 500;
@@ -260,7 +261,7 @@
                     &::before {
                         content: '';
                         position: absolute;
-                        top: 80px; 
+                        top: 80px;
                         left: -10%;
                         right: -10%;
                         height: 2px;
@@ -268,11 +269,11 @@
                         opacity: 0.2;
                     }
 
-                    // Arrow Head
+
                     &::after {
                         content: '';
                         position: absolute;
-                        top: 73px; 
+                        top: 73px;
                         right: -10%;
                         width: 0;
                         height: 0;
@@ -284,9 +285,9 @@
 
                     .line {
                         position: absolute;
-                        top: 80px; // Starts from horizontal line
+                        top: 80px;
                         width: 2px;
-                        height: 60px; // Drops down to nodes
+                        height: 60px;
                         background: #0071e3;
                         opacity: 0.15;
 
@@ -423,7 +424,7 @@
                             letter-spacing: -0.01em;
                         }
 
-                        // Checklist Styling
+
                         .checklist-wrapper {
                             margin-top: 20px;
                             text-align: left;
@@ -500,14 +501,14 @@
                         }
                     }
 
-                    // Cohesive Blue Theme
+
                     &.step-1,
                     &.step-2,
                     &.step-3,
                     &.step-4 {
                         .node-header {
 
-                            // Subtle gradient to distinguish steps if needed
+
                             &::after {
                                 content: '';
                                 position: absolute;
@@ -573,7 +574,7 @@
             text-align: center;
 
             .btn-start-booking {
-                background: #1d1d1f; // Apple Dark Button
+                background: #1d1d1f;
                 color: #ffffff;
                 border: none;
                 padding: 24px 80px;
@@ -617,124 +618,285 @@
     }
 }
 
-// Responsive
+
 @media (max-width: 1024px) {
-    .process-content {
-        .mindmap-container {
-            .central-hub {
-                .branch-lines {
-                    width: 90%;
+    .process-booking-container {
+        .process-banner {
+            height: 480px;
+
+            .banner-content {
+                top: 5%;
+
+                .banner-title {
+                    font-size: 52px;
+                    margin-bottom: 20px;
+                }
+
+                .banner-subtitle {
+                    font-size: 19px;
+                    margin-bottom: 40px;
+                }
+
+                .banner-stats {
+                    gap: 40px;
+
+                    .stat-item .stat-value {
+                        font-size: 36px;
+                    }
                 }
             }
+        }
 
-            .mindmap-nodes {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 48px;
-                padding: 0 30px;
+        .process-content {
+            margin: 40px auto;
+
+            .header-section .title {
+                font-size: 46px;
+            }
+
+            .mindmap-container {
+                padding: 40px 20px;
+                border-radius: 32px;
+
+                .central-hub {
+                    margin-bottom: 40px;
+
+                    .branch-lines {
+                        display: none;
+                    }
+
+                    .hub-box {
+                        max-width: 480px;
+                        padding: 24px 32px;
+                    }
+                }
+
+                .mindmap-nodes {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 32px;
+                    padding: 0;
+
+                    .mindmap-node {
+
+                        background: #ffffff;
+                        border-radius: 28px;
+                        padding: 24px;
+                        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03);
+                        border: 1px solid rgba(0, 0, 0, 0.02);
+
+                        .node-header {
+                            padding: 0;
+                            margin-bottom: 20px;
+                            background: transparent;
+                            box-shadow: none;
+                            border: none;
+                        }
+                    }
+                }
             }
         }
     }
 }
 
 @media (max-width: 768px) {
-    .process-content {
-        .mindmap-container {
-            background: transparent;
-            padding: 0;
-            border: none;
-            backdrop-filter: none;
+    .process-booking-container {
+        .process-banner {
+            height: 380px;
 
-            .central-hub {
-                margin-bottom: 60px;
+            .banner-content {
+                padding: 0 16px;
+                top: 7% !important;
 
-                .branch-lines {
-                    display: none;
+                .hero-badge {
+                    padding: 4px 12px;
+                    font-size: 12px;
+                    margin-bottom: 16px;
                 }
 
-                .hub-box {
-                    padding: 20px;
+                .banner-title {
+                    font-size: 34px;
+                    white-space: normal;
+                    line-height: 1.2;
+                    margin-bottom: 16px;
+                    letter-spacing: -0.5px;
+                }
 
-                    .hub-desc {
-                        font-size: 17px;
+                .banner-subtitle {
+                    font-size: 15px;
+                    margin-bottom: 32px;
+                }
+
+                .banner-stats {
+                    gap: 24px;
+
+                    .stat-divider {
+                        height: 30px;
+                    }
+
+                    .stat-item {
+                        .stat-value {
+                            font-size: 28px;
+                        }
+
+                        .stat-label {
+                            font-size: 11px;
+                        }
                     }
                 }
             }
+        }
 
-            .mindmap-nodes {
-                grid-template-columns: 1fr;
-                gap: 32px;
+        .process-content {
+            margin: 32px auto 60px;
+            padding: 0 16px;
+
+            .header-section {
+                margin-bottom: 32px;
+
+                .title {
+                    font-size: 32px;
+                    letter-spacing: -0.5px;
+                }
+            }
+
+            .mindmap-container {
+                background: transparent;
                 padding: 0;
+                border: none;
+                backdrop-filter: none;
+                margin-bottom: 40px;
 
-                .mindmap-node {
-                    flex-direction: row;
-                    align-items: center;
-                    gap: 24px;
-                    text-align: left;
-                    background: #ffffff;
-                    padding: 28px;
-                    border-radius: 32px;
-                    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
-                    border: 1px solid rgba(0, 0, 0, 0.02);
+                .central-hub {
+                    margin-bottom: 32px;
 
-                    .node-header {
-                        width: 80px;
-                        margin-bottom: 0;
-                        padding: 0;
-                        background: transparent;
-                        box-shadow: none;
-                        border: none;
+                    .hub-box {
+                        padding: 20px;
+                        border-radius: 20px;
+                        width: 100%;
 
-                        .node-pill {
-                            width: 54px;
-                            height: 54px;
-                            font-size: 20px;
-                        }
-
-                        .node-title {
-                            display: none;
-                        }
-
-                        &::after {
-                            display: none;
-                        }
-                    }
-
-                    .node-body {
-                        text-align: left;
-                        padding: 0;
-
-                        &::before {
-                            content: attr(data-title);
-                            display: block;
-                            font-size: 20px;
-                            font-weight: 700;
-                            color: #1d1d1f;
-                            margin-bottom: 6px;
-                            letter-spacing: -0.02em;
-                        }
-
-                        .node-desc {
+                        .hub-desc {
                             font-size: 16px;
                         }
                     }
                 }
-            }
-        }
 
-        .tips-section {
-            .tip-box {
-                flex-direction: column;
-                text-align: center;
-                gap: 16px;
-                padding: 24px;
-            }
-        }
+                .mindmap-nodes {
+                    grid-template-columns: 1fr;
+                    gap: 20px;
+                    padding: 0;
 
-        .action-footer {
-            .btn-start-booking {
-                width: 100%;
-                padding: 20px;
-                font-size: 18px;
+                    .mindmap-node {
+                        flex-direction: row;
+                        align-items: flex-start;
+                        gap: 16px;
+                        text-align: left;
+                        background: #ffffff;
+                        padding: 20px;
+                        border-radius: 20px;
+                        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+                        border: 1px solid rgba(0, 0, 0, 0.03);
+
+                        .node-header {
+                            width: auto;
+                            flex-shrink: 0;
+                            margin-bottom: 0;
+                            padding: 0;
+                            background: transparent;
+                            box-shadow: none;
+                            border: none;
+
+                            .node-pill {
+                                width: 48px;
+                                height: 48px;
+                                font-size: 18px;
+                            }
+
+                            .node-title,
+                            &::after {
+                                display: none;
+                            }
+                        }
+
+                        .node-body {
+                            text-align: left;
+                            padding: 0;
+                            flex: 1;
+
+                            &::before {
+                                content: attr(data-title);
+                                display: block;
+                                font-size: 18px;
+                                font-weight: 700;
+                                color: #1d1d1f;
+                                margin-bottom: 4px;
+                                letter-spacing: -0.5px;
+                            }
+
+                            .node-desc {
+                                font-size: 14px;
+                                line-height: 1.5;
+                            }
+
+                            .checklist-wrapper {
+                                margin-top: 16px;
+                                gap: 8px;
+
+                                .check-item {
+                                    padding: 8px 12px;
+                                    border-radius: 12px;
+                                    gap: 10px;
+
+                                    .custom-checkbox {
+                                        width: 18px;
+                                        height: 18px;
+                                        border-radius: 4px;
+
+                                        &::after {
+                                            font-size: 10px;
+                                        }
+                                    }
+
+                                    .check-text {
+                                        font-size: 13px;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            .tips-section {
+                margin: 32px 0;
+
+                .tip-box {
+                    flex-direction: column;
+                    text-align: center;
+                    gap: 16px;
+                    padding: 24px;
+                    border-radius: 20px;
+
+                    .tip-icon {
+                        width: 48px;
+                        height: 48px;
+                        font-size: 20px;
+                    }
+
+                    .tip-content .tip-text {
+                        font-size: 15px;
+                    }
+                }
+            }
+
+            .action-footer {
+                margin-top: 40px;
+
+                .btn-start-booking {
+                    width: 100%;
+                    padding: 18px;
+                    font-size: 17px;
+                    border-radius: 16px;
+                }
             }
         }
     }

@@ -22,17 +22,17 @@
     }
 
     &.warning {
-        background-color: rgba(245, 245, 247, 0.9); // Apple Light Grey
+        background-color: rgba(245, 245, 247, 0.9);
         color: #1d1d1f;
         border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 
         i {
-            color: #ff9f0a; // Apple Orange
+            color: #ff9f0a;
         }
     }
 
     &.success {
-        background-color: rgba(52, 199, 89, 0.9); // Apple Green
+        background-color: rgba(52, 199, 89, 0.9);
         color: #ffffff;
 
         i {
@@ -41,7 +41,7 @@
     }
 
     &.error {
-        background-color: rgba(255, 59, 48, 0.9); // Apple Red
+        background-color: rgba(255, 59, 48, 0.9);
         color: #ffffff;
     }
 
@@ -63,7 +63,7 @@
     }
 }
 
-// Add animation for pulsing if needed
+
 @keyframes pulse-opacity {
     0% { opacity: 0.8; }
     50% { opacity: 1; }
