@@ -36,9 +36,9 @@ class HomeFooter extends Component {
                     <div className="hm-footer-col">
                         <div className="footer-title"><FormattedMessage id="homefooter.follow-us" /></div>
                         <div className="social-links">
-                            <a href="#!"><i className="fab fa-facebook"></i></a>
-                            <a href="#!"><i className="fab fa-linkedin"></i></a>
-                            <a href="#!"><i className="fab fa-instagram"></i></a>
+                            <a href="https://www.facebook.com/milah.o6o4"><i className="fab fa-facebook"></i></a>
+                            <a href="https://zalo.me/0966226404"><i className="far fa-comments"></i></a>
+                            <a href="https://www.instagram.com/pain.o4o4/"><i className="fab fa-instagram"></i></a>
                         </div>
                     </div>
                 </div>

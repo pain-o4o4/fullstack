@@ -98,7 +98,7 @@ class DetailHandbook extends Component {
                                 </div>
                                 <div className="social-share">
                                     <button title="Share on Facebook"><i className="fab fa-facebook-f"></i></button>
-                                    <button title="Share on Twitter"><i className="fab fa-twitter"></i></button>
+                                    <button title="Share on Instagram"><i className="fab fa-instagram"></i></button>
                                     <button title="Copy Link"><i className="fas fa-link"></i></button>
                                 </div>
                             </div>
@@ -123,9 +123,9 @@ class DetailHandbook extends Component {
                                 <div className="related-list">
                                     {this.props.allHandbooks && this.props.allHandbooks.length > 0 &&
                                         this.props.allHandbooks
-                                            .filter(item => 
-                                                item.id !== dataDetailHandbook.id && 
-                                                item.name !== 'Chính sách bảo mật' && 
+                                            .filter(item =>
+                                                item.id !== dataDetailHandbook.id &&
+                                                item.name !== 'Chính sách bảo mật' &&
                                                 item.name !== 'Điều khoản sử dụng'
                                             )
                                             .slice(0, 5)
@@ -146,7 +146,7 @@ class DetailHandbook extends Component {
                         </aside>
                     </div>
 
-                    
+
                     <div className="suggested-handbooks">
                         <div className="suggested-header">
                             <h2>{language === 'vi' ? 'Có thể bạn quan tâm' : 'You might also like'}</h2>
@@ -157,9 +157,9 @@ class DetailHandbook extends Component {
                         <div className="suggested-grid">
                             {this.props.allHandbooks && this.props.allHandbooks.length > 0 &&
                                 this.props.allHandbooks
-                                    .filter(item => 
-                                        item.id !== dataDetailHandbook.id && 
-                                        item.name !== 'Chính sách bảo mật' && 
+                                    .filter(item =>
+                                        item.id !== dataDetailHandbook.id &&
+                                        item.name !== 'Chính sách bảo mật' &&
                                         item.name !== 'Điều khoản sử dụng'
                                     )
                                     .sort(() => 0.5 - Math.random()) // Random bài viết
