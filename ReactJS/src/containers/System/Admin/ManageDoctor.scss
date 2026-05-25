@@ -177,3 +177,121 @@
 }
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+// Premium Responsive Design System
+@media (max-width: 1024px) {
+    .manage-doctor-container {
+        padding: 24px;
+
+        .doctor-main-layout {
+            gap: 24px;
+
+            .settings-grid {
+                grid-template-columns: 1fr; // Stack cards vertically to prevent cracking
+                gap: 24px;
+
+                .info-card {
+                    .card-body {
+                        // Override inline styles of Grid components
+                        grid-template-columns: 1fr !important;
+                        gap: 16px !important;
+                    }
+                }
+            }
+
+            .editor-section {
+                padding: 24px;
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .manage-doctor-container {
+        padding: 16px 12px;
+
+        .manage-header {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding: 0;
+
+            .header-info {
+                h1 {
+                    font-size: 24px;
+                }
+                span {
+                    font-size: 13px;
+                }
+            }
+        }
+
+        .doctor-main-layout {
+            gap: 20px;
+
+            .settings-grid {
+                grid-template-columns: 1fr !important;
+                gap: 20px;
+
+                .info-card {
+                    padding: 16px;
+                    border-radius: 16px;
+
+                    .card-header {
+                        margin-bottom: 16px;
+                    }
+
+                    .card-body {
+                        grid-template-columns: 1fr !important; // Force stack columns
+                        gap: 16px !important;
+
+                        .input-group-apple {
+                            gap: 6px;
+
+                            input, textarea {
+                                padding: 10px 14px;
+                                font-size: 14px;
+                            }
+                        }
+
+                        // Override react-select container sizing on mobile
+                        .react-select-container {
+                            width: 100% !important;
+                        }
+                    }
+                }
+            }
+
+            .editor-section {
+                padding: 16px;
+                border-radius: 16px;
+
+                .section-header {
+                    margin-bottom: 16px;
+                    h2 { font-size: 18px; }
+                    p { font-size: 13px; }
+                }
+
+                .custom-md-editor {
+                    height: 380px !important; // Compact height on mobile viewport
+                }
+            }
+        }
+
+        .footer-actions {
+            margin-top: 20px;
+            padding-top: 16px;
+
+            .btn-save-doctor {
+                width: 100%; // Full width button for easy tap target
+                padding: 12px;
+                justify-content: center;
+                display: flex;
+                align-items: center;
+                border-radius: 10px;
+                font-size: 15px;
+            }
+        }
+    }
+}

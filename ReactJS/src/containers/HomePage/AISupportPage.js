@@ -25,9 +25,14 @@ class AISupportPage extends Component {
             message: '',
             currentSessionId: `session_${Date.now()}`,
             isSending: false,
-            localMessages: [] // Thêm state localMessages để render ngay tin nhắn của user
+            localMessages: [],
+            isSidebarOpen: true  // default open like Gemini
         };
         this.chatEndRef = React.createRef();
+    }
+
+    toggleSidebar = () => {
+        this.setState(prevState => ({ isSidebarOpen: !prevState.isSidebarOpen }));
     }
 
     async componentDidMount() {
@@ -184,27 +189,55 @@ class AISupportPage extends Component {
     }
 
     render() {
-        const { language, chatSessions, navigate } = this.props;
-        const { message, currentSessionId, isSending, localMessages } = this.state;
-        console.log('message:', message);
-        console.log('currentSessionId:', currentSessionId);
-        console.log('isSending:', isSending);
-        console.log('localMessages:', localMessages);
+        const { language, chatSessions } = this.props;
+        const { message, currentSessionId, isSending, localMessages, isSidebarOpen } = this.state;
+        const hasMessages = localMessages && localMessages.length > 0;
+
         return (
             <div className="ai-support-container">
-                {/* <HomeHeader isShowBanner={false} /> */}
-
                 <div className="ai-support-content">
-                    {/* Sidebar */}
-                    <div className="ai-sidebar">
+                    {/* Mobile Sidebar Backdrop */}
+                    {isSidebarOpen && window.innerWidth <= 768 && (
+                        <div className="sidebar-backdrop" onClick={this.toggleSidebar}></div>
+                    )}
+
+                    {/* ── Sidebar ── */}
+                    <div className={`ai-sidebar ${isSidebarOpen ? 'open' : 'collapsed'}`}>
+                        {/* Sidebar header: logo + toggle */}
+                        <div className="sidebar-header">
+                            <div className="sidebar-logo" onClick={this.handleHomePage}>
+                                <i className="fas fa-stethoscope sidebar-logo-icon"></i>
+                                <span className="sidebar-logo-text">BookingCare AI</span>
+                            </div>
+                            <button className="sidebar-toggle-btn" onClick={this.toggleSidebar} title="Toggle sidebar">
+                                <i className="fas fa-bars"></i>
+                            </button>
+                        </div>
+
+                        {/* New Chat */}
                         <button className="new-chat-btn" onClick={this.handleNewChat}>
-                            <i className="fas fa-plus"></i>
-                            <span><FormattedMessage id="ai.new-chat" defaultMessage="New Chat" /></span>
+                            <i className="fas fa-edit"></i>
+                            <span className="new-chat-text">
+                                <FormattedMessage id="ai.new-chat" defaultMessage="New Chat" />
+                            </span>
                         </button>
 
+                        {/* Nav items */}
+                        <div className="sidebar-nav">
+                            <div className="sidebar-nav-item" onClick={this.handleHomePage}>
+                                <i className="fas fa-home"></i>
+                                <span className="sidebar-label">Trang chủ</span>
+                            </div>
+                        </div>
+
+                        <div className="sidebar-divider"></div>
+
+                        {/* Sessions */}
                         <div className="sessions-list">
                             <div className="session-group-title">
-                                <FormattedMessage id="ai.history" defaultMessage="Recent Conversations" />
+                                <span className="sidebar-label">
+                                    <FormattedMessage id="ai.history" defaultMessage="Gần đây" />
+                                </span>
                             </div>
                             <CustomScrollbars className="sessions-scrollbar">
                                 {chatSessions && chatSessions.length > 0 ? (
@@ -212,93 +245,129 @@ class AISupportPage extends Component {
                                         <div
                                             key={index}
                                             className={`session-item ${currentSessionId === session.sessionId ? 'active' : ''}`}
-                                            onClick={() => this.handleSelectSession(session.sessionId)}
+                                            onClick={() => {
+                                                this.handleSelectSession(session.sessionId);
+                                                if (window.innerWidth <= 768) {
+                                                    this.setState({ isSidebarOpen: false });
+                                                }
+                                            }}
+                                            title={session.lastMessage}
                                         >
-                                            <i className="far fa-comment-alt"></i>
-                                            <div className="session-info">
-                                                <div className="session-text">{session.lastMessage}</div>
-                                                <div className="session-time">{moment(session.createdAt).fromNow()}</div>
-                                            </div>
+                                            <div className="session-text">{session.lastMessage}</div>
                                         </div>
                                     ))
                                 ) : (
-                                    <div className="no-sessions">No history found</div>
+                                    <div className="no-sessions">Chưa có cuộc trò chuyện nào</div>
                                 )}
                             </CustomScrollbars>
                         </div>
                     </div>
 
-                    {/* Chat Area */}
+                    {/* ── Chat Main ── */}
                     <div className="ai-chat-main">
-                        <div className="chat-header">
-                            <div className="ai-title"
-
-                                onClick={() => this.handleHomePage()}
-                            >BookingCare</div>
+                        {/* Top bar (only visible when sidebar is closed on desktop) */}
+                        <div className="chat-topbar">
+                            <button className="sidebar-toggle-btn topbar-toggle" onClick={this.toggleSidebar} title="Toggle sidebar">
+                                <i className="fas fa-bars"></i>
+                            </button>
                             <div className="ai-status">
-                                <span className="status-dot"></span> Online
+                                <span className="status-dot"></span>
+                                <span>Online</span>
                             </div>
                         </div>
 
-                        <div className="chat-messages-area">
-                            <CustomScrollbars className="chat-messages-scrollbar">
-                                <div className="messages-wrapper">
-                                    {localMessages && localMessages.length > 0 ? (
-                                        localMessages.map((msg, index) => (
-                                            <div key={index} className={`message-bubble ${msg.role}`}>
-                                                <div 
-                                                    className="bubble-content markdown-content"
-                                                    dangerouslySetInnerHTML={{ __html: mdParser.render(msg.content) }}
-                                                />
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <div className="chat-welcome">
-                                            <div className="welcome-icon">
-                                                <i className="fas fa-stethoscope"></i>
-                                            </div>
-                                            <h2>Xin chào! Tôi có thể giúp gì cho bạn?</h2>
-                                            <p>Hãy đặt câu hỏi về triệu chứng, bác sĩ hoặc cách sử dụng hệ thống BookingCare.</p>
+                        {/* ── Welcome state: input centered ── */}
+                        {!hasMessages ? (
+                            <div className="chat-welcome-screen">
+                                <div className="welcome-glow"></div>
+                                <div className="welcome-body">
+                                    <h2 className="welcome-greeting">
+                                        {language === 'vi'
+                                            ? 'Xin chào! Tôi có thể giúp gì cho bạn?'
+                                            : 'Hello! How can I help you?'}
+                                    </h2>
+                                    <p className="welcome-sub">
+                                        Hãy đặt câu hỏi về triệu chứng, bác sĩ hoặc cách sử dụng hệ thống BookingCare.
+                                    </p>
+                                    {/* Input centered on welcome screen */}
+                                    <div className="welcome-input-area">
+                                        <div className="input-wrapper">
+                                            <textarea
+                                                placeholder={language === 'vi' ? "Hỏi BookingCare AI..." : "Ask BookingCare AI..."}
+                                                value={message}
+                                                onChange={this.handleInputChange}
+                                                onKeyDown={this.handleKeyDown}
+                                                disabled={isSending}
+                                                rows="1"
+                                            />
+                                            <button
+                                                className={`send-btn ${!message.trim() || isSending ? 'disabled' : ''}`}
+                                                onClick={this.handleSendMessage}
+                                            >
+                                                <i className="fas fa-paper-plane"></i>
+                                            </button>
                                         </div>
-                                    )}
-                                    {isSending && (
-                                        <div className="message-bubble assistant typing">
-                                            <div className="bubble-content">
-                                                <div className="typing-loader">
-                                                    <span></span><span></span><span></span>
-                                                </div>
-                                            </div>
+                                        <div className="input-hint">
+                                            AI có thể đưa ra câu trả lời không chính xác. Hãy kiểm tra lại thông tin quan trọng.
                                         </div>
-                                    )}
-                                    <div ref={this.chatEndRef} />
+                                    </div>
                                 </div>
-                            </CustomScrollbars>
-                        </div>
+                            </div>
+                        ) : (
+                            /* ── Chat state: messages + bottom input ── */
+                            <>
+                                <div className="chat-messages-area">
+                                    <CustomScrollbars className="chat-messages-scrollbar">
+                                        <div className="messages-wrapper">
+                                            {localMessages.map((msg, index) => (
+                                                <div key={index} className={`message-bubble ${msg.role}`}>
+                                                    <div
+                                                        className="bubble-content markdown-content"
+                                                        dangerouslySetInnerHTML={{ __html: mdParser.render(msg.content) }}
+                                                    />
+                                                </div>
+                                            ))}
+                                            {isSending && (
+                                                <div className="message-bubble assistant typing">
+                                                    <div className="bubble-content">
+                                                        <div className="typing-loader">
+                                                            <span></span><span></span><span></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            <div ref={this.chatEndRef} />
+                                        </div>
+                                    </CustomScrollbars>
+                                </div>
 
-                        <div className="chat-input-container">
-                            <div className="input-wrapper">
-                                <textarea
-                                    placeholder={language === 'vi' ? "Hỏi bất cứ điều gì..." : "Ask anything..."}
-                                    value={message}
-                                    onChange={this.handleInputChange}
-                                    onKeyDown={this.handleKeyDown}
-                                    disabled={isSending}
-                                    rows="1"
-                                />
-                                <button
-                                    className={`send-btn ${!message.trim() || isSending ? 'disabled' : ''}`}
-                                    onClick={this.handleSendMessage}
-                                >
-                                    <i className="fas fa-paper-plane"></i>
-                                </button>
-                            </div>
-                            <div className="input-hint">
-                                AI có thể đưa ra câu trả lời không chính xác. Hãy kiểm tra lại thông tin quan trọng.
-                            </div>
-                        </div>
+                                <div className="chat-input-container">
+                                    <div className="input-wrapper">
+                                        <textarea
+                                            placeholder={language === 'vi' ? "Hỏi bất cứ điều gì..." : "Ask anything..."}
+                                            value={message}
+                                            onChange={this.handleInputChange}
+                                            onKeyDown={this.handleKeyDown}
+                                            disabled={isSending}
+                                            rows="1"
+                                        />
+                                        <button
+                                            className={`send-btn ${!message.trim() || isSending ? 'disabled' : ''}`}
+                                            onClick={this.handleSendMessage}
+                                        >
+                                            <i className="fas fa-paper-plane"></i>
+                                        </button>
+                                    </div>
+                                    <div className="input-hint">
+                                        AI có thể đưa ra câu trả lời không chính xác. Hãy kiểm tra lại thông tin quan trọng.
+                                    </div>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
+
         );
     }
 }

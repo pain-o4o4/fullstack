@@ -37,10 +37,6 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-
-        @media (max-width: 768px) {
-            font-size: 36px;
-        }
     }
 
     .stat-label {
@@ -57,15 +53,6 @@
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: 230px 200px;
     gap: 14px;
-
-    @media (max-width: 1100px) {
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: auto;
-    }
-
-    @media (max-width: 540px) {
-        grid-template-columns: 1fr;
-    }
 }
 
 .bento-card {
@@ -86,14 +73,6 @@
     gap: 28px;
     position: relative;
     overflow: hidden;
-
-    @media (max-width: 540px) {
-        grid-column: span 1;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 20px;
-        padding: 28px 24px;
-    }
 
     .bento-hero-text {
         flex: 1;
@@ -169,10 +148,6 @@
         align-items: center;
         justify-content: center;
         z-index: 1;
-
-        @media (max-width: 540px) {
-            align-self: center;
-        }
     }
 
     .hero-ring {
@@ -222,7 +197,6 @@
 }
 
 @keyframes pulseRing {
-
     0%,
     100% {
         transform: scale(1);
@@ -264,9 +238,7 @@
         border-radius: 16px;
         margin-bottom: 4px;
         color: var(--accent);
-        background: rgba(0, 0, 0, 0.04); // Fallback
-        
-        // Using the passed accent variable
+        background: rgba(0, 0, 0, 0.04);
         background-color: color-mix(in srgb, var(--accent) 8%, transparent);
     }
 
@@ -286,7 +258,6 @@
         flex: 1;
     }
 
-    // AI card — special hover
     &.bento-feature--ai {
         cursor: pointer;
         background: #faf8ff;
@@ -329,10 +300,6 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
-
-    @media (max-width: 540px) {
-        grid-column: span 1;
-    }
 
     .bento-network-label {
         font-size: 11px;
@@ -412,7 +379,6 @@
 }
 
 @keyframes nodePulse {
-
     0%,
     100% {
         transform: translateY(0);
@@ -422,5 +388,99 @@
     50% {
         transform: translateY(-3px);
         opacity: 1;
+    }
+}
+
+// ============================================================
+// RESPONSIVE OVERRIDES (TABLET - MAX 1024PX)
+// ============================================================
+@media (max-width: 1024px) {
+    .intro-stats-row {
+        margin-bottom: 36px;
+    }
+
+    .intro-stat-item {
+        padding: 16px 12px;
+
+        .stat-number {
+            font-size: 42px;
+        }
+    }
+
+    .intro-bento-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: auto;
+        gap: 12px;
+    }
+}
+
+// ============================================================
+// RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
+// ============================================================
+@media (max-width: 768px) {
+    .intro-stats-row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 28px;
+    }
+
+    .intro-stat-item {
+        padding: 12px 8px;
+        background: rgba(0, 0, 0, 0.02);
+        border-radius: 12px;
+
+        &::after {
+            display: none !important;
+        }
+
+        .stat-number {
+            font-size: 32px !important;
+            letter-spacing: -1.5px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+        }
+    }
+
+    .intro-bento-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .bento-hero {
+        grid-column: span 1;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+        padding: 24px 20px;
+
+        h2 {
+            font-size: 22px;
+        }
+
+        p {
+            font-size: 13px;
+            max-width: 100%;
+        }
+
+        .bento-hero-visual {
+            align-self: center;
+        }
+    }
+
+    .bento-network {
+        grid-column: span 1;
+        padding: 20px;
+
+        .bento-network-title {
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        .network-nodes {
+            gap: 12px;
+        }
     }
 }

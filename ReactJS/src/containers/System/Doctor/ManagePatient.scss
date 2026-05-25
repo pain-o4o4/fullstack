@@ -255,12 +255,82 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
+// ============================================================
+// RESPONSIVE OVERRIDES (TABLET - MAX 1024PX)
+// ============================================================
+@media (max-width: 1024px) {
+    .manage-patient-container {
+        padding: 24px;
+
+        .filters-card {
+            padding: 20px;
+        }
+
+        .table-wrapper {
+            border-radius: 16px;
+
+            .table-card {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+    }
+}
+
+// ============================================================
+// RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
+// ============================================================
 @media (max-width: 768px) {
     .manage-patient-container {
-        padding: 20px;
-        .filters-card .form-grid {
+        padding: 16px;
+
+        .header-section {
             flex-direction: column;
-            align-items: stretch;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 24px;
+
+            .title {
+                font-size: 26px;
+            }
+        }
+
+        .filters-card {
+            padding: 16px;
+            margin-bottom: 20px;
+
+            .form-grid {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 16px;
+
+                .input-group-apple {
+                    min-width: 100%;
+                }
+            }
+        }
+
+        .table-wrapper {
+            .table-card {
+                .table {
+                    thead th {
+                        padding: 14px 16px;
+                        font-size: 11px;
+                    }
+                    tbody tr td {
+                        padding: 12px 16px;
+                        font-size: 14px;
+                    }
+                }
+            }
+
+            .table-footer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                padding: 16px;
+                font-size: 13px;
+            }
         }
     }
 }

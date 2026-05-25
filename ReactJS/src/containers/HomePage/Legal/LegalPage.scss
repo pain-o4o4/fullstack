@@ -34,10 +34,6 @@
                     margin-bottom: 8px;
                     letter-spacing: -0.02em;
                     line-height: 1.1;
-
-                    @media (max-width: 768px) {
-                        font-size: 32px;
-                    }
                 }
 
                 .legal-meta {
@@ -65,10 +61,6 @@
                     margin-bottom: 16px;
                     border-bottom: none;
                     padding-bottom: 0;
-
-                    @media (max-width: 768px) {
-                        font-size: 20px;
-                    }
                 }
 
                 h3 {
@@ -120,7 +112,7 @@
                     width: 100%;
                     border-collapse: collapse;
                     margin: 40px 0;
-                    
+
                     th {
                         background: transparent;
                         color: #1d1d1f;
@@ -156,5 +148,80 @@
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+// ============================================================
+// RESPONSIVE OVERRIDES (TABLET - MAX 1024PX)
+// ============================================================
+@media (max-width: 1024px) {
+    .legal-page-container {
+        .legal-page-body {
+            padding: 80px 24px 60px 24px;
+
+            .legal-content-wrapper {
+                .legal-header {
+                    margin-bottom: 30px;
+                    padding-bottom: 20px;
+
+                    h1 {
+                        font-size: 36px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// ============================================================
+// RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
+// ============================================================
+@media (max-width: 768px) {
+    .legal-page-container {
+        .legal-page-body {
+            padding: 60px 16px 40px 16px;
+
+            .legal-content-wrapper {
+                .legal-header {
+                    margin-bottom: 24px;
+                    padding-bottom: 16px;
+
+                    h1 {
+                        font-size: 30px;
+                    }
+                }
+
+                .legal-content {
+                    font-size: 15px;
+                    line-height: 1.55;
+
+                    h2 {
+                        font-size: 20px;
+                        margin-top: 36px;
+                        margin-bottom: 12px;
+                    }
+
+                    h3 {
+                        font-size: 17px;
+                        margin-top: 28px;
+                        margin-bottom: 10px;
+                    }
+
+                    h4 {
+                        font-size: 15px;
+                        margin-top: 22px;
+                        margin-bottom: 8px;
+                    }
+
+                    table {
+                        display: block;
+                        width: 100%;
+                        overflow-x: auto;
+                        -webkit-overflow-scrolling: touch;
+                        margin: 24px 0;
+                    }
+                }
+            }
+        }
     }
 }

@@ -14,9 +14,7 @@ import bannerService from '../../assets/images/bannerService.png';
 import { stopTimer } from '../../auth/TokenRefreshManager';
 import axios from 'axios';
 
-// ============================================================
-// SUB-COMPONENT: MOBILE SIDEBAR (Dành riêng cho Mobile)
-// ============================================================
+
 class MobileSidebarInternal extends Component {
     handleLogout = () => {
         stopTimer();
@@ -166,10 +164,6 @@ const SidebarConnected = connect(
     })
 )(MobileSidebarInternal);
 
-
-// ============================================================
-// MAIN COMPONENT: HOME HEADER
-// ============================================================
 class HomeHeader extends Component {
     constructor(props) {
         super(props);

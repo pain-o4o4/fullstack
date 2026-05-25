@@ -25,25 +25,6 @@ $ease    : cubic-bezier(0.25, 0.46, 0.45, 0.94);
         "ai      ai   actions";
     gap: 20px;
     align-items: stretch;
-
-    @media (max-width: 1024px) {
-        grid-template-columns: 1fr 1fr;
-        grid-template-areas:
-            "profile profile"
-            "appt    appt"
-            "bio     actions"
-            "ai      ai";
-    }
-
-    @media (max-width: 600px) {
-        grid-template-columns: 1fr;
-        grid-template-areas:
-            "profile"
-            "appt"
-            "bio"
-            "actions"
-            "ai";
-    }
 }
 
 // ── Profile Card ──────────────────────────────────────────────
@@ -57,9 +38,8 @@ $ease    : cubic-bezier(0.25, 0.46, 0.45, 0.94);
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center; // Center vertically since it spans 2 rows
+    justify-content: center;
     gap: 0;
-    // position: sticky removed because it's now part of the grid flow
 
     .pdt-avatar-container {
         position: relative;
@@ -199,7 +179,7 @@ $ease    : cubic-bezier(0.25, 0.46, 0.45, 0.94);
         gap: 8px;
         margin-bottom: 14px;
 
-        .pdt-card-icon { 
+        .pdt-card-icon {
             font-size: 18px;
             i { display: block; }
         }
@@ -674,8 +654,6 @@ $ease    : cubic-bezier(0.25, 0.46, 0.45, 0.94);
             box-shadow: 0 4px 12px rgba(0,0,0,0.12);
         }
     }
-
-    @media (max-width: 600px) { grid-column: span 1; }
 }
 
 @keyframes aiShimmer {
@@ -687,4 +665,80 @@ $ease    : cubic-bezier(0.25, 0.46, 0.45, 0.94);
 @keyframes pdtScan {
     from { opacity: 0.4; transform: scale(0.9) rotate(-5deg); }
     to   { opacity: 1; transform: scale(1.05) rotate(5deg); }
+}
+
+// ============================================================
+// RESPONSIVE OVERRIDES (TABLET - MAX 1024PX)
+// ============================================================
+@media (max-width: 1024px) {
+    .pdt-wrapper {
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+            "profile profile"
+            "appt    appt"
+            "bio     actions"
+            "ai      ai";
+        gap: 16px;
+    }
+
+    .pdt-profile-card {
+        padding: 24px 16px;
+    }
+}
+
+// ============================================================
+// RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
+// ============================================================
+@media (max-width: 768px) {
+    .pdt-wrapper {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "profile"
+            "appt"
+            "bio"
+            "actions"
+            "ai";
+        gap: 14px;
+    }
+
+    .pdt-profile-card {
+        padding: 20px 14px;
+
+        .pdt-avatar-container {
+            width: 76px;
+            height: 76px;
+
+            .pdt-avatar-img, .pdt-avatar-initials {
+                width: 76px;
+                height: 76px;
+                font-size: 22px;
+            }
+        }
+
+        .pdt-auth-actions {
+            flex-direction: row;
+            gap: 10px;
+
+            button {
+                flex: 1;
+                padding: 10px;
+                font-size: 13px;
+            }
+        }
+    }
+
+    .pdt-ai-promo {
+        grid-column: span 1;
+        padding: 20px 16px;
+
+        h3 {
+            font-size: 18px;
+        }
+
+        p {
+            font-size: 12.5px;
+            max-width: 100%;
+            margin-bottom: 16px;
+        }
+    }
 }

@@ -41,14 +41,6 @@
         grid-template-columns: repeat(4, 1fr);
         gap: 16px;
         margin-bottom: 32px;
-
-        @media (max-width: 1024px) {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        @media (max-width: 540px) {
-            grid-template-columns: 1fr;
-        }
     }
 
     .cf-util-card {
@@ -173,6 +165,9 @@
         }
     }
 
+    // ============================================================
+    // RESPONSIVE OVERRIDES (TABLET - MAX 1024PX)
+    // ============================================================
     @media (max-width: 1024px) {
         .cf-header {
             .cf-title {
@@ -197,13 +192,19 @@
         }
     }
 
-    @media (max-width: 540px) {
+    // ============================================================
+    // RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
+    // ============================================================
+    @media (max-width: 768px) {
         min-height: 600px;
+
+        .cf-utilities-grid {
+            grid-template-columns: 1fr;
+        }
     }
 }
 
 @keyframes ecoPulse {
-
     0%,
     100% {
         opacity: 0.1;

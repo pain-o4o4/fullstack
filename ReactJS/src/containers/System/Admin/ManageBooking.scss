@@ -584,13 +584,81 @@
     }
 }
 
+// ============================================================
+// RESPONSIVE OVERRIDES (TABLET - MAX 1024PX)
+// ============================================================
+@media (max-width: 1024px) {
+    .manage-booking-history-container {
+        padding: 24px;
+
+        .filters-card {
+            padding: 20px;
+        }
+
+        .table-wrapper {
+            border-radius: 16px;
+
+            .table-card {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+    }
+}
+
+// ============================================================
+// RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
+// ============================================================
 @media (max-width: 768px) {
     .manage-booking-history-container {
-        padding: 20px;
+        padding: 16px;
 
-        .filters-card .form-grid {
-            flex-direction: column;
-            align-items: stretch;
+        .header-section {
+            margin-bottom: 24px;
+
+            .title {
+                font-size: 26px;
+            }
+        }
+
+        .filters-card {
+            padding: 16px;
+            margin-bottom: 20px;
+
+            .form-grid {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 16px;
+
+                .input-group-apple {
+                    min-width: 100%;
+                }
+            }
+        }
+
+        .table-wrapper {
+            .table-card {
+                .table {
+                    thead th {
+                        padding: 12px 14px;
+                        font-size: 11px;
+                    }
+                    tbody tr td {
+                        padding: 12px 14px;
+                        font-size: 13px;
+                    }
+                }
+            }
+        }
+
+        .apple-modal-content {
+            width: 95%;
+            max-width: 100%;
+            border-radius: 16px;
+
+            .modal-header, .modal-body, .modal-footer {
+                padding: 16px;
+            }
         }
     }
 }

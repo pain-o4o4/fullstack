@@ -298,8 +298,105 @@
 // Animations
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+// ============================================================
+// RESPONSIVE OVERRIDES (TABLET - MAX 1024PX)
+// ============================================================
 @media (max-width: 1024px) {
-    .schedule-main-layout {
-        grid-template-columns: 1fr !important;
+    .manage-schedule-container {
+        padding: 24px;
+
+        .schedule-main-layout {
+            grid-template-columns: 1fr !important;
+            gap: 24px;
+        }
+
+        .time-picker-area {
+            padding: 24px;
+        }
+    }
+}
+
+// ============================================================
+// RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
+// ============================================================
+@media (max-width: 768px) {
+    .manage-schedule-container {
+        padding: 16px;
+
+        .manage-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding: 0;
+
+            .header-info {
+                h1 {
+                    font-size: 22px;
+                }
+                span {
+                    font-size: 13px;
+                }
+            }
+        }
+
+        .schedule-main-layout {
+            gap: 16px;
+
+            .config-sidebar {
+                gap: 16px;
+
+                .sidebar-card {
+                    padding: 16px;
+                }
+            }
+
+            .time-picker-area {
+                padding: 20px 16px;
+                border-radius: 16px;
+
+                .area-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 12px;
+                    margin-bottom: 20px;
+
+                    .selection-badge {
+                        align-self: flex-start;
+                    }
+                }
+
+                .time-slots-grid {
+                    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                    gap: 10px;
+
+                    .time-pill {
+                        padding: 12px 6px;
+                        border-radius: 8px;
+                        
+                        .time-label {
+                            font-size: 14px;
+                        }
+                    }
+                }
+
+                .footer-actions {
+                    flex-direction: column;
+                    width: 100%;
+                    gap: 12px;
+                    margin-top: 20px;
+                    padding-top: 16px;
+
+                    button {
+                        width: 100% !important;
+                        text-align: center;
+                    }
+
+                    .btn-save-schedule {
+                        padding: 12px 20px;
+                    }
+                }
+            }
+        }
     }
 }

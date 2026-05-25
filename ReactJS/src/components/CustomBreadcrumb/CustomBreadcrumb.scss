@@ -101,7 +101,7 @@
         padding: 8px 16px !important; // Very tight padding
         animation: none !important;
         max-width: 100% !important;
-        margin: 10px 0 0 0 !important; // Start exactly after header
+        margin: 15px 0 0 0 !important; // Start exactly after header
         width: 100%;
         box-sizing: border-box;
         z-index: 900; // Below header
@@ -148,6 +148,21 @@
                 flex: 1;
                 min-width: 0;
                 font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .breadcrumb-container {
+        padding: 6px 12px !important;
+        margin: 10px 0 0 0 !important;
+
+        .breadcrumb {
+            font-size: 12px;
+
+            .separator {
+                margin: 0 6px !important;
             }
         }
     }

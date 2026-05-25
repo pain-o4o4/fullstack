@@ -1,10 +1,6 @@
 @use "sass:color";
 @use './HomePage.scss' as *;
 
-// ============================================================
-// BASE STYLES (LAPTOP/DESKTOP)
-// ============================================================
-
 .hm-mobile-sidebar-overlay,
 .hm-mobile-sidebar {
     display: none;
@@ -28,7 +24,7 @@
         align-items: center;
         justify-content: space-between;
         gap: 32px;
-        background: rgba(255, 255, 255, 0.94);
+        background: white;
         backdrop-filter: blur(30px);
         -webkit-backdrop-filter: blur(30px);
         border: 1px solid rgba(0, 0, 0, 0.08);
@@ -36,15 +32,6 @@
         padding: 16px 32px;
         box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.06);
         transition: all 0.3s ease;
-
-        @media (max-width: 768px) {
-            background: transparent;
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-            border: none;
-            box-shadow: none;
-            padding: 20px 24px;
-        }
     }
 
     .hm-hamburger,
@@ -198,27 +185,16 @@
 
             .mobile-sidebar-trigger {
                 display: none; // Hidden on desktop
-
-                @media (max-width: 768px) {
-                    display: none !important; // Hidden on mobile because it's in Bottom Nav
-                }
             }
         }
 
         .search-trigger {
             display: none !important; // Hidden on desktop
 
-            @media (max-width: 1024px) {
-                display: flex !important;
-            }
-
-            @media (max-width: 768px) {
-                display: none !important; // Hidden on mobile because it's in Bottom Nav
-            }
-
             .search-icon {
-                font-size: 16px;
-                opacity: 0.7;
+                font-size: 20px;
+                color: #1d1d1f;
+                opacity: 0.75;
             }
         }
 
@@ -272,39 +248,43 @@
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
             border: 1px solid rgba(209, 209, 214, 0.5);
 
-            @media (max-width: 768px) {
-                display: none !important; // Hidden on mobile because it's in Bottom Nav
+            i {
+                font-size: 20px;
+                color: #1d1d1f;
+                opacity: 0.75;
+                transition: opacity 0.2s ease;
             }
 
-            i {
-                font-size: 15px;
-                transition: transform 0.25s ease;
+            span {
+                font-size: 14px;
+                font-weight: 600;
+                color: #374151;
             }
 
             .chat-badge-count {
                 position: absolute;
-                top: -8px;
+                top: -6px;
                 right: -10px;
                 background: #f02849;
                 color: white;
-                font-size: 11px;
+                font-size: 10px;
                 font-weight: 700;
-                min-width: 19px;
-                height: 19px;
-                padding: 0 5px;
-                border-radius: 12px;
+                min-width: 17px;
+                height: 17px;
+                padding: 0 4px;
+                border-radius: 10px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
                 z-index: 10;
             }
 
             &:hover {
-                background: $apple-blue;
-                color: #ffffff;
-                box-shadow: 0 4px 16px rgba($apple-blue, 0.35);
-                transform: translateY(-1px);
+                opacity: 0.7;
+
+                i {
+                    opacity: 1;
+                }
             }
         }
 
@@ -395,11 +375,6 @@
         text-transform: none; // Title Case for premium feel
         white-space: nowrap;
 
-        @media (max-width: 768px) {
-            font-size: 42px;
-            letter-spacing: -1px;
-            white-space: normal;
-        }
 
         .hero-accent {
             background: linear-gradient(135deg, #0071e3 0%, #05c1ff 100%);
@@ -505,10 +480,6 @@
     }
 }
 
-
-// ============================================================
-// RESPONSIVE OVERRIDES (TABLET - MAX 1024PX)
-// ============================================================
 @media (max-width: 1024px) {
     .hm-header {
         padding: 0;
@@ -553,32 +524,97 @@
         }
 
         .hm-header-actions {
-            gap: 20px;
+            gap: 8px;
 
-            .search-trigger .search-icon {
-                font-size: 20px !important;
+            // ── Icon button base (shared by all 3 actions) ─────────────────────
+            .nav-sign-in,
+            .hm-chat-doctor-btn,
+            .user-menu-wrapper .mobile-sidebar-trigger {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                width: 44px !important;
+                height: 44px !important;
+                min-width: 44px !important;
+                border-radius: 12px !important;
+                background: transparent !important;
+                border: none !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                cursor: pointer !important;
+                position: relative;
+                flex-shrink: 0;
+                transition: background 0.18s ease !important;
+
+                i,
+                svg {
+                    font-size: 20px !important;
+                    margin: 0 !important;
+                    opacity: 0.8 !important;
+                    color: #374151 !important;
+                    transition: opacity 0.18s ease !important;
+                    flex-shrink: 0;
+                }
+
+                span {
+                    display: none !important;
+                }
+
+                &:hover {
+                    background: rgba(0, 0, 0, 0.06) !important;
+                }
+
+                &:active {
+                    background: rgba(0, 0, 0, 0.1) !important;
+                }
             }
 
+            // ── 1. Search ──────────────────────────────────────────────────────
+            .nav-sign-in {
+                order: 1;
+            }
+
+            // ── 2. Chat doctor ────────────────────────────────────────────────
+            .hm-chat-doctor-btn {
+                order: 2;
+                background: transparent !important;
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+                border: none !important;
+                padding: 0 !important;
+
+                .chat-badge-count {
+                    position: absolute;
+                    top: 4px;
+                    right: 4px;
+                    min-width: 16px;
+                    height: 16px;
+                    font-size: 9px;
+                    font-weight: 700;
+                    background: #ff3b30;
+                    color: white;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border: 1.5px solid white;
+                    pointer-events: none;
+                }
+            }
+
+            // ── 3. Hamburger (inside user-menu-wrapper) ───────────────────────
             .user-menu-wrapper {
+                order: 3;
+                position: relative;
+                display: flex;
+                align-items: center;
+
                 .desktop-only {
                     display: none !important;
                 }
 
                 .mobile-sidebar-trigger {
-                    display: flex;
-                    font-size: 24px;
-                }
-            }
-
-            .hm-chat-doctor-btn {
-                padding: 12px;
-
-                i {
-                    font-size: 20px !important;
-                }
-
-                span {
-                    display: none;
+                    display: flex !important;
                 }
             }
         }
@@ -601,9 +637,13 @@
         height: 100vh;
         transform: translateX(100%) translateY(0);
         opacity: 1;
+        visibility: hidden;
+        pointer-events: none;
 
         &.open {
             transform: translateX(0) translateY(0);
+            visibility: visible;
+            pointer-events: auto;
         }
 
         .sidebar-header .brand-name {
@@ -617,11 +657,7 @@
     }
 }
 
-// ============================================================
-// RESPONSIVE OVERRIDES (MOBILE - MAX 768PX)
-// ============================================================
 
-/* Common Sidebar Styles for Tablet & Mobile */
 .hm-mobile-sidebar-overlay {
     display: block;
     position: fixed;
@@ -649,13 +685,14 @@
     background: rgba(255, 255, 255, 0.96);
     z-index: 2001;
     flex-direction: column;
-    transform: translateY(-100%);
+    transform: translateX(100%);
     opacity: 0;
     transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    padding-top: env(safe-area-inset-top);
+    // padding-top: env(safe-area-inset-top);
+    padding: calc(20px + env(safe-area-inset-top)) 24px 24px 24px;
 
     &.open {
-        transform: translateY(0);
+        transform: translateX(0);
         opacity: 1;
     }
 
@@ -842,6 +879,7 @@
     .sidebar-footer {
         padding: 40px 24px;
         background: #f5f5f7;
+        border-radius: 12px;
 
         .lang-switch {
             display: flex;
@@ -930,71 +968,96 @@
             order: 3;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 4px; // Tighter on 375px screens
 
-            .search-trigger .search-icon {
-                font-size: 17px !important;
-                color: #000000;
-                opacity: 1 !important;
+            // ── Icon button base (same system as 1024px, 40×40 touch target) ──
+            .nav-sign-in,
+            .hm-chat-doctor-btn,
+            .user-menu-wrapper .mobile-sidebar-trigger {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                width: 40px !important;
+                height: 40px !important;
+                min-width: 40px !important;
+                border-radius: 10px !important;
+                background: transparent !important;
+                border: none !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                cursor: pointer !important;
+                position: relative;
+                flex-shrink: 0;
+                transition: background 0.18s ease !important;
+
+                i,
+                svg {
+                    font-size: 20px !important;
+                    margin: 0 !important;
+                    opacity: 0.8 !important;
+                    color: #374151 !important;
+                    flex-shrink: 0;
+                }
+
+                span {
+                    display: none !important;
+                }
+
+                &:hover {
+                    background: rgba(0, 0, 0, 0.06) !important;
+                }
+
+                &:active {
+                    background: rgba(0, 0, 0, 0.1) !important;
+                }
             }
 
+            // ── 1. Search ──────────────────────────────────────────────────────
+            .nav-sign-in {
+                order: 1;
+            }
+
+            // ── 2. Chat doctor ────────────────────────────────────────────────
+            .hm-chat-doctor-btn {
+                order: 2;
+                background: transparent !important;
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+                border: none !important;
+                padding: 0 !important;
+
+                .chat-badge-count {
+                    position: absolute;
+                    top: 2px;
+                    right: 2px;
+                    min-width: 15px;
+                    height: 15px;
+                    font-size: 9px;
+                    font-weight: 700;
+                    background: #ff3b30;
+                    color: white;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border: 1.5px solid white;
+                    pointer-events: none;
+                }
+            }
+
+            // ── 3. Hamburger (inside user-menu-wrapper) ───────────────────────
             .user-menu-wrapper {
+                order: 3;
+                position: relative;
+                display: flex;
+                align-items: center;
+
                 .desktop-only {
                     display: none !important;
                 }
 
                 .mobile-sidebar-trigger {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    width: 40px;
-                    height: 40px;
-                    cursor: pointer;
-                    color: #000000;
-                    font-size: 22px;
-                    // opacity: 0.7;
-                    transition: opacity 0.2s;
-
-                    &:active {
-                        opacity: 0.4;
-                    }
-                }
-            }
-
-            .hm-chat-doctor-btn {
-                padding: 9px;
-
-                // background: transparent !important;
-                border: none !important;
-                box-shadow: none !important;
-                color: #000000;
-
-                i {
-                    font-size: 17px !important;
-                    opacity: 1 !important;
-
-                    .hover {
-                        transform: translate(-50%, 8px) !important;
-                        background: rgba(0, 0, 0, 0.8) !important;
-
-                        font-size: 10px !important;
-                        white-space: nowrap;
-                        opacity: 0 !important;
-                        transition: opacity 0.2s ease !important;
-                    }
-                }
-
-                span {
-                    display: none;
-                }
-
-                .chat-badge-count {
-                    top: -4px;
-                    right: -6px;
-                    min-width: 16px;
-                    height: 16px;
-                    font-size: 9px;
-                    background: #ff3b30;
+                    display: flex !important;
                 }
             }
         }
@@ -1012,81 +1075,8 @@
             line-height: 1.1 !important;
         }
     }
-}
 
-// ============================================================
-// MOBILE-ONLY FIXES (ULTRA NARROW - MAX 480PX)
-// ============================================================
-@media (max-width: 480px) {
-
-    .hm-hero-text .hero-actions .ai-btn-special,
-    .hm-hero-text .hero-actions .call-button {
-        width: 100%;
-        padding: 14px;
-    }
-}
-
-// ============================================================
-// MOBILE BOTTOM NAVIGATION (REACH ZONE)
-// ============================================================
-.hm-bottom-nav {
-    display: none; // Hidden on desktop
-}
-
-@media (max-width: 768px) {
     .hm-bottom-nav {
-        display: flex;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 70px;
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(25px);
-        -webkit-backdrop-filter: blur(25px);
-        border-top: 1px solid rgba(0, 0, 0, 0.05);
-        z-index: 2000;
-        padding-bottom: env(safe-area-inset-bottom);
-        justify-content: space-around;
-        align-items: center;
-
-        .bottom-nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            color: #86868b;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            flex: 1;
-
-            i {
-                font-size: 20px;
-            }
-
-            span {
-                font-size: 11px;
-                font-weight: 500;
-            }
-
-            &.active {
-                color: #0071e3;
-            }
-
-            &:active {
-                transform: scale(0.9);
-            }
-        }
-    }
-}
-
-// ============================================================
-// BOTTOM NAVIGATION BAR (MOBILE REACH ZONE)
-// ============================================================
-.hm-bottom-nav {
-    display: none;
-
-    @media (max-width: 768px) {
         display: flex;
         position: fixed;
         bottom: 20px;
@@ -1186,4 +1176,8 @@
             }
         }
     }
+}
+
+.hm-bottom-nav {
+    display: none;
 }
