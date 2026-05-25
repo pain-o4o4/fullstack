@@ -24,6 +24,19 @@ class MobileSidebarInternal extends Component {
         this.props.onClose();
     }
 
+    isPathActive = (type) => {
+        const pathName = window.location.pathname;
+        if (type === 'HOME') return pathName === '/home' || pathName === '/';
+        if (type === 'SELECT_SERVICE') return pathName === '/select-service' || pathName === '/process-booking';
+        if (type === 'HANDBOOK') return pathName.includes('handbook') || pathName.includes('all-handbook');
+        if (type === 'SETTINGS') return pathName === '/settings';
+        if (type === 'MY_BOOKING') return pathName === '/my-booking';
+        if (type === 'BOOKING_HISTORY') return pathName === '/booking-history';
+        if (type === 'PRIVACY_POLICY') return pathName === '/privacy-policy';
+        if (type === 'TERMS_OF_USE') return pathName === '/terms-of-use';
+        return false;
+    }
+
     render() {
         const { isOpen, onClose, userInfo, isLoggedIn, language, imageBase64, handleViewList } = this.props;
 
@@ -79,34 +92,34 @@ class MobileSidebarInternal extends Component {
 
                         <ul className="sidebar-menu">
                             <li className="menu-group-label">Chính</li>
-                            <li className="sidebar-item" onClick={() => { handleViewList('HOME'); onClose(); }}>
-                                <i className="fas fa-home"></i>
+                            <li className={`sidebar-item ${this.isPathActive('HOME') ? 'active' : ''}`} onClick={() => { handleViewList('HOME'); onClose(); }}>
+                                {/* <i className="fas fa-home"></i> */}
                                 <FormattedMessage id="homeheader.home" />
                             </li>
-                            <li className="sidebar-item" onClick={() => { handleViewList('SELECT_SERVICE'); onClose(); }}>
-                                <i className="fas fa-calendar-alt"></i>
+                            <li className={`sidebar-item ${this.isPathActive('SELECT_SERVICE') ? 'active' : ''}`} onClick={() => { handleViewList('SELECT_SERVICE'); onClose(); }}>
+                                {/* <i className="fas fa-calendar-alt"></i> */}
                                 <FormattedMessage id="homeheader.booking" />
                             </li>
-                            <li className="sidebar-item" onClick={() => { handleViewList('HANDBOOK'); onClose(); }}>
-                                <i className="fas fa-book"></i>
+                            <li className={`sidebar-item ${this.isPathActive('HANDBOOK') ? 'active' : ''}`} onClick={() => { handleViewList('HANDBOOK'); onClose(); }}>
+                                {/* <i className="fas fa-book"></i> */}
                                 <FormattedMessage id="homeheader.handbook-nav" />
                             </li>
 
                             <li className="menu-group-label">Cá nhân</li>
                             {isLoggedIn && (
                                 <React.Fragment>
-                                    <li className="sidebar-item" onClick={() => { handleViewList('SETTINGS'); onClose(); }}>
-                                        <i className="fas fa-user-cog"></i>
+                                    <li className={`sidebar-item ${this.isPathActive('SETTINGS') ? 'active' : ''}`} onClick={() => { handleViewList('SETTINGS'); onClose(); }}>
+                                        {/* <i className="fas fa-user-cog"></i> */}
                                         <span>Chỉnh sửa thông tin</span>
                                     </li>
                                     {userInfo?.roleId !== 'R2' && (
                                         <React.Fragment>
-                                            <li className="sidebar-item" onClick={() => { handleViewList('MY_BOOKING'); onClose(); }}>
-                                                <i className="fas fa-calendar-check"></i>
+                                            <li className={`sidebar-item ${this.isPathActive('MY_BOOKING') ? 'active' : ''}`} onClick={() => { handleViewList('MY_BOOKING'); onClose(); }}>
+                                                {/* <i className="fas fa-calendar-check"></i>  */}
                                                 <span>Lịch khám của tôi</span>
                                             </li>
-                                            <li className="sidebar-item" onClick={() => { handleViewList('BOOKING_HISTORY'); onClose(); }}>
-                                                <i className="fas fa-history"></i>
+                                            <li className={`sidebar-item ${this.isPathActive('BOOKING_HISTORY') ? 'active' : ''}`} onClick={() => { handleViewList('BOOKING_HISTORY'); onClose(); }}>
+                                                {/* <i className="fas fa-history"></i> */}
                                                 <span>Lịch sử khám</span>
                                             </li>
                                         </React.Fragment>
@@ -116,12 +129,12 @@ class MobileSidebarInternal extends Component {
 
 
                             <li className="menu-group-label">Thông tin</li>
-                            <li className="sidebar-item" onClick={() => { handleViewList('PRIVACY_POLICY'); onClose(); }}>
-                                <i className="fas fa-user-shield"></i>
+                            <li className={`sidebar-item ${this.isPathActive('PRIVACY_POLICY') ? 'active' : ''}`} onClick={() => { handleViewList('PRIVACY_POLICY'); onClose(); }}>
+                                {/* <i className="fas fa-user-shield"></i> */}
                                 <span>Chính sách bảo mật</span>
                             </li>
-                            <li className="sidebar-item" onClick={() => { handleViewList('TERMS_OF_USE'); onClose(); }}>
-                                <i className="fas fa-file-contract"></i>
+                            <li className={`sidebar-item ${this.isPathActive('TERMS_OF_USE') ? 'active' : ''}`} onClick={() => { handleViewList('TERMS_OF_USE'); onClose(); }}>
+                                {/* <i className="fas fa-file-contract"></i> */}
                                 <span>Điều khoản sử dụng</span>
                             </li>
 
@@ -302,7 +315,7 @@ class HomeHeader extends Component {
                         )}
 
                         <div className="hm-header-actions">
-                            
+
                             {!isOpenSearch && (
                                 <div className="nav-sign-in search-trigger" onClick={() => this.toggleSearch(true)}>
                                     <i className="fas fa-search search-icon"></i>
@@ -370,7 +383,7 @@ class HomeHeader extends Component {
                     handleViewList={this.handleViewList}
                 />
 
-                
+
                 {(!isOpenSearch && !this.state.isOpenSidebar && !this.props.isOpenDoctorChat) && (
                     <div className="hm-bottom-nav">
                         <div className={`nav-item ${!isOpenSearch ? 'active' : ''}`} onClick={() => { this.handleViewList('HOME'); this.toggleSearch(false); }}>
