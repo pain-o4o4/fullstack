@@ -704,6 +704,7 @@
     transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 
     padding: calc(20px + env(safe-area-inset-top, 0px)) 24px calc(24px + env(safe-area-inset-bottom, 0px)) 24px;
+    padding-bottom: 0 !important; // fix bottom of sidebar not visible
 
     &.open {
         transform: translateX(0);
