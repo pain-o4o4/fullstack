@@ -120,7 +120,7 @@ class App extends Component {
                         <ResilienceBanner />
                         <ConfirmModal />
                         <div className="content-container">
-                            <CustomScrollbars ref={this.customScrollbarsRef} style={{ height: '100vh', width: '100%' }}>
+                            <CustomScrollbars ref={this.customScrollbarsRef} style={{ height: '100vh', width: '100%' }} disableHorizontalScroll={true}>
                                 <Routes>
                                     <Route path={path.HOME} element={<Home />} />
 
