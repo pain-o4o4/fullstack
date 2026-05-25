@@ -78,6 +78,7 @@ class ChatSidebar extends Component {
                         style={{ cursor: 'pointer' }}
                         title="Bấm để đóng cửa sổ"
                     >
+                        <i className="fas fa-chevron-left"></i>
                         Đoạn chat
                     </div>
                     <div className="dcd-sidebar-actions" ref={this.menuRef}>
@@ -292,7 +293,7 @@ class ChatSidebar extends Component {
                     )}
                 </div>
 
-                
+
             </div>
         );
     }
