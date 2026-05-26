@@ -394,6 +394,14 @@
 
             .hb-grid-section .hb-articles-grid {
                 grid-template-columns: repeat(2, 1fr);
+
+                .hb-grid-card {
+                    &:hover {
+                        .grid-image-wrapper {
+                            transform: none !important;
+                        }
+                    }
+                }
             }
         }
     }
@@ -430,6 +438,14 @@
 
             .hb-grid-section .hb-articles-grid {
                 grid-template-columns: 1fr;
+
+                .hb-grid-card {
+                    &:hover {
+                        .grid-image-wrapper {
+                            transform: none !important;
+                        }
+                    }
+                }
             }
         }
     }
