@@ -86,8 +86,8 @@ class OutStandingDoctor extends Component {
                                     let imageUrl = item.image || '';
 
                                     // Display name
-                                    let nameVi = `${item.positionData.valueVi}, ${item.lastName} ${item.firstName}`;
-                                    let nameEn = `${item.positionData.valueEn}, ${item.firstName} ${item.lastName}`;
+                                    let nameVi = `${item.positionData.valueVi} ${item.lastName} ${item.firstName}`;
+                                    let nameEn = `${item.positionData.valueEn} ${item.firstName} ${item.lastName}`;
                                     let finalName = language === LANGUAGES.VI ? nameVi : nameEn;
 
                                     // Rotate colors

@@ -217,8 +217,12 @@ class DetailClinic extends Component {
                                                         isShowDescriptionDoctor={true}
                                                         isShowLinkDetail={true}
                                                         isShowPrice={false}
+                                                        isShowContact={true}
                                                         doctorImageFromParent={this.handleGetImageFromChild}
                                                     />
+                                                    <div className="view-more-doctor-link">
+                                                        <span>Xem thông tin chi tiết <i className="fas fa-angle-right"></i></span>
+                                                    </div>
 
                                                 </div>
                                                 <div className="dt-content-right">

@@ -23,7 +23,9 @@ class DetailDoctor extends Component {
             currentDoctorId: this.props.params && this.props.params.id ? this.props.params.id : -1,
             selectedClinicData: null,
             listRelatedDoctors: [],
-            isLoading: true
+            isLoading: true,
+            currentPage: 1,
+            itemsPerPage: 4
         }
     }
 
@@ -63,7 +65,8 @@ class DetailDoctor extends Component {
             this.setState({
                 currentDoctorId: id,
                 isLoading: true,
-                listRelatedDoctors: [] // Reset related list
+                listRelatedDoctors: [], // Reset related list
+                currentPage: 1
             });
             this.props.getDetailDoctor(id);
             window.scrollTo(0, 0);
@@ -97,6 +100,64 @@ class DetailDoctor extends Component {
         });
     }
 
+    handlePageChange = (page) => {
+        this.setState({ currentPage: page });
+    }
+
+    renderPagination = (totalItems) => {
+        const { currentPage, itemsPerPage } = this.state;
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        if (totalPages <= 1) return null;
+
+        let pages = [];
+        const maxVisiblePages = 5;
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+        if (endPage - startPage < maxVisiblePages - 1) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            pages.push(i);
+        }
+
+        return (
+            <div className="pagination-container" style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
+                <button
+                    className="btn-pagination"
+                    disabled={currentPage === 1}
+                    onClick={() => this.handlePageChange(currentPage - 1)}
+                >
+                    <i className="fas fa-chevron-left"></i>
+                </button>
+
+                {startPage > 1 && <span className="pagination-ellipsis">...</span>}
+
+                {pages.map(page => (
+                    <button
+                        key={page}
+                        className={`btn-pagination ${currentPage === page ? 'active' : ''}`}
+                        onClick={() => this.handlePageChange(page)}
+                    >
+                        {page}
+                    </button>
+                ))}
+
+                {endPage < totalPages && <span className="pagination-ellipsis">...</span>}
+
+                <button
+                    className="btn-pagination"
+                    disabled={currentPage === totalPages}
+                    onClick={() => this.handlePageChange(currentPage + 1)}
+                >
+                    <i className="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        );
+    }
+
     handleStartChat = () => {
         if (this.state.currentDoctorId) {
             localStorage.setItem('telehealth_preselected_doctor_id', this.state.currentDoctorId);
@@ -107,7 +168,7 @@ class DetailDoctor extends Component {
     }
 
     render() {
-        let { detailDoctor, selectedClinicData } = this.state;
+        let { detailDoctor, selectedClinicData, listRelatedDoctors, currentPage, itemsPerPage } = this.state;
         let { language } = this.props;
         let nameVi = '', nameEn = '';
 
@@ -115,6 +176,10 @@ class DetailDoctor extends Component {
             nameVi = `${detailDoctor.positionData.valueVi} ${detailDoctor.lastName} ${detailDoctor.firstName}`;
             nameEn = `${detailDoctor.positionData.valueEn} ${detailDoctor.firstName} ${detailDoctor.lastName}`;
         }
+
+        const indexOfLastItem = currentPage * itemsPerPage;
+        const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+        const currentItems = listRelatedDoctors ? listRelatedDoctors.slice(indexOfFirstItem, indexOfLastItem) : [];
 
         return (
             <React.Fragment>
@@ -209,18 +274,19 @@ class DetailDoctor extends Component {
                             </div>
 
                             
-                            {this.state.listRelatedDoctors && this.state.listRelatedDoctors.length > 0 && (
+                            {listRelatedDoctors && listRelatedDoctors.length > 0 && (
                                 <div className="related-doctors-section">
                                     <div className="related-title">
                                         <FormattedMessage id="homepage.outstanding-doctor" defaultMessage="Bác sĩ nổi bật" />
                                     </div>
                                     <div className="related-list">
-                                        {this.state.listRelatedDoctors.map((item, index) => (
+                                        {currentItems.map((item, index) => (
                                             <div className="related-item" key={index} onClick={() => this.handleViewDetail(item, "DOCTOR")}>
                                                 <ProfileDoctor
                                                     doctorId={item.doctorId}
                                                     isShowDescription={true}
                                                     isShowPrice={false}
+                                                    isShowContact={true}
                                                 />
                                                 <div className="view-more">
                                                     <FormattedMessage id="homepage.more-info" defaultMessage="Xem thêm" />
@@ -228,6 +294,7 @@ class DetailDoctor extends Component {
                                             </div>
                                         ))}
                                     </div>
+                                    {this.renderPagination(listRelatedDoctors.length)}
                                 </div>
                             )}
                         </>

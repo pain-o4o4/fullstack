@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { getProfileDoctorById } from '../../../services/userService'
 import { LANGUAGES } from '../../../utils/constant'
 import { withRouter } from '../../../components/Navigator'; // hoặc 'react-router-dom'
+import * as actions from '../../../store/actions';
 import { FormattedMessage } from 'react-intl';
 import './ProfileDoctor.scss'
 import { FormattedNumber } from 'react-intl';
@@ -107,6 +108,51 @@ class ProfileDoctor extends Component {
                                 </>
                             }
                         </div>
+                        {this.props.isShowContact === true && (
+                            <div className="doctor-contact-container">
+                                <div className="doctor-contact-info">
+                                    {dataProfile && dataProfile.email && (
+                                        <div className="info-row" onClick={(e) => e.stopPropagation()}>
+                                            <i className="far fa-envelope icon-mail"></i>
+                                            <a href={`mailto:${dataProfile.email}`}>{dataProfile.email}</a>
+                                        </div>
+                                    )}
+                                    {dataProfile && dataProfile.phonenumber && (
+                                        <div className="info-row" onClick={(e) => e.stopPropagation()}>
+                                            <i className="fas fa-phone-alt icon-phone"></i>
+                                            <a href={`tel:${dataProfile.phonenumber}`}>{dataProfile.phonenumber}</a>
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="doctor-contact-actions">
+                                    {dataProfile && dataProfile.phonenumber && (
+                                        <a 
+                                            href={`https://zalo.me/${dataProfile.phonenumber}`} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer" 
+                                            className="action-btn btn-zalo"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            <i className="far fa-comment-dots"></i>
+                                            <span>Chat Zalo</span>
+                                        </a>
+                                    )}
+                                    {dataProfile && dataProfile.id && (
+                                        <div 
+                                            className="action-btn btn-chat"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                localStorage.setItem('telehealth_preselected_doctor_id', dataProfile.id);
+                                                this.props.toggleChat();
+                                            }}
+                                        >
+                                            <i className="fas fa-comments"></i>
+                                            <span>Tư vấn Chat</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
                 {isShowPrice === true &&
@@ -148,8 +194,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-
-        // getProfileDoctor: (id) => dispatch(action.getProfileDoctor(id))
+        toggleChat: () => dispatch(actions.toggleChat())
     };
 };
 

@@ -24,6 +24,8 @@ class DetailSpecialty extends Component {
             listOtherSpecialties: [],
             currentPage: 1,
             itemsPerPage: 6,
+            doctorCurrentPage: 1,
+            doctorItemsPerPage: 5,
             isLoading: true
         }
     }
@@ -65,7 +67,7 @@ class DetailSpecialty extends Component {
         }
         if (this.props.params && this.props.params.id && this.props.params.id !== prevProps.params.id) {
             let id = this.props.params.id;
-            this.setState({ currentPage: 1, isLoading: true });
+            this.setState({ currentPage: 1, doctorCurrentPage: 1, isLoading: true });
             await this.props.getDetailSpecialtyById(id);
             window.scrollTo(0, 0);
         }
@@ -86,6 +88,14 @@ class DetailSpecialty extends Component {
     handlePageChange = (page) => {
         this.setState({ currentPage: page });
         const section = document.querySelector('.other-specialties-section');
+        if (section) {
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    handleDoctorPageChange = (page) => {
+        this.setState({ doctorCurrentPage: page });
+        const section = document.querySelector('.specialty-doctor-list');
         if (section) {
             section.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
@@ -145,13 +155,71 @@ class DetailSpecialty extends Component {
         );
     }
 
+    renderDoctorPagination = (totalItems) => {
+        const { doctorCurrentPage, doctorItemsPerPage } = this.state;
+        const totalPages = Math.ceil(totalItems / doctorItemsPerPage);
+
+        if (totalPages <= 1) return null;
+
+        let pages = [];
+        const maxVisiblePages = 5;
+        let startPage = Math.max(1, doctorCurrentPage - 2);
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+        if (endPage - startPage < maxVisiblePages - 1) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            pages.push(i);
+        }
+
+        return (
+            <div className="pagination-container" style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
+                <button
+                    className="btn-pagination"
+                    disabled={doctorCurrentPage === 1}
+                    onClick={() => this.handleDoctorPageChange(doctorCurrentPage - 1)}
+                >
+                    <i className="fas fa-chevron-left"></i>
+                </button>
+
+                {startPage > 1 && <span className="pagination-ellipsis">...</span>}
+
+                {pages.map(page => (
+                    <button
+                        key={page}
+                        className={`btn-pagination ${doctorCurrentPage === page ? 'active' : ''}`}
+                        onClick={() => this.handleDoctorPageChange(page)}
+                    >
+                        {page}
+                    </button>
+                ))}
+
+                {endPage < totalPages && <span className="pagination-ellipsis">...</span>}
+
+                <button
+                    className="btn-pagination"
+                    disabled={doctorCurrentPage === totalPages}
+                    onClick={() => this.handleDoctorPageChange(doctorCurrentPage + 1)}
+                >
+                    <i className="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        );
+    }
+
     render() {
-        let { dataDetailSpecialty, arrDoctorId, listOtherSpecialties, currentPage, itemsPerPage } = this.state;
+        let { dataDetailSpecialty, arrDoctorId, listOtherSpecialties, currentPage, itemsPerPage, doctorCurrentPage, doctorItemsPerPage } = this.state;
         
         const filteredSpecialties = listOtherSpecialties.filter(item => item.id !== +this.props.params.id);
         const indexOfLastItem = currentPage * itemsPerPage;
         const indexOfFirstItem = indexOfLastItem - itemsPerPage;
         const currentItems = filteredSpecialties.slice(indexOfFirstItem, indexOfLastItem);
+
+        const indexOfLastDoctor = doctorCurrentPage * doctorItemsPerPage;
+        const indexOfFirstDoctor = indexOfLastDoctor - doctorItemsPerPage;
+        const currentDoctorItems = arrDoctorId ? arrDoctorId.slice(indexOfFirstDoctor, indexOfLastDoctor) : [];
 
         return (
             <React.Fragment>
@@ -190,35 +258,43 @@ class DetailSpecialty extends Component {
                                     <div className="list-title">
                                         <FormattedMessage id="specialty-detail.title" />
                                     </div>
-                                    {arrDoctorId && arrDoctorId.length > 0 ?
-                                        arrDoctorId.map((item, index) => {
-                                            return (
-                                                <div className="each-doctor" key={index}>
-                                                    <div
-                                                        className="dt-content-left"
-                                                        onClick={() => {
-                                                            this.handleViewDetailDoctor(item.doctorId)
-                                                        }}
-                                                    >
-                                                        <ProfileDoctor
-                                                            doctorId={item.doctorId}
-                                                            isShowDescription={true}
-                                                            isShowLinkDetail={true}
-                                                            isShowPrice={false}
-                                                        />
-                                                    </div>
-                                                    <div className="dt-content-right">
-                                                        <div className="doctor-extra-info">
-                                                            <ExtraInforDoctor doctorIdFromParent={item.doctorId} />
+                                    {arrDoctorId && arrDoctorId.length > 0 ? (
+                                        <>
+                                            {currentDoctorItems.map((item, index) => {
+                                                return (
+                                                    <div className="each-doctor" key={index}>
+                                                        <div
+                                                            className="dt-content-left"
+                                                            onClick={() => {
+                                                                this.handleViewDetailDoctor(item.doctorId)
+                                                            }}
+                                                        >
+                                                            <ProfileDoctor
+                                                                doctorId={item.doctorId}
+                                                                isShowDescription={true}
+                                                                isShowLinkDetail={true}
+                                                                isShowPrice={false}
+                                                                isShowContact={true}
+                                                            />
+                                                            <div className="view-more-doctor-link">
+                                                                <span>Xem thông tin chi tiết <i className="fas fa-angle-right"></i></span>
+                                                            </div>
+                                                        </div>
+                                                        <div className="dt-content-right">
+                                                            <div className="doctor-extra-info">
+                                                                <ExtraInforDoctor doctorIdFromParent={item.doctorId} />
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            )
-                                        })
-                                        : <div className="no-data">
+                                                )
+                                            })}
+                                            {this.renderDoctorPagination(arrDoctorId.length)}
+                                        </>
+                                    ) : (
+                                        <div className="no-data">
                                             <FormattedMessage id="specialty-detail.no-doctor" />
                                         </div>
-                                    }
+                                    )}
                                 </div>
 
                                 {filteredSpecialties && filteredSpecialties.length > 0 && (

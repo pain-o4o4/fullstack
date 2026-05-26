@@ -25,11 +25,11 @@ class AllDoctor extends Component {
         return (
             <div className="all-doctors-container">
                 <HomeHeader isShowBanner={false} />
-                <CustomBreadcrumb 
+                <CustomBreadcrumb
                     items={[
                         { label: <FormattedMessage id="homeheader.booking" />, link: '/select-service' },
                         { label: <FormattedMessage id="homeheader.Physician" /> }
-                    ]} 
+                    ]}
                 />
 
 
@@ -38,12 +38,12 @@ class AllDoctor extends Component {
                     <div className="doctors-grid">
                         {allDoctors && allDoctors.length > 0 &&
                             allDoctors.map((item, index) => {
-                                let nameVi = `${item.positionData?.valueVi || ''}, ${item.lastName || ''} ${item.firstName || ''}`;
-                                let nameEn = `${item.positionData?.valueEn || ''}, ${item.firstName || ''} ${item.lastName || ''}`;
-                                
-                                let specialtyName = item.doctorinforData?.specialtyData?.name 
+                                let nameVi = `${item.positionData?.valueVi || ''} ${item.lastName || ''} ${item.firstName || ''}`;
+                                let nameEn = `${item.positionData?.valueEn || ''} ${item.firstName || ''} ${item.lastName || ''}`;
+
+                                let specialtyName = item.doctorinforData?.specialtyData?.name
                                     || (language === 'vi' ? 'Chuyên khoa Y tế' : 'Medical Specialist');
-                                
+
                                 let provinceName = item.doctorinforData?.provinceTypeData
                                     ? (language === 'vi' ? item.doctorinforData.provinceTypeData.valueVi : item.doctorinforData.provinceTypeData.valueEn)
                                     : (language === 'vi' ? 'Toàn quốc' : 'National');

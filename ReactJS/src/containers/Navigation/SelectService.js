@@ -120,8 +120,8 @@ class SelectService extends Component {
             <div className="service-list-view">
                 <div className="list-items">
                     {currentItems.map((item, index) => {
-                        let nameVi = `${item.positionData?.valueVi || 'Bác sĩ'}, ${item.lastName} ${item.firstName}`;
-                        let nameEn = `${item.positionData?.valueEn || 'Doctor'}, ${item.firstName} ${item.lastName}`;
+                        let nameVi = `${item.positionData?.valueVi || 'Bác sĩ'} ${item.lastName} ${item.firstName}`;
+                        let nameEn = `${item.positionData?.valueEn || 'Doctor'} ${item.firstName} ${item.lastName}`;
                         return (
                             <div key={index} className="service-list-card doctor" onClick={() => navigate(`/detail-doctor/${item.id}`)}>
                                 <div className="card-image" style={{ backgroundImage: `url(${item.image})` }}></div>
@@ -188,8 +188,8 @@ class SelectService extends Component {
                                 <h3 className="card-name">{item.name}</h3>
                                 <p className="card-desc">
                                     {item.descriptionMarkdown ? (
-                                        item.descriptionMarkdown.length > 120 
-                                            ? item.descriptionMarkdown.substring(0, 120) + '...' 
+                                        item.descriptionMarkdown.length > 120
+                                            ? item.descriptionMarkdown.substring(0, 120) + '...'
                                             : item.descriptionMarkdown
                                     ) : (
                                         language === 'vi' ? 'Chuyên khoa y tế uy tín, chất lượng hàng đầu.' : 'Leading medical specialty with reputable services.'
@@ -233,8 +233,8 @@ class SelectService extends Component {
                                     <span>
                                         <i className="fas fa-info-circle"></i>
                                         {item.descriptionMarkdown ? (
-                                            item.descriptionMarkdown.length > 90 
-                                                ? item.descriptionMarkdown.substring(0, 90) + '...' 
+                                            item.descriptionMarkdown.length > 90
+                                                ? item.descriptionMarkdown.substring(0, 90) + '...'
                                                 : item.descriptionMarkdown
                                         ) : (
                                             language === 'vi' ? 'Cơ sở vật chất hiện đại, dịch vụ y tế chất lượng cao.' : 'Modern facilities and high-quality healthcare services.'
