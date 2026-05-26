@@ -274,8 +274,14 @@ class HomeHeader extends Component {
             PRIVACY_POLICY: path.PRIVACY_POLICY,
             TERMS_OF_USE: path.TERMS_OF_USE,
         };
-        if (routeMap[type]) navigate(routeMap[type]);
-        else this.props.navigate('/home');
+        if (routeMap[type]) {
+            if (type === 'HOME') {
+                window.location.href = routeMap[type];
+            } else {
+                navigate(routeMap[type]);
+            }
+        }
+        else window.location.href = '/home';
     }
 
 
