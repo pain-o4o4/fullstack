@@ -27,7 +27,8 @@ class MobileSidebarInternal extends Component {
     isPathActive = (type) => {
         const pathName = window.location.pathname;
         if (type === 'HOME') return pathName === '/home' || pathName === '/';
-        if (type === 'SELECT_SERVICE') return pathName === '/select-service' || pathName === '/process-booking';
+        if (type === 'SELECT_SERVICE') return pathName === '/select-service';
+        if (type === 'PROCESS_BOOKING') return pathName === '/process-booking';
         if (type === 'HANDBOOK') return pathName.includes('handbook') || pathName.includes('all-handbook');
         if (type === 'SETTINGS') return pathName === '/settings';
         if (type === 'MY_BOOKING') return pathName === '/my-booking';
@@ -99,6 +100,10 @@ class MobileSidebarInternal extends Component {
                             <li className={`sidebar-item ${this.isPathActive('SELECT_SERVICE') ? 'active' : ''}`} onClick={() => { handleViewList('SELECT_SERVICE'); onClose(); }}>
                                 {/* <i className="fas fa-calendar-alt"></i> */}
                                 <FormattedMessage id="homeheader.booking" />
+                            </li>
+                            <li className={`sidebar-item ${this.isPathActive('PROCESS_BOOKING') ? 'active' : ''}`} onClick={() => { handleViewList('PROCESS_BOOKING'); onClose(); }}>
+                                {/* <i className="fas fa-calendar-alt"></i> */}
+                                <FormattedMessage id="homeheader.process-booking" />
                             </li>
                             <li className={`sidebar-item ${this.isPathActive('HANDBOOK') ? 'active' : ''}`} onClick={() => { handleViewList('HANDBOOK'); onClose(); }}>
                                 {/* <i className="fas fa-book"></i> */}
