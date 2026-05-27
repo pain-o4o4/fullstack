@@ -25,6 +25,8 @@ class DetailClinic extends Component {
             listOtherClinics: [],
             currentPage: 1,
             itemsPerPage: 6,
+            doctorCurrentPage: 1,
+            doctorItemsPerPage: 5,
             isLoading: true
         }
     }
@@ -34,7 +36,7 @@ class DetailClinic extends Component {
         if (this.props.params && this.props.params.id) {
             let id = this.props.params.id;
             this.setState({ isLoading: true });
-            
+
             // Parallelize API calls
             await Promise.all([
                 this.props.getDetailClinicById(id),
@@ -71,7 +73,7 @@ class DetailClinic extends Component {
         // Fix: Handle URL parameter changes
         if (this.props.params && this.props.params.id && this.props.params.id !== prevProps.params.id) {
             let id = this.props.params.id;
-            this.setState({ isLoading: true });
+            this.setState({ currentPage: 1, doctorCurrentPage: 1, isLoading: true });
             this.props.getDetailClinicById(id);
             window.scrollTo(0, 0);
         }
@@ -100,6 +102,68 @@ class DetailClinic extends Component {
         if (section) {
             section.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
+    }
+
+    handleDoctorPageChange = (page) => {
+        this.setState({ doctorCurrentPage: page });
+        const section = document.querySelector('.clinic-doctor-list');
+        if (section) {
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    renderDoctorPagination = (totalItems) => {
+        const { doctorCurrentPage, doctorItemsPerPage } = this.state;
+        const totalPages = Math.ceil(totalItems / doctorItemsPerPage);
+
+        if (totalPages <= 1) return null;
+
+        let pages = [];
+        const maxVisiblePages = 5;
+        let startPage = Math.max(1, doctorCurrentPage - 2);
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+        if (endPage - startPage < maxVisiblePages - 1) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            pages.push(i);
+        }
+
+        return (
+            <div className="pagination-container doctor-pagination">
+                <button
+                    className="btn-pagination"
+                    disabled={doctorCurrentPage === 1}
+                    onClick={() => this.handleDoctorPageChange(doctorCurrentPage - 1)}
+                >
+                    <i className="fas fa-chevron-left"></i>
+                </button>
+
+                {startPage > 1 && <span className="pagination-ellipsis">...</span>}
+
+                {pages.map(page => (
+                    <button
+                        key={page}
+                        className={`btn-pagination ${doctorCurrentPage === page ? 'active' : ''}`}
+                        onClick={() => this.handleDoctorPageChange(page)}
+                    >
+                        {page}
+                    </button>
+                ))}
+
+                {endPage < totalPages && <span className="pagination-ellipsis">...</span>}
+
+                <button
+                    className="btn-pagination"
+                    disabled={doctorCurrentPage === totalPages}
+                    onClick={() => this.handleDoctorPageChange(doctorCurrentPage + 1)}
+                >
+                    <i className="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        );
     }
 
     renderPagination = (totalItems) => {
@@ -157,29 +221,33 @@ class DetailClinic extends Component {
     }
 
     render() {
-        let { dataDetailClinic, arrDoctorId, listOtherClinics, currentPage, itemsPerPage } = this.state;
+        let { dataDetailClinic, arrDoctorId, listOtherClinics, currentPage, itemsPerPage, doctorCurrentPage, doctorItemsPerPage } = this.state;
         
         const filteredClinics = listOtherClinics.filter(item => item.id !== +this.props.params.id);
         const indexOfLastItem = currentPage * itemsPerPage;
         const indexOfFirstItem = indexOfLastItem - itemsPerPage;
         const currentItems = filteredClinics.slice(indexOfFirstItem, indexOfLastItem);
 
+        const indexOfLastDoctor = doctorCurrentPage * doctorItemsPerPage;
+        const indexOfFirstDoctor = indexOfLastDoctor - doctorItemsPerPage;
+        const currentDoctorItems = arrDoctorId ? arrDoctorId.slice(indexOfFirstDoctor, indexOfLastDoctor) : [];
+
         return (
             <div className="detail-clinic-container">
                 <HomeHeader />
-                <CustomBreadcrumb 
+                <CustomBreadcrumb
                     items={[
                         { label: <FormattedMessage id="homeheader.booking" />, link: '/select-service' },
                         { label: <FormattedMessage id="homeheader.MedicalFacility" />, link: '/all-clinic' },
                         { label: dataDetailClinic?.name || 'Chi tiết cơ sở y tế' }
-                    ]} 
+                    ]}
                 />
                 <div className="detail-clinic-body">
                     {this.state.isLoading ? (
                         <ClinicDetailSkeleton />
                     ) : (
                         <>
-                            
+
                             {dataDetailClinic && dataDetailClinic.image && (
                                 <div
                                     className="clinic-banner"
@@ -193,7 +261,7 @@ class DetailClinic extends Component {
                             <div className="clinic-description">
                                 {dataDetailClinic && !_.isEmpty(dataDetailClinic) && (
                                     <>
-                                        
+
                                         <div className="clinic-address">{dataDetailClinic.address}</div>
                                         <div dangerouslySetInnerHTML={{ __html: dataDetailClinic.descriptionHTML }}></div>
                                     </>
@@ -201,8 +269,8 @@ class DetailClinic extends Component {
                             </div>
 
                             <div className="clinic-doctor-list">
-                                {arrDoctorId && arrDoctorId.length > 0 &&
-                                    arrDoctorId.map((item, index) => {
+                                {currentDoctorItems && currentDoctorItems.length > 0 &&
+                                    currentDoctorItems.map((item, index) => {
                                         return (
                                             <div className="each-doctor" key={index}>
                                                 <div
@@ -220,9 +288,9 @@ class DetailClinic extends Component {
                                                         isShowContact={true}
                                                         doctorImageFromParent={this.handleGetImageFromChild}
                                                     />
-                                                    <div className="view-more-doctor-link">
+                                                    {/* <div className="view-more-doctor-link">
                                                         <span>Xem thông tin chi tiết <i className="fas fa-angle-right"></i></span>
-                                                    </div>
+                                                    </div> */}
 
                                                 </div>
                                                 <div className="dt-content-right">
@@ -235,7 +303,11 @@ class DetailClinic extends Component {
                                 }
                             </div>
 
-                            
+                            {arrDoctorId && arrDoctorId.length > 0 && 
+                                this.renderDoctorPagination(arrDoctorId.length)
+                            }
+
+
                             {filteredClinics && filteredClinics.length > 0 && (
                                 <div className="other-clinics-section">
                                     <div className="other-title">
@@ -243,12 +315,12 @@ class DetailClinic extends Component {
                                     </div>
                                     <div className="other-list">
                                         {currentItems.map((item, index) => (
-                                            <div 
-                                                className="other-item" 
+                                            <div
+                                                className="other-item"
                                                 key={index}
                                                 onClick={() => this.handleViewOtherClinic(item.id)}
                                             >
-                                                <div 
+                                                <div
                                                     className="clinic-img"
                                                     style={{ backgroundImage: `url(${item.image})` }}
                                                 ></div>

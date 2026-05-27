@@ -2,7 +2,7 @@
     background-color: #ffffff;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 120px 20px 40px;
+    padding: 140px 20px 40px;
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
 
     .intro-doctor {
@@ -234,6 +234,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            overflow: hidden;
 
             .profile-doctor-container {
                 .intro-doctor {
@@ -260,14 +261,16 @@
                         }
                     }
 
-                    &:hover .content-left .doctor-avatar {
-                        transform: scale(1.05);
-                    }
+                    // &:hover .content-left .doctor-avatar {
+                    //     transform: scale(1.05);
+                    // }
 
                     .content-right {
                         display: flex !important;
                         flex-direction: column !important;
                         gap: 6px !important;
+                        min-width: 0 !important;
+                        overflow: hidden !important;
 
                         &::before {
                             content: "BÁC SĨ CHUYÊN KHOA" !important;
@@ -369,7 +372,7 @@
                                         &:hover {
                                             background: rgba(0, 113, 227, 0.1);
                                             border-color: rgba(0, 113, 227, 0.25);
-                                            transform: translateY(-1px);
+                                            // transform: translateY(-1px);
                                             box-shadow: 0 4px 10px rgba(0, 113, 227, 0.12);
                                         }
                                     }
@@ -382,7 +385,7 @@
                                         &:hover {
                                             background: rgba(255, 149, 0, 0.1);
                                             border-color: rgba(255, 149, 0, 0.25);
-                                            transform: translateY(-1px);
+                                            // transform: translateY(-1px);
                                             box-shadow: 0 4px 10px rgba(255, 149, 0, 0.12);
                                         }
                                     }
@@ -410,12 +413,12 @@
 
                 &::after {
                     content: " →";
-                    transition: transform 0.2s ease;
+                    // transition: transform 0.2s ease;
                 }
             }
 
             &:hover {
-                transform: translateY(-4px);
+                // transform: translateY(-4px);
                 box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
                 border-color: rgba(0, 113, 227, 0.2);
 
@@ -543,7 +546,7 @@
 
 @media (max-width: 1024px) {
     .doctor-detail-container {
-        padding: 100px 24px 40px !important;
+        padding: 120px 24px 40px !important;
 
         .intro-doctor {
             gap: 24px !important;
@@ -592,6 +595,37 @@
         .related-list {
             grid-template-columns: repeat(2, 1fr) !important;
             gap: 20px !important;
+
+            .related-item {
+                .profile-doctor-container .intro-doctor {
+                    gap: 16px !important;
+
+                    .content-left {
+                        width: 84px !important;
+                        height: 84px !important;
+                        min-width: 84px !important;
+                        border-radius: 16px !important;
+                    }
+
+                    .content-right {
+                        .up {
+                            font-size: 18px !important;
+                        }
+
+                        .doctor-contact-container {
+                            .doctor-contact-actions {
+                                flex-wrap: wrap;
+                                gap: 8px;
+
+                                .action-btn {
+                                    padding: 5px 10px !important;
+                                    font-size: 11.5px !important;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -601,7 +635,7 @@
 
 @media (max-width: 768px) {
     .doctor-detail-container {
-        padding: 64px 16px 30px !important;
+        padding: 110px 16px 30px !important;
 
         .intro-doctor {
             flex-direction: column !important;

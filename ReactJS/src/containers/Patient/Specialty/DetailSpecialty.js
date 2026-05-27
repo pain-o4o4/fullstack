@@ -34,13 +34,13 @@ class DetailSpecialty extends Component {
         if (this.props.params && this.props.params.id) {
             let id = this.props.params.id;
             this.setState({ isLoading: true });
-            
+
             // Parallelize API calls
             await Promise.all([
                 this.props.getDetailSpecialtyById(id),
                 this.fetchAllSpecialties()
             ]);
-            
+
             // isLoading will be set to false in componentDidUpdate when data arrives
         }
     }
@@ -211,7 +211,7 @@ class DetailSpecialty extends Component {
 
     render() {
         let { dataDetailSpecialty, arrDoctorId, listOtherSpecialties, currentPage, itemsPerPage, doctorCurrentPage, doctorItemsPerPage } = this.state;
-        
+
         const filteredSpecialties = listOtherSpecialties.filter(item => item.id !== +this.props.params.id);
         const indexOfLastItem = currentPage * itemsPerPage;
         const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -225,12 +225,12 @@ class DetailSpecialty extends Component {
             <React.Fragment>
                 <div className="detail-specialty-container">
                     <HomeHeader />
-                    <CustomBreadcrumb 
+                    <CustomBreadcrumb
                         items={[
                             { label: <FormattedMessage id="homeheader.booking" />, link: '/select-service' },
                             { label: <FormattedMessage id="homeheader.MedicalSpecialty" />, link: '/all-specialty' },
                             { label: dataDetailSpecialty?.name || 'Chi tiết chuyên khoa' }
-                        ]} 
+                        ]}
                     />
                     <div className="detail-specialty-body">
                         {this.state.isLoading ? (
@@ -276,9 +276,9 @@ class DetailSpecialty extends Component {
                                                                 isShowPrice={false}
                                                                 isShowContact={true}
                                                             />
-                                                            <div className="view-more-doctor-link">
+                                                            {/* <div className="view-more-doctor-link">
                                                                 <span>Xem thông tin chi tiết <i className="fas fa-angle-right"></i></span>
-                                                            </div>
+                                                            </div> */}
                                                         </div>
                                                         <div className="dt-content-right">
                                                             <div className="doctor-extra-info">
@@ -304,12 +304,12 @@ class DetailSpecialty extends Component {
                                         </div>
                                         <div className="other-list">
                                             {currentItems.map((item, index) => (
-                                                <div 
-                                                    className="other-item" 
+                                                <div
+                                                    className="other-item"
                                                     key={index}
                                                     onClick={() => this.handleViewOtherSpecialty(item.id)}
                                                 >
-                                                    <div 
+                                                    <div
                                                         className="specialty-img"
                                                         style={{ backgroundImage: `url(${item.image})` }}
                                                     ></div>

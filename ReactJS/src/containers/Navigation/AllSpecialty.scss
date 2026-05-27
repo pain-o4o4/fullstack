@@ -70,7 +70,7 @@
 @media (max-width: 1024px) {
     .all-specialty-container {
         .all-specialty-body {
-            padding: 100px 32px 60px;
+            padding: 120px 32px 60px;
             .specialty-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 24px;
@@ -89,8 +89,8 @@
 @media (max-width: 768px) {
     .all-specialty-container {
         .all-specialty-body {
-            padding: 40px 16px 80px;
-            margin-top: 10px !important;
+            padding: 110px 16px 80px;
+            margin-top: 0px !important;
             .specialty-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 16px;

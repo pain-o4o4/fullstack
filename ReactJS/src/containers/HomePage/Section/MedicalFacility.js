@@ -62,7 +62,7 @@ class MedicalFacility extends Component {
         }
 
         return (
-            <div className='section-maven'>
+            <div className='section-maven section-medical-facility'>
                 <div className='section-header'>
                     <span className='title-section'>
                         <FormattedMessage id="homepage.clinic" />

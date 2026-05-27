@@ -1,5 +1,5 @@
 .detail-specialty-container {
-    padding-top: 100px;
+    padding-top: 120px;
     background-color: #f5f5f7;
     min-height: 100vh;
     color: #1d1d1f;
@@ -95,6 +95,7 @@
                 border-radius: 16px;
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+                overflow: hidden;
 
                 &:hover {
                     transform: translateY(-8px);
@@ -103,11 +104,13 @@
 
                 .dt-content-left {
                     width: 50%;
+                    min-width: 0;
                     padding-right: 32px;
                     border-right: 1px solid #f2f2f7;
                     display: flex;
                     flex-direction: column;
                     justify-content: space-between;
+                    overflow: hidden;
 
                     .profile-doctor-container {
                         .intro-doctor {
@@ -142,6 +145,8 @@
                                 display: flex !important;
                                 flex-direction: column !important;
                                 gap: 6px !important;
+                                min-width: 0 !important;
+                                overflow: hidden !important;
 
                                 &::before {
                                     content: "BÁC SĨ CHUYÊN KHOA" !important;
@@ -158,6 +163,8 @@
                                     color: #1d1d1f !important;
                                     letter-spacing: -0.5px !important;
                                     margin-bottom: 4px !important;
+                                    word-break: break-word !important;
+                                    overflow-wrap: break-word !important;
                                 }
 
                                 .down {
@@ -306,7 +313,9 @@
 
                 .dt-content-right {
                     width: 50%;
+                    min-width: 0;
                     padding-left: 32px;
+                    overflow: hidden;
 
                     .doctor-extra-info {
                         .schedule-doctor {
@@ -416,127 +425,226 @@
     }
 
     @media (max-width: 1024px) {
-        .detail-specialty-container {
-            padding-top: 0px !important;
-            margin-top: 0px !important;
+        padding-top: 120px !important;
+        margin-top: 0px !important;
 
-            .detail-specialty-body {
-                padding: 0 40px 80px;
+        .detail-specialty-body {
+            padding: 0 40px 80px;
 
-                .specialty-banner {
-                    height: 280px;
+            .specialty-banner {
+                height: 280px;
 
-                    .specialty-name {
-                        font-size: 32px;
-                    }
-                }
-
-                .specialty-doctor-list .each-doctor {
-                    padding: 24px;
-
-                    .dt-content-left {
-                        padding-right: 20px;
-
-                        .intro-doctor .content-left {
-                            width: 100px;
-                            height: 100px;
-                        }
-                    }
-
-                    .dt-content-right {
-                        padding-left: 20px;
-                    }
+                .specialty-name {
+                    font-size: 32px;
                 }
             }
 
-            .other-specialties-section {
-                padding: 40px 40px;
+            .specialty-doctor-list .each-doctor {
+                padding: 28px;
+                // ── At 1024px: switch to full single-column ──────────
+                // Two 50% columns are too cramped at this width.
+                // Stack them vertically with a clean horizontal divider.
+                flex-direction: column;
 
-                .other-list {
-                    grid-template-columns: repeat(3, 1fr);
+                .dt-content-left {
+                    width: 100%;
+                    min-width: 0;
+                    padding-right: 0;
+                    padding-bottom: 24px;
+                    border-right: none;
+                    border-bottom: 1px solid #f2f2f7;
+                    margin-bottom: 24px;
+
+                    .intro-doctor {
+                        gap: 20px !important;
+
+                        .content-left {
+                            width: 88px;
+                            height: 88px;
+                            min-width: 88px !important;
+                            border-radius: 18px !important;
+                        }
+
+                        .content-right {
+                            min-width: 0;
+
+                            .up {
+                                font-size: 20px !important;
+                            }
+
+                            .down {
+                                -webkit-line-clamp: 2 !important;
+                            }
+
+                            .doctor-contact-container {
+                                .doctor-contact-actions {
+                                    flex-wrap: wrap;
+                                    gap: 8px;
+
+                                    .action-btn {
+                                        padding: 6px 14px;
+                                        font-size: 12px;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
+
+                .dt-content-right {
+                    width: 100%;
+                    min-width: 0;
+                    padding-left: 0;
+
+                    .schedule-doctor .content-up .name-clinic {
+                        font-size: 16px;
+                    }
+                }
+            }
+        }
+
+        .other-specialties-section {
+            padding: 40px 40px;
+
+            .other-list {
+                grid-template-columns: repeat(3, 1fr);
             }
         }
     }
 
     @media (max-width: 768px) {
-        .detail-specialty-container {
-            padding-top: 0px !important;
-            margin-top: 0px !important;
+        padding-top: 110px !important;
+        margin-top: 0px !important;
 
-            .detail-specialty-body {
-                padding: 0 16px 60px;
+        .detail-specialty-body {
+            padding: 0 16px 60px;
 
-                .specialty-banner {
-                    height: 200px;
-                    margin-top: 16px;
-                    border-radius: 16px;
+            .specialty-banner {
+                height: 200px;
+                margin-top: 16px;
+                border-radius: 16px;
 
-                    .banner-overlay {
-                        padding: 20px;
-                    }
-
-                    .specialty-name {
-                        font-size: 28px;
-                    }
+                .banner-overlay {
+                    padding: 20px;
                 }
 
-                .description-specialty {
-                    padding: 24px;
-                    border-radius: 16px;
-                    margin: 16px 0 32px;
+                .specialty-name {
+                    font-size: 28px;
+                }
+            }
 
-                    p {
-                        font-size: 15px;
-                    }
+            .description-specialty {
+                padding: 24px;
+                border-radius: 16px;
+                margin: 16px 0 32px;
 
-                    h1,
-                    h2,
-                    h3 {
-                        font-size: 20px;
-                        margin: 24px 0 12px;
-                    }
+                p {
+                    font-size: 15px;
                 }
 
-                .specialty-doctor-list {
-                    .list-title {
-                        font-size: 20px;
-                        margin-bottom: 16px;
-                    }
+                h1,
+                h2,
+                h3 {
+                    font-size: 20px;
+                    margin: 24px 0 12px;
+                }
+            }
 
-                    .each-doctor {
-                        flex-direction: column;
-                        padding: 24px;
-                        border-radius: 16px;
+            .specialty-doctor-list {
+                .list-title {
+                    font-size: 20px;
+                    margin-bottom: 16px;
+                }
 
-                        .dt-content-left {
-                            width: 100%;
-                            padding-right: 0;
-                            padding-bottom: 24px;
-                            border-right: none;
-                            border-bottom: 1px solid #f2f2f7;
-                            margin-bottom: 24px;
+                .each-doctor {
+                    flex-direction: column;
+                    padding: 20px;
+                    border-radius: 14px;
+                    margin-bottom: 16px;
 
-                            .intro-doctor {
-                                gap: 16px;
+                    .dt-content-left {
+                        width: 100%;
+                        min-width: 0;
+                        padding-right: 0;
+                        padding-bottom: 20px;
+                        border-right: none;
+                        border-bottom: 1px solid #f2f2f7;
+                        margin-bottom: 20px;
 
-                                .content-left {
-                                    width: 80px;
-                                    height: 80px;
+                        .intro-doctor {
+                            gap: 14px !important;
+
+                            .content-left {
+                                width: 72px !important;
+                                height: 72px !important;
+                                min-width: 72px !important;
+                                border-radius: 14px !important;
+                            }
+
+                            .content-right {
+                                min-width: 0;
+
+                                .up {
+                                    font-size: 17px !important;
+                                    letter-spacing: -0.3px !important;
                                 }
 
-                                .content-right .up {
-                                    font-size: 18px;
+                                .down {
+                                    font-size: 13px !important;
+                                    -webkit-line-clamp: 2 !important;
+                                }
+
+                                .doctor-contact-container {
+                                    margin-top: 10px;
+
+                                    .doctor-contact-info {
+                                        .info-row a {
+                                            font-size: 13px;
+                                        }
+                                    }
+
+                                    .doctor-contact-actions {
+                                        flex-wrap: wrap;
+                                        gap: 6px;
+
+                                        .action-btn {
+                                            padding: 5px 12px;
+                                            font-size: 11.5px;
+                                        }
+                                    }
                                 }
                             }
                         }
+                    }
 
-                        .dt-content-right {
-                            width: 100%;
-                            padding-left: 0;
+                    .dt-content-right {
+                        width: 100%;
+                        min-width: 0;
+                        padding-left: 0;
 
-                            .schedule-doctor .content-up .name-clinic {
-                                font-size: 16px;
+                        .schedule-doctor {
+                            .content-up {
+                                margin-bottom: 14px;
+
+                                .name-clinic {
+                                    font-size: 15px;
+                                }
+
+                                .detail-address {
+                                    font-size: 12px;
+                                }
+                            }
+
+                            .content-donw {
+                                padding-top: 14px;
+
+                                .price {
+                                    padding: 8px 12px;
+                                }
+
+                                .note {
+                                    font-size: 11.5px;
+                                }
                             }
                         }
                     }
@@ -565,7 +673,7 @@
         .other-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-            gap: 32px;
+            gap: 18px;
             margin-bottom: 48px;
 
             .other-item {
@@ -684,7 +792,7 @@
 
             .other-list {
                 grid-template-columns: 1fr;
-                gap: 16px;
+                gap: 14px;
             }
 
             .other-title {
