@@ -600,6 +600,63 @@ class DoctorChat extends Component {
         }
     }
 
+    handleSendCustomMessage = async (customText) => {
+        const { selectedDoctor } = this.state;
+        const { userInfo } = this.props;
+        if (!customText || !selectedDoctor || !userInfo) return;
+
+        const sendData = {
+            senderId: userInfo.id,
+            receiverId: selectedDoctor.id,
+            text: customText,
+            image: '',
+            parentId: null
+        };
+
+        const tempId = `temp_${Date.now()}`;
+        const optimisticMsg = {
+            id: tempId,
+            idempotencyKey: tempId,
+            ...sendData,
+            type: 'patient',
+            time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+            isPending: true
+        };
+
+        this.setState(prevState => ({
+            messages: [...prevState.messages, optimisticMsg],
+        }), this.scrollToBottom);
+
+        let res = await this.props.sendMessageResilient({
+            ...sendData,
+            tempId: tempId
+        });
+
+        if (res && res.success) {
+            const realMsg = res.data;
+            this.setState(prevState => ({
+                messages: prevState.messages.map(m => {
+                    if (String(m.id) === String(tempId) || String(m.idempotencyKey) === String(tempId)) {
+                        return {
+                            ...realMsg,
+                            isPending: false,
+                            type: 'patient',
+                            time: new Date(realMsg.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+                        };
+                    }
+                    return m;
+                })
+            }), () => {
+                this.loadChatHistory();
+                this.scrollToBottom();
+            });
+
+            if (!this.props.socket || !this.props.socket.connected) {
+                this.loadMessages();
+            }
+        }
+    }
+
     handleOnChangeImage = async (event) => {
         let data = event.target.files;
         let file = data[0];
@@ -916,6 +973,7 @@ class DoctorChat extends Component {
                             handleInputChange={(e) => this.setState({ inputText: e.target.value })}
                             handleKeyDown={this.handleKeyDown}
                             handleSend={this.handleSend}
+                            onSendCustomMessage={this.handleSendCustomMessage}
                             onClearImage={() => this.setState({ selectedImage: '', previewImage: '' })}
                             showConfirmDelete={this.state.showConfirmDelete}
                             deleteType={this.state.deleteType}

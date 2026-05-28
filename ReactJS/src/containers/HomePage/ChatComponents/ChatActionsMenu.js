@@ -39,7 +39,7 @@ class ChatActionsMenu extends Component {
     }
 
     handleAction = (actionType) => {
-        const { onSendImage, onToggleAutoReply } = this.props;
+        const { onSendImage, onToggleAutoReply, onOpenScheduleSelector } = this.props;
 
         if (actionType === 'IMAGE') {
             onSendImage();
@@ -48,6 +48,11 @@ class ChatActionsMenu extends Component {
             this.setState({ showQuickReplies: true });
         } else if (actionType === 'AUTO') {
             onToggleAutoReply();
+        } else if (actionType === 'SCHEDULE') {
+            if (onOpenScheduleSelector) {
+                onOpenScheduleSelector();
+            }
+            this.setState({ isOpen: false });
         }
     }
 
@@ -84,6 +89,12 @@ class ChatActionsMenu extends Component {
                                     <div className="item-label">Tin nhắn nhanh</div>
                                     <div className="item-icon-wrap quick"><i className="fas fa-bolt"></i></div>
                                 </div>
+                                {this.props.userInfo && this.props.userInfo.roleId === 'R2' && (
+                                    <div className="menu-item" onClick={() => this.handleAction('SCHEDULE')}>
+                                        <div className="item-label">Đề xuất lịch khám</div>
+                                        <div className="item-icon-wrap schedule"><i className="fas fa-calendar-alt"></i></div>
+                                    </div>
+                                )}
                             </div>
                         ) : (
                             <div className="menu-quick-replies">

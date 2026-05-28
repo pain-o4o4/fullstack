@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
 import { withRouter } from '../../../components/Navigator';
-import { getAllUsers, getDetailDoctorByIdService } from '../../../services/userService';
+import { getAllUsers, getDetailDoctorByIdService, getScheduleByDate } from '../../../services/userService';
 import './ChatBox.scss';
 import ChatActionsMenu from './ChatActionsMenu';
 import MarkdownIt from 'markdown-it';
+import moment from 'moment';
+import 'moment/locale/vi';
+import { LANGUAGES } from '../../../utils/constant';
+import BookingModal from '../../Patient/Doctor/Modal/BookingModal';
 
 const mdParser = new MarkdownIt({
     html: false,
@@ -28,7 +32,15 @@ class ChatBox extends Component {
             showReactionFor: null,
             showProfileDrawer: false,
             dbUserData: null,
-            isLoadingProfile: false
+            isLoadingProfile: false,
+            showScheduleSelector: false,
+            scheduleDates: [],
+            selectedScheduleDate: '',
+            scheduleSlots: [],
+            selectedScheduleSlot: null,
+            isLoadingScheduleSlots: false,
+            isBookingModalOpen: false,
+            bookingModalData: null
         };
         this.reactionRef = React.createRef();
         this.textareaRef = React.createRef();
@@ -71,6 +83,129 @@ class ChatBox extends Component {
         } else {
             this.setState({ showProfileDrawer: !this.state.showProfileDrawer });
         }
+    }
+
+    getArrDays = () => {
+        const language = this.props.language || 'vi';
+        let allDays = [];
+        for (let i = 0; i < 7; i++) {
+            let object = {};
+            if (i === 0) {
+                let ddMM = moment(new Date()).format('DD/MM');
+                let todayVi = `Hôm nay - ${ddMM}`;
+                let todayEn = `Today - ${ddMM}`;
+                object.label = language === 'vi' ? todayVi : todayEn;
+            } else {
+                let label = moment(new Date()).add(i, 'days').locale(language).format('ddd - DD/MM');
+                object.label = label.charAt(0).toUpperCase() + label.slice(1);
+            }
+
+            object.value = moment(new Date()).add(i, 'days').startOf('day').valueOf();
+            allDays.push(object);
+        }
+        return allDays;
+    }
+
+    handleOpenScheduleSelector = () => {
+        const dates = this.getArrDays();
+        if (dates.length > 0) {
+            this.setState({
+                showScheduleSelector: true,
+                scheduleDates: dates,
+                selectedScheduleDate: dates[0].value,
+                selectedScheduleSlot: null,
+                scheduleSlots: []
+            }, () => {
+                this.loadScheduleSlots(dates[0].value);
+            });
+        }
+    }
+
+    loadScheduleSlots = async (date) => {
+        const { userInfo } = this.props;
+        if (!userInfo || !userInfo.id) return;
+
+        this.setState({ isLoadingScheduleSlots: true });
+        try {
+            let res = await getScheduleByDate(userInfo.id, date);
+            if (res && res.errCode === 0) {
+                const slots = res.data ? res.data.filter(item => item.isFull !== true) : [];
+                this.setState({
+                    scheduleSlots: slots,
+                    isLoadingScheduleSlots: false
+                });
+            } else {
+                this.setState({
+                    scheduleSlots: [],
+                    isLoadingScheduleSlots: false
+                });
+            }
+        } catch (e) {
+            console.error("Error loading doctor schedule slots:", e);
+            this.setState({
+                scheduleSlots: [],
+                isLoadingScheduleSlots: false
+            });
+        }
+    }
+
+    handleChangeScheduleDate = (e) => {
+        const dateVal = e.target.value;
+        this.setState({
+            selectedScheduleDate: dateVal,
+            selectedScheduleSlot: null,
+            scheduleSlots: []
+        }, () => {
+            this.loadScheduleSlots(dateVal);
+        });
+    }
+
+    handleSelectScheduleSlot = (slot) => {
+        this.setState({ selectedScheduleSlot: slot });
+    }
+
+    handleSendScheduleSuggestion = () => {
+        const { selectedScheduleSlot, selectedScheduleDate, scheduleDates, dbUserData } = this.state;
+        const { userInfo, onSendCustomMessage } = this.props;
+        if (!selectedScheduleSlot || !userInfo || !onSendCustomMessage) return;
+
+        const dateObj = scheduleDates.find(d => String(d.value) === String(selectedScheduleDate));
+        const dateLabel = dateObj ? dateObj.label : moment(Number(selectedScheduleDate)).format('DD/MM/YYYY');
+
+        let priceValue = 'Chưa cập nhật';
+        if (dbUserData && dbUserData.doctorinforData && dbUserData.doctorinforData.priceTypeData) {
+            priceValue = dbUserData.doctorinforData.priceTypeData.valueVi;
+        }
+
+        const schedulePayload = {
+            doctorId: userInfo.id,
+            date: selectedScheduleDate,
+            dateLabel: dateLabel,
+            timeType: selectedScheduleSlot.timeType,
+            timeValueVi: selectedScheduleSlot.timeTypeData?.valueVi || '',
+            timeValueEn: selectedScheduleSlot.timeTypeData?.valueEn || '',
+            price: priceValue,
+            doctorName: `${userInfo.lastName || ''} ${userInfo.firstName || ''}`,
+            timeData: selectedScheduleSlot
+        };
+
+        const customMessageText = `[APPOINTMENT_SCHEDULE]${JSON.stringify(schedulePayload)}`;
+        onSendCustomMessage(customMessageText);
+
+        this.setState({
+            showScheduleSelector: false,
+            selectedScheduleSlot: null
+        });
+    }
+
+    handleOpenBookingModalFromCard = (scheduleData) => {
+        this.setState({
+            isBookingModalOpen: true,
+            bookingModalData: {
+                ...scheduleData.timeData,
+                doctorId: scheduleData.doctorId
+            }
+        });
     }
 
     loadHeaderUserData = async (selectedDoctor) => {
@@ -326,12 +461,71 @@ class ChatBox extends Component {
                                                                                             <img src={msg.image} alt="Sent" className="dcd-msg-image" />
                                                                                         </div>
                                                                                     )}
-                                                                                    {msg.text && (
-                                                                                        <div
-                                                                                            className="dcd-text markdown-content"
-                                                                                            dangerouslySetInnerHTML={{ __html: mdParser.render(msg.text) }}
-                                                                                        />
-                                                                                    )}
+                                                                                    {msg.text && (() => {
+                                                                                        let isAppointmentSchedule = false;
+                                                                                        let scheduleData = null;
+                                                                                        if (msg.text.startsWith('[APPOINTMENT_SCHEDULE]')) {
+                                                                                            try {
+                                                                                                scheduleData = JSON.parse(msg.text.replace('[APPOINTMENT_SCHEDULE]', ''));
+                                                                                                isAppointmentSchedule = true;
+                                                                                            } catch (e) {
+                                                                                                console.error("Error parsing appointment JSON:", e);
+                                                                                            }
+                                                                                        }
+
+                                                                                        if (isAppointmentSchedule && scheduleData) {
+                                                                                            const isMeDoctor = userInfo && userInfo.roleId === 'R2';
+                                                                                            return (
+                                                                                                <div className="dcd-appointment-card">
+                                                                                                    <div className="appointment-card-header">
+                                                                                                        <i className="fas fa-calendar-check card-icon"></i>
+                                                                                                        <span>ĐỀ XUẤT LỊCH HẸN KHÁM</span>
+                                                                                                    </div>
+                                                                                                    <div className="appointment-card-body">
+                                                                                                        <div className="appointment-info-row">
+                                                                                                            <span className="label">Bác sĩ tư vấn:</span>
+                                                                                                            <span className="value font-weight-bold">{scheduleData.doctorName}</span>
+                                                                                                        </div>
+                                                                                                        <div className="appointment-info-row">
+                                                                                                            <span className="label">Khung giờ:</span>
+                                                                                                            <span className="value-highlight">
+                                                                                                                <i className="far fa-clock"></i> {this.props.language === 'vi' ? scheduleData.timeValueVi : scheduleData.timeValueEn}
+                                                                                                            </span>
+                                                                                                        </div>
+                                                                                                        <div className="appointment-info-row">
+                                                                                                            <span className="label">Ngày khám:</span>
+                                                                                                            <span className="value">{scheduleData.dateLabel}</span>
+                                                                                                        </div>
+                                                                                                        {scheduleData.price && (
+                                                                                                            <div className="appointment-info-row">
+                                                                                                                <span className="label">Giá khám:</span>
+                                                                                                                <span className="value price-tag">{scheduleData.price}</span>
+                                                                                                            </div>
+                                                                                                        )}
+                                                                                                    </div>
+                                                                                                    {isMeDoctor ? (
+                                                                                                        <div className="appointment-sent-badge">
+                                                                                                            <i className="fas fa-check-circle"></i> Đã đề xuất tới bệnh nhân
+                                                                                                        </div>
+                                                                                                    ) : (
+                                                                                                        <button
+                                                                                                            className="appointment-btn-confirm"
+                                                                                                            onClick={() => this.handleOpenBookingModalFromCard(scheduleData)}
+                                                                                                        >
+                                                                                                            Đặt lịch hẹn ngay
+                                                                                                        </button>
+                                                                                                    )}
+                                                                                                </div>
+                                                                                            );
+                                                                                        }
+
+                                                                                        return (
+                                                                                            <div
+                                                                                                className="dcd-text markdown-content"
+                                                                                                dangerouslySetInnerHTML={{ __html: mdParser.render(msg.text) }}
+                                                                                            />
+                                                                                        );
+                                                                                    })()}
 
                                                                                     {messageReactions.length > 0 && (
                                                                                         <div className="dcd-bubble-reactions"
@@ -454,6 +648,7 @@ class ChatBox extends Component {
                                     onToggleAutoReply={handleToggleAutoReply}
                                     isAutoReplyActive={isAutoReplyActive}
                                     quickReplies={quickReplies}
+                                    onOpenScheduleSelector={this.handleOpenScheduleSelector}
                                 />
 
                                 <div className="dcd-input-container">
@@ -667,6 +862,82 @@ class ChatBox extends Component {
                             );
                         })()}
                     </div>
+                )}
+
+                {this.state.showScheduleSelector && (
+                    <div className="dcd-schedule-selector-overlay">
+                        <div className="dcd-schedule-selector-popup">
+                            <div className="selector-header">
+                                <h3>Đề xuất lịch khám bệnh</h3>
+                                <button
+                                    className="close-selector-btn"
+                                    onClick={() => this.setState({ showScheduleSelector: false, selectedScheduleSlot: null })}
+                                >
+                                    <i className="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div className="selector-body">
+                                <div className="selector-field">
+                                    <label>Chọn ngày đề xuất:</label>
+                                    <select
+                                        value={this.state.selectedScheduleDate}
+                                        onChange={this.handleChangeScheduleDate}
+                                    >
+                                        {this.state.scheduleDates.map((item, idx) => (
+                                            <option key={idx} value={item.value}>
+                                                {item.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="selector-field">
+                                    <label>Chọn khung giờ trống:</label>
+                                    {this.state.isLoadingScheduleSlots ? (
+                                        <div className="selector-loading">
+                                            <i className="fas fa-spinner fa-spin"></i> Đang tìm lịch khám...
+                                        </div>
+                                    ) : this.state.scheduleSlots.length > 0 ? (
+                                        <div className="slots-grid">
+                                            {this.state.scheduleSlots.map((slot, idx) => {
+                                                const isSelected = this.state.selectedScheduleSlot?.id === slot.id;
+                                                return (
+                                                    <button
+                                                        key={idx}
+                                                        className={`slot-pill ${isSelected ? 'selected' : ''}`}
+                                                        onClick={() => this.handleSelectScheduleSlot(slot)}
+                                                    >
+                                                        {this.props.language === 'vi' ? slot.timeTypeData?.valueVi : slot.timeTypeData?.valueEn}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    ) : (
+                                        <div className="no-slots-alert">
+                                            <i className="fas fa-exclamation-circle"></i> Bác sĩ chưa đăng ký lịch khám cho ngày này. Vui lòng chọn ngày khác hoặc cập nhật lịch trước.
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="selector-footer">
+                                <button
+                                    className="send-proposal-btn"
+                                    disabled={!this.state.selectedScheduleSlot}
+                                    onClick={this.handleSendScheduleSuggestion}
+                                >
+                                    Gửi đề xuất lịch khám
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {this.state.isBookingModalOpen && this.state.bookingModalData && (
+                    <BookingModal
+                        isTheModalOpen={this.state.isBookingModalOpen}
+                        closeModal={() => this.setState({ isBookingModalOpen: false })}
+                        dataTimeModal={this.state.bookingModalData}
+                        doctorId={this.state.bookingModalData?.doctorId || ''}
+                    />
                 )}
             </div>
         );
