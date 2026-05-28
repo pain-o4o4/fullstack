@@ -206,7 +206,7 @@ class DetailDoctor extends Component {
                                         {language === LANGUAGES.VI ? nameVi : nameEn}
                                     </div>
 
-                                    
+
                                     <div className='doctor-subtitle-meta'>
                                         {detailDoctor?.doctorinforData?.specialtyData?.name && (
                                             <span className='meta-item' onClick={() => this.handleViewDetail({ id: detailDoctor.doctorinforData.specialtyId || detailDoctor.doctorinforData.specialtyData.id }, 'SPECIALTY')}>
@@ -229,7 +229,7 @@ class DetailDoctor extends Component {
                                         }
                                     </div>
 
-                                    
+
                                     <div className='doctor-hero-actions'>
                                         <button
                                             onClick={this.handleStartChat}
@@ -241,12 +241,12 @@ class DetailDoctor extends Component {
 
                                         {detailDoctor?.phonenumber && (
                                             <a href={`tel:${detailDoctor.phonenumber}`} className='action-secondary-link' title="Bấm để gọi ngay">
-                                                <i className='fas fa-phone-alt'></i> {language === 'vi' ? 'Gọi ngay' : 'Call'}
+                                                <i className='fas fa-phone-alt'></i>  <span>{detailDoctor.phonenumber}</span>
                                             </a>
                                         )}
                                         {detailDoctor?.email && (
                                             <a href={`mailto:${detailDoctor.email}`} className='action-secondary-link' title="Bấm để gửi email">
-                                                <i className='fas fa-envelope'></i> {language === 'vi' ? 'Gửi Email' : 'Email'}
+                                                <i className='fas fa-envelope'></i>  <span>{detailDoctor.email}</span>
                                             </a>
                                         )}
                                     </div>
@@ -266,14 +266,14 @@ class DetailDoctor extends Component {
                                     />
                                 </div>
                             </div>
-                            
+
                             <div className='detail-info-doctor'>
                                 {detailDoctor && detailDoctor.markdownData && detailDoctor.markdownData.contentHTML
                                     && <div dangerouslySetInnerHTML={{ __html: detailDoctor.markdownData.contentHTML }}></div>
                                 }
                             </div>
 
-                            
+
                             {listRelatedDoctors && listRelatedDoctors.length > 0 && (
                                 <div className="related-doctors-section">
                                     <div className="related-title">
@@ -288,9 +288,9 @@ class DetailDoctor extends Component {
                                                     isShowPrice={false}
                                                     isShowContact={true}
                                                 />
-                                                <div className="view-more">
+                                                {/* <div className="view-more">
                                                     <FormattedMessage id="homepage.more-info" defaultMessage="Xem thêm" />
-                                                </div>
+                                                </div> */}
                                             </div>
                                         ))}
                                     </div>

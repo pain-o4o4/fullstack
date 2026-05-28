@@ -87,6 +87,12 @@
                 flex-wrap: wrap;
                 gap: 16px;
 
+                span {
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+
                 .btn-quick-chat {
                     display: inline-flex;
                     align-items: center;
@@ -272,14 +278,7 @@
                         min-width: 0 !important;
                         overflow: hidden !important;
 
-                        &::before {
-                            content: "BÁC SĨ CHUYÊN KHOA" !important;
-                            font-size: 10px !important;
-                            font-weight: 700 !important;
-                            color: #0071e3 !important;
-                            letter-spacing: 1px !important;
-                            text-transform: uppercase !important;
-                        }
+
 
                         .up {
                             font-size: 22px !important;
@@ -300,7 +299,7 @@
                         }
 
                         .doctor-contact-container {
-                            margin-top: 14px;
+                            // margin-top: 14px;
                             display: flex;
                             flex-direction: column;
                             gap: 12px;
@@ -808,12 +807,12 @@
                     }
                 }
 
-                .view-more {
-                    margin-top: 12px !important;
-                    font-size: 13px !important;
-                    color: #0071e3 !important;
-                    font-weight: 600 !important;
-                }
+                // .view-more {
+                //     margin-top: 12px !important;
+                //     font-size: 13px !important;
+                //     color: #0071e3 !important;
+                //     font-weight: 600 !important;
+                // }
             }
         }
     }

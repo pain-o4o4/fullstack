@@ -504,6 +504,7 @@ let getProfileDoctorById = (doctorId) => {
                                 { model: db.Allcode, as: "provinceTypeData", attributes: ['valueEn', 'valueVi'] },
                                 { model: db.Allcode, as: "paymentTypeData", attributes: ['valueEn', 'valueVi'] },
                                 { model: db.Clinic, as: "clinicData", attributes: ['name', 'address'] },
+                                { model: db.Specialty, as: "specialtyData", attributes: ['id', 'name'] },
                             ]
 
                         }

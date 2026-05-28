@@ -33,9 +33,15 @@ class SelectService extends Component {
 
     componentDidMount() {
         window.scrollTo(0, 0);
-        this.props.fetchAllDoctors();
-        this.props.fecthAllSpecialties();
-        this.props.fecthAllClinics();
+        if (!this.props.allDoctors || this.props.allDoctors.length === 0) {
+            this.props.fetchAllDoctors();
+        }
+        if (!this.props.allSpecialties || this.props.allSpecialties.length === 0) {
+            this.props.fecthAllSpecialties();
+        }
+        if (!this.props.allClinics || this.props.allClinics.length === 0) {
+            this.props.fecthAllClinics();
+        }
     }
 
     handleTabChange = (tabId) => {

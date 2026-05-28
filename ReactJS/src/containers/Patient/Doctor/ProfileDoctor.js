@@ -75,6 +75,12 @@ class ProfileDoctor extends Component {
                         />
                     </div>
                     <div className='content-right'>
+                        <div className="doctor-specialty-badge">
+                            {dataProfile && dataProfile.doctorinforData && dataProfile.doctorinforData.specialtyData && dataProfile.doctorinforData.specialtyData.name
+                                ? `${language === LANGUAGES.VI ? 'BÁC SĨ CHUYÊN KHOA' : 'SPECIALIST IN'} ${dataProfile.doctorinforData.specialtyData.name.toUpperCase()}`
+                                : (language === LANGUAGES.VI ? 'BÁC SĨ ĐIỀU TRỊ' : 'ATTENDING PHYSICIAN')
+                            }
+                        </div>
                         <div className='up'>
                             {language === LANGUAGES.VI ? nameVi : nameEn}
                         </div>
@@ -126,10 +132,10 @@ class ProfileDoctor extends Component {
                                 </div>
                                 <div className="doctor-contact-actions">
                                     {dataProfile && dataProfile.phonenumber && (
-                                        <a 
-                                            href={`https://zalo.me/${dataProfile.phonenumber}`} 
-                                            target="_blank" 
-                                            rel="noopener noreferrer" 
+                                        <a
+                                            href={`https://zalo.me/${dataProfile.phonenumber}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
                                             className="action-btn btn-zalo"
                                             onClick={(e) => e.stopPropagation()}
                                         >
@@ -138,7 +144,7 @@ class ProfileDoctor extends Component {
                                         </a>
                                     )}
                                     {dataProfile && dataProfile.id && (
-                                        <div 
+                                        <div
                                             className="action-btn btn-chat"
                                             onClick={(e) => {
                                                 e.stopPropagation();
