@@ -30,8 +30,8 @@ class HomeFooter extends Component {
                     </div>
                     <div className="hm-footer-col">
                         <div className="footer-title"><FormattedMessage id="homefooter.contact" /></div>
-                        <div className="footer-text">Email: support@bookingcare.vn</div>
-                        <div className="footer-text">Website: bookingcare.vn</div>
+                        <div className="footer-text">Email: support@paincare.vn</div>
+                        <div className="footer-text">Website: paincare.id.vn</div>
                     </div>
                     <div className="hm-footer-col">
                         <div className="footer-title"><FormattedMessage id="homefooter.follow-us" /></div>

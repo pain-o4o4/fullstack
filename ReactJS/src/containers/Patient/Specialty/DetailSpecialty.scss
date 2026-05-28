@@ -98,7 +98,7 @@
                 overflow: hidden;
 
                 &:hover {
-                    transform: translateY(-8px);
+                    transform: translateY(-1px);
                     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
                 }
 
@@ -137,9 +137,9 @@
                                 }
                             }
 
-                            &:hover .content-left .doctor-avatar {
-                                transform: scale(1.05);
-                            }
+                            // &:hover .content-left .doctor-avatar {
+                            //     transform: scale(1.05);
+                            // }
 
                             .content-right {
                                 display: flex !important;

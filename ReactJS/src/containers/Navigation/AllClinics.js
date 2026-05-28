@@ -27,11 +27,11 @@ class AllClinic extends Component {
         return (
             <div className="all-clinic-container">
                 <HomeHeader isShowBanner={false} />
-                <CustomBreadcrumb 
+                <CustomBreadcrumb
                     items={[
                         { label: <FormattedMessage id="homeheader.booking" />, link: '/select-service' },
                         { label: <FormattedMessage id="homeheader.MedicalFacility" /> }
-                    ]} 
+                    ]}
                 />
 
 
@@ -55,7 +55,6 @@ class AllClinic extends Component {
                                             <div className="clinic-address">
                                                 <i className="fas fa-map-marker-alt"></i> {item.address}
                                             </div>
-                                            <div className="clinic-action">Xem chi tiết <i className="fas fa-chevron-right"></i></div>
                                         </div>
                                     </div>
                                 )

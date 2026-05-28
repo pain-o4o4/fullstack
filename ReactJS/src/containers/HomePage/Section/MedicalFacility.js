@@ -99,9 +99,9 @@ class MedicalFacility extends Component {
                                                 <p className="maven-card-desc">
                                                     {item.address}
                                                 </p>
-                                                <button className="maven-card-btn" style={{ backgroundColor: dotColor, color: '#fff' }}>
+                                                {/* <button className="maven-card-btn" style={{ backgroundColor: dotColor, color: '#fff' }}>
                                                     Learn more
-                                                </button>
+                                                </button> */}
                                             </div>
                                         </div>
                                     </div>

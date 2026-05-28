@@ -5,6 +5,7 @@ import HomeHeader from './HomeHeader'
 import './HomePage.scss';
 import HomeFooter from '../HomePage/HomeFooter';
 import { withRouter } from '../../components/Navigator';
+import * as action from '../../store/actions';
 
 // HomeTabs
 import IntroTab from './HomeTabs/IntroTab';
@@ -41,6 +42,12 @@ class HomePage extends Component {
         this.tabRefs = {};
     }
 
+    componentDidMount() {
+        if (this.props.fetchAllSpecialties) {
+            this.props.fetchAllSpecialties();
+        }
+    }
+
     handleTabChange = (tabId) => {
         this.setState({ activeTab: tabId }, () => {
             if (this.tabsSectionRef.current) {
@@ -54,11 +61,12 @@ class HomePage extends Component {
 
     render() {
         const { activeTab } = this.state;
+        const { allSpecialties } = this.props;
         return (
             <div className="hm-page-container">
                 <HomeHeader isShowBanner={true} />
 
-                
+
                 <div className="hm-tabs-section" ref={this.tabsSectionRef}>
                     <div className="hm-tabs-container">
                         <div className="hm-segmented-bar">
@@ -83,14 +91,14 @@ class HomePage extends Component {
                     </div>
                 </div>
 
-                
+
                 <div className="hm-medicine-banner">
                     <div className="hm-medicine-text" data-sal="slide-up">
                         <FormattedMessage id="homepage.medicine-text" />
                     </div>
                 </div>
 
-                
+
                 <div className="hm-offer-section" id="oferta">
                     <div className="hm-section-header">
                         <div className="hm-section-title">
@@ -143,7 +151,7 @@ class HomePage extends Component {
                     </ul>
                 </div>
 
-                
+
                 <div className="hm-gallery-section">
                     <div className="hm-gallery-container">
                         <div className="gallery-grid">
@@ -166,7 +174,7 @@ class HomePage extends Component {
                     </div>
                 </div>
 
-                
+
                 <div className="hm-reach-section">
                     <div className="hm-reach-wrapper">
                         <div className="hm-reach-top">
@@ -197,7 +205,7 @@ class HomePage extends Component {
                     </div>
                 </div>
 
-                
+
                 <div className="hm-about-section" id="o-nas">
                     <div className="hm-section-header">
                         <div className="hm-section-title">
@@ -220,26 +228,46 @@ class HomePage extends Component {
                     </div>
                 </div>
 
-                
+
                 <div className="hm-successes-section">
                     <div className="hm-successes-wrapper">
                         <div className="hm-successes-title">
                             <FormattedMessage id="homepage.success-title" />
                         </div>
                         <ul className="hm-successes-badges">
-                            <li className="hm-badge"><FormattedMessage id="homepage.neurosurgery" /></li>
-                            <li className="hm-badge"><FormattedMessage id="homepage.cardiology" /></li>
-                            <li className="hm-badge"><FormattedMessage id="homepage.vascular" /></li>
-                            <li className="hm-badge"><FormattedMessage id="homepage.oncology" /></li>
-                            <li className="hm-badge"><FormattedMessage id="homepage.lab-tests" /></li>
+                            {allSpecialties && allSpecialties.length > 0 ? (
+                                allSpecialties.slice(0, 5).map((item, index) => {
+                                    return (
+                                        <li
+                                            key={index}
+                                            className="hm-badge"
+                                            onClick={() => this.props.navigate(`/detail-specialty/${item.id}`)}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            {item.name}
+                                        </li>
+                                    )
+                                })
+                            ) : (
+                                <>
+                                    <li className="hm-badge"><FormattedMessage id="homepage.neurosurgery" /></li>
+                                    <li className="hm-badge"><FormattedMessage id="homepage.cardiology" /></li>
+                                    <li className="hm-badge"><FormattedMessage id="homepage.vascular" /></li>
+                                    <li className="hm-badge"><FormattedMessage id="homepage.oncology" /></li>
+                                    <li className="hm-badge"><FormattedMessage id="homepage.lab-tests" /></li>
+                                </>
+                            )}
                         </ul>
-                        <div className="hm-successes-more">
+                        <div
+                            className="hm-successes-more"
+                            onClick={() => this.props.navigate(`/all-specialty`)}
+                        >
                             <FormattedMessage id="homepage.and-more" />
                         </div>
                     </div>
                 </div>
 
-                
+
                 <div className="hm-merits-section" id="co-nas-wyroznia">
                     <div className="hm-section-header center">
                         <div className="hm-section-title">
@@ -277,7 +305,7 @@ class HomePage extends Component {
                     </ul>
                 </div>
 
-                
+
                 <div className="hm-contact-banner">
                     <div className="hm-banner-wrapper">
                         <div className="hm-banner-col">
@@ -310,9 +338,15 @@ class HomePage extends Component {
 
 const mapStateToProps = state => {
     return {
-        isLoggedIn: state.user.isLoggedIn
+        isLoggedIn: state.user.isLoggedIn,
+        allSpecialties: state.admin.allSpecialties
     };
 };
 
-// export default connect(mapStateToProps)(HomePage);
-export default withRouter(connect(mapStateToProps)(HomePage));
+const mapDispatchToProps = dispatch => {
+    return {
+        fetchAllSpecialties: () => dispatch(action.fecthAllSpecialties())
+    };
+};
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(HomePage));

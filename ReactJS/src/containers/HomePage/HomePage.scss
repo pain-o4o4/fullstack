@@ -452,6 +452,13 @@ ul {
         font-size: 18px;
         color: $text-secondary;
         font-style: italic;
+
+        cursor: pointer;
+
+        &:hover {
+            color: $apple-blue;
+            text-decoration: underline;
+        }
     }
 }
 
