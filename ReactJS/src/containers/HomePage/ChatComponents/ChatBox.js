@@ -25,6 +25,155 @@ const REACTION_LIST = [
     { id: 'like', img: 'https://emojicdn.elk.sh/%F0%9F%91%8D?style=apple', alt: 'like' }
 ];
 
+class InteractiveAppointmentCard extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            doctorData: null,
+            slotData: null,
+            isLoading: true,
+            isBooked: false
+        };
+    }
+
+    async componentDidMount() {
+        await this.loadData();
+    }
+
+    async componentDidUpdate(prevProps) {
+        if (prevProps.doctorId !== this.props.doctorId || 
+            prevProps.date !== this.props.date || 
+            prevProps.timeType !== this.props.timeType ||
+            prevProps.language !== this.props.language) {
+            await this.loadData();
+        }
+    }
+
+    loadData = async () => {
+        const { doctorId, date, timeType } = this.props;
+        this.setState({ isLoading: true });
+        try {
+            // 1. Fetch Doctor details
+            let docRes = await getDetailDoctorByIdService(doctorId);
+            let doctorData = null;
+            if (docRes && docRes.errCode === 0) {
+                doctorData = docRes.data;
+            }
+
+            // 2. Fetch Schedule/Slot details for that date
+            let schedRes = await getScheduleByDate(doctorId, date);
+            let slotData = null;
+            let isBooked = false;
+            if (schedRes && schedRes.errCode === 0 && schedRes.data) {
+                const matchingSlot = schedRes.data.find(item => item.timeType === timeType);
+                if (matchingSlot) {
+                    slotData = matchingSlot;
+                    if (matchingSlot.isFull === true) {
+                        isBooked = true;
+                    }
+                }
+            }
+
+            this.setState({
+                doctorData,
+                slotData,
+                isBooked,
+                isLoading: false
+            });
+        } catch (e) {
+            console.error("Error loading interactive card dynamic data:", e);
+            this.setState({ isLoading: false });
+        }
+    }
+
+    render() {
+        const { isLoading, doctorData, slotData, isBooked } = this.state;
+        const { language, userInfo, onBook } = this.props;
+
+        if (isLoading) {
+            return (
+                <div className="dcd-appointment-card loading">
+                    <div className="card-skeleton-header">
+                        <i className="fas fa-spinner fa-spin"></i>
+                        <span>{language === 'vi' ? 'Đang tải thông tin...' : 'Loading proposal...'}</span>
+                    </div>
+                </div>
+            );
+        }
+
+        if (!doctorData) {
+            return (
+                <div className="dcd-appointment-card error">
+                    <i className="fas fa-exclamation-triangle"></i>
+                    <span>{language === 'vi' ? 'Không thể tải thông tin lịch khám' : 'Failed to load booking details'}</span>
+                </div>
+            );
+        }
+
+        const isMeDoctor = userInfo && Number(userInfo.id) === Number(doctorData.id);
+        const doctorName = `${doctorData.lastName || ''} ${doctorData.firstName || ''}`;
+        const price = doctorData.doctorinforData?.priceTypeData
+            ? (language === 'vi' ? doctorData.doctorinforData.priceTypeData.valueVi : doctorData.doctorinforData.priceTypeData.valueEn)
+            : 'Chưa cập nhật';
+
+        const dateLabel = moment(Number(this.props.date)).locale(language).format('dddd - DD/MM/YYYY');
+        const formattedDateLabel = dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1);
+
+        let timeLabel = '';
+        if (slotData && slotData.timeTypeData) {
+            timeLabel = language === 'vi' ? slotData.timeTypeData.valueVi : slotData.timeTypeData.valueEn;
+        } else {
+            timeLabel = this.props.timeType;
+        }
+
+        return (
+            <div className={`dcd-appointment-card ${isBooked ? 'is-booked' : ''}`}>
+                <div className="appointment-card-header">
+                    <i className="fas fa-calendar-check card-icon"></i>
+                    <span>{language === 'vi' ? 'ĐỀ XUẤT LỊCH HẸN KHÁM' : 'APPOINTMENT SUGGESTION'}</span>
+                </div>
+                <div className="appointment-card-body">
+                    <div className="appointment-info-row">
+                        <span className="label">{language === 'vi' ? 'Bác sĩ tư vấn:' : 'Consultant:'}</span>
+                        <span className="value font-weight-bold">{doctorName}</span>
+                    </div>
+                    <div className="appointment-info-row">
+                        <span className="label">{language === 'vi' ? 'Khung giờ:' : 'Time Slot:'}</span>
+                        <span className="value-highlight">
+                            <i className="far fa-clock"></i> {timeLabel}
+                        </span>
+                    </div>
+                    <div className="appointment-info-row">
+                        <span className="label">{language === 'vi' ? 'Ngày khám:' : 'Date:'}</span>
+                        <span className="value">{formattedDateLabel}</span>
+                    </div>
+                    <div className="appointment-info-row">
+                        <span className="label">{language === 'vi' ? 'Giá khám:' : 'Price:'}</span>
+                        <span className="value price-tag">{price}</span>
+                    </div>
+                </div>
+                {isBooked ? (
+                    <div className="appointment-booked-badge">
+                        <i className="fas fa-ban"></i> {language === 'vi' ? 'Khung giờ này đã đầy' : 'Fully booked'}
+                    </div>
+                ) : isMeDoctor ? (
+                    <div className="appointment-sent-badge">
+                        <i className="fas fa-check-circle"></i> {language === 'vi' ? 'Đã đề xuất tới bệnh nhân' : 'Sent to patient'}
+                    </div>
+                ) : (
+                    <button
+                        className="appointment-btn-confirm"
+                        onClick={() => onBook(slotData)}
+                        disabled={!slotData}
+                    >
+                        {language === 'vi' ? 'Đặt lịch hẹn ngay' : 'Book Appointment Now'}
+                    </button>
+                )}
+            </div>
+        );
+    }
+}
+
 class ChatBox extends Component {
     constructor(props) {
         super(props);
@@ -165,28 +314,14 @@ class ChatBox extends Component {
     }
 
     handleSendScheduleSuggestion = () => {
-        const { selectedScheduleSlot, selectedScheduleDate, scheduleDates, dbUserData } = this.state;
+        const { selectedScheduleSlot, selectedScheduleDate } = this.state;
         const { userInfo, onSendCustomMessage } = this.props;
         if (!selectedScheduleSlot || !userInfo || !onSendCustomMessage) return;
-
-        const dateObj = scheduleDates.find(d => String(d.value) === String(selectedScheduleDate));
-        const dateLabel = dateObj ? dateObj.label : moment(Number(selectedScheduleDate)).format('DD/MM/YYYY');
-
-        let priceValue = 'Chưa cập nhật';
-        if (dbUserData && dbUserData.doctorinforData && dbUserData.doctorinforData.priceTypeData) {
-            priceValue = dbUserData.doctorinforData.priceTypeData.valueVi;
-        }
 
         const schedulePayload = {
             doctorId: userInfo.id,
             date: selectedScheduleDate,
-            dateLabel: dateLabel,
-            timeType: selectedScheduleSlot.timeType,
-            timeValueVi: selectedScheduleSlot.timeTypeData?.valueVi || '',
-            timeValueEn: selectedScheduleSlot.timeTypeData?.valueEn || '',
-            price: priceValue,
-            doctorName: `${userInfo.lastName || ''} ${userInfo.firstName || ''}`,
-            timeData: selectedScheduleSlot
+            timeType: selectedScheduleSlot.timeType
         };
 
         const customMessageText = `[APPOINTMENT_SCHEDULE]${JSON.stringify(schedulePayload)}`;
@@ -198,13 +333,10 @@ class ChatBox extends Component {
         });
     }
 
-    handleOpenBookingModalFromCard = (scheduleData) => {
+    handleOpenBookingModalFromCard = (slotObj) => {
         this.setState({
             isBookingModalOpen: true,
-            bookingModalData: {
-                ...scheduleData.timeData,
-                doctorId: scheduleData.doctorId
-            }
+            bookingModalData: slotObj
         });
     }
 
@@ -474,48 +606,15 @@ class ChatBox extends Component {
                                                                                         }
 
                                                                                         if (isAppointmentSchedule && scheduleData) {
-                                                                                            const isMeDoctor = userInfo && userInfo.roleId === 'R2';
                                                                                             return (
-                                                                                                <div className="dcd-appointment-card">
-                                                                                                    <div className="appointment-card-header">
-                                                                                                        <i className="fas fa-calendar-check card-icon"></i>
-                                                                                                        <span>ĐỀ XUẤT LỊCH HẸN KHÁM</span>
-                                                                                                    </div>
-                                                                                                    <div className="appointment-card-body">
-                                                                                                        <div className="appointment-info-row">
-                                                                                                            <span className="label">Bác sĩ tư vấn:</span>
-                                                                                                            <span className="value font-weight-bold">{scheduleData.doctorName}</span>
-                                                                                                        </div>
-                                                                                                        <div className="appointment-info-row">
-                                                                                                            <span className="label">Khung giờ:</span>
-                                                                                                            <span className="value-highlight">
-                                                                                                                <i className="far fa-clock"></i> {this.props.language === 'vi' ? scheduleData.timeValueVi : scheduleData.timeValueEn}
-                                                                                                            </span>
-                                                                                                        </div>
-                                                                                                        <div className="appointment-info-row">
-                                                                                                            <span className="label">Ngày khám:</span>
-                                                                                                            <span className="value">{scheduleData.dateLabel}</span>
-                                                                                                        </div>
-                                                                                                        {scheduleData.price && (
-                                                                                                            <div className="appointment-info-row">
-                                                                                                                <span className="label">Giá khám:</span>
-                                                                                                                <span className="value price-tag">{scheduleData.price}</span>
-                                                                                                            </div>
-                                                                                                        )}
-                                                                                                    </div>
-                                                                                                    {isMeDoctor ? (
-                                                                                                        <div className="appointment-sent-badge">
-                                                                                                            <i className="fas fa-check-circle"></i> Đã đề xuất tới bệnh nhân
-                                                                                                        </div>
-                                                                                                    ) : (
-                                                                                                        <button
-                                                                                                            className="appointment-btn-confirm"
-                                                                                                            onClick={() => this.handleOpenBookingModalFromCard(scheduleData)}
-                                                                                                        >
-                                                                                                            Đặt lịch hẹn ngay
-                                                                                                        </button>
-                                                                                                    )}
-                                                                                                </div>
+                                                                                                <InteractiveAppointmentCard
+                                                                                                    doctorId={scheduleData.doctorId}
+                                                                                                    date={scheduleData.date}
+                                                                                                    timeType={scheduleData.timeType}
+                                                                                                    language={this.props.language}
+                                                                                                    userInfo={userInfo}
+                                                                                                    onBook={this.handleOpenBookingModalFromCard}
+                                                                                                />
                                                                                             );
                                                                                         }
 

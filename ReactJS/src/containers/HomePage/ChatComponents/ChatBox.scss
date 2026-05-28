@@ -1432,6 +1432,80 @@
             font-size: 14px;
         }
     }
+
+    &.loading {
+        background: rgba(255, 255, 255, 0.6);
+        border-color: rgba(0, 113, 227, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 140px;
+
+        .card-skeleton-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #0071e3;
+            font-size: 13px;
+            font-weight: 600;
+
+            i {
+                font-size: 16px;
+            }
+        }
+    }
+
+    &.error {
+        background: #fff5f5;
+        border-color: #ff3b30;
+        color: #ff3b30;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 120px;
+        font-size: 13px;
+        font-weight: 600;
+
+        i {
+            font-size: 20px;
+        }
+    }
+
+    &.is-booked {
+        background: #fcfcfd;
+        border-color: #d1d1d6;
+        opacity: 0.85;
+
+        &:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transform: none;
+        }
+
+        .appointment-card-header {
+            color: #8e8e93;
+        }
+    }
+
+    .appointment-booked-badge {
+        width: 100%;
+        background: rgba(255, 59, 48, 0.08);
+        color: #ff3b30;
+        border-radius: 10px;
+        padding: 10px;
+        font-weight: 600;
+        font-size: 13px;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+
+        i {
+            font-size: 14px;
+        }
+    }
 }
 
 .dcd-schedule-selector-overlay {
