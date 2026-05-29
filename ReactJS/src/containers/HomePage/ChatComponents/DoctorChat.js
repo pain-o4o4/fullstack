@@ -223,7 +223,7 @@ class DoctorChat extends Component {
             const { userInfo } = this.props;
             const sId = String(data.senderId || "").trim();
             const rId = String(data.receiverId || "").trim();
-            
+
             // Luôn lấy state mới nhất ngay tại thời điểm nhận tin nhắn
             const { selectedDoctor } = this.state;
             const curSelectedId = String(selectedDoctor?.id || "").trim();
@@ -252,7 +252,7 @@ class DoctorChat extends Component {
                         // 2. Nếu đã tồn tại (tin nhắn tạm của mình), cập nhật thành tin nhắn thật
                         newMessages = prevState.messages.map(m => {
                             const isMatchMsg = (m.id && data.id && String(m.id) === String(data.id)) ||
-                                               (data.idempotencyKey && String(m.idempotencyKey) === String(data.idempotencyKey));
+                                (data.idempotencyKey && String(m.idempotencyKey) === String(data.idempotencyKey));
                             if (isMatchMsg) {
                                 return {
                                     ...data,
@@ -413,8 +413,8 @@ class DoctorChat extends Component {
                 // Get messages from offline queue for this conversation
                 const { offlineQueue } = this.props;
                 const conversationOfflineMsgs = offlineQueue
-                    .filter(msg => 
-                        String(msg.senderId) === String(userInfo.id) && 
+                    .filter(msg =>
+                        String(msg.senderId) === String(userInfo.id) &&
                         String(msg.receiverId) === String(selectedDoctor.id)
                     )
                     .map(msg => ({
@@ -951,11 +951,13 @@ class DoctorChat extends Component {
                         )}
 
                         <ChatBox
+                            isOpen={this.props.isOpen}
                             isSidebarHidden={this.state.isSidebarHidden}
                             onToggleSidebar={this.handleToggleSidebar}
                             filterTab={this.state.filterTab}
                             selectedDoctor={selectedDoctor}
                             userInfo={userInfo}
+                            language={this.props.language}
                             messages={this.state.messages}
                             inputText={this.state.inputText}
                             previewImage={this.state.previewImage}

@@ -25,7 +25,7 @@ const REACTION_LIST = [
     { id: 'like', img: 'https://emojicdn.elk.sh/%F0%9F%91%8D?style=apple', alt: 'like' }
 ];
 
-class InteractiveAppointmentCard extends Component {
+class AppointmentCard extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -41,8 +41,8 @@ class InteractiveAppointmentCard extends Component {
     }
 
     async componentDidUpdate(prevProps) {
-        if (prevProps.doctorId !== this.props.doctorId || 
-            prevProps.date !== this.props.date || 
+        if (prevProps.doctorId !== this.props.doctorId ||
+            prevProps.date !== this.props.date ||
             prevProps.timeType !== this.props.timeType ||
             prevProps.language !== this.props.language) {
             await this.loadData();
@@ -79,13 +79,24 @@ class InteractiveAppointmentCard extends Component {
                 slotData,
                 isBooked,
                 isLoading: false
+            }, () => {
+                if (this.props.onLoadComplete) {
+                    this.props.onLoadComplete();
+                }
             });
         } catch (e) {
             console.error("Error loading interactive card dynamic data:", e);
-            this.setState({ isLoading: false });
+            this.setState({ isLoading: false }, () => {
+                if (this.props.onLoadComplete) {
+                    this.props.onLoadComplete();
+                }
+            });
         }
     }
 
+    // handleViewDetailSchedule = (doctorId) => {
+    //     // this.props.history.push(`/detail-doctor/${doctorId}`);
+    // }
     render() {
         const { isLoading, doctorData, slotData, isBooked } = this.state;
         const { language, userInfo, onBook } = this.props;
@@ -116,6 +127,9 @@ class InteractiveAppointmentCard extends Component {
             ? (language === 'vi' ? doctorData.doctorinforData.priceTypeData.valueVi : doctorData.doctorinforData.priceTypeData.valueEn)
             : 'Chưa cập nhật';
 
+        const specialtyName = doctorData.doctorinforData?.specialtyData?.name || (language === 'vi' ? 'Chưa cập nhật' : 'Not updated');
+        const clinicName = doctorData.doctorinforData?.clinicData?.name || doctorData.doctorinforData?.nameClinic || (language === 'vi' ? 'Chưa cập nhật' : 'Not updated');
+
         const dateLabel = moment(Number(this.props.date)).locale(language).format('dddd - DD/MM/YYYY');
         const formattedDateLabel = dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1);
 
@@ -138,6 +152,14 @@ class InteractiveAppointmentCard extends Component {
                         <span className="value font-weight-bold">{doctorName}</span>
                     </div>
                     <div className="appointment-info-row">
+                        <span className="label">{language === 'vi' ? 'Chuyên khoa:' : 'Specialty:'}</span>
+                        <span className="value">{specialtyName}</span>
+                    </div>
+                    <div className="appointment-info-row">
+                        <span className="label">{language === 'vi' ? 'Nơi khám:' : 'Clinic:'}</span>
+                        <span className="value">{clinicName}</span>
+                    </div>
+                    <div className="appointment-info-row">
                         <span className="label">{language === 'vi' ? 'Khung giờ:' : 'Time Slot:'}</span>
                         <span className="value-highlight">
                             <i className="far fa-clock"></i> {timeLabel}
@@ -157,8 +179,11 @@ class InteractiveAppointmentCard extends Component {
                         <i className="fas fa-ban"></i> {language === 'vi' ? 'Khung giờ này đã đầy' : 'Fully booked'}
                     </div>
                 ) : isMeDoctor ? (
-                    <div className="appointment-sent-badge">
-                        <i className="fas fa-check-circle"></i> {language === 'vi' ? 'Đã đề xuất tới bệnh nhân' : 'Sent to patient'}
+                    <div
+                        className="appointment-sent-badge"
+                    // onClick={() => this.handleViewDetailSchedule(doctorData.id)}
+                    >
+                        <i className="fas fa-check-circle"></i> {language === 'vi' ? 'Đã đề xuất lịch khám bệnh' : 'Sent Appointment Suggestion'}
                     </div>
                 ) : (
                     <button
@@ -189,7 +214,8 @@ class ChatBox extends Component {
             selectedScheduleSlot: null,
             isLoadingScheduleSlots: false,
             isBookingModalOpen: false,
-            bookingModalData: null
+            bookingModalData: null,
+            isBannerHidden: false
         };
         this.reactionRef = React.createRef();
         this.textareaRef = React.createRef();
@@ -398,6 +424,10 @@ class ChatBox extends Component {
         if (prevProps.selectedDoctor?.id !== this.props.selectedDoctor?.id) {
             this.loadHeaderUserData(this.props.selectedDoctor);
         }
+
+        if (prevProps.isOpen === false && this.props.isOpen === true) {
+            this.setState({ isBannerHidden: false });
+        }
     }
 
     render() {
@@ -504,6 +534,22 @@ class ChatBox extends Component {
                                 </div>
                             </div>
 
+                            {userInfo && userInfo.roleId === 'R3' && !this.state.isBannerHidden && (
+                                <div className="dcd-emergency-banner">
+                                    <i className="fas fa-exclamation-triangle"></i>
+                                    <span>{this.props.language === 'vi'
+                                        ? 'Lưu ý: Nền tảng tư vấn từ xa không dùng cho các trường hợp cấp cứu. Nếu bạn đang gặp tình trạng nguy hiểm đến tính mạng, vui lòng gọi ngay 115 hoặc đến cơ sở y tế gần nhất.'
+                                        : 'Notice: Telehealth consulting is not for emergencies. If you are experiencing a life-threatening medical situation, please call emergency services immediately or go to the nearest hospital.'}</span>
+                                    <button
+                                        className="close-banner-btn"
+                                        onClick={() => this.setState({ isBannerHidden: true })}
+                                        title={this.props.language === 'vi' ? 'Đóng' : 'Close'}
+                                    >
+                                        <i className="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            )}
+
                             <div className="dcd-messages" onClick={onMarkAsRead} ref={this.reactionRef}>
                                 {(() => {
                                     let lastSentIndex = -1;
@@ -607,13 +653,18 @@ class ChatBox extends Component {
 
                                                                                         if (isAppointmentSchedule && scheduleData) {
                                                                                             return (
-                                                                                                <InteractiveAppointmentCard
+                                                                                                <AppointmentCard
                                                                                                     doctorId={scheduleData.doctorId}
                                                                                                     date={scheduleData.date}
                                                                                                     timeType={scheduleData.timeType}
                                                                                                     language={this.props.language}
                                                                                                     userInfo={userInfo}
                                                                                                     onBook={this.handleOpenBookingModalFromCard}
+                                                                                                    onLoadComplete={() => {
+                                                                                                        if (this.props.messagesEndRef && this.props.messagesEndRef.current) {
+                                                                                                            this.props.messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+                                                                                                        }
+                                                                                                    }}
                                                                                                 />
                                                                                             );
                                                                                         }
@@ -954,7 +1005,7 @@ class ChatBox extends Component {
                                             >
                                                 Đặt lịch khám bệnh
                                             </button>
-                                            
+
                                         </div>
                                     </div>
                                 </>

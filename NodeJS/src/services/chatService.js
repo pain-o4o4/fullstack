@@ -239,10 +239,38 @@ let searchUsersForChat = (userId, query) => {
                 let results = [];
 
                 if (user.roleId === 'R2') { // DOCTOR
-                    // Chỉ tìm bệnh nhân có lịch khám với bác sĩ này
+                    // Tìm tất cả bệnh nhân đã từng chat HOẶC đã đặt lịch
+                    let messages = await db.Message.findAll({
+                        where: {
+                            [Op.or]: [
+                                { senderId: userId },
+                                { receiverId: userId }
+                            ]
+                        },
+                        attributes: ['senderId', 'receiverId'],
+                        raw: true
+                    });
+                    
+                    let bookedPatients = await db.Booking.findAll({
+                        where: { doctorId: userId },
+                        attributes: ['patientId'],
+                        raw: true
+                    });
+
+                    let relatedUserIds = new Set();
+                    messages.forEach(msg => {
+                        if (msg.senderId && msg.senderId !== userId) relatedUserIds.add(msg.senderId);
+                        if (msg.receiverId && msg.receiverId !== userId) relatedUserIds.add(msg.receiverId);
+                    });
+                    bookedPatients.forEach(booking => {
+                        if (booking.patientId) relatedUserIds.add(booking.patientId);
+                    });
+
                     let whereClause = {
-                        roleId: 'R3' // PATIENT
+                        roleId: 'R3', // PATIENT
+                        id: { [Op.in]: Array.from(relatedUserIds) }
                     };
+                    
                     if (query && query.trim()) {
                         whereClause[Op.or] = [
                             { firstName: { [Op.like]: `%${query}%` } },
@@ -252,12 +280,6 @@ let searchUsersForChat = (userId, query) => {
 
                     results = await db.User.findAll({
                         where: whereClause,
-                        include: [{
-                            model: db.Booking,
-                            as: 'patientBookingData',
-                            where: { doctorId: userId },
-                            attributes: []
-                        }],
                         attributes: ['id', 'firstName', 'lastName', 'image'],
                         raw: true
                     });

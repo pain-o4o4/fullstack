@@ -1,4 +1,3 @@
-
 .dcd-chat-area {
     flex: 1;
     display: flex;
@@ -1310,9 +1309,7 @@
     }
 }
 
-// ----------------------------------------------------
 // INTERACTIVE APPOINTMENT CARD & SELECTOR STYLES
-// ----------------------------------------------------
 
 .dcd-appointment-card {
     background: #ffffff;
@@ -1619,7 +1616,7 @@
                     padding-right: 4px;
 
                     .slot-pill {
-                        height: 36px;
+                        height: 50px;
                         border-radius: 8px;
                         border: 1px solid rgba(0, 113, 227, 0.15);
                         background: #ffffff;
@@ -1696,12 +1693,17 @@
 }
 
 .item-icon-wrap.schedule {
-    color: #34c759 !important;
+    color: #0071e3 !important;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes scaleUp {
@@ -1709,8 +1711,49 @@
         opacity: 0;
         transform: scale(0.9) translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: scale(1) translateY(0);
+    }
+}
+.dcd-emergency-banner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #ffebee;
+    color: #c62828;
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+    border-bottom: 1px solid #ffcdd2;
+    z-index: 10;
+    flex-shrink: 0;
+
+    i {
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+
+    span {
+        flex: 1;
+    }
+
+    .close-banner-btn {
+        background: transparent;
+        border: none;
+        color: #c62828;
+        cursor: pointer;
+        font-size: 14px;
+        padding: 4px;
+        margin-left: 4px;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+        flex-shrink: 0;
+
+        &:hover {
+            opacity: 1;
+        }
     }
 }

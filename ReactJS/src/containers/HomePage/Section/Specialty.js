@@ -23,13 +23,13 @@ class Specialty extends Component {
 
     scrollLeft = () => {
         if (this.scrollRef.current) {
-            this.scrollRef.current.scrollBy({ left: -300, behavior: 'smooth' });
+            this.scrollRef.current.scrollBy({ left: -600, behavior: 'smooth' });
         }
     }
 
     scrollRight = () => {
         if (this.scrollRef.current) {
-            this.scrollRef.current.scrollBy({ left: 300, behavior: 'smooth' });
+            this.scrollRef.current.scrollBy({ left: 600, behavior: 'smooth' });
         }
     }
 
