@@ -43,7 +43,7 @@ class UserMenuPopup extends Component {
                 {isLoggedIn ? (
                     <React.Fragment>
                         <div className="menu-header">
-                            <div className="user-name">{userInfo?.firstName} {userInfo?.lastName}</div>
+                            <div className="user-name">{userInfo?.lastName} {userInfo?.firstName}</div>
                             <div className="user-email">{userInfo?.email}</div>
                         </div>
                         <div className="menu-body">

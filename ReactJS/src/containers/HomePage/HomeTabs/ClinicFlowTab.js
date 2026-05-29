@@ -4,7 +4,7 @@ import { withRouter } from '../../../components/Navigator';
 import { getAllClinicService } from '../../../services/userService';
 import ExaminationPackages from './ExaminationPackages';
 import DoctorConsultationTab from './DoctorConsultationTab';
-import ChatBot from './ChatBot';
+import * as actions from "../../../store/actions";
 import './ClinicFlowTab.scss';
 
 class ClinicFlowTab extends Component {
@@ -92,7 +92,7 @@ class ClinicFlowTab extends Component {
                 this.setState({ activeView: 'PACKAGES' });
                 break;
             case 'AI_CHAT':
-                this.setState({ activeView: 'AI_CHAT' });
+                this.props.openChatWithTab('AISUPPORT');
                 break;
             case 'PHARMACY':
                 // this.props.navigate('/pharmacy');
@@ -110,8 +110,6 @@ class ClinicFlowTab extends Component {
                 return <ExaminationPackages onBack={() => this.setState({ activeView: 'MAIN' })} />;
             case 'DOCTOR_CHAT':
                 return <DoctorConsultationTab onBack={() => this.setState({ activeView: 'MAIN' })} />;
-            case 'AI_CHAT':
-                return <ChatBot onBack={() => this.setState({ activeView: 'MAIN' })} />;
             default:
                 return null;
         }
@@ -197,4 +195,10 @@ const mapStateToProps = state => {
     };
 };
 
-export default withRouter(connect(mapStateToProps)(ClinicFlowTab));
+const mapDispatchToProps = dispatch => {
+    return {
+        openChatWithTab: (tab) => dispatch(actions.openChatWithTab(tab))
+    };
+};
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ClinicFlowTab));
