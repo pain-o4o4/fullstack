@@ -1,4 +1,4 @@
-import cloudinaryConfig from '../config/cloudinary';
+import cloudinaryService from '../services/cloudinaryService';
 
 /**
  * Parses an image value fetched from the database.
@@ -37,7 +37,7 @@ export const uploadImageToCloudinary = async (imageInput, folder = 'bookingcare'
     }
 
     // Otherwise upload it
-    return await cloudinaryConfig.uploadToCloudinary(imageInput, folder);
+    return await cloudinaryService.uploadToCloudinary(imageInput, folder);
 };
 
 /**
@@ -61,7 +61,7 @@ export const replaceImageOnCloudinary = async (newImageInput, oldImageUrl, folde
     }
 
     // Upload new image first (ensure success before deleting old)
-    const newUrl = await cloudinaryConfig.uploadToCloudinary(newImageInput, folder);
+    const newUrl = await cloudinaryService.uploadToCloudinary(newImageInput, folder);
 
     // Delete old image from Cloudinary (best-effort, non-blocking)
     if (oldImageUrl) {
@@ -69,7 +69,7 @@ export const replaceImageOnCloudinary = async (newImageInput, oldImageUrl, folde
             ? oldImageUrl 
             : (Buffer.isBuffer(oldImageUrl) ? oldImageUrl.toString('utf-8') : '');
         if (oldUrlStr.startsWith('http')) {
-            await cloudinaryConfig.deleteFromCloudinary(oldUrlStr);
+            await cloudinaryService.deleteFromCloudinary(oldUrlStr);
         }
     }
 
@@ -86,7 +86,7 @@ export const deleteImageFromCloudinary = async (imageUrl) => {
         ? imageUrl
         : (Buffer.isBuffer(imageUrl) ? imageUrl.toString('utf-8') : '');
     if (urlStr.startsWith('http')) {
-        await cloudinaryConfig.deleteFromCloudinary(urlStr);
+        await cloudinaryService.deleteFromCloudinary(urlStr);
     }
 };
 
