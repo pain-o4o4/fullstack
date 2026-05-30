@@ -458,7 +458,8 @@ class ChatBox extends Component {
             replyingTo,
             onSetReply,
             onCancelReply,
-            onClose
+            onClose,
+            language
         } = this.props;
 
         const isAIMode = selectedDoctor?.isAI;
@@ -642,10 +643,33 @@ class ChatBox extends Component {
                                                                                     {msg.text && (() => {
                                                                                         let isAppointmentSchedule = false;
                                                                                         let scheduleData = null;
-                                                                                        if (msg.text.startsWith('[APPOINTMENT_SCHEDULE]')) {
+                                                                                        let cleanText = msg.text;
+
+                                                                                        let isAiSearchData = false;
+                                                                                        let aiSearchData = null;
+
+                                                                                        if (cleanText.includes('[AI_ACTION_DATA]')) {
+                                                                                            const regex = /\[AI_ACTION_DATA\]([\s\S]*?)\[\/AI_ACTION_DATA\]/g;
+                                                                                            const match = regex.exec(cleanText);
+                                                                                            if (match) {
+                                                                                                try {
+                                                                                                    aiSearchData = JSON.parse(match[1]);
+                                                                                                    isAiSearchData = true;
+                                                                                                    cleanText = cleanText.replace(match[0], '');
+                                                                                                } catch (e) {
+                                                                                                    console.error("Error parsing AI Action JSON:", e);
+                                                                                                }
+                                                                                            } else {
+                                                                                                // Xoá text cũ nếu bị lỗi
+                                                                                                cleanText = cleanText.replace(/\[AI_ACTION_DATA\][\s\S]*/g, '');
+                                                                                            }
+                                                                                        }
+
+                                                                                        if (cleanText.startsWith('[APPOINTMENT_SCHEDULE]')) {
                                                                                             try {
-                                                                                                scheduleData = JSON.parse(msg.text.replace('[APPOINTMENT_SCHEDULE]', ''));
+                                                                                                scheduleData = JSON.parse(cleanText.replace('[APPOINTMENT_SCHEDULE]', ''));
                                                                                                 isAppointmentSchedule = true;
+                                                                                                cleanText = '';
                                                                                             } catch (e) {
                                                                                                 console.error("Error parsing appointment JSON:", e);
                                                                                             }
@@ -669,11 +693,117 @@ class ChatBox extends Component {
                                                                                             );
                                                                                         }
 
+                                                                                        const renderAiCards = () => {
+                                                                                            if (!isAiSearchData || !aiSearchData || !aiSearchData.data) return null;
+                                                                                            const { doctors, clinics, specialties, handbooks } = aiSearchData.data;
+                                                                                            
+                                                                                            return (
+                                                                                                <div className="ai-search-results-wrapper">
+                                                                                                    {doctors && doctors.length > 0 && (
+                                                                                                        <div className="ai-doctors-list">
+                                                                                                            <div className="ai-list-title"><i className="fas fa-user-md"></i> {language === 'vi' ? 'Bác sĩ gợi ý' : 'Suggested Doctors'}</div>
+                                                                                                            <div className="ai-cards-container">
+                                                                                                                {doctors.map(doc => (
+                                                                                                                    <div className="ai-doctor-card" key={`doc-${doc.id}`} onClick={() => this.props.history.push(`/detail-doctor/${doc.id}`)}>
+                                                                                                                        <div className="ai-doc-avatar">
+                                                                                                                            {doc.image ? (
+                                                                                                                                <img src={doc.image} alt={doc.lastName} />
+                                                                                                                            ) : (
+                                                                                                                                <i className="fas fa-user-md"></i>
+                                                                                                                            )}
+                                                                                                                        </div>
+                                                                                                                        <div className="ai-doc-info">
+                                                                                                                            <div className="ai-doc-name">{doc.lastName} {doc.firstName}</div>
+                                                                                                                            <button className="ai-doc-btn">{language === 'vi' ? 'Xem chi tiết' : 'View Details'}</button>
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                ))}
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    )}
+                                                                                                    
+                                                                                                    {specialties && specialties.length > 0 && (
+                                                                                                        <div className="ai-doctors-list">
+                                                                                                            <div className="ai-list-title"><i className="fas fa-stethoscope"></i> {language === 'vi' ? 'Chuyên khoa phù hợp' : 'Suggested Specialties'}</div>
+                                                                                                            <div className="ai-cards-container">
+                                                                                                                {specialties.map(spec => (
+                                                                                                                    <div className="ai-doctor-card" key={`spec-${spec.id}`} onClick={() => this.props.history.push(`/detail-specialty/${spec.id}`)}>
+                                                                                                                        <div className="ai-doc-avatar rounded">
+                                                                                                                            {spec.image ? (
+                                                                                                                                <img src={spec.image} alt={spec.name} />
+                                                                                                                            ) : (
+                                                                                                                                <i className="fas fa-stethoscope"></i>
+                                                                                                                            )}
+                                                                                                                        </div>
+                                                                                                                        <div className="ai-doc-info">
+                                                                                                                            <div className="ai-doc-name">{spec.name}</div>
+                                                                                                                            <button className="ai-doc-btn">{language === 'vi' ? 'Xem chi tiết' : 'View Details'}</button>
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                ))}
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    )}
+
+                                                                                                    {clinics && clinics.length > 0 && (
+                                                                                                        <div className="ai-doctors-list">
+                                                                                                            <div className="ai-list-title"><i className="far fa-hospital"></i> {language === 'vi' ? 'Cơ sở y tế' : 'Suggested Clinics'}</div>
+                                                                                                            <div className="ai-cards-container">
+                                                                                                                {clinics.map(clinic => (
+                                                                                                                    <div className="ai-doctor-card" key={`clinic-${clinic.id}`} onClick={() => this.props.history.push(`/detail-clinic/${clinic.id}`)}>
+                                                                                                                        <div className="ai-doc-avatar rounded">
+                                                                                                                            {clinic.image ? (
+                                                                                                                                <img src={clinic.image} alt={clinic.name} />
+                                                                                                                            ) : (
+                                                                                                                                <i className="far fa-hospital"></i>
+                                                                                                                            )}
+                                                                                                                        </div>
+                                                                                                                        <div className="ai-doc-info">
+                                                                                                                            <div className="ai-doc-name">{clinic.name}</div>
+                                                                                                                            <button className="ai-doc-btn">{language === 'vi' ? 'Xem chi tiết' : 'View Details'}</button>
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                ))}
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    )}
+                                                                                                    
+                                                                                                    {handbooks && handbooks.length > 0 && (
+                                                                                                        <div className="ai-doctors-list">
+                                                                                                            <div className="ai-list-title"><i className="fas fa-book-medical"></i> {language === 'vi' ? 'Bài viết liên quan' : 'Related Articles'}</div>
+                                                                                                            <div className="ai-cards-container">
+                                                                                                                {handbooks.map(article => (
+                                                                                                                    <div className="ai-doctor-card" key={`hb-${article.id}`} onClick={() => this.props.history.push(`/detail-handbook/${article.id}`)}>
+                                                                                                                        <div className="ai-doc-avatar rounded">
+                                                                                                                            {article.image ? (
+                                                                                                                                <img src={article.image} alt={article.name} />
+                                                                                                                            ) : (
+                                                                                                                                <i className="fas fa-book-medical"></i>
+                                                                                                                            )}
+                                                                                                                        </div>
+                                                                                                                        <div className="ai-doc-info">
+                                                                                                                            <div className="ai-doc-name multiline">{article.name}</div>
+                                                                                                                            <button className="ai-doc-btn">{language === 'vi' ? 'Đọc bài viết' : 'Read Article'}</button>
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                ))}
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    )}
+                                                                                                </div>
+                                                                                            );
+                                                                                        };
+
                                                                                         return (
-                                                                                            <div
-                                                                                                className="dcd-text markdown-content"
-                                                                                                dangerouslySetInnerHTML={{ __html: mdParser.render(msg.text) }}
-                                                                                            />
+                                                                                            <>
+                                                                                                {cleanText && (
+                                                                                                    <div
+                                                                                                        className="dcd-text markdown-content"
+                                                                                                        dangerouslySetInnerHTML={{ __html: mdParser.render(cleanText) }}
+                                                                                                    />
+                                                                                                )}
+                                                                                                {renderAiCards()}
+                                                                                            </>
                                                                                         );
                                                                                     })()}
 

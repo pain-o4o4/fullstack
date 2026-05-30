@@ -1,5 +1,6 @@
 import db from "../../models/index";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import searchService from "./searchService";
 require('dotenv').config();
 
 const saveMessage = (data) => {
@@ -43,9 +44,9 @@ const getChatSessions = (userId) => {
                 });
             } else {
                 let sessions = await db.Chatbot.findAll({
-                    where: { 
+                    where: {
                         userId: userId,
-                        deletedByUser: false 
+                        deletedByUser: false
                     },
                     attributes: ['sessionId', 'createdAt', 'content'],
                     order: [['createdAt', 'DESC']],
@@ -89,8 +90,8 @@ const getChatHistory = (userId, sessionId) => {
                 });
             } else {
                 let history = await db.Chatbot.findAll({
-                    where: { 
-                        userId: userId, 
+                    where: {
+                        userId: userId,
                         sessionId: sessionId,
                         deletedByUser: false
                     },
@@ -118,13 +119,60 @@ const handleChatWithAI = async (userQuery, language, history = [], io = null, us
     for (let i = 0; i < retries; i++) {
         try {
             const API_KEY = process.env.GOOGLE_API_KEY;
+            console.log(">>> [DEBUG] CHATBOT IS USING API KEY:", API_KEY);
             if (!API_KEY) return language === 'en' ? "System configuration error." : "Lỗi cấu hình hệ thống.";
-
             const genAI = new GoogleGenerativeAI(API_KEY);
-            const modelName = process.env.GOOGLE_MODEL_NAME || "gemini-1.5-flash";
-            const model = genAI.getGenerativeModel({ model: modelName });
+            // Dùng gemini-2.5-flash
+            const modelName = "gemini-2.5-flash";
+            const tools = [
+                {
+                    functionDeclarations: [
+                        {
+                            name: "search_bookingcare_system",
+                            description: "Tìm kiếm thông tin Bác sĩ, Phòng khám, Chuyên khoa và Cẩm nang y tế trong hệ thống BookingCare.",
+                            parameters: {
+                                type: "OBJECT",
+                                properties: {
+                                    keyword: {
+                                        type: "STRING",
+                                        description: "Câu hỏi hoặc triệu chứng của người dùng (Ví dụ: 'Tôi hay bị đau đầu chóng mặt', 'Khám dạ dày ở đâu tốt', 'Bác sĩ Thần kinh'). Hỗ trợ tìm kiếm theo ngữ nghĩa (Semantic Search/RAG).",
+                                    },
+                                },
+                                required: ["keyword"],
+                            },
+                        }
+                    ],
+                },
+            ];
 
             const systemLang = language === 'en' ? 'Tiếng Anh (English)' : 'Tiếng Việt (Vietnamese)';
+
+            const systemPrompt = `
+                Bạn là Trợ lý chuyên gia của Hệ thống BookingCare. 
+                Bạn đang hỗ trợ người dùng trên nền tảng đặt lịch khám bệnh trực tuyến mà chúng tôi đã phát triển.
+
+                Ngữ cảnh hệ thống:
+                Vai trò: Điều phối viên y tế ảo, hỗ trợ người dùng tìm kiếm thông tin phòng khám, bác sĩ, chuyên khoa.
+                Ngôn ngữ phản hồi: ${systemLang} (Luôn ưu tiên ngôn ngữ này để phản hồi).
+                
+                Nhiệm vụ cụ thể:
+                1. Phân tích triệu chứng người dùng kể để xác định chuyên khoa hoặc từ khóa phù hợp.
+                2. SỬ DỤNG CÔNG CỤ (Function Calling): Bạn CÓ KHẢ NĂNG tự động gọi hàm search_bookingcare_system(keyword). 
+                LƯU Ý CỰC KỲ QUAN TRỌNG: Hiện tại hệ thống đang tìm kiếm bằng SQL LIKE chính xác, nên BẠN CHỈ ĐƯỢC PHÉP TRÍCH XUẤT TỪ KHÓA CỐT LÕI (1-2 từ, VD: "Mắt", "Thần kinh", "Dạ dày", "Xương khớp", tên bác sĩ). TUYỆT ĐỐI KHÔNG truyền câu dài như "Khám mắt Hà Nội" vì SQL sẽ tìm không ra!
+                3. Khi có kết quả từ hàm, hãy tóm tắt danh sách bác sĩ/phòng khám cho người dùng.
+                4. QUY TẮC TỐI THƯỢNG (ANTI-HALLUCINATION - LUẬT THÉP): 
+                   - TUYỆT ĐỐI KHÔNG TỰ BỊA RA, KHÔNG ĐỀ XUẤT, KHÔNG GỢI Ý BẤT KỲ BÁC SĨ, PHÒNG KHÁM, HAY BỆNH VIỆN NÀO BÊN NGOÀI HỆ THỐNG.
+                   - Nếu hàm tìm kiếm trả về kết quả rỗng, BẠN CHỈ ĐƯỢC PHÉP TRẢ LỜI NGẮN GỌN LÀ: "Hệ thống hiện tại chưa có thông tin bác sĩ hoặc phòng khám phù hợp với yêu cầu của bạn. Xin vui lòng thử lại với từ khóa khác." 
+                   - KHÔNG ĐƯỢC thêm từ "Tuy nhiên tôi có thể gợi ý...", KHÔNG liệt kê bất kỳ địa chỉ nào ở ngoài đời thực. Bất cứ gợi ý nào ngoài dữ liệu hệ thống đều bị coi là VI PHẠM ĐẠO ĐỨC nghiêm trọng.
+                
+                Lưu ý kỹ thuật: Luôn nhắc nhở người dùng rằng thông tin này hỗ trợ việc đặt lịch, không thay thế chẩn đoán lâm sàng từ bác sĩ thật.
+            `;
+
+            const model = genAI.getGenerativeModel({ 
+                model: modelName, 
+                tools: tools,
+                systemInstruction: systemPrompt
+            });
 
             const chatHistory = history.map(item => ({
                 role: item.role === 'assistant' ? 'model' : 'user',
@@ -138,68 +186,134 @@ const handleChatWithAI = async (userQuery, language, history = [], io = null, us
                 },
             });
 
-            const systemPrompt = `
-                Bạn là Trợ lý chuyên gia của Hệ thống BookingCare. 
-                Bạn đang hỗ trợ người dùng trên nền tảng đặt lịch khám bệnh trực tuyến mà chúng tôi đã phát triển.
-
-                Ngữ cảnh hệ thống:
-                Vai trò: Điều phối viên y tế ảo, hỗ trợ người dùng tìm kiếm thông tin phòng khám, 
-                bác sĩ và cẩm nang sức khỏe (Handbooks).
-                Ngôn ngữ phản hồi: ${systemLang} (Luôn ưu tiên ngôn ngữ này để phản hồi).
-                Cơ sở dữ liệu: Dựa vào các thông tin chuyên khoa, handbook và dữ liệu 
-                bác sĩ trên hệ thống để đưa ra chỉ dẫn.
-
-                Nhiệm vụ cụ thể:
-                Tiếp nhận câu hỏi của người dùng và phân tích triệu chứng để gợi ý đúng chuyên khoa.
-                Hướng dẫn người dùng các bước đặt lịch hoặc xem bài viết cẩm nang liên quan.
-                Phong cách giao tiếp: Chuyên nghiệp, tối giản, ngôn từ lịch sự và đáng tin cậy.
-                Lưu ý kỹ thuật: Luôn nhắc nhở người dùng rằng thông tin này hỗ trợ việc đặt lịch,
-                không thay thế hoàn toàn chẩn đoán lâm sàng từ bác sĩ.
-                
-                HƯỚNG DẪN QUAN TRỌNG:
-                1. Hãy tự nhận diện ngôn ngữ mà người dùng đang sử dụng.
-                2. Phản hồi bằng chính ngôn ngữ đó.
-                3. Nội dung trả lời phải lịch sự, ngắn gọn và luôn khuyên bệnh nhân đi khám bác sĩ.
-            `;
-
-            const finalQuery = history.length === 0 ? `${systemPrompt}\n\nUser: ${userQuery}` : userQuery;
+            const finalQuery = userQuery;
 
             if (io && userId) {
                 io.to(`user_room_${userId}`).emit('ai_typing_start', { sessionId });
+            }
 
-                const result = await chat.sendMessageStream(finalQuery);
-                let fullResponseText = '';
+            const resultStream = await chat.sendMessageStream(finalQuery);
+            let fullResponseText = '';
+            let functionCallObj = null;
 
-                for await (const chunk of result.stream) {
-                    const chunkText = chunk.text();
-                    fullResponseText += chunkText;
-
-                    io.to(`user_room_${userId}`).emit('ai_response_chunk', {
-                        sessionId,
-                        chunk: chunkText,
-                        isDone: false
-                    });
+            for await (const chunk of resultStream.stream) {
+                const fCalls = typeof chunk.functionCalls === 'function' ? chunk.functionCalls() : chunk.functionCalls;
+                if (fCalls && fCalls.length > 0) {
+                    functionCallObj = fCalls[0];
+                    // KHÔNG break ở đây, phải để luồng kết thúc tự nhiên để SDK lưu lịch sử chat (turn)
                 }
 
+                if (chunk.text) {
+                    try {
+                        const chunkText = chunk.text();
+                        if (chunkText) {
+                            fullResponseText += chunkText;
+                            if (io && userId) {
+                                io.to(`user_room_${userId}`).emit('ai_response_chunk', {
+                                    sessionId,
+                                    chunk: chunkText,
+                                    isDone: false
+                                });
+                            }
+                        }
+                    } catch (e) {
+                        // Có thể là do Safety Block
+                        console.log("Chunk text error (Safety block or Function Call):", e.message);
+                        if (e.message.includes('SAFETY') || e.message.includes('blocked')) {
+                            const safetyMsg = "\n[Hệ thống]: Câu hỏi của bạn có thể vi phạm chính sách an toàn của AI. Vui lòng đặt câu hỏi khác.";
+                            fullResponseText += safetyMsg;
+                            if (io && userId) {
+                                io.to(`user_room_${userId}`).emit('ai_response_chunk', {
+                                    sessionId,
+                                    chunk: safetyMsg,
+                                    isDone: false
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+
+            // ĐỢI luồng kết thúc hoàn toàn để SDK Google cập nhật Lịch sử hội thoại (Lưu ý rất quan trọng)
+            await resultStream.response;
+
+            // Nếu AI đòi gọi hàm (Function Calling)
+            if (functionCallObj) {
+                if (functionCallObj.name === "search_bookingcare_system") {
+                    const args = functionCallObj.args;
+                    console.log(">>> Gemini tự động gọi hàm tìm kiếm với keyword:", args.keyword);
+
+                    // 1. Chạy API thật của hệ thống
+                    let searchRes = await searchService.searchAll(args.keyword);
+
+                    let apiResponse = {
+                        result: searchRes.data || "Không tìm thấy kết quả"
+                    };
+
+                    // 1.5. Bắn luồng JSON nguyên bản (Raw Data) xuống Frontend để Frontend có thể vẽ giao diện Card
+                    if (io && userId && searchRes.errCode === 0) {
+                        io.to(`user_room_${userId}`).emit('ai_action_data', {
+                            sessionId,
+                            action: 'SEARCH_RESULTS',
+                            data: searchRes.data
+                        });
+                        
+                        // QUAN TRỌNG: Nối chuỗi JSON ẩn này vào fullResponseText để lưu vào Database.
+                        // Khi Frontend fetch lại lịch sử (getChatHistory), nó sẽ tự động parse đoạn này ra để vẽ lại giao diện.
+                        const actionPayload = `\n[AI_ACTION_DATA]${JSON.stringify({
+                            action: 'SEARCH_RESULTS',
+                            data: searchRes.data
+                        })}[/AI_ACTION_DATA]`;
+                        fullResponseText += actionPayload;
+                    }
+
+                    // 2. Trả kết quả (Data) ngược lại cho Gemini, và cho phép Gemini trả lời (stream)
+                    const funcStreamResult = await chat.sendMessageStream([{
+                        functionResponse: {
+                            name: functionCallObj.name,
+                            response: apiResponse
+                        }
+                    }]);
+
+                    for await (const chunk of funcStreamResult.stream) {
+                        if (chunk.text) {
+                            try {
+                                const chunkText = chunk.text();
+                                fullResponseText += chunkText;
+                                if (io && userId) {
+                                    io.to(`user_room_${userId}`).emit('ai_response_chunk', {
+                                        sessionId,
+                                        chunk: chunkText,
+                                        isDone: false
+                                    });
+                                }
+                            } catch (e) {
+                                console.log("Inner chunk text error:", e.message);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (io && userId) {
                 io.to(`user_room_${userId}`).emit('ai_response_chunk', {
                     sessionId,
                     chunk: '',
                     isDone: true
                 });
-
-                return fullResponseText;
-            } else {
-                const result = await chat.sendMessage(finalQuery);
-                const response = await result.response;
-                return response.text();
             }
+
+            return fullResponseText;
 
         } catch (error) {
             console.error(`>>> Lỗi Gemini (Lần ${i + 1}):`, error.message);
 
-            if (error.message.includes("503") && i < retries - 1) {
-                await new Promise(resolve => setTimeout(resolve, delay));
-                continue;
+            if (error.message.includes("503") || error.message.includes("429") || error.message.includes("Quota")) {
+                if (i < retries - 1) {
+                    console.log(`>>> [Chatbot] Lỗi API (Quota/503). Đang thử lại...`);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    continue;
+                }
             }
 
             return "Lỗi từ Gemini: " + error.message;

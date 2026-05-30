@@ -303,6 +303,31 @@ class DoctorChat extends Component {
             }), this.scrollToBottom);
         });
 
+        socket.on('ai_action_data', ({ sessionId, action, data }) => {
+            const { selectedDoctor } = this.state;
+            if (selectedDoctor?.id !== sessionId) return;
+
+            this.setState(prevState => {
+                const messages = [...prevState.messages];
+                const lastMsgIndex = messages.findIndex(m => m.id === 'ai_typing');
+                
+                const actionPayload = `[AI_ACTION_DATA]${JSON.stringify({action, data})}[/AI_ACTION_DATA]`;
+
+                if (lastMsgIndex !== -1) {
+                    messages[lastMsgIndex].text += actionPayload;
+                } else {
+                    messages.push({
+                        id: Math.random(),
+                        text: actionPayload,
+                        type: 'doctor',
+                        time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+                        isTyping: false
+                    });
+                }
+                return { messages };
+            }, this.scrollToBottom);
+        });
+
         socket.on('ai_response_chunk', ({ sessionId, chunk, isDone }) => {
             const { selectedDoctor } = this.state;
             if (selectedDoctor?.id !== sessionId) return;

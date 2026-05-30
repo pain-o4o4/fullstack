@@ -45,7 +45,8 @@ export const PUBLIC_PATHS = [
     '/api/get-chat-sessions',
     '/api/get-chat-history',
     '/api/save-chat-message',
-    '/api/get-system-statistics'
+    '/api/get-system-statistics',
+    '/api/sync-rag'
 ];
 
 // ==========================================

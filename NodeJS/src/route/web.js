@@ -14,6 +14,7 @@ import socketSyncMiddleware from '../middleware/socketSyncMiddleware';
 import systemController from "../controller/systemController";
 import chatController from "../controller/chatController";
 import adminController from "../controllers/adminController";
+import ragController from "../controller/ragController";
 let router = express.Router()
 
 let initWebRoutes = (app) => {
@@ -127,6 +128,9 @@ let initWebRoutes = (app) => {
 
     router.get('/api/get-all-global-quick-replies', adminController.handleGetAllGlobalQuickReplies);
     router.post('/api/save-global-quick-reply', adminController.handleUpsertGlobalQuickReply);
+
+    // Sync RAG Data (Utility route for admin)
+    router.post('/api/sync-rag', ragController.handleSyncRAG);
 
     return app.use("/", router)
 }
