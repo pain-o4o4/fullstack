@@ -214,25 +214,38 @@ class AISupportPage extends Component {
             const { doctors, clinics, specialties, handbooks } = aiSearchData.data;
             const { language, navigate } = this.props;
 
+            const itemsPerSlide = window.innerWidth <= 768 ? 3 : 9;
+            const chunkArray = (arr, size) => {
+                const chunked = [];
+                for (let i = 0; i < arr.length; i += size) {
+                    chunked.push(arr.slice(i, i + size));
+                }
+                return chunked;
+            };
+
             return (
                 <div className="ai-search-results-wrapper">
                     {doctors && doctors.length > 0 && (
                         <div className="ai-doctors-list">
                             <div className="ai-list-title"><i className="fas fa-user-md"></i> {language === 'vi' ? 'Bác sĩ gợi ý' : 'Suggested Doctors'}</div>
-                            <div className="ai-cards-container">
-                                {doctors.map(doc => (
-                                    <div className="ai-doctor-card" key={`doc-${doc.id}`} onClick={() => navigate(`/detail-doctor/${doc.id}`)}>
-                                        <div className="ai-doc-avatar">
-                                            {doc.image ? (
-                                                <img src={doc.image} alt={doc.lastName} />
-                                            ) : (
-                                                <i className="fas fa-user-md"></i>
-                                            )}
-                                        </div>
-                                        <div className="ai-doc-info">
-                                            <div className="ai-doc-name">{doc.lastName} {doc.firstName}</div>
-                                            <button className="ai-doc-btn">{language === 'vi' ? 'Xem chi tiết' : 'View Details'}</button>
-                                        </div>
+                            <div className="ai-cards-carousel">
+                                {chunkArray(doctors, itemsPerSlide).map((slide, slideIdx) => (
+                                    <div className="ai-cards-slide" key={`doc-slide-${slideIdx}`}>
+                                        {slide.map(doc => (
+                                            <div className="ai-doctor-card" key={`doc-${doc.id}`} onClick={() => navigate(`/detail-doctor/${doc.id}`)}>
+                                                <div className="ai-doc-avatar">
+                                                    {doc.image ? (
+                                                        <img src={doc.image} alt={doc.lastName} />
+                                                    ) : (
+                                                        <i className="fas fa-user-md"></i>
+                                                    )}
+                                                </div>
+                                                <div className="ai-doc-info">
+                                                    <div className="ai-doc-name">{doc.lastName} {doc.firstName}</div>
+                                                    <button className="ai-doc-btn">{language === 'vi' ? 'Xem chi tiết' : 'View Details'}</button>
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
                                 ))}
                             </div>
@@ -242,20 +255,24 @@ class AISupportPage extends Component {
                     {specialties && specialties.length > 0 && (
                         <div className="ai-doctors-list">
                             <div className="ai-list-title"><i className="fas fa-stethoscope"></i> {language === 'vi' ? 'Chuyên khoa phù hợp' : 'Suggested Specialties'}</div>
-                            <div className="ai-cards-container">
-                                {specialties.map(spec => (
-                                    <div className="ai-doctor-card" key={`spec-${spec.id}`} onClick={() => navigate(`/detail-specialty/${spec.id}`)}>
-                                        <div className="ai-doc-avatar rounded">
-                                            {spec.image ? (
-                                                <img src={spec.image} alt={spec.name} />
-                                            ) : (
-                                                <i className="fas fa-stethoscope"></i>
-                                            )}
-                                        </div>
-                                        <div className="ai-doc-info">
-                                            <div className="ai-doc-name">{spec.name}</div>
-                                            <button className="ai-doc-btn">{language === 'vi' ? 'Xem chi tiết' : 'View Details'}</button>
-                                        </div>
+                            <div className="ai-cards-carousel">
+                                {chunkArray(specialties, itemsPerSlide).map((slide, slideIdx) => (
+                                    <div className="ai-cards-slide" key={`spec-slide-${slideIdx}`}>
+                                        {slide.map(spec => (
+                                            <div className="ai-doctor-card" key={`spec-${spec.id}`} onClick={() => navigate(`/detail-specialty/${spec.id}`)}>
+                                                <div className="ai-doc-avatar rounded">
+                                                    {spec.image ? (
+                                                        <img src={spec.image} alt={spec.name} />
+                                                    ) : (
+                                                        <i className="fas fa-stethoscope"></i>
+                                                    )}
+                                                </div>
+                                                <div className="ai-doc-info">
+                                                    <div className="ai-doc-name">{spec.name}</div>
+                                                    <button className="ai-doc-btn">{language === 'vi' ? 'Xem chi tiết' : 'View Details'}</button>
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
                                 ))}
                             </div>
@@ -265,20 +282,24 @@ class AISupportPage extends Component {
                     {clinics && clinics.length > 0 && (
                         <div className="ai-doctors-list">
                             <div className="ai-list-title"><i className="far fa-hospital"></i> {language === 'vi' ? 'Cơ sở y tế' : 'Suggested Clinics'}</div>
-                            <div className="ai-cards-container">
-                                {clinics.map(clinic => (
-                                    <div className="ai-doctor-card" key={`clinic-${clinic.id}`} onClick={() => navigate(`/detail-clinic/${clinic.id}`)}>
-                                        <div className="ai-doc-avatar rounded">
-                                            {clinic.image ? (
-                                                <img src={clinic.image} alt={clinic.name} />
-                                            ) : (
-                                                <i className="far fa-hospital"></i>
-                                            )}
-                                        </div>
-                                        <div className="ai-doc-info">
-                                            <div className="ai-doc-name">{clinic.name}</div>
-                                            <button className="ai-doc-btn">{language === 'vi' ? 'Xem chi tiết' : 'View Details'}</button>
-                                        </div>
+                            <div className="ai-cards-carousel">
+                                {chunkArray(clinics, itemsPerSlide).map((slide, slideIdx) => (
+                                    <div className="ai-cards-slide" key={`clinic-slide-${slideIdx}`}>
+                                        {slide.map(clinic => (
+                                            <div className="ai-doctor-card" key={`clinic-${clinic.id}`} onClick={() => navigate(`/detail-clinic/${clinic.id}`)}>
+                                                <div className="ai-doc-avatar rounded">
+                                                    {clinic.image ? (
+                                                        <img src={clinic.image} alt={clinic.name} />
+                                                    ) : (
+                                                        <i className="far fa-hospital"></i>
+                                                    )}
+                                                </div>
+                                                <div className="ai-doc-info">
+                                                    <div className="ai-doc-name">{clinic.name}</div>
+                                                    <button className="ai-doc-btn">{language === 'vi' ? 'Xem chi tiết' : 'View Details'}</button>
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
                                 ))}
                             </div>
@@ -288,20 +309,24 @@ class AISupportPage extends Component {
                     {handbooks && handbooks.length > 0 && (
                         <div className="ai-doctors-list">
                             <div className="ai-list-title"><i className="fas fa-book-medical"></i> {language === 'vi' ? 'Bài viết liên quan' : 'Related Articles'}</div>
-                            <div className="ai-cards-container">
-                                {handbooks.map(article => (
-                                    <div className="ai-doctor-card" key={`hb-${article.id}`} onClick={() => navigate(`/detail-handbook/${article.id}`)}>
-                                        <div className="ai-doc-avatar rounded">
-                                            {article.image ? (
-                                                <img src={article.image} alt={article.name} />
-                                            ) : (
-                                                <i className="fas fa-book-medical"></i>
-                                            )}
-                                        </div>
-                                        <div className="ai-doc-info">
-                                            <div className="ai-doc-name multiline">{article.name}</div>
-                                            <button className="ai-doc-btn">{language === 'vi' ? 'Đọc bài viết' : 'Read Article'}</button>
-                                        </div>
+                            <div className="ai-cards-carousel">
+                                {chunkArray(handbooks, itemsPerSlide).map((slide, slideIdx) => (
+                                    <div className="ai-cards-slide" key={`hb-slide-${slideIdx}`}>
+                                        {slide.map(article => (
+                                            <div className="ai-doctor-card" key={`hb-${article.id}`} onClick={() => navigate(`/detail-handbook/${article.id}`)}>
+                                                <div className="ai-doc-avatar rounded">
+                                                    {article.image ? (
+                                                        <img src={article.image} alt={article.name} />
+                                                    ) : (
+                                                        <i className="fas fa-book-medical"></i>
+                                                    )}
+                                                </div>
+                                                <div className="ai-doc-info">
+                                                    <div className="ai-doc-name multiline">{article.name}</div>
+                                                    <button className="ai-doc-btn">{language === 'vi' ? 'Đọc bài viết' : 'Read Article'}</button>
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
                                 ))}
                             </div>

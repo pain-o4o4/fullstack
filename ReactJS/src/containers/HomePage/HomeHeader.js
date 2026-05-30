@@ -35,6 +35,7 @@ class MobileSidebarInternal extends Component {
         if (type === 'BOOKING_HISTORY') return pathName === '/booking-history';
         if (type === 'PRIVACY_POLICY') return pathName === '/privacy-policy';
         if (type === 'TERMS_OF_USE') return pathName === '/terms-of-use';
+        if (type === 'AI_SUPPORT') return pathName === '/ai-support';
         return false;
     }
 
@@ -116,6 +117,10 @@ class MobileSidebarInternal extends Component {
                                     <li className={`sidebar-item ${this.isPathActive('SETTINGS') ? 'active' : ''}`} onClick={() => { handleViewList('SETTINGS'); onClose(); }}>
                                         {/* <i className="fas fa-user-cog"></i> */}
                                         <span>Chỉnh sửa thông tin</span>
+                                    </li>
+                                    <li className={`sidebar-item ${this.isPathActive('AI_SUPPORT') ? 'active' : ''}`} onClick={() => { handleViewList('AI_SUPPORT'); onClose(); }}>
+                                        {/* <i className="fas fa-user-cog"></i> */}
+                                        <span>Trợ lý AI</span>
                                     </li>
                                     {userInfo?.roleId !== 'R2' && (
                                         <React.Fragment>

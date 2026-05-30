@@ -823,16 +823,24 @@ $ease: cubic-bezier(0.4, 0.0, 0.2, 1);
         top: 0;
         left: 0;
         bottom: 0;
+        z-index: 1001;
         transform: translateX(-100%);
         width: 280px;
-        box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+        box-shadow: none;
+        visibility: hidden;
+        transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.25s, box-shadow 0.25s;
 
         &.open {
             transform: translateX(0);
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+            visibility: visible;
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0s, box-shadow 0.25s;
         }
 
         &.collapsed {
             transform: translateX(-100%);
+            box-shadow: none;
+            visibility: hidden;
         }
     }
 
@@ -872,7 +880,7 @@ $ease: cubic-bezier(0.4, 0.0, 0.2, 1);
 
     .message-bubble {
         &.user .bubble-content {
-            max-width: 88%;
+            max-width: 100%;
             font-size: 14px;
         }
 
@@ -921,34 +929,46 @@ $ease: cubic-bezier(0.4, 0.0, 0.2, 1);
         }
     }
 
-    .ai-cards-container {
-        display: grid;
-        grid-template-rows: repeat(3, min-content);
-        grid-auto-flow: column;
-        grid-auto-columns: 260px;
-        gap: 12px;
+    .ai-cards-carousel {
+        display: flex;
         overflow-x: auto;
-        padding-bottom: 8px;
         scroll-snap-type: x mandatory;
+        gap: 16px;
+        padding-bottom: 8px;
 
         /* Tùy chỉnh thanh cuộn ngang */
         &::-webkit-scrollbar {
             height: 5px;
         }
+
         &::-webkit-scrollbar-track {
             background: transparent;
         }
+
         &::-webkit-scrollbar-thumb {
             background: rgba(0, 0, 0, 0.15);
             border-radius: 4px;
         }
+
         &::-webkit-scrollbar-thumb:hover {
             background: rgba(0, 0, 0, 0.3);
         }
     }
 
-    .ai-doctor-card {
+    .ai-cards-slide {
+        flex: 0 0 100%;
         scroll-snap-align: start;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        align-content: start;
+        gap: 12px;
+
+        @media (max-width: 768px) {
+            grid-template-columns: repeat(1, 1fr);
+        }
+    }
+
+    .ai-doctor-card {
         display: flex;
         align-items: center;
         padding: 10px;

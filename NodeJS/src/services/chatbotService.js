@@ -118,10 +118,19 @@ const handleChatWithAI = async (userQuery, language, history = [], io = null, us
 
     for (let i = 0; i < retries; i++) {
         try {
-            const API_KEY = process.env.GOOGLE_API_KEY;
-            console.log(">>> [DEBUG] CHATBOT IS USING API KEY:", API_KEY);
-            if (!API_KEY) return language === 'en' ? "System configuration error." : "Lỗi cấu hình hệ thống.";
-            const genAI = new GoogleGenerativeAI(API_KEY);
+            // Hỗ trợ cấu hình nhiều API Key ngăn cách bởi dấu phẩy để tự động xoay tua (rotate) khi bị limit
+            let apiKeys = [];
+            if (process.env.GOOGLE_API_KEYS) {
+                apiKeys = process.env.GOOGLE_API_KEYS.split(',').map(k => k.trim()).filter(Boolean);
+            }
+            if (apiKeys.length === 0 && process.env.GOOGLE_API_KEY) {
+                apiKeys = [process.env.GOOGLE_API_KEY];
+            }
+
+            const currentKey = apiKeys[i % apiKeys.length];
+            console.log(`>>> [DEBUG] CHATBOT IS USING API KEY (Lần ${i + 1}):`, currentKey ? currentKey.substring(0, 10) + "..." : "NULL");
+            if (!currentKey) return language === 'en' ? "System configuration error." : "Lỗi cấu hình hệ thống.";
+            const genAI = new GoogleGenerativeAI(currentKey);
             // Dùng gemini-2.5-flash
             const modelName = "gemini-2.5-flash";
             const tools = [
@@ -174,7 +183,10 @@ const handleChatWithAI = async (userQuery, language, history = [], io = null, us
                 systemInstruction: systemPrompt
             });
 
-            const chatHistory = history.map(item => ({
+            // Tối ưu: Chỉ gửi tối đa 10 tin nhắn gần nhất để tránh ngốn Token dẫn đến bị limit TPM (Token Per Minute)
+            const maxHistory = 10;
+            const optimizedHistory = history.slice(-maxHistory);
+            const chatHistory = optimizedHistory.map(item => ({
                 role: item.role === 'assistant' ? 'model' : 'user',
                 parts: [{ text: item.content }],
             }));
