@@ -483,7 +483,8 @@
 @media (max-width: 1024px) {
     .hm-header {
         top: 0 !important;
-        height: calc(64px + env(safe-area-inset-top, 0px)) !important;
+        height: 64px !important;
+        box-sizing: content-box !important;
         padding-top: env(safe-area-inset-top, 0px) !important;
         background: rgba(255, 255, 255, 0.88) !important;
         backdrop-filter: blur(20px) saturate(180%) !important;
