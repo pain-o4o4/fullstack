@@ -229,3 +229,11 @@
         }
     }
 }
+
+@media (max-width: 768px) {
+    .patient-profile-section {
+        input, select, textarea, .inline-input {
+            font-size: 16px !important;
+        }
+    }
+}

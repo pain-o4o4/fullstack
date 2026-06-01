@@ -91,7 +91,7 @@
         width: 100% !important;
         margin: 0 !important;
         z-index: 990 !important;
-        padding: calc(64px + env(safe-area-inset-top, 0px) + 8px) 16px 8px !important; // starts right below the 64px mobile header!
+        padding: calc(56px + env(safe-area-inset-top, 0px) + 8px) 16px 8px !important; // starts right below the 56px mobile header!
         background: rgba(255, 255, 255, 0.88) !important;
         backdrop-filter: blur(20px) saturate(180%) !important;
         -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
@@ -151,7 +151,7 @@
 
 @media (max-width: 768px) {
     .breadcrumb-container {
-        padding: calc(64px + env(safe-area-inset-top, 0px) + 1px) 12px 6px !important;
+        padding: calc(56px + env(safe-area-inset-top, 0px) + 1px) 12px 6px !important;
 
         .breadcrumb {
             font-size: 12px;

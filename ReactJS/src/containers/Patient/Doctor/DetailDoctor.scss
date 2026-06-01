@@ -545,7 +545,66 @@
 
 @media (max-width: 1024px) {
     .doctor-detail-container {
-        padding: 120px 24px 40px !important;
+        padding: calc(120px + env(safe-area-inset-top, 0px)) 24px 40px !important;
+
+        .breadcrumb-container {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100% !important;
+            margin: 0 !important;
+            z-index: 990 !important;
+            padding: calc(56px + env(safe-area-inset-top, 0px) + 8px) 16px 8px !important;
+            background: rgba(255, 255, 255, 0.88) !important;
+            backdrop-filter: blur(20px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
+            border: none !important;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+            border-radius: 0 !important;
+            animation: none !important;
+            max-width: 100% !important;
+            box-sizing: border-box;
+
+            .breadcrumb {
+                margin: 0 !important;
+                padding: 5px 0 !important;
+                font-size: 14px;
+                color: #86868b;
+                display: flex;
+                align-items: center;
+                width: 100%;
+                overflow: hidden;
+                line-height: 1;
+
+                .home-link {
+                    color: #0071e3 !important;
+                    font-weight: 400 !important;
+                    flex-shrink: 0;
+                }
+
+                .separator {
+                    margin: 0 8px !important;
+                    color: #86868b !important;
+                    opacity: 0.5;
+                    font-size: 11px;
+                    flex-shrink: 0;
+                    display: flex;
+                    align-items: center;
+                }
+
+                .current-page {
+                    color: #86868b !important;
+                    font-weight: 400 !important;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    flex: 1;
+                    min-width: 0;
+                }
+            }
+        }
 
         .intro-doctor {
             gap: 24px !important;
@@ -634,7 +693,19 @@
 
 @media (max-width: 768px) {
     .doctor-detail-container {
-        padding: 110px 16px 30px !important;
+        padding: calc(110px + env(safe-area-inset-top, 0px)) 16px 30px !important;
+
+        .breadcrumb-container {
+            padding: calc(56px + env(safe-area-inset-top, 0px) + 1px) 12px 6px !important;
+
+            .breadcrumb {
+                font-size: 12px;
+
+                .separator {
+                    margin: 0 6px !important;
+                }
+            }
+        }
 
         .intro-doctor {
             flex-direction: column !important;
