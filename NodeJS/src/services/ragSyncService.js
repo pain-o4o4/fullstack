@@ -1,33 +1,34 @@
 import db from "../../models/index";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Pinecone } from '@pinecone-database/pinecone';
-import fs from 'fs';
-import path from 'path';
 
-const registryPath = path.join(__dirname, '../../synced_registry.txt');
-
-const loadRegistry = () => {
+const loadRegistryFromDB = async () => {
     let registry = {
         doctors: [],
         specialties: [],
         clinics: [],
         handbooks: []
     };
-    if (fs.existsSync(registryPath)) {
-        try {
-            registry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
-        } catch (e) {
-            console.error(">>> [RAG] Lỗi đọc registry, khởi tạo mới:", e);
-        }
+    try {
+        const states = await db.RagSyncState.findAll({ raw: true });
+        states.forEach(state => {
+            if (state.entityType === 'doctor') registry.doctors.push(state.entityId);
+            if (state.entityType === 'specialty') registry.specialties.push(state.entityId);
+            if (state.entityType === 'clinic') registry.clinics.push(state.entityId);
+            if (state.entityType === 'handbook') registry.handbooks.push(state.entityId);
+        });
+    } catch (e) {
+        console.error(">>> [RAG] Lỗi đọc state từ Database:", e);
     }
     return registry;
 };
 
-const saveRegistry = (registry) => {
+const saveBatchToDB = async (type, dbIds) => {
     try {
-        fs.writeFileSync(registryPath, JSON.stringify(registry, null, 4), 'utf8');
+        const records = dbIds.map(id => ({ entityType: type, entityId: id }));
+        await db.RagSyncState.bulkCreate(records, { ignoreDuplicates: true });
     } catch (e) {
-        console.error(">>> [RAG] Lỗi lưu registry:", e);
+        console.error(`>>> [RAG] Lỗi lưu state vào DB cho ${type}:`, e);
     }
 };
 
@@ -56,7 +57,7 @@ const syncAllToPinecone = async () => {
             return result.embedding.values;
         };
 
-        const registry = loadRegistry();
+        const registry = await loadRegistryFromDB();
         const Op = db.Sequelize.Op;
 
         // 1. Đồng bộ BÁC SĨ (Chưa được sync)
@@ -101,16 +102,14 @@ const syncAllToPinecone = async () => {
 
             if (batch.length >= batchSize) {
                 await pineconeIndex.upsert({ records: batch });
-                registry.doctors.push(...batch.map(item => item.metadata.dbId));
-                saveRegistry(registry);
+                await saveBatchToDB('doctor', batch.map(item => item.metadata.dbId));
                 console.log(`>>> [RAG] Đã đẩy thành công ${batch.length} bác sĩ lên Pinecone.`);
                 batch = [];
             }
         }
         if (batch.length > 0) {
             await pineconeIndex.upsert({ records: batch });
-            registry.doctors.push(...batch.map(item => item.metadata.dbId));
-            saveRegistry(registry);
+            await saveBatchToDB('doctor', batch.map(item => item.metadata.dbId));
             console.log(`>>> [RAG] Đã đẩy thành công ${batch.length} bác sĩ cuối cùng lên Pinecone.`);
             batch = [];
         }
@@ -143,16 +142,14 @@ const syncAllToPinecone = async () => {
 
             if (batch.length >= batchSize) {
                 await pineconeIndex.upsert({ records: batch });
-                registry.specialties.push(...batch.map(item => item.metadata.dbId));
-                saveRegistry(registry);
+                await saveBatchToDB('specialty', batch.map(item => item.metadata.dbId));
                 console.log(`>>> [RAG] Đã đẩy thành công ${batch.length} chuyên khoa lên Pinecone.`);
                 batch = [];
             }
         }
         if (batch.length > 0) {
             await pineconeIndex.upsert({ records: batch });
-            registry.specialties.push(...batch.map(item => item.metadata.dbId));
-            saveRegistry(registry);
+            await saveBatchToDB('specialty', batch.map(item => item.metadata.dbId));
             console.log(`>>> [RAG] Đã đẩy thành công ${batch.length} chuyên khoa cuối cùng lên Pinecone.`);
             batch = [];
         }
@@ -185,16 +182,14 @@ const syncAllToPinecone = async () => {
 
             if (batch.length >= batchSize) {
                 await pineconeIndex.upsert({ records: batch });
-                registry.clinics.push(...batch.map(item => item.metadata.dbId));
-                saveRegistry(registry);
+                await saveBatchToDB('clinic', batch.map(item => item.metadata.dbId));
                 console.log(`>>> [RAG] Đã đẩy thành công ${batch.length} phòng khám lên Pinecone.`);
                 batch = [];
             }
         }
         if (batch.length > 0) {
             await pineconeIndex.upsert({ records: batch });
-            registry.clinics.push(...batch.map(item => item.metadata.dbId));
-            saveRegistry(registry);
+            await saveBatchToDB('clinic', batch.map(item => item.metadata.dbId));
             console.log(`>>> [RAG] Đã đẩy thành công ${batch.length} phòng khám cuối cùng lên Pinecone.`);
             batch = [];
         }
@@ -227,16 +222,14 @@ const syncAllToPinecone = async () => {
 
             if (batch.length >= batchSize) {
                 await pineconeIndex.upsert({ records: batch });
-                registry.handbooks.push(...batch.map(item => item.metadata.dbId));
-                saveRegistry(registry);
+                await saveBatchToDB('handbook', batch.map(item => item.metadata.dbId));
                 console.log(`>>> [RAG] Đã đẩy thành công ${batch.length} cẩm nang lên Pinecone.`);
                 batch = [];
             }
         }
         if (batch.length > 0) {
             await pineconeIndex.upsert({ records: batch });
-            registry.handbooks.push(...batch.map(item => item.metadata.dbId));
-            saveRegistry(registry);
+            await saveBatchToDB('handbook', batch.map(item => item.metadata.dbId));
             console.log(`>>> [RAG] Đã đẩy thành công ${batch.length} cẩm nang cuối cùng lên Pinecone.`);
             batch = [];
         }

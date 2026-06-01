@@ -9,8 +9,12 @@ import cookieParser from 'cookie-parser';
 import http from 'http';
 import initSocket from './socket/init';
 import compression from 'compression';
+import initCronJobs from './cron/ragSyncCron';
 
 require('dotenv').config();
+
+// Khởi chạy tiến trình Cron Job ngầm định
+initCronJobs();
 
 // 1. Express app được tạo ra --- Express - App
 // 2. HTTP server được tạo từ Express --- Server - Express

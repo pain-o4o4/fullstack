@@ -531,7 +531,7 @@ class ChatBox extends Component {
                                                                                                             <div className="ai-list-title"><i className="fas fa-user-md"></i> {language === 'vi' ? 'Bác sĩ gợi ý' : 'Suggested Doctors'}</div>
                                                                                                             <div className="ai-cards-container">
                                                                                                                 {doctors.map(doc => (
-                                                                                                                    <div className="ai-doctor-card" key={`doc-${doc.id}`} onClick={() => this.props.history.push(`/detail-doctor/${doc.id}`)}>
+                                                                                                                    <div className="ai-doctor-card" key={`doc-${doc.id}`} onClick={() => this.props.navigate(`/detail-doctor/${doc.id}`)}>
                                                                                                                         <div className="ai-doc-avatar">
                                                                                                                             {doc.image ? (
                                                                                                                                 <img src={doc.image} alt={doc.lastName} />
@@ -554,7 +554,7 @@ class ChatBox extends Component {
                                                                                                             <div className="ai-list-title"><i className="fas fa-stethoscope"></i> {language === 'vi' ? 'Chuyên khoa phù hợp' : 'Suggested Specialties'}</div>
                                                                                                             <div className="ai-cards-container">
                                                                                                                 {specialties.map(spec => (
-                                                                                                                    <div className="ai-doctor-card" key={`spec-${spec.id}`} onClick={() => this.props.history.push(`/detail-specialty/${spec.id}`)}>
+                                                                                                                    <div className="ai-doctor-card" key={`spec-${spec.id}`} onClick={() => this.props.navigate(`/detail-specialty/${spec.id}`)}>
                                                                                                                         <div className="ai-doc-avatar rounded">
                                                                                                                             {spec.image ? (
                                                                                                                                 <img src={spec.image} alt={spec.name} />
@@ -577,7 +577,7 @@ class ChatBox extends Component {
                                                                                                             <div className="ai-list-title"><i className="far fa-hospital"></i> {language === 'vi' ? 'Cơ sở y tế' : 'Suggested Clinics'}</div>
                                                                                                             <div className="ai-cards-container">
                                                                                                                 {clinics.map(clinic => (
-                                                                                                                    <div className="ai-doctor-card" key={`clinic-${clinic.id}`} onClick={() => this.props.history.push(`/detail-clinic/${clinic.id}`)}>
+                                                                                                                    <div className="ai-doctor-card" key={`clinic-${clinic.id}`} onClick={() => this.props.navigate(`/detail-clinic/${clinic.id}`)}>
                                                                                                                         <div className="ai-doc-avatar rounded">
                                                                                                                             {clinic.image ? (
                                                                                                                                 <img src={clinic.image} alt={clinic.name} />
@@ -600,7 +600,7 @@ class ChatBox extends Component {
                                                                                                             <div className="ai-list-title"><i className="fas fa-book-medical"></i> {language === 'vi' ? 'Bài viết liên quan' : 'Related Articles'}</div>
                                                                                                             <div className="ai-cards-container">
                                                                                                                 {handbooks.map(article => (
-                                                                                                                    <div className="ai-doctor-card" key={`hb-${article.id}`} onClick={() => this.props.history.push(`/detail-handbook/${article.id}`)}>
+                                                                                                                    <div className="ai-doctor-card" key={`hb-${article.id}`} onClick={() => this.props.navigate(`/detail-handbook/${article.id}`)}>
                                                                                                                         <div className="ai-doc-avatar rounded">
                                                                                                                             {article.image ? (
                                                                                                                                 <img src={article.image} alt={article.name} />
