@@ -8,7 +8,7 @@ import { path } from '../../../utils/constant';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import '../../Navigation/MavenSlider.scss';
-import { SectionSkeleton } from '../../Navigation/SelectService';
+import { SectionSkeleton } from '../../Navigation/SectionSkeleton';
 
 const DOT_COLORS = ['#00d1b2', '#34d399', '#818cf8', '#fbbf24', '#f472b6'];
 

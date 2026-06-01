@@ -7,7 +7,7 @@ import { withRouter } from '../../../components/Navigator';
 import { path } from '../../../utils/constant';
 import * as actions from '../../../store/actions'
 import '../../Navigation/MavenSlider.scss';
-import { SectionSkeleton } from '../../Navigation/SelectService';
+import { SectionSkeleton } from '../../Navigation/SectionSkeleton';
 
 const DOT_COLORS = ['#00d1b2', '#34d399', '#818cf8', '#fbbf24', '#f472b6'];
 
