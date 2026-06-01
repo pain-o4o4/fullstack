@@ -65,15 +65,18 @@ class BookingHistory extends Component {
                                 {listHistory && listHistory.length > 0 ?
                                     listHistory.slice((currentPage - 1) * pageSize, currentPage * pageSize).map((item, index) => {
                                         const realIndex = (currentPage - 1) * pageSize + index + 1;
-                                        let name = language === 'vi'
-                                            ? `${item.doctorBookingData.lastName} ${item.doctorBookingData.firstName}`
-                                            : `${item.doctorBookingData.firstName} ${item.doctorBookingData.lastName}`;
+                                        let name = 'N/A';
+                                        if (item.doctorBookingData) {
+                                            name = language === 'vi'
+                                                ? `${item.doctorBookingData.lastName} ${item.doctorBookingData.firstName}`
+                                                : `${item.doctorBookingData.firstName} ${item.doctorBookingData.lastName}`;
+                                        }
 
                                         let patientName = item.patientBookingData
                                             ? `${item.patientBookingData.lastName} ${item.patientBookingData.firstName}`
                                             : 'N/A';
 
-                                        let clinicName = item.doctorBookingData.doctorinforData
+                                        let clinicName = item.doctorBookingData?.doctorinforData
                                             ? item.doctorBookingData.doctorinforData.nameClinic
                                             : 'N/A';
 
@@ -91,7 +94,7 @@ class BookingHistory extends Component {
                                                 <td className="col-stt">{realIndex}</td>
                                                 <td>
                                                     <div className="cell-time">
-                                                        <span>{language === 'vi' ? item.timeTypeDataPatient.valueVi : item.timeTypeDataPatient.valueEn}</span>
+                                                        <span>{item.timeTypeDataPatient ? (language === 'vi' ? item.timeTypeDataPatient.valueVi : item.timeTypeDataPatient.valueEn) : 'N/A'}</span>
                                                     </div>
                                                     <div className="cell-date">
                                                         <span>{formattedDate}</span>
@@ -130,7 +133,7 @@ class BookingHistory extends Component {
                                                         {item.statusId === 'S3' ? <FormattedMessage id="patient.my-booking.done" /> :
                                                             item.statusId === 'S4' ? <FormattedMessage id="patient.my-booking.cancelled" /> :
                                                                 item.statusId === 'S5' ? <FormattedMessage id="patient.my-booking.missed" /> :
-                                                                    (language === 'vi' ? item.statusData.valueVi : item.statusData.valueEn)
+                                                                    item.statusData ? (language === 'vi' ? item.statusData.valueVi : item.statusData.valueEn) : 'N/A'
                                                         }
                                                     </span>
                                                 </td>

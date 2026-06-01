@@ -15,7 +15,7 @@ import { stopTimer } from '../../auth/TokenRefreshManager';
 import axios from 'axios';
 
 
-class MobileSidebarInternal extends Component {
+class MobileSidebar extends Component {
     handleLogout = () => {
         stopTimer();
         localStorage.removeItem('token');
@@ -185,7 +185,7 @@ const SidebarConnected = connect(
         processLogout: () => dispatch(actions.processLogout()),
         openChatWithTab: (tab) => dispatch(actions.openChatWithTab(tab)),
     })
-)(MobileSidebarInternal);
+)(MobileSidebar);
 
 class HomeHeader extends Component {
     constructor(props) {

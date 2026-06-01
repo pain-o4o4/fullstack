@@ -118,19 +118,10 @@ const handleChatWithAI = async (userQuery, language, history = [], io = null, us
 
     for (let i = 0; i < retries; i++) {
         try {
-            // Hỗ trợ cấu hình nhiều API Key ngăn cách bởi dấu phẩy để tự động xoay tua (rotate) khi bị limit
-            let apiKeys = [];
-            if (process.env.GOOGLE_API_KEYS) {
-                apiKeys = process.env.GOOGLE_API_KEYS.split(',').map(k => k.trim()).filter(Boolean);
-            }
-            if (apiKeys.length === 0 && process.env.GOOGLE_API_KEY) {
-                apiKeys = [process.env.GOOGLE_API_KEY];
-            }
-
-            const currentKey = apiKeys[i % apiKeys.length];
-            console.log(`>>> [DEBUG] CHATBOT IS USING API KEY (Lần ${i + 1}):`, currentKey ? currentKey.substring(0, 10) + "..." : "NULL");
-            if (!currentKey) return language === 'en' ? "System configuration error." : "Lỗi cấu hình hệ thống.";
-            const genAI = new GoogleGenerativeAI(currentKey);
+            const API_KEY = process.env.GOOGLE_API_KEY;
+            console.log(">>> [DEBUG] CHATBOT IS USING API KEY:", API_KEY ? API_KEY.substring(0, 10) + "..." : "NULL");
+            if (!API_KEY) return language === 'en' ? "System configuration error." : "Lỗi cấu hình hệ thống.";
+            const genAI = new GoogleGenerativeAI(API_KEY);
             // Dùng gemini-2.5-flash
             const modelName = "gemini-2.5-flash";
             const tools = [
