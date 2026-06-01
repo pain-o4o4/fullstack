@@ -80,68 +80,38 @@ const searchAll = async (keyword) => {
         };
 
         // ==========================================
-        // PHÂN HỆ 1: TÌM KIẾM TỪ KHÓA (SQL REGEXP / ILIKE)
+        // PHÂN HỆ 1: TÌM KIẾM TỪ KHÓA TIẾNG VIỆT KHÔNG DẤU (SQL REGEXP - MYSQL ONLY)
         // ==========================================
-        const dialect = db.sequelize.options.dialect || 'mysql';
-        const isMySQL = dialect === 'mysql';
-
-        let userWhere, clinicWhere, specialtyWhere, handbookWhere;
-
-        if (isMySQL) {
-            const vtRegex = getVietnameseRegex(trimmedKeyword);
-            userWhere = {
-                roleId: 'R2',
-                [Op.or]: [
-                    { firstName: { [Op.regexp]: vtRegex } },
-                    { lastName: { [Op.regexp]: vtRegex } },
-                    db.sequelize.where(
-                        db.sequelize.fn('concat', db.sequelize.col('lastName'), ' ', db.sequelize.col('firstName')),
-                        'REGEXP',
-                        vtRegex
-                    )
-                ]
-            };
-            clinicWhere = { name: { [Op.regexp]: vtRegex } };
-            specialtyWhere = { name: { [Op.regexp]: vtRegex } };
-            handbookWhere = { name: { [Op.regexp]: vtRegex } };
-        } else {
-            // Postgres / SQLite / MSSQL fallback
-            const likeOp = dialect === 'postgres' ? Op.iLike : Op.like;
-            const searchPattern = `%${trimmedKeyword}%`;
-            userWhere = {
-                roleId: 'R2',
-                [Op.or]: [
-                    { firstName: { [likeOp]: searchPattern } },
-                    { lastName: { [likeOp]: searchPattern } },
-                    db.sequelize.where(
-                        db.sequelize.fn('concat', db.sequelize.col('lastName'), ' ', db.sequelize.col('firstName')),
-                        { [likeOp]: searchPattern }
-                    )
-                ]
-            };
-            clinicWhere = { name: { [likeOp]: searchPattern } };
-            specialtyWhere = { name: { [likeOp]: searchPattern } };
-            handbookWhere = { name: { [likeOp]: searchPattern } };
-        }
-
+        const vtRegex = getVietnameseRegex(trimmedKeyword);
         const sqlSearchPromise = Promise.all([
             db.User.findAll({
-                where: userWhere,
+                where: {
+                    roleId: 'R2',
+                    [Op.or]: [
+                        { firstName: { [Op.regexp]: vtRegex } },
+                        { lastName: { [Op.regexp]: vtRegex } },
+                        db.sequelize.where(
+                            db.sequelize.fn('concat', db.sequelize.col('lastName'), ' ', db.sequelize.col('firstName')),
+                            'REGEXP',
+                            vtRegex
+                        )
+                    ]
+                },
                 attributes: ['id', 'firstName', 'lastName', 'positionId', 'image'],
                 limit: 8
             }),
             db.Clinic.findAll({
-                where: clinicWhere,
+                where: { name: { [Op.regexp]: vtRegex } },
                 attributes: ['id', 'name', 'image'],
                 limit: 8
             }),
             db.Specialty.findAll({
-                where: specialtyWhere,
+                where: { name: { [Op.regexp]: vtRegex } },
                 attributes: ['id', 'name', 'image'],
                 limit: 8
             }),
             db.Handbook.findAll({
-                where: handbookWhere,
+                where: { name: { [Op.regexp]: vtRegex } },
                 attributes: ['id', 'name', 'image'],
                 limit: 8
             })
