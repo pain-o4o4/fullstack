@@ -1,7 +1,8 @@
 import React, { Component, createRef } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import { searchGlobal, getAllSpecialtyService, saveSearchHistoryApi, getSearchHistoryApi, deleteSearchHistoryItemApi, clearSearchHistoryApi } from '../../services/userService';
+import { searchGlobal, saveSearchHistoryApi, getSearchHistoryApi, deleteSearchHistoryItemApi, clearSearchHistoryApi } from '../../services/adminSystemService';
+import { getAllSpecialtyService } from '../../services/specialtyService';
 import './GlobalSearch.scss';
 import { withRouter } from '../Navigator';
 
