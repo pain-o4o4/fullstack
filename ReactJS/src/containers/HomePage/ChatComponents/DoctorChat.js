@@ -484,8 +484,15 @@ class DoctorChat extends Component {
     handleSelectDoctor = async (doctor) => {
         // Trên màn hình nhỏ (Mobile), tự động ẩn Sidebar khi đã chọn Doctor
         const isMobile = window.innerWidth <= 768;
+
+        // Nếu chọn bác sĩ người thật nhưng đang ở tab AI, tự động chuyển sang tab ALL để hiển thị chat người-người
+        const newFilterTab = (doctor && !doctor.isAI && this.state.filterTab === 'AISUPPORT')
+            ? 'ALL'
+            : this.state.filterTab;
+
         this.setState({
             selectedDoctor: doctor,
+            filterTab: newFilterTab,
             isSidebarHidden: isMobile ? true : this.state.isSidebarHidden
         }, async () => {
             this.scrollToBottom();
@@ -495,6 +502,8 @@ class DoctorChat extends Component {
 
     handleNewAIChat = () => {
         const newId = `session_${Date.now()}`;
+        const isMobile = window.innerWidth <= 768;
+
         this.setState({
             currentAISessionId: newId,
             selectedDoctor: {
@@ -503,7 +512,8 @@ class DoctorChat extends Component {
                 name: 'AI Support'
             },
             messages: [],
-            inputText: ''
+            inputText: '',
+            isSidebarHidden: isMobile ? true : this.state.isSidebarHidden // Trên mobile, tự động ẩn Sidebar để hiện Boxchat soạn tin nhắn
         });
         this.props.clearAIDbHistory();
     }

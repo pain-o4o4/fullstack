@@ -19,6 +19,10 @@ export const PUBLIC_PATHS = [
     '/api/reset-password',
     '/api/allcode',
     '/api/search',
+    '/api/save-search-history',
+    '/api/get-search-history',
+    '/api/delete-search-history-item',
+    '/api/clear-search-history',
 
     // Xem thông tin (Trang chủ & Chi tiết)
     '/api/top-doctor-home',

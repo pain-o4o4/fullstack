@@ -15,6 +15,7 @@ import systemController from "../controller/systemController";
 import chatController from "../controller/chatController";
 import adminController from "../controllers/adminController";
 import ragController from "../controller/ragController";
+import searchHistoryController from "../controller/searchHistoryController";
 let router = express.Router()
 
 let initWebRoutes = (app) => {
@@ -38,6 +39,12 @@ let initWebRoutes = (app) => {
 
     // Global Search
     router.get('/api/search', searchRateLimiter, validateSearch, searchController.handleGlobalSearch);
+
+    // Search History
+    router.post('/api/save-search-history', searchHistoryController.handleSaveSearchHistory);
+    router.get('/api/get-search-history', searchHistoryController.handleGetSearchHistory);
+    router.delete('/api/delete-search-history-item', searchHistoryController.handleDeleteSearchHistoryItem);
+    router.delete('/api/clear-search-history', searchHistoryController.handleClearSearchHistory);
 
     // Usersll
     router.post("/api/register", userController.createRegister);

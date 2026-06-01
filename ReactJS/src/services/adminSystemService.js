@@ -6,6 +6,18 @@ export const searchGlobal = (keyword, signal) => {
         timeout: 10000
     });
 }
+export const saveSearchHistoryApi = (userId, keyword) => {
+    return axios.post('/api/save-search-history', { userId, keyword });
+}
+export const getSearchHistoryApi = (userId) => {
+    return axios.get(`/api/get-search-history?userId=${userId}`);
+}
+export const deleteSearchHistoryItemApi = (userId, id) => {
+    return axios.delete('/api/delete-search-history-item', { data: { userId, id } });
+}
+export const clearSearchHistoryApi = (userId) => {
+    return axios.delete('/api/clear-search-history', { data: { userId } });
+}
 export const getSystemStatisticsService = () => {
     return axios.get('/api/get-system-statistics');
 }
