@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../../store/actions';
-import { sendMessageApi, getMessagesApi, getChatHistorySidebarApi, searchUsersForChatApi, deleteConversationApi, markMessagesAsReadApi, getQuickRepliesApi, updateMessageReactionApi } from '../../../services/userService';
+import { sendMessageApi, getMessagesApi, getChatHistorySidebarApi, searchUsersForChatApi, deleteConversationApi, markMessagesAsReadApi, getQuickRepliesApi, updateMessageReactionApi, postChatWithAIService } from '../../../services/userService';
 import { toast } from 'react-toastify';
 import { CommonUtils } from '../../../utils';
 import './DoctorChat.scss';
 import ChatSidebar from './ChatSidebar';
 import ChatBox from './ChatBox';
 import { getChatSessions, getChatHistory, saveChatMessage, deleteChatSessionApi } from '../../../services/chatbotService';
-import axios from '../../../auth/axiosInstance';
 import moment from 'moment';
 
 const MOCK_CHAT = [];
@@ -534,8 +533,7 @@ class DoctorChat extends Component {
             }), this.scrollToBottom);
 
             try {
-                // Gọi API AI giống AISupportPage
-                let res = await axios.post('/api/chat-with-ai', {
+                let res = await postChatWithAIService({
                     userQuery: userMsgContent,
                     language: language,
                     userId: userInfo.id,

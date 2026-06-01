@@ -7,7 +7,7 @@ import './AISupportPage.scss';
 import * as actions from "../../store/actions";
 import MarkdownIt from 'markdown-it';
 import CustomScrollbars from '../../components/CustomScrollbars';
-import axios from '../../auth/axiosInstance';
+import { postChatWithAIService } from '../../services/userService';
 import { toast } from 'react-toastify';
 import moment from 'moment';
 
@@ -137,8 +137,7 @@ class AISupportPage extends Component {
         });
 
         try {
-            // 2. Gửi tin nhắn lên AI Server
-            let res = await axios.post('/api/chat-with-ai', {
+            let res = await postChatWithAIService({
                 userQuery: userMsgContent,
                 language: language,
                 userId: userInfo ? userInfo.id : null,

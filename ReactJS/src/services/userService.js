@@ -3,6 +3,9 @@ import axios from '../auth/axiosInstance';
 const handleLoginApi = (email, password) => {
     return axios.post('/api/login', { email, password });
 }
+const handleLogoutApi = () => {
+    return axios.post('/api/logout');
+}
 const initiateRegister = (data) => {
     return axios.post('/api/register', { ...data, action: 'initiate' });
 }
@@ -265,6 +268,7 @@ const handleResetPasswordAPI = (data) => {
 
 export {
     handleLoginApi,
+    handleLogoutApi,
     verifyPaymentStatus,
     postChatWithAIService,
     initiateRegister,

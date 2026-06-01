@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { FormattedMessage } from 'react-intl';
 import * as actions from "../../../store/actions";
 import { stopTimer } from '../../../auth/TokenRefreshManager';
-import axios from 'axios';
+import { handleLogoutApi } from '../../../services/userService';
 import './UserMenuPopup.scss';
 
 class UserMenuPopup extends Component {
@@ -31,7 +31,7 @@ class UserMenuPopup extends Component {
     handleLogout = () => {
         stopTimer();
         localStorage.removeItem('token');
-        axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/logout`, {}, { withCredentials: true }).catch(() => { });
+        handleLogoutApi().catch(() => { });
         this.props.processLogout();
     }
 
