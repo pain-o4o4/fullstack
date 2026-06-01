@@ -12,7 +12,7 @@
         height: 600px;
         position: relative;
         overflow: visible;
-        z-index: 1001;
+        z-index: 150;
         margin-bottom: 0;
         display: flex;
         align-items: center;
@@ -54,10 +54,8 @@
                 display: inline-flex;
                 align-items: center;
                 gap: 8px;
-                background: rgba(255, 255, 255, 0.2);
-                -webkit-backdrop-filter: blur(20px);
-                backdrop-filter: blur(20px);
-                border: 1px solid rgba(255, 255, 255, 0.3);
+                background: rgba(0, 0, 0, 0.45);
+                border: 1px solid rgba(255, 255, 255, 0.25);
                 padding: 10px 24px;
                 border-radius: 12px;
                 font-size: 13px;
@@ -532,6 +530,8 @@
 
 @media (max-width: 1024px) {
     .select-service-container {
+        padding-top: calc(64px + env(safe-area-inset-top, 0px)) !important;
+
         .select-service-banner {
             height: 480px !important;
 
@@ -665,7 +665,7 @@
                         }
 
                         input {
-                            font-size: 15px !important;
+                            font-size: 16px !important;
                         }
                     }
                 }
