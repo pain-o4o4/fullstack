@@ -63,7 +63,7 @@ class PatientProfile extends Component {
     validateField = (fieldName, value) => {
         let { errors } = this.state;
         let { language } = this.props;
-        const nameRegex = /^[a-zA-ZÀÁẢÃẠĂẰẮẲẴẶÂẦẤẨẪẬÈÉẺẼẸÊỀẾỂỄỆÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴĐàáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ\s]+$/;
+        const nameRegex = /^[\p{L}\s]+$/u;
         const xssRegex = /<[^>]*>/g;
 
         const cleanVal = (value || '').trim();

@@ -40,7 +40,7 @@ class Register extends Component {
         let { language } = this.props;
         // Industry-standard robust email regex enforcing valid domain structure and TLD
         const emailRe = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        const nameRegex = /^[a-zA-ZÀÁẢÃẠĂẰẮẲẴẶÂẦẤẨẪẬÈÉẺẼẸÊỀẾỂỄỆÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴĐàáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ\s]+$/;
+        const nameRegex = /^[\p{L}\s]+$/u;
         const xssRegex = /<[^>]*>/g;
 
         const cleanVal = (value || '').trim();
