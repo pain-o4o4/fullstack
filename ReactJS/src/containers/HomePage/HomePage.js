@@ -14,7 +14,6 @@ import ClinicFlowTab from './HomeTabs/ClinicFlowTab';
 import PersonalDashboardTab from './HomeTabs/PersonalDashboardTab';
 
 // Import images
-import backgroundBanner from '../../assets/images/backgroundBanner.avif';
 import galleryMri from '../../assets/images/gallery_mri.png';
 import galleryControls from '../../assets/images/gallery_controls.png';
 import galleryProfessional from '../../assets/images/gallery_professional.png';

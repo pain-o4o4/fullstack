@@ -7,7 +7,6 @@ import * as actions from "../../store/actions";
 import { path } from '../../utils/constant';
 import { withRouter } from '../../components/Navigator';
 import UserMenuPopup from '../HomePage/SubMenuForUser/UserMenuPopup';
-import backgroundBanner from '../../assets/images/backgroundBanner.avif';
 import GlobalSearch from '../../components/GlobalSearch/GlobalSearch';
 import DoctorChat from './ChatComponents/DoctorChat';
 import bannerService from '../../assets/images/bannerService.png';
