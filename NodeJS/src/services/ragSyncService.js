@@ -49,14 +49,27 @@ const syncAllToPinecone = async () => {
         
         const currentModel = new GoogleGenerativeAI(GOOGLE_API_KEY).getGenerativeModel({ model: "gemini-embedding-001" });
 
-        const generateEmbeddingsBatch = async (texts) => {
-            const response = await currentModel.batchEmbedContents({
-                requests: texts.map(t => ({
-                    content: { parts: [{ text: t }] },
-                    outputDimensionality: 768
-                }))
-            });
-            return response.embeddings.map(e => e.values);
+        const generateEmbeddingsBatchWithRetry = async (texts, maxRetries = 5, delayMs = 6000) => {
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                try {
+                    const response = await currentModel.batchEmbedContents({
+                        requests: texts.map(t => ({
+                            content: { parts: [{ text: t }] },
+                            outputDimensionality: 768
+                        }))
+                    });
+                    return response.embeddings.map(e => e.values);
+                } catch (error) {
+                    const isRateLimit = error.status === 429 || error.message?.includes('429') || error.message?.includes('Quota exceeded');
+                    if (isRateLimit && attempt < maxRetries) {
+                        console.warn(`>>> [RAG] Đụng trần Google API Rate Limit. Đang tự động thử lại lần ${attempt}/${maxRetries} sau ${delayMs / 1000} giây...`);
+                        await sleep(delayMs);
+                        delayMs = delayMs * 1.5;
+                        continue;
+                    }
+                    throw error;
+                }
+            }
         };
 
         const registry = await loadRegistryFromDB();
@@ -92,7 +105,7 @@ const syncAllToPinecone = async () => {
             await sleep(4000); // Giữ RPM an toàn dưới 15 RPM
             
             try {
-                const embeddings = await generateEmbeddingsBatch(texts);
+                const embeddings = await generateEmbeddingsBatchWithRetry(texts);
                 
                 const records = currentBatchDocs.map((doc, index) => {
                     const name = `${doc.lastName} ${doc.firstName}`;
@@ -137,7 +150,7 @@ const syncAllToPinecone = async () => {
             await sleep(4000);
             
             try {
-                const embeddings = await generateEmbeddingsBatch(texts);
+                const embeddings = await generateEmbeddingsBatchWithRetry(texts);
                 
                 const records = currentBatchSpecs.map((spec, index) => ({
                     id: `specialty_${spec.id}`,
@@ -177,7 +190,7 @@ const syncAllToPinecone = async () => {
             await sleep(4000);
             
             try {
-                const embeddings = await generateEmbeddingsBatch(texts);
+                const embeddings = await generateEmbeddingsBatchWithRetry(texts);
                 
                 const records = currentBatchClinics.map((clinic, index) => ({
                     id: `clinic_${clinic.id}`,
@@ -217,7 +230,7 @@ const syncAllToPinecone = async () => {
             await sleep(4000);
             
             try {
-                const embeddings = await generateEmbeddingsBatch(texts);
+                const embeddings = await generateEmbeddingsBatchWithRetry(texts);
                 
                 const records = currentBatchHandbooks.map((handbook, index) => ({
                     id: `handbook_${handbook.id}`,
