@@ -22,6 +22,7 @@ initCronJobs();
 // 4. `io` được lưu lại để controller/service có thể dùng sau --- io - Server - App
 
 const app = express(); /// const app= springboot app get post delete http ngầm định 3000
+app.set('trust proxy', 1);
 app.use(compression());
 app.use(cookieParser());
 app.use(cors({
