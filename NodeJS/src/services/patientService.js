@@ -108,6 +108,9 @@ let buildUrlEmail = (doctorId, token) => {
 
 let postBookAppointmentService = (data) => {
     return new Promise(async (resolve, reject) => {
+        let appointmentId = null;
+        let isNewBooking = false;
+
         const t = await db.sequelize.transaction();
         try {
             if (!data || !data.doctorId || !data.date || !data.timeType || !data.patientId) {
@@ -155,8 +158,10 @@ let postBookAppointmentService = (data) => {
                     paymentId: data.paymentId,
                     orderCode: newOrderCode
                 }, { transaction: t });
+                appointmentId = appointment.id;
             } else {
                 // CASE 2: Tạo mới booking (Chưa có hoặc đã hủy)
+                isNewBooking = true;
 
                 // 2. KHÓA dòng Schedule này lại để kiểm tra sức chứa
                 let schedule = await db.Schedule.findOne({
@@ -179,7 +184,6 @@ let postBookAppointmentService = (data) => {
                         doctorId: data.doctorId,
                         date: formattedDate,
                         timeType: data.timeType,
-                        // statusId: { [Op.ne]: 'S4' } // Hủy
                         statusId: { [Op.in]: ['S1', 'S2', 'S3'] }
                     },
                     transaction: t
@@ -196,7 +200,7 @@ let postBookAppointmentService = (data) => {
                 const orderCode = Number(String(Date.now()).slice(-10));
                 let token = uuidv4();
                 appointment = await db.Booking.create({
-                    statusId: 'S1', // đợi thanh toansn
+                    statusId: 'S1', // đợi thanh toán
                     doctorId: data.doctorId,
                     patientId: data.patientId,
                     clinicId: data.clinicId,
@@ -207,9 +211,13 @@ let postBookAppointmentService = (data) => {
                     token: token,
                     reason: data.reason
                 }, { transaction: t });
+                appointmentId = appointment.id;
             }
 
-            // --- PAYOS LOGIC ---
+            // Commit ngay lập tức để giải phóng lock trên DB (mất ~5ms)
+            await t.commit();
+
+            // --- PAYOS LOGIC (Gọi bên ngoài DB transaction) ---
             const finalAmount = 5000;
             const body = {
                 orderCode: Number(appointment.orderCode),
@@ -220,27 +228,36 @@ let postBookAppointmentService = (data) => {
                 items: [{ name: "Appointment booking", quantity: 1, price: finalAmount }]
             };
 
-            // Lấy instance chuẩn xác nhất
             let payosInstance = payOS;
             if (payOS && payOS.default) payosInstance = payOS.default;
-
 
             try {
                 let paymentLinkRes = await payosInstance.paymentRequests.create(body);
 
-                // Guard: Kiểm tra checkoutUrl có hợp lệ không trước khi commit
+                // Guard: Kiểm tra checkoutUrl có hợp lệ không
                 if (!paymentLinkRes || !paymentLinkRes.checkoutUrl) {
                     throw new Error('PayOS returned invalid response: missing checkoutUrl');
                 }
 
-                await t.commit();
                 return resolve({
                     errCode: 0,
-                    data: { checkoutUrl: paymentLinkRes.checkoutUrl, bookingId: appointment.id }
+                    data: { checkoutUrl: paymentLinkRes.checkoutUrl, bookingId: appointmentId }
                 });
             } catch (payosError) {
                 console.error(">>> [PAYOS API ERROR]:", payosError?.response?.data || payosError.message || payosError);
-                if (t && !t.finished) await t.rollback();
+                
+                // Nếu PayOS lỗi, tự động hủy/xóa bản ghi booking mới tạo để giải phóng slot ngay lập tức
+                if (isNewBooking && appointmentId) {
+                    try {
+                        await db.Booking.destroy({
+                            where: { id: appointmentId }
+                        });
+                        console.log(`>>> Rolled back new booking ID ${appointmentId} due to PayOS API error`);
+                    } catch (dbErr) {
+                        console.error(">>> Failed to auto-delete failed booking:", dbErr.message);
+                    }
+                }
+
                 return resolve({
                     errCode: 3,
                     errMessage: "Lỗi kết nối cổng thanh toán. Vui lòng thử lại!"
