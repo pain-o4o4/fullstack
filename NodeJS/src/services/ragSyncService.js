@@ -49,16 +49,19 @@ const syncAllToPinecone = async () => {
         
         const currentModel = new GoogleGenerativeAI(GOOGLE_API_KEY).getGenerativeModel({ model: "gemini-embedding-001" });
 
-        const generateEmbedding = async (text) => {
-            const result = await currentModel.embedContent({
-                content: { parts: [{ text: text }] },
-                outputDimensionality: 768
+        const generateEmbeddingsBatch = async (texts) => {
+            const response = await currentModel.batchEmbedContents({
+                requests: texts.map(t => ({
+                    content: { parts: [{ text: t }] },
+                    outputDimensionality: 768
+                }))
             });
-            return result.embedding.values;
+            return response.embeddings.map(e => e.values);
         };
 
         const registry = await loadRegistryFromDB();
         const Op = db.Sequelize.Op;
+        const batchSize = 20;
 
         // 1. Đồng bộ BÁC SĨ (Chưa được sync)
         console.log(">>> [RAG] Đang tải danh sách bác sĩ chưa đồng bộ...");
@@ -77,41 +80,42 @@ const syncAllToPinecone = async () => {
 
         console.log(`>>> [RAG] Tìm thấy ${doctors.length} bác sĩ cần đồng bộ.`);
         
-        let batch = [];
-        const batchSize = 10;
-
-        for (let doc of doctors) {
-            const title = doc.positionData?.valueVi || "Bác sĩ";
-            const name = `${doc.lastName} ${doc.firstName}`;
-            const desc = doc.markdownData?.description || "";
-            const textToEmbed = `Đây là thông tin Bác sĩ. Chức danh: ${title}. Tên: ${name}. Thông tin chuyên môn/Mô tả: ${desc}`;
-
-            await sleep(1000); // Tránh bị Google khóa rate limit (RPM)
-            const embedding = await generateEmbedding(textToEmbed);
-
-            batch.push({
-                id: `doctor_${doc.id}`,
-                values: embedding,
-                metadata: {
-                    type: 'doctor',
-                    dbId: doc.id,
-                    name: name,
-                    description: desc
-                }
+        for (let i = 0; i < doctors.length; i += batchSize) {
+            const currentBatchDocs = doctors.slice(i, i + batchSize);
+            const texts = currentBatchDocs.map(doc => {
+                const title = doc.positionData?.valueVi || "Bác sĩ";
+                const name = `${doc.lastName} ${doc.firstName}`;
+                const desc = doc.markdownData?.description || "";
+                return `Đây là thông tin Bác sĩ. Chức danh: ${title}. Tên: ${name}. Thông tin chuyên môn/Mô tả: ${desc}`;
             });
 
-            if (batch.length >= batchSize) {
-                await pineconeIndex.upsert({ records: batch });
-                await saveBatchToDB('doctor', batch.map(item => item.metadata.dbId));
-                console.log(`>>> [RAG] Đã đẩy thành công ${batch.length} bác sĩ lên Pinecone.`);
-                batch = [];
+            await sleep(4000); // Giữ RPM an toàn dưới 15 RPM
+            
+            try {
+                const embeddings = await generateEmbeddingsBatch(texts);
+                
+                const records = currentBatchDocs.map((doc, index) => {
+                    const name = `${doc.lastName} ${doc.firstName}`;
+                    const desc = doc.markdownData?.description || "";
+                    return {
+                        id: `doctor_${doc.id}`,
+                        values: embeddings[index],
+                        metadata: {
+                            type: 'doctor',
+                            dbId: doc.id,
+                            name: name,
+                            description: desc
+                        }
+                    };
+                });
+
+                await pineconeIndex.upsert({ records });
+                await saveBatchToDB('doctor', currentBatchDocs.map(doc => doc.id));
+                console.log(`>>> [RAG] Đã đẩy thành công ${records.length} bác sĩ lên Pinecone. (${i + records.length}/${doctors.length})`);
+            } catch (err) {
+                console.error(`>>> [RAG] Lỗi đồng bộ batch bác sĩ từ index ${i}:`, err.message);
+                throw err;
             }
-        }
-        if (batch.length > 0) {
-            await pineconeIndex.upsert({ records: batch });
-            await saveBatchToDB('doctor', batch.map(item => item.metadata.dbId));
-            console.log(`>>> [RAG] Đã đẩy thành công ${batch.length} bác sĩ cuối cùng lên Pinecone.`);
-            batch = [];
         }
 
         // 2. Đồng bộ CHUYÊN KHOA
@@ -124,34 +128,34 @@ const syncAllToPinecone = async () => {
         });
         console.log(`>>> [RAG] Tìm thấy ${specialties.length} chuyên khoa cần đồng bộ.`);
 
-        for (let spec of specialties) {
-            const textToEmbed = `Đây là thông tin Chuyên khoa y tế. Tên chuyên khoa: ${spec.name}. Mô tả chuyên khoa: ${spec.descriptionHTML || ''}`;
-            
-            await sleep(1000);
-            const embedding = await generateEmbedding(textToEmbed);
-            
-            batch.push({
-                id: `specialty_${spec.id}`,
-                values: embedding,
-                metadata: {
-                    type: 'specialty',
-                    dbId: spec.id,
-                    name: spec.name
-                }
-            });
+        for (let i = 0; i < specialties.length; i += batchSize) {
+            const currentBatchSpecs = specialties.slice(i, i + batchSize);
+            const texts = currentBatchSpecs.map(spec => 
+                `Đây là thông tin Chuyên khoa y tế. Tên chuyên khoa: ${spec.name}. Mô tả chuyên khoa: ${spec.descriptionHTML || ''}`
+            );
 
-            if (batch.length >= batchSize) {
-                await pineconeIndex.upsert({ records: batch });
-                await saveBatchToDB('specialty', batch.map(item => item.metadata.dbId));
-                console.log(`>>> [RAG] Đã đẩy thành công ${batch.length} chuyên khoa lên Pinecone.`);
-                batch = [];
+            await sleep(4000);
+            
+            try {
+                const embeddings = await generateEmbeddingsBatch(texts);
+                
+                const records = currentBatchSpecs.map((spec, index) => ({
+                    id: `specialty_${spec.id}`,
+                    values: embeddings[index],
+                    metadata: {
+                        type: 'specialty',
+                        dbId: spec.id,
+                        name: spec.name
+                    }
+                }));
+
+                await pineconeIndex.upsert({ records });
+                await saveBatchToDB('specialty', currentBatchSpecs.map(spec => spec.id));
+                console.log(`>>> [RAG] Đã đẩy thành công ${records.length} chuyên khoa lên Pinecone. (${i + records.length}/${specialties.length})`);
+            } catch (err) {
+                console.error(`>>> [RAG] Lỗi đồng bộ batch chuyên khoa từ index ${i}:`, err.message);
+                throw err;
             }
-        }
-        if (batch.length > 0) {
-            await pineconeIndex.upsert({ records: batch });
-            await saveBatchToDB('specialty', batch.map(item => item.metadata.dbId));
-            console.log(`>>> [RAG] Đã đẩy thành công ${batch.length} chuyên khoa cuối cùng lên Pinecone.`);
-            batch = [];
         }
 
         // 3. Đồng bộ PHÒNG KHÁM
@@ -164,34 +168,34 @@ const syncAllToPinecone = async () => {
         });
         console.log(`>>> [RAG] Tìm thấy ${clinics.length} phòng khám cần đồng bộ.`);
 
-        for (let clinic of clinics) {
-            const textToEmbed = `Đây là thông tin Cơ sở y tế / Bệnh viện / Phòng khám. Tên cơ sở: ${clinic.name}. Địa chỉ: ${clinic.address}. Mô tả: ${clinic.descriptionHTML || ''}`;
-            
-            await sleep(1000);
-            const embedding = await generateEmbedding(textToEmbed);
-            
-            batch.push({
-                id: `clinic_${clinic.id}`,
-                values: embedding,
-                metadata: {
-                    type: 'clinic',
-                    dbId: clinic.id,
-                    name: clinic.name
-                }
-            });
+        for (let i = 0; i < clinics.length; i += batchSize) {
+            const currentBatchClinics = clinics.slice(i, i + batchSize);
+            const texts = currentBatchClinics.map(clinic => 
+                `Đây là thông tin Cơ sở y tế / Bệnh viện / Phòng khám. Tên cơ sở: ${clinic.name}. Địa chỉ: ${clinic.address}. Mô tả: ${clinic.descriptionHTML || ''}`
+            );
 
-            if (batch.length >= batchSize) {
-                await pineconeIndex.upsert({ records: batch });
-                await saveBatchToDB('clinic', batch.map(item => item.metadata.dbId));
-                console.log(`>>> [RAG] Đã đẩy thành công ${batch.length} phòng khám lên Pinecone.`);
-                batch = [];
+            await sleep(4000);
+            
+            try {
+                const embeddings = await generateEmbeddingsBatch(texts);
+                
+                const records = currentBatchClinics.map((clinic, index) => ({
+                    id: `clinic_${clinic.id}`,
+                    values: embeddings[index],
+                    metadata: {
+                        type: 'clinic',
+                        dbId: clinic.id,
+                        name: clinic.name
+                    }
+                }));
+
+                await pineconeIndex.upsert({ records });
+                await saveBatchToDB('clinic', currentBatchClinics.map(clinic => clinic.id));
+                console.log(`>>> [RAG] Đã đẩy thành công ${records.length} phòng khám lên Pinecone. (${i + records.length}/${clinics.length})`);
+            } catch (err) {
+                console.error(`>>> [RAG] Lỗi đồng bộ batch phòng khám từ index ${i}:`, err.message);
+                throw err;
             }
-        }
-        if (batch.length > 0) {
-            await pineconeIndex.upsert({ records: batch });
-            await saveBatchToDB('clinic', batch.map(item => item.metadata.dbId));
-            console.log(`>>> [RAG] Đã đẩy thành công ${batch.length} phòng khám cuối cùng lên Pinecone.`);
-            batch = [];
         }
 
         // 4. Đồng bộ CẨM NANG
@@ -204,34 +208,34 @@ const syncAllToPinecone = async () => {
         });
         console.log(`>>> [RAG] Tìm thấy ${handbooks.length} cẩm nang cần đồng bộ.`);
 
-        for (let handbook of handbooks) {
-            const textToEmbed = `Đây là thông tin Bài viết Cẩm nang y khoa. Tiêu đề bài viết: ${handbook.name}. Mô tả/Nội dung: ${handbook.descriptionHTML || ''}`;
-            
-            await sleep(1000);
-            const embedding = await generateEmbedding(textToEmbed);
-            
-            batch.push({
-                id: `handbook_${handbook.id}`,
-                values: embedding,
-                metadata: {
-                    type: 'handbook',
-                    dbId: handbook.id,
-                    name: handbook.name
-                }
-            });
+        for (let i = 0; i < handbooks.length; i += batchSize) {
+            const currentBatchHandbooks = handbooks.slice(i, i + batchSize);
+            const texts = currentBatchHandbooks.map(handbook => 
+                `Đây là thông tin Bài viết Cẩm nang y khoa. Tiêu đề bài viết: ${handbook.name}. Mô tả/Nội dung: ${handbook.descriptionHTML || ''}`
+            );
 
-            if (batch.length >= batchSize) {
-                await pineconeIndex.upsert({ records: batch });
-                await saveBatchToDB('handbook', batch.map(item => item.metadata.dbId));
-                console.log(`>>> [RAG] Đã đẩy thành công ${batch.length} cẩm nang lên Pinecone.`);
-                batch = [];
+            await sleep(4000);
+            
+            try {
+                const embeddings = await generateEmbeddingsBatch(texts);
+                
+                const records = currentBatchHandbooks.map((handbook, index) => ({
+                    id: `handbook_${handbook.id}`,
+                    values: embeddings[index],
+                    metadata: {
+                        type: 'handbook',
+                        dbId: handbook.id,
+                        name: handbook.name
+                    }
+                }));
+
+                await pineconeIndex.upsert({ records });
+                await saveBatchToDB('handbook', currentBatchHandbooks.map(handbook => handbook.id));
+                console.log(`>>> [RAG] Đã đẩy thành công ${records.length} cẩm nang lên Pinecone. (${i + records.length}/${handbooks.length})`);
+            } catch (err) {
+                console.error(`>>> [RAG] Lỗi đồng bộ batch cẩm nang từ index ${i}:`, err.message);
+                throw err;
             }
-        }
-        if (batch.length > 0) {
-            await pineconeIndex.upsert({ records: batch });
-            await saveBatchToDB('handbook', batch.map(item => item.metadata.dbId));
-            console.log(`>>> [RAG] Đã đẩy thành công ${batch.length} cẩm nang cuối cùng lên Pinecone.`);
-            batch = [];
         }
 
         console.log(">>> [RAG] Hoàn tất đồng bộ toàn bộ cơ sở dữ liệu!");
@@ -241,6 +245,7 @@ const syncAllToPinecone = async () => {
         console.error(">>> [RAG] Lỗi trong quá trình đồng bộ lũy tiến:", e);
         return { errCode: -1, errMessage: e.message || 'Error during sync' };
     }
+}
 }
 
 export default { syncAllToPinecone };
