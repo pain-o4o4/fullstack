@@ -246,6 +246,5 @@ const syncAllToPinecone = async () => {
         return { errCode: -1, errMessage: e.message || 'Error during sync' };
     }
 }
-}
 
 export default { syncAllToPinecone };
