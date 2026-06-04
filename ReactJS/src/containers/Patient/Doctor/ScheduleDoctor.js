@@ -30,7 +30,7 @@ class ScheduleDoctor extends Component {
     // 1. Tạo một hàm riêng để build mảng ngày
     getArrDays = (language) => {
         let allDays = [];
-        for (let i = 0; i < 7; i++) {
+        for (let i = 0; i < 30; i++) {
             let object = {};
             if (i === 0) {
                 // Nếu là ngày hiện tại, hiển thị "Hôm nay" thay vì "Thứ ..."

@@ -90,7 +90,7 @@ class ChatBox extends Component {
     getArrDays = () => {
         const language = this.props.language || 'vi';
         let allDays = [];
-        for (let i = 0; i < 7; i++) {
+        for (let i = 0; i < 30; i++) {
             let object = {};
             if (i === 0) {
                 let ddMM = moment(new Date()).format('DD/MM');
