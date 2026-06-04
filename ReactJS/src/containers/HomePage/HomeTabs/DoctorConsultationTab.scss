@@ -628,6 +628,7 @@
 
             .dct-sidebar {
                 width: 260px;
+                min-width: 0;
             }
         }
 
@@ -650,46 +651,94 @@
         .dct-layout {
             flex-direction: column;
             height: auto;
-            min-height: 500px;
+            min-height: unset;
             padding: 16px;
-            gap: 20px;
+            gap: 16px;
+            overflow: hidden;
+            isolation: isolate;
         }
 
         .dct-sidebar {
-            width: 100%;
-            height: 180px;
+            width: 100% !important;
+            min-width: 0;
+            flex: none;
+            height: auto;
             border-right: none;
             border-bottom: 1px solid rgba(0, 0, 0, 0.06);
             padding-right: 0;
-            padding-bottom: 16px;
+            padding-bottom: 12px;
 
             .doctor-list {
                 flex-direction: row;
                 overflow-x: auto;
                 overflow-y: hidden;
-                gap: 12px;
-                padding-bottom: 8px;
+                min-width: 0;
+                gap: 10px;
+                padding: 4px 2px 8px;
+                -webkit-overflow-scrolling: touch;
+
+                &::-webkit-scrollbar {
+                    display: none;
+                }
 
                 .doctor-item {
-                    width: 220px;
-                    flex-shrink: 0;
+                    min-width: 200px;
+                    max-width: 220px;
+                    flex: 0 0 auto;
+                    padding: 10px 12px;
                 }
             }
         }
 
         .dct-profile-panel {
+            flex: 1;
+            min-width: 0;
+
+            .profile-wrapper {
+                height: auto !important;
+                overflow-y: visible !important;
+                gap: 16px;
+            }
+
             .profile-card-header {
                 padding: 16px;
+
+                .header-info-row {
+                    gap: 16px;
+                }
 
                 .profile-primary-info {
                     .profile-name {
                         font-size: 18px;
                     }
+
+                    .profile-specialty {
+                        font-size: 13px;
+                    }
+
+                    .profile-clinic-meta {
+                        font-size: 12px;
+                    }
                 }
             }
 
-            .services-card .services-grid {
-                grid-template-columns: 1fr;
+            .services-card {
+                padding: 16px;
+
+                .services-grid {
+                    grid-template-columns: 1fr;
+                    gap: 10px;
+                }
+            }
+
+            .flow-card {
+                padding: 16px;
+            }
+
+            .profile-action-footer .btn-book-telehealth {
+                padding: 14px 20px;
+                font-size: 15px;
+                border-radius: 14px;
             }
         }
     }

@@ -54,9 +54,7 @@ const searchAll = async (keyword) => {
         const trimmedKeyword = keyword.trim();
         const cacheKey = `search:${trimmedKeyword.toLowerCase()}`;
 
-        // ==========================================
         // CHỐT CHẶN 0: KIỂM TRA BỘ NHỚ ĐỆM (CACHE HIT)
-        // ==========================================
         const cachedResult = await cache.get(cacheKey);
         if (cachedResult) {
             console.log(`>>> [CACHE HIT] Trả kết quả tìm kiếm cho từ khóa "${trimmedKeyword}" từ Cache RAM (5ms)`);
@@ -79,9 +77,7 @@ const searchAll = async (keyword) => {
             }
         };
 
-        // ==========================================
         // PHÂN HỆ 1: TÌM KIẾM TỪ KHÓA TIẾNG VIỆT KHÔNG DẤU (SQL REGEXP - MYSQL ONLY)
-        // ==========================================
         const vtRegex = getVietnameseRegex(trimmedKeyword);
         const sqlSearchPromise = Promise.all([
             db.User.findAll({
@@ -128,9 +124,7 @@ const searchAll = async (keyword) => {
             console.error(">>> [Hybrid Search] Lỗi SQL Search (Regex):", sqlErr.message);
         }
 
-        // ==========================================
         // PHÂN HỆ 2: TÌM KIẾM NGỮ NGHĨA THÔNG MINH (VECTOR SEARCH - RAG)
-        // ==========================================
         let vectorDoctors = [], vectorClinics = [], vectorSpecialties = [], vectorHandbooks = [];
 
         if (PINECONE_API_KEY && GOOGLE_API_KEY) {
@@ -159,7 +153,7 @@ const searchAll = async (keyword) => {
                 const hbIds = [];
 
                 for (const match of queryResponse.matches) {
-                    if (match.score < 0.5) continue;
+                    if (match.score < 0.7) continue;
 
                     const type = match.metadata.type;
                     const dbId = match.metadata.dbId;
@@ -200,9 +194,7 @@ const searchAll = async (keyword) => {
             }
         }
 
-        // ==========================================
         // PHÂN HỆ 3: LAI GHÉP, KHỬ TRÙNG LẶP & SẮP XẾP ƯU TIÊN
-        // ==========================================
         const mergeAndDeduplicate = (sqlList, vectorList) => {
             const map = new Map();
 
@@ -223,7 +215,49 @@ const searchAll = async (keyword) => {
             return Array.from(map.values()).slice(0, 8);
         };
 
-        const mergedDoctors = mergeAndDeduplicate(sqlDoctors, vectorDoctors);
+        // Bổ sung bác sĩ thuộc các chuyên khoa hoặc phòng khám đã khớp
+        const matchedSpecIds = [
+            ...sqlSpecialties.map(s => s.id),
+            ...vectorSpecialties.map(s => s.id)
+        ];
+        const matchedClinicIds = [
+            ...sqlClinics.map(c => c.id),
+            ...vectorClinics.map(c => c.id)
+        ];
+
+        let doctorsBySpecialtyOrClinic = [];
+        if (matchedSpecIds.length > 0 || matchedClinicIds.length > 0) {
+            try {
+                const orConditions = [];
+                if (matchedSpecIds.length > 0) {
+                    orConditions.push({ specialtyId: { [Op.in]: matchedSpecIds } });
+                }
+                if (matchedClinicIds.length > 0) {
+                    orConditions.push({ clinicId: { [Op.in]: matchedClinicIds } });
+                }
+
+                const doctorInfors = await db.Doctor_infor.findAll({
+                    where: { [Op.or]: orConditions },
+                    attributes: ['doctorId'],
+                    raw: true
+                });
+
+                const doctorIdsFromSpecOrClinic = [...new Set(doctorInfors.map(di => di.doctorId))];
+                if (doctorIdsFromSpecOrClinic.length > 0) {
+                    doctorsBySpecialtyOrClinic = await db.User.findAll({
+                        where: {
+                            id: { [Op.in]: doctorIdsFromSpecOrClinic },
+                            roleId: 'R2'
+                        },
+                        attributes: ['id', 'firstName', 'lastName', 'positionId', 'image']
+                    });
+                }
+            } catch (err) {
+                console.error(">>> [Search] Lỗi lấy bác sĩ theo chuyên khoa/phòng khám:", err);
+            }
+        }
+
+        const mergedDoctors = mergeAndDeduplicate(sqlDoctors, [...vectorDoctors, ...doctorsBySpecialtyOrClinic]);
         const mergedClinics = mergeAndDeduplicate(sqlClinics, vectorClinics);
         const mergedSpecialties = mergeAndDeduplicate(sqlSpecialties, vectorSpecialties);
         const mergedHandbooks = mergeAndDeduplicate(sqlHandbooks, vectorHandbooks);
@@ -238,9 +272,7 @@ const searchAll = async (keyword) => {
             }
         };
 
-        // ==========================================
         // LƯU KẾT QUẢ VÀO BỘ NHỚ ĐỆM (CACHE SET)
-        // ==========================================
         // Cache kết quả trong vòng 1 tiếng (3600 giây)
         await cache.set(cacheKey, finalResult, 3600);
 
