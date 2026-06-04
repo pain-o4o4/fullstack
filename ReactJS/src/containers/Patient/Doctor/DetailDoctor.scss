@@ -623,6 +623,21 @@
                 .down {
                     font-size: 16px !important;
                 }
+
+                .doctor-hero-actions {
+                    margin-top: 20px !important;
+                    gap: 12px !important;
+
+                    .btn-quick-chat {
+                        padding: 10px 20px !important;
+                        font-size: 14.5px !important;
+                    }
+
+                    .action-secondary-link {
+                        padding: 9px 16px !important;
+                        font-size: 13.5px !important;
+                    }
+                }
             }
         }
 
@@ -748,17 +763,14 @@
                     margin-top: 20px !important;
 
                     .btn-quick-chat {
-                        width: 100% !important;
-                        max-width: 280px !important;
+                        width: auto !important;
                         padding: 10px 20px !important;
                         font-size: 14px !important;
                     }
 
                     .action-secondary-link {
-                        flex: 1 !important;
-                        justify-content: center !important;
-                        max-width: 135px !important;
-                        padding: 10px 12px !important;
+                        width: auto !important;
+                        padding: 10px 16px !important;
                         font-size: 13px !important;
                     }
                 }
