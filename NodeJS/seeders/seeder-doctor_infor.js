@@ -30,8 +30,6 @@ module.exports = {
                         priceId: 'PRI' + ((i % 7) + 1),
                         provinceId: 'PRO' + ((i % 10) + 1),
                         paymentId: 'PAY' + ((i % 3) + 1),
-                        addressClinic: 'Địa chỉ phòng khám ' + (i + 1),
-                        nameClinic: 'PK ' + (i + 1),
                         note: 'Ghi chú cho bác sĩ ' + (i + 1),
                         createdAt: new Date(),
                         updatedAt: new Date()

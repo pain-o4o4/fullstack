@@ -365,8 +365,8 @@ class BookingModal extends Component {
             language: language,
             doctorName: this.state.doctorName,
 
-            clinicName: dataTimeModal.clinicData?.name || doctorInfor.nameClinic,
-            addressClinic: dataTimeModal.clinicData?.address || doctorInfor.addressClinic,
+            clinicName: dataTimeModal.clinicData?.name || '',
+            addressClinic: dataTimeModal.clinicData?.address || '',
 
             paymentId: doctorInfor.paymentId,
             price: doctorInfor.priceTypeData?.valueVi || 0,

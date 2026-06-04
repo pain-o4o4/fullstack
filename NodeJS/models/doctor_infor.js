@@ -48,8 +48,6 @@ module.exports = (sequelize, DataTypes) => {
         clinicId: DataTypes.INTEGER,
         provinceId: DataTypes.STRING,
         paymentId: DataTypes.STRING,
-        addressClinic: DataTypes.STRING,
-        nameClinic: DataTypes.STRING,
         note: DataTypes.STRING,
         count: DataTypes.INTEGER
     }, {

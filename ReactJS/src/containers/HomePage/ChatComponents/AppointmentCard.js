@@ -103,7 +103,7 @@ class AppointmentCard extends Component {
             : 'Chưa cập nhật';
 
         const specialtyName = doctorData.doctorinforData?.specialtyData?.name || (language === 'vi' ? 'Chưa cập nhật' : 'Not updated');
-        const clinicName = doctorData.doctorinforData?.clinicData?.name || doctorData.doctorinforData?.nameClinic || (language === 'vi' ? 'Chưa cập nhật' : 'Not updated');
+        const clinicName = doctorData.doctorinforData?.clinicData?.name || (language === 'vi' ? 'Chưa cập nhật' : 'Not updated');
 
         const dateLabel = moment(Number(this.props.date)).locale(language).format('dddd - DD/MM/YYYY');
         const formattedDateLabel = dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1);

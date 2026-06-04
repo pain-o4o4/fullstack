@@ -159,13 +159,13 @@ class DetailSchedulePatient extends Component {
                                     <div className="info-item">
                                         <span className="label"><FormattedMessage id="patient-detail.clinic-info" /></span>
                                         <span className="value">
-                                            {formatTitleCase(detailBooking.doctorBookingData?.doctorinforData?.nameClinic)}
+                                            {formatTitleCase(detailBooking.clinicBookingData?.name)}
                                         </span>
                                     </div>
                                     <div className="info-item">
                                         <span className="label"><FormattedMessage id="patient.my-booking.address" /></span>
                                         <span className="value address-text">
-                                            {formatTitleCase(detailBooking.doctorBookingData?.doctorinforData?.addressClinic)}
+                                            {formatTitleCase(detailBooking.clinicBookingData?.address)}
                                         </span>
                                     </div>
                                 </div>

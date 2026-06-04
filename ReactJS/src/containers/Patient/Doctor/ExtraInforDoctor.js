@@ -99,7 +99,7 @@ class ExtraInforDoctor extends Component {
         let listExtraInforLanguage = this.getInfoByLanguage();
         
         // Dữ liệu hiển thị (ưu tiên từ props nếu có, fallback về extraInfor)
-        let displayClinicName = clinicData ? clinicData.name : (extraInfor && extraInfor.clinicData ? extraInfor.clinicData.name : (extraInfor && extraInfor.nameClinic ? extraInfor.nameClinic : ''));
+        let displayClinicName = clinicData ? clinicData.name : (extraInfor && extraInfor.clinicData ? extraInfor.clinicData.name : '');
         let displayClinicAddress = clinicData ? clinicData.address : (extraInfor && extraInfor.clinicData ? extraInfor.clinicData.address : listExtraInforLanguage.province);
 
         console.log('check state', this.state)

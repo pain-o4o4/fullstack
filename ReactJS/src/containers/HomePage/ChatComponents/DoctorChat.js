@@ -748,7 +748,7 @@ class DoctorChat extends Component {
                 'patientName': selectedDoctor ? selectedDoctor.name : 'bạn',
                 'specialty': doctorDetail?.Doctor_Infor?.specialtyData?.valueVi || 'chuyên khoa',
                 'clinicName': doctorDetail?.Doctor_Infor?.clinicData?.name || 'phòng khám',
-                'addressClinic': doctorDetail?.Doctor_Infor?.addressClinic || 'địa chỉ phòng khám'
+                'addressClinic': doctorDetail?.Doctor_Infor?.clinicData?.address || 'địa chỉ phòng khám'
             };
 
             replacedText = text.replace(/\{\{(.*?)\}\}/g, (match, key) => {

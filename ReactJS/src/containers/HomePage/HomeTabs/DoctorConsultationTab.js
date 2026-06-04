@@ -106,8 +106,8 @@ class DoctorConsultationTab extends Component {
             ? infoData.specialtyData.name
             : (language === 'vi' ? 'Chuyên khoa Nội tổng quát' : 'General Internal Medicine');
 
-        const clinicName = infoData?.nameClinic || (language === 'vi' ? 'Phòng khám BookingCare' : 'BookingCare Partner Clinic');
-        const clinicAddress = infoData?.addressClinic || (language === 'vi' ? 'Đang cập nhật địa chỉ' : 'Address updating');
+        const clinicName = infoData?.clinicData?.name || (language === 'vi' ? 'Phòng khám BookingCare' : 'BookingCare Partner Clinic');
+        const clinicAddress = infoData?.clinicData?.address || (language === 'vi' ? 'Đang cập nhật địa chỉ' : 'Address updating');
 
         // Dynamic Price/Fee formatting
         const priceType = infoData?.priceTypeData;

@@ -203,8 +203,6 @@ class ManageDoctor extends Component {
             selectedPrice: this.state.selectedPrice.value,
             selectedPayment: this.state.selectedPayment.value,
             selectedProvince: this.state.selectedProvince.value,
-            nameClinic: '', // redundant now
-            addressClinic: '', // redundant now
             note: this.state.note,
             specialtyId: this.state.selectedSpecialty.value,
             clinicId: this.state.selectedClinic.value,
@@ -229,40 +227,46 @@ class ManageDoctor extends Component {
         let { listPrice, listPayment, listProvince, listSpecialty, listClinic } = this.state;
 
         let res = await getDetailDoctorByIdService(selectedOption.value);
-        if (res && res.errCode === 0 && res.data && res.data.markdownData) {
+        if (res && res.errCode === 0 && res.data) {
             let markdown = res.data.markdownData;
+            let doctorinfor = res.data.doctorinforData;
+            let hasOldData = false;
 
-            let addressClinic = '', nameClinic = '', note = '',
+            let contentHTML = '', contentMarkdown = '', description = '';
+            if (markdown) {
+                contentHTML = markdown.contentHTML || '';
+                contentMarkdown = markdown.contentMarkdown || '';
+                description = markdown.description || '';
+                hasOldData = true;
+            }
+
+            let note = '',
                 paymentId = '', priceId = '', provinceId = '', specialtyId = '', clinicId = '',
                 selectedPayment = '', selectedPrice = '', selectedProvince = '',
                 selectedSpecialty = '', selectedClinic = '', maxNumber = '';
 
+            if (doctorinfor) {
+                note = doctorinfor.note || '';
+                maxNumber = doctorinfor.count || '';
+                paymentId = doctorinfor.paymentId || '';
+                priceId = doctorinfor.priceId || '';
+                provinceId = doctorinfor.provinceId || '';
+                specialtyId = doctorinfor.specialtyId || '';
+                clinicId = doctorinfor.clinicId || '';
 
-            if (res.data.doctorinforData) {
-                addressClinic = res.data.doctorinforData.addressClinic;
-                nameClinic = res.data.doctorinforData.nameClinic;
-                note = res.data.doctorinforData.note;
-                maxNumber = res.data.doctorinforData.count;
-                paymentId = res.data.doctorinforData.paymentId;
-                priceId = res.data.doctorinforData.priceId;
-                provinceId = res.data.doctorinforData.provinceId;
-                specialtyId = res.data.doctorinforData.specialtyId;
-                clinicId = res.data.doctorinforData.clinicId;
-
-                selectedPayment = listPayment.find(item => item && item.value === paymentId);
-                selectedPrice = listPrice.find(item => item && item.value === priceId);
-                selectedProvince = listProvince.find(item => item && item.value === provinceId);
-                selectedSpecialty = listSpecialty.find(item => item && item.value === specialtyId);
-                selectedClinic = listClinic.find(item => item && item.value === clinicId);
+                selectedPayment = listPayment.find(item => item && item.value === paymentId) || '';
+                selectedPrice = listPrice.find(item => item && item.value === priceId) || '';
+                selectedProvince = listProvince.find(item => item && item.value === provinceId) || '';
+                selectedSpecialty = listSpecialty.find(item => item && item.value === specialtyId) || '';
+                selectedClinic = listClinic.find(item => item && item.value === clinicId) || '';
+                hasOldData = true;
             }
 
             this.setState({
-                contentHTML: markdown.contentHTML,
-                contentMarkdown: markdown.contentMarkdown,
-                description: markdown.description,
-                hasOldData: true,
-                addressClinic: addressClinic,
-                nameClinic: nameClinic,
+                contentHTML: contentHTML,
+                contentMarkdown: contentMarkdown,
+                description: description,
+                hasOldData: hasOldData,
                 note: note,
                 maxNumber: maxNumber,
                 selectedPayment: selectedPayment,
@@ -277,8 +281,6 @@ class ManageDoctor extends Component {
                 contentMarkdown: '',
                 description: '',
                 hasOldData: false,
-                addressClinic: '',
-                nameClinic: '',
                 note: '',
                 maxNumber: '',
                 selectedPayment: '',

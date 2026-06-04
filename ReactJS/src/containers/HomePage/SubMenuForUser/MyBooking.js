@@ -129,7 +129,7 @@ class MyBooking extends Component {
                                             : 'N/A';
 
                                         let clinicName = item.doctorBookingData?.doctorinforData
-                                            ? item.doctorBookingData.doctorinforData.nameClinic
+                                            ? item.clinicBookingData.name
                                             : 'N/A';
 
                                         let formattedDate = '';

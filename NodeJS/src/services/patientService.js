@@ -377,14 +377,7 @@ let getAllAppointmentsByIdService = async (id) => {
                         {
                             model: db.User,
                             as: 'doctorBookingData',
-                            attributes: ['firstName', 'lastName'],
-                            include: [
-                                {
-                                    model: db.Doctor_infor,
-                                    as: 'doctorinforData',
-                                    attributes: ['nameClinic', 'addressClinic']
-                                }
-                            ]
+                            attributes: ['firstName', 'lastName']
                         },
                         {
                             model: db.User,
@@ -441,14 +434,7 @@ let getHistoryAppointmentByIdService = (id) => {
                         {
                             model: db.User,
                             as: 'doctorBookingData',
-                            attributes: ['firstName', 'lastName'],
-                            include: [
-                                {
-                                    model: db.Doctor_infor,
-                                    as: 'doctorinforData',
-                                    attributes: ['nameClinic', 'addressClinic']
-                                }
-                            ]
+                            attributes: ['firstName', 'lastName']
                         },
                         {
                             model: db.User,
@@ -530,7 +516,7 @@ let getDetailSchedulePatient = async (bookingId) => {
                             include: [
                                 {
                                     model: db.Doctor_infor, as: 'doctorinforData',
-                                    attributes: ['nameClinic', 'addressClinic', 'priceId', 'paymentId'],
+                                    attributes: ['priceId', 'paymentId'],
                                     include: [
                                         { model: db.Allcode, as: 'priceTypeData', attributes: ['valueVi', 'valueEn'] },
                                         { model: db.Allcode, as: 'paymentTypeData', attributes: ['valueVi', 'valueEn'] }
