@@ -107,7 +107,8 @@ let deleteSpecialtyService = (specialtyId, force = false) => {
     return new Promise(async (resolve, reject) => {
         try {
             let specialty = await db.Specialty.findOne({
-                where: { id: specialtyId }
+                where: { id: specialtyId },
+                raw: false
             });
             if (!specialty) {
                 resolve({

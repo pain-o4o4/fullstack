@@ -83,7 +83,8 @@ let deleteHandbook = (id, force = false) => {
     return new Promise(async (resolve, reject) => {
         try {
             let handbook = await db.Handbook.findOne({
-                where: { id: id }
+                where: { id: id },
+                raw: false
             });
             if (!handbook) {
                 resolve({

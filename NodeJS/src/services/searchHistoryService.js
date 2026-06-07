@@ -18,7 +18,8 @@ const saveSearchHistory = async (userId, keyword) => {
         // Tìm kiếm cả những bản ghi đã bị xóa mềm (paranoid: false) để tái sử dụng
         let history = await db.SearchHistory.findOne({
             where: { userId, keyword: cleanKeyword },
-            paranoid: false
+            paranoid: false,
+            raw: false
         });
 
         if (history) {

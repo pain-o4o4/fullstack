@@ -103,7 +103,8 @@ let deleteClinicService = (clinicId, force = false) => {
     return new Promise(async (resolve, reject) => {
         try {
             let clinic = await db.Clinic.findOne({
-                where: { id: clinicId }
+                where: { id: clinicId },
+                raw: false
             });
             if (!clinic) {
                 resolve({

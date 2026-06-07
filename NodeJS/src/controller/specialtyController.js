@@ -51,6 +51,7 @@ let handleDeleteSpecialty = async (req, res) => {
             })
         }
         let force = req.body.force || false;
+        console.log('req.body: ', req.body);
         let response = await specialtyService.deleteSpecialtyService(req.body.id, force);
         return res.status(200).json(response);
     } catch (e) {

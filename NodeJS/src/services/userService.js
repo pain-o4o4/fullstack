@@ -380,7 +380,8 @@ let deleteUserById = (id, force = false) => {
     return new Promise(async (resolve, reject) => {
         try {
             let user = await db.User.findOne({
-                where: { id: id }
+                where: { id: id },
+                raw: false
             });
 
             if (!user) {
