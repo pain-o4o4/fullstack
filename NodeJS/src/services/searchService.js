@@ -153,7 +153,7 @@ const searchAll = async (keyword) => {
                 const hbIds = [];
 
                 for (const match of queryResponse.matches) {
-                    if (match.score < 0.7) continue;
+                    if (match.score < 0.55) continue;
 
                     const type = match.metadata.type;
                     const dbId = match.metadata.dbId;
