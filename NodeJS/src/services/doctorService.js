@@ -304,16 +304,22 @@ let bulkCreateScheduleService = (data) => {
 
             let schedule = data.arrSchedule;
 
-            // === AUTO-FETCH: Lấy clinicId và maxNumber từ Doctor_infor ===
-            // Frontend không cần gửi clinicId nữa, Backend tự lấy
+            // Đọc maxNumber truyền trực tiếp từ client và kiểm duyệt
+            const customMaxNumber = parseInt(data.maxNumber, 10);
+            if (!customMaxNumber || isNaN(customMaxNumber) || customMaxNumber <= 0 || customMaxNumber >= 20) {
+                return resolve({
+                    errCode: 2,
+                    errMessage: "Số lượng ca khám/khung giờ phải là số nguyên dương và nhỏ hơn 20!"
+                });
+            }
+
+            // Chỉ fetch clinicId tự động
             let doctorInfor = await db.Doctor_infor.findOne({
                 where: { doctorId: data.doctorId },
-                attributes: ['count', 'clinicId']
+                attributes: ['clinicId']
             });
 
             const autoClinicId = doctorInfor ? doctorInfor.clinicId : null;
-            const customMaxNumber = (doctorInfor && doctorInfor.count) ? doctorInfor.count : MAX_NUMBER_SCHEDULE;
-            // === END AUTO-FETCH ===
 
             if (schedule && schedule.length > 0) {
                 schedule = schedule.map(item => {
@@ -345,11 +351,25 @@ let bulkCreateScheduleService = (data) => {
                 });
             }
 
-            // 4. BulkCreate / Update the submitted schedule slots
-            if (schedule && schedule.length > 0) {
-                await db.Schedule.bulkCreate(schedule, {
-                    updateOnDuplicate: ['maxNumber', 'clinicId']
-                });
+            // 4. Update maxNumber cho các schedule ĐÃ TỒN TẠI (vấn đề bạn đang gặp phải)
+            if (existing && existing.length > 0) {
+                for (let i = 0; i < existing.length; i++) {
+                    await db.Schedule.update({
+                        maxNumber: customMaxNumber,
+                        clinicId: autoClinicId
+                    }, {
+                        where: { id: existing[i].id }
+                    });
+                }
+            }
+
+            // 5. Tạo mới các schedule CHƯA TỒN TẠI
+            let toCreate = schedule.filter(item => {
+                return !existing.some(ex => ex.timeType === item.timeType && ex.date == item.date)
+            });
+
+            if (toCreate && toCreate.length > 0) {
+                await db.Schedule.bulkCreate(toCreate);
             }
 
             resolve({

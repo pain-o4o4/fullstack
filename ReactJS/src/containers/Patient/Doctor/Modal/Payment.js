@@ -147,7 +147,8 @@ class Payment extends Component {
                     this.startTimer(data.id);
                 });
             } else {
-                console.log(this.props.language === LANGUAGES.VI ? "Không tìm thấy dữ liệu đặt lịch!" : "Booking data not found!");
+                let errMsg = res && res.errMessage ? res.errMessage : (this.props.language === LANGUAGES.VI ? "Không tìm thấy dữ liệu đặt lịch!" : "Booking data not found!");
+                toast.error(errMsg);
                 this.setState({ isLoading: false });
                 this.props.navigate('/home');
             }

@@ -111,7 +111,10 @@ let postBookAppointmentService = (data) => {
         let appointmentId = null;
         let isNewBooking = false;
 
-        const t = await db.sequelize.transaction();
+        const { Transaction } = require('sequelize');
+        const t = await db.sequelize.transaction({
+            isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED
+        });
         try {
             if (!data || !data.doctorId || !data.date || !data.timeType || !data.patientId) {
                 await t.rollback();
@@ -476,7 +479,7 @@ let getHistoryAppointmentByIdService = (id) => {
     });
 };
 
-let getDetailSchedulePatient = async (bookingId) => {
+let getDetailSchedulePatient = async (bookingId, user) => {
     return new Promise(async (resolve, reject) => {
         try {
             if (!bookingId) {
@@ -487,6 +490,22 @@ let getDetailSchedulePatient = async (bookingId) => {
                     where: { id: bookingId },
                     raw: false
                 });
+
+                if (!appointment) {
+                    return resolve({
+                        errCode: 2,
+                        errMessage: 'Lịch hẹn không tồn tại!'
+                    });
+                }
+
+                // Bảo vệ chống lỗi IDOR: Bệnh nhân khác không thể truy cập thanh toán/xem lịch hẹn của người khác
+                // ADMIN (R1) và Bác sĩ (R2) được phép xem
+                if (user && user.roleId === 'R3' && appointment.patientId !== user.id) {
+                    return resolve({
+                        errCode: 3,
+                        errMessage: 'Bạn không có quyền truy cập thông tin lịch hẹn này!'
+                    });
+                }
 
                 if (appointment && appointment.statusId === 'S1') {
                     let nowMillis = moment().valueOf();

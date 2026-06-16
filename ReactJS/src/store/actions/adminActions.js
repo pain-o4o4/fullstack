@@ -284,12 +284,14 @@ export const saveDetailDoctor = (data) => {
                 // Hiện thị đúng errMessage từ server (VD: thông báo chặn khi đổi Bệnh viện)
                 console.log(res?.errMessage || 'Cập nhật thông tin bác sĩ thất bại!');
             }
+            return res; // <-- QUAN TRỌNG: Trả về res cho Component
         } catch (e) {
             console.error('saveDetailDoctors error:', e);
             console.log('Cập nhật thông tin bác sĩ thất bại!');
             dispatch({
                 type: actionTypes.POST_DETAIL_DOCTORS_FAIL
             });
+            return { errCode: -1, errMessage: 'Lỗi hệ thống' }; // Trả về lỗi
         }
     }
 }

@@ -338,6 +338,7 @@ class ManageDoctor extends Component {
                                             onChange={this.handleChangeSelect}
                                             options={this.state.listAllDoctors}
                                             placeholder='Tìm bác sĩ...'
+                                            menuPlacement="bottom"
                                             menuPortalTarget={document.body}
                                             styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                         />
@@ -350,6 +351,7 @@ class ManageDoctor extends Component {
                                             options={this.state.listSpecialty}
                                             placeholder="Chọn chuyên khoa"
                                             name="selectedSpecialty"
+                                            menuPlacement="bottom"
                                             menuPortalTarget={document.body}
                                             styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                         />
@@ -362,6 +364,7 @@ class ManageDoctor extends Component {
                                             options={this.state.listClinic}
                                             placeholder="Chọn phòng khám/bệnh viện"
                                             name="selectedClinic"
+                                            menuPlacement="bottom"
                                             menuPortalTarget={document.body}
                                             styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                         />
@@ -386,6 +389,7 @@ class ManageDoctor extends Component {
                                             options={this.state.listPrice}
                                             placeholder="Giá khám"
                                             name="selectedPrice"
+                                            menuPlacement="bottom"
                                             menuPortalTarget={document.body}
                                             styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                         />
@@ -432,6 +436,7 @@ class ManageDoctor extends Component {
                                         options={this.state.listPayment}
                                         placeholder="Phương thức thanh toán"
                                         name="selectedPayment"
+                                        menuPlacement="bottom"
                                         menuPortalTarget={document.body}
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                     />
@@ -464,6 +469,7 @@ class ManageDoctor extends Component {
                                             options={this.state.listProvince}
                                             placeholder="Chọn tỉnh thành"
                                             name="selectedProvince"
+                                            menuPlacement="bottom"
                                             menuPortalTarget={document.body}
                                             styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                         />

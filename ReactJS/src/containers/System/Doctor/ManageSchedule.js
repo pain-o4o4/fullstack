@@ -21,7 +21,8 @@ class ManageSchedule extends Component {
             currentDate: '',
             listAllScheduleTime: [],
             showConfirm: false,
-            isLoading: false
+            isLoading: false,
+            maxNumber: ''
         };
     }
 
@@ -172,9 +173,15 @@ class ManageSchedule extends Component {
     }
 
     handleSaveSchedule = async () => {
-        let { listAllScheduleTime, selectedOption, currentDate } = this.state;
+        let { listAllScheduleTime, selectedOption, currentDate, maxNumber } = this.state;
         if (!currentDate || !selectedOption || _.isEmpty(selectedOption)) {
-            toast.error("Vui lòng chọn đầy đủ thông tin!");
+            toast.error("Vui lòng chọn đầy đủ thông tin bác sĩ và ngày!");
+            return;
+        }
+
+        const maxNumInt = parseInt(maxNumber, 10);
+        if (isNaN(maxNumInt) || maxNumInt <= 0 || maxNumInt >= 20) {
+            toast.error("Số ca khám tối đa/khung giờ phải là số nguyên dương và nhỏ hơn 20!");
             return;
         }
 
@@ -182,7 +189,7 @@ class ManageSchedule extends Component {
     }
 
     confirmSave = async () => {
-        let { listAllScheduleTime, selectedOption, currentDate } = this.state;
+        let { listAllScheduleTime, selectedOption, currentDate, maxNumber } = this.state;
         let formartedDate = new Date(currentDate).getTime();
         let result = [];
 
@@ -201,7 +208,8 @@ class ManageSchedule extends Component {
         let res = await bulkCreateScheduleService({
             arrSchedule: result,
             doctorId: selectedOption.value,
-            date: formartedDate
+            date: formartedDate,
+            maxNumber: parseInt(maxNumber, 10)
         });
 
         if (res && res.errCode === 0) {
@@ -222,7 +230,7 @@ class ManageSchedule extends Component {
 
     render() {
         let { language, userInfo } = this.props;
-        let { listAllScheduleTime, selectedOption, currentDate, showConfirm, isLoading } = this.state;
+        let { listAllScheduleTime, selectedOption, currentDate, showConfirm, isLoading, maxNumber } = this.state;
         let isDoctorRole = userInfo && userInfo.roleId === 'R2';
         let selectedCount = listAllScheduleTime.filter(i => i.isSelected).length;
 
@@ -247,6 +255,7 @@ class ManageSchedule extends Component {
                                     options={this.state.listAllDoctors}
                                     isDisabled={isDoctorRole}
                                     placeholder={language === LANGUAGES.VI ? 'Tìm bác sĩ...' : 'Search doctor...'}
+                                    menuPlacement="bottom"
                                     menuPortalTarget={document.body}
                                     styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                 />
@@ -296,6 +305,19 @@ class ManageSchedule extends Component {
                                     </div>
                                 </div>
                             )}
+                        </div>
+
+                        <div className="sidebar-card">
+                            <span className="card-label">Sức chứa tối đa / Khung giờ</span>
+                            <input
+                                type="number"
+                                className="apple-datepicker"
+                                value={maxNumber || ''}
+                                onChange={(e) => this.setState({ maxNumber: e.target.value })}
+                                placeholder={language === LANGUAGES.VI ? "Ví dụ: 3 (Sức chứa)" : "e.g. 3 slots"}
+                                min="1"
+                                max="19"
+                            />
                         </div>
                     </div>
 
@@ -354,7 +376,7 @@ class ManageSchedule extends Component {
                         <div className="apple-confirm-popup">
                             <div className="popup-title">Lưu thay đổi?</div>
                             <div className="popup-desc">
-                                Bạn đang thiết lập {selectedCount} khung giờ khám cho bác sĩ vào ngày {moment(currentDate).format('DD/MM/YYYY')}. Dữ liệu cũ (nếu có) sẽ bị thay thế.
+                                Bạn đang thiết lập {selectedCount} khung giờ khám cho bác sĩ vào ngày {moment(currentDate).format('DD/MM/YYYY')} với sức chứa tối đa {maxNumber} ca/khung giờ. Dữ liệu cũ (nếu có) sẽ bị thay thế.
                             </div>
                             <div className="popup-actions">
                                 <button className="btn-cancel" disabled={isLoading} onClick={() => this.setState({ showConfirm: false })}>Hủy</button>

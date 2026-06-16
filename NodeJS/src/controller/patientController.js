@@ -76,7 +76,7 @@ let postUpdatePatient = async (req, res) => {
 
 let getDetailSchedulePatient = async (req, res) => {
     try {
-        let infor = await patientService.getDetailSchedulePatient(req.query.bookingId);
+        let infor = await patientService.getDetailSchedulePatient(req.query.bookingId, req.user);
         return res.status(200).json(infor);
     } catch (error) {
         console.log(error);
