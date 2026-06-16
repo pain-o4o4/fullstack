@@ -68,10 +68,10 @@ class Payment extends Component {
                     bookingData: { ...bookingData, bookingId },
                     checkoutUrl: checkoutUrl // Store for later
                 });
-                
+
                 // Update browser URL query params so reloading doesn't lose state/bookingId
                 this.props.navigate(`/patient/payment?bookingId=${bookingId}`, { replace: true });
-                
+
                 this.handleTimerPersistence(bookingId);
             } else {
                 // If backend fails (e.g. PayOS error), the record might or might not be saved 
@@ -221,8 +221,8 @@ class Payment extends Component {
         if (isProcessing) return;
 
         if (!navigator.onLine) {
-            toast.error(this.props.language === LANGUAGES.VI 
-                ? "Mất kết nối mạng. Vui lòng kiểm tra lại!" 
+            toast.error(this.props.language === LANGUAGES.VI
+                ? "Mất kết nối mạng. Vui lòng kiểm tra lại!"
                 : "Network connection lost. Please check again!");
             return;
         }
@@ -238,7 +238,7 @@ class Payment extends Component {
 
                 if (res && res.errCode === 0 && res.data && res.data.checkoutUrl) {
                     localStorage.removeItem(`payment_expiry_${bookingData.bookingId}`);
-                    
+
                     // Tự động gửi tin nhắn chào mừng từ bác sĩ (Background task)
                     sendMessageApi({
                         senderId: bookingData.doctorId,
@@ -254,8 +254,8 @@ class Payment extends Component {
                 }
             } catch (e) {
                 console.error(e);
-                toast.warning(this.props.language === LANGUAGES.VI 
-                    ? "Kết nối chập chờn. Bạn có thể thử lại an toàn nhờ Idempotency Key." 
+                toast.warning(this.props.language === LANGUAGES.VI
+                    ? "Kết nối chập chờn. Bạn có thể thử lại an toàn nhờ Idempotency Key."
                     : "Unstable connection. You can safely retry thanks to Idempotency Key.");
                 this.setState({ isProcessing: false });
             }
@@ -275,7 +275,7 @@ class Payment extends Component {
 
                     <div className="payment-main">
                         <div className="payment-content-layout">
-                            
+
                             <div className="content-left">
                                 <div className="product-visual">
                                     <div className="doctor-card">
@@ -308,7 +308,7 @@ class Payment extends Component {
                                 </div>
                             </div>
 
-                            
+
                             <div className="content-right">
                                 <h1 className="main-title">
                                     {language === LANGUAGES.VI ? 'Kiểm tra thông tin lịch hẹn' : 'Review your appointment'}

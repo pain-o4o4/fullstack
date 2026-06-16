@@ -248,7 +248,7 @@ let postBookAppointmentService = (data) => {
                 });
             } catch (payosError) {
                 console.error(">>> [PAYOS API ERROR]:", payosError?.response?.data || payosError.message || payosError);
-                
+
                 // Nếu PayOS lỗi, tự động hủy/xóa bản ghi booking mới tạo để giải phóng slot ngay lập tức
                 if (isNewBooking && appointmentId) {
                     try {
@@ -564,13 +564,13 @@ let getDetailSchedulePatient = async (bookingId, user) => {
                     nest: true
                 });
 
-                 if (data && data.doctorBookingData && data.doctorBookingData.image) {
-                     data.doctorBookingData.image = parseImageFromDb(data.doctorBookingData.image);
-                 }
- 
-                 if (data && data.patientBookingData && data.patientBookingData.image) {
-                     data.patientBookingData.image = parseImageFromDb(data.patientBookingData.image);
-                 }
+                if (data && data.doctorBookingData && data.doctorBookingData.image) {
+                    data.doctorBookingData.image = parseImageFromDb(data.doctorBookingData.image);
+                }
+
+                if (data && data.patientBookingData && data.patientBookingData.image) {
+                    data.patientBookingData.image = parseImageFromDb(data.patientBookingData.image);
+                }
 
                 resolve({
                     errCode: 0,
@@ -653,10 +653,10 @@ let postUpdatePatientService = (data) => {
                     }
                 });
 
-                 if (data.image !== undefined) {
-                     let imageUrl = await uploadImageToCloudinary(data.image, 'users');
-                     updateData.image = imageUrl;
-                 }
+                if (data.image !== undefined) {
+                    let imageUrl = await uploadImageToCloudinary(data.image, 'users');
+                    updateData.image = imageUrl;
+                }
                 // if (data.password !== undefined) {
                 //     let hashPasswordFromBcrypt = await hashUserPassword(data.password);
                 //     updateData.password = hashPasswordFromBcrypt;

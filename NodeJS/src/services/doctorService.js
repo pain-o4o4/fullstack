@@ -192,6 +192,14 @@ let postInforDoctorService = (data) => {
                 });
             }
 
+            const newMaxNumber = parseInt(data.maxNumber, 10);
+            if (data.maxNumber && (isNaN(newMaxNumber) || newMaxNumber <= 0 || newMaxNumber >= 20)) {
+                return resolve({
+                    errCode: 3,
+                    errMessage: "Số lượng ca khám/khung giờ phải là số nguyên dương và nhỏ hơn 20!"
+                });
+            }
+
             let doctorInfor = await db.Doctor_infor.findOne({
                 where: { doctorId: data.doctorId },
                 raw: false
@@ -219,6 +227,15 @@ let postInforDoctorService = (data) => {
                     specialtyId: data.specialtyId,
                     clinicId: data.clinicId,
                     count: data.maxNumber
+                });
+            }
+
+            // Đồng bộ maxNumber vào các schedule hiện có của bác sĩ
+            if (data.maxNumber) {
+                await db.Schedule.update({
+                    maxNumber: newMaxNumber
+                }, {
+                    where: { doctorId: data.doctorId }
                 });
             }
 
@@ -752,7 +769,7 @@ let updateBookingService = (data) => {
                 if (data.reason) booking.reason = data.reason;
                 if (data.date) booking.date = data.date;
                 if (data.timeType) booking.timeType = data.timeType;
-                
+
                 await booking.save();
                 resolve({
                     errCode: 0,
@@ -839,7 +856,7 @@ let getListBookingHistory = (data) => {
             } else if (data.doctorId && data.doctorId !== 'ALL') {
                 whereCondition.doctorId = data.doctorId;
             }
-            
+
             if (data.statusId && data.statusId !== 'ALL') {
                 whereCondition.statusId = data.statusId;
             }
@@ -874,9 +891,9 @@ let getListBookingHistory = (data) => {
                         attributes: ['email', 'firstName', 'lastName', 'phonenumber', 'address'],
                         include: [{ model: db.Allcode, as: 'genderData', attributes: ['valueEn', 'valueVi'] }]
                     },
-                    { 
-                        model: db.User, 
-                        as: 'doctorBookingData', 
+                    {
+                        model: db.User,
+                        as: 'doctorBookingData',
                         attributes: ['firstName', 'lastName'],
                         include: [
                             {

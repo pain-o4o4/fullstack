@@ -481,8 +481,13 @@
                                     flex-wrap: wrap;
                                     gap: 8px;
 
-                                    .card-label { font-size: 15px; }
-                                    .card-price  { font-size: 13px; }
+                                    .card-label {
+                                        font-size: 15px;
+                                    }
+
+                                    .card-price {
+                                        font-size: 13px;
+                                    }
                                 }
 
                                 .card-details p {
@@ -499,8 +504,13 @@
                                         grid-column: span 1;
                                     }
 
-                                    .label { font-size: 11px; }
-                                    .value { font-size: 14px; }
+                                    .label {
+                                        font-size: 11px;
+                                    }
+
+                                    .value {
+                                        font-size: 14px;
+                                    }
                                 }
                             }
                         }
@@ -529,12 +539,16 @@
                     .status-item {
                         gap: 8px;
 
-                        i { font-size: 16px; }
+                        i {
+                            font-size: 16px;
+                        }
 
                         .status-text {
                             font-size: 12px;
 
-                            span { line-height: 1.4; }
+                            span {
+                                line-height: 1.4;
+                            }
                         }
                     }
                 }
